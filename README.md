@@ -7,7 +7,7 @@ SMASHING iOS 레포입니다 🏓
 
 # 구성원 소개
 
-| 이승준 (Lead) | 홍준범  | 이진재 |
+| 이승준 | 홍준범  | 이진재 |
 | :----: | :----: | :----: |
 |  `iOS Lead`  |  `iOS Developer`   |    `iOS Developer`  |
 
