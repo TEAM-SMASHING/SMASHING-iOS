@@ -7,7 +7,29 @@ SMASHING iOS 레포입니다 🏓
 
 # 구성원 소개
 
+| 이승준 (Lead) | 홍준범  | 이진재 |
+| :----: | :----: | :----: |
+|  `iOS Lead`  |  `iOS Developer`   |    `iOS Developer`  |
+
 # 사용할 라이브러리
+
+| 영역 | 기술 | 비고 |
+|:---:|:---:|---|
+| UI 프레임워크 | **UIKit** | 안정적이고 풍부한 레퍼런스, 실무 적합성 |
+| 아키텍처 | **MVVM + InputOutput Pattern** | UI, 도메인, 데이터 계층 분리로 유지보수 용이 |
+| 네트워킹 | **Moya + Combine**	| CTargetType 기반 API 추상화 및 Publisher를 활용한 반응형 비동기 처리 |
+| 비동기/반응형 | **Combine** | 데이터 흐름의 선언적 처리, 상태 바인딩 최적화 |
+| 이미지 처리 | **Kingfisher** | 이미지 캐싱 및 네트워크 병목 방지 |
+| 의존성 주입 | **DIContainer** | 모듈 간 결합도 최소화, 테스트 편의성 확보 |
+| 패키지 관리 및 모듈화 | **SPM** | Swift Package Manager 기반 외부 라이브러리 관리 |
+| 버전 관리 | **Git, GitHub** | 브랜치 전략 기반 협업, PR 및 코드리뷰 활용 |
+| 협업 도구 | **Figma, Notion** | 디자인 및 기능 흐름 시각화, 문서화 기반 협업 |
+
+# Conventions
+
+<details>
+  <summary><b>Coding Convention</b></summary>
+  <div markdown="1">
 
 # Coding Convention
 
@@ -124,6 +146,13 @@ var messages: [String]
 var names: [Int: String]
 ```
 
+  </div>
+</details>
+
+<details>
+  <summary><b>Git Flow</b></summary>
+  <div markdown="1">
+
 # Git Flow
 
 ## 🌳 Branch Strategy
@@ -163,6 +192,9 @@ Review: 작성자 제외 팀원 전원 승인(Approve) 필수
 
 Merge: 모든 승인이 완료되면 develop으로 머지
 
+  </div>
+</details>
+
 
 # 프로젝트 폴더링
 
@@ -172,7 +204,9 @@ Merge: 모든 승인이 완료되면 develop으로 머지
  ┃ ┣ 📄 AppDelegate.swift
  ┃ ┗ 📄 SceneDelegate.swift
  ┣ 📂 Global
+ ┃ ┣ 📂 DIContainer                     # 의존성 주입 관리 (Dependency Injection)
  ┃ ┣ 📂 Base                            # BaseView, BaswViewController 등
+ ┃ ┣ 📂 Utility
  ┃ ┣ 📂 Components                      # 공통 UI 컴포넌트
  ┃ ┣ 📂 Extensions
  ┃ ┗ 📂 Resource
@@ -185,12 +219,10 @@ Merge: 모든 승인이 완료되면 develop으로 머지
  ┃ ┗ 📂 Service                         # 네트워크 비즈니스 로직
  ┗ 📂 Presentation
    ┣ 📂 Core
+   ┃ ┣ 📂 Factories
    ┃ ┗ 📄 ViewModelType.swift           # I/O 패턴을 위한 공통 프로토콜
    ┣ 📂 Main (Feature)
-   ┃ ┣ 📄 MainViewController.swift
-   ┃ ┣ 📄 MainViewModel.swift           # Input/Output 구조체 포함
-   ┃ ┗ 📄 MainView.swift                # UI 코드가 길 경우 분리
-   ┗ 📂 Search (Feature)
-     ┣ 📄 SearchViewController.swift
-     ┗ 📄 SearchViewModel.swift
+     ┣ 📄 MainViewController.swift
+     ┣ 📄 MainViewModel.swift           # Input/Output 구조체 포함
+     ┗ 📄 MainView.swift                # UI 코드가 길 경우 분리
 ```
