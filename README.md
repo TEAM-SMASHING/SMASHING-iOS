@@ -12,8 +12,7 @@ SMASHING iOS 레포입니다 🏓
 | <img src="https://github.com/user-attachments/assets/85578013-a587-41fb-aadc-117bb8d345cd" width="180" height="180" /> | <img src="https://github.com/user-attachments/assets/b38d23f3-c33f-473b-bf24-223a2c1ef959" width="180" height="180" /> | <img src="https://github.com/user-attachments/assets/a7ddcfa9-d7bf-4584-9058-929c62710eee" width="180" height="180" /> |
 | `iOS Lead` | `iOS Developer` | `iOS Developer` |
 
-# 사용할 라이브러리
-
+# 사용할 라이브러리 및 기술스택
 | 영역 | 기술 | 비고 |
 |:---:|:---:|---|
 | UI 프레임워크 | **UIKit** | 안정적이고 풍부한 레퍼런스, 실무 적합성 |
