@@ -18,7 +18,7 @@ SMASHING iOS 레포입니다 🏓
 |:---:|:---:|---|
 | UI 프레임워크 | **UIKit** | 안정적이고 풍부한 레퍼런스, 실무 적합성 |
 | 아키텍처 | **MVVM + InputOutput Pattern** | UI, 도메인, 데이터 계층 분리로 유지보수 용이 |
-| 네트워킹 | **Moya + Combine**	| CTargetType 기반 API 추상화 및 Publisher를 활용한 반응형 비동기 처리 |
+| 네트워킹 | **CombineMoya**	| CTargetType 기반 API 추상화 및 Publisher를 활용한 반응형 비동기 처리 |
 | 비동기/반응형 | **Combine** | 데이터 흐름의 선언적 처리, 상태 바인딩 최적화 |
 | 이미지 처리 | **Kingfisher** | 이미지 캐싱 및 네트워크 병목 방지 |
 | 의존성 주입 | **DIContainer** | 모듈 간 결합도 최소화, 테스트 편의성 확보 |
