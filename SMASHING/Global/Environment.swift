@@ -8,5 +8,5 @@
 import Foundation
 
 enum Environment {
-    
+    static let baseURL: String = Bundle.main.infoDictionary?["BaseURL"] as! String
 }
