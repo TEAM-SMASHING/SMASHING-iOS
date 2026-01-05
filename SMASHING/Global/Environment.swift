@@ -9,4 +9,5 @@ import Foundation
 
 enum Environment {
     static let baseURL: String = Bundle.main.infoDictionary?["BaseURL"] as! String
+    static let kakaoAPPKey: String = Bundle.main.infoDictionary?["KAKAO_APP_Key"] as! String
 }
