@@ -5,57 +5,47 @@
 //  Created by 이승준 on 12/30/25.
 //
 
+import Combine
 import Foundation
+
+import CombineMoya
 import Moya
 
 final class NetworkProvider<API: TargetType> {
 
     // MARK: - API Calls
-    
-    static func request<T: Decodable>(
+
+    static func requestPublisher<T: Decodable>(
         _ target: API,
-        type: T.Type,
-        completion: @escaping (Result<T, NetworkError>) -> Void
-    ) {
+        type: T.Type
+    ) -> AnyPublisher<T, NetworkError> {
         let provider = MoyaProvider<API>(plugins: [NetworkLogger()])
-
-        provider.request(target) { result in
-            switch result {
-
-            case .success(let response):
-
-                switch response.statusCode {
-                case 200...299:
-                    break
-                case 401:
-                    completion(.failure(.unauthorized))
-                    return
-                case 403:
-                    completion(.failure(.forbidden))
-                    return
-                case 404:
-                    completion(.failure(.notFound))
-                    return
-                case 500...599:
-                    let msg = String(data: response.data, encoding: .utf8) ?? "Server Error"
-                    completion(.failure(.serverError(msg)))
-                    return
-                default:
-                    completion(.failure(.unknown))
-                    return
+        
+        return Future<T, NetworkError> { promise in
+            provider.request(target) { result in
+                switch result {
+                case .success(let response):
+                    switch response.statusCode {
+                    case 200...299:
+                        do {
+                            let decodedResponse = try JSONDecoder().decode(T.self, from: response.data)
+                            promise(.success(decodedResponse))
+                        } catch {
+                            promise(.failure(.decoding))
+                        }
+                    case 401: promise(.failure(.unauthorized))
+                    case 403: promise(.failure(.forbidden))
+                    case 404: promise(.failure(.notFound))
+                    case 500...599:
+                        let msg = String(data: response.data, encoding: .utf8) ?? "Server Error"
+                        promise(.failure(.serverError(msg)))
+                    default:
+                        promise(.failure(.unknown))
+                    }
+                case .failure:
+                    promise(.failure(.networkFail))
                 }
-
-                do {
-                    let result = try JSONDecoder().decode(T.self, from: response.data)
-                    completion(.success(result))
-                } catch {
-                    completion(.failure(.decoding))
-                }
-
-            case .failure:
-                completion(.failure(.networkFail))
             }
-        }
+        }.eraseToAnyPublisher()
     }
 }
-
