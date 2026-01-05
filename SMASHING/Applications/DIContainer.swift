@@ -7,6 +7,12 @@
 
 import UIKit
 
+enum DIScope {
+
+    case SingleTon
+    case Tranient
+}
+
 class DIContainer {
     
     //MARK: SingleTon
@@ -26,7 +32,7 @@ class DIContainer {
     //MARK: Resolve
     func resolve<T>(type: T.Type) -> T {
         let key = ObjectIdentifier(type)
-        let component = services[key] as! () -> T
+        guard let component = services[key] as? () -> T else { return <#default value#> }
         return component()
     }
     
