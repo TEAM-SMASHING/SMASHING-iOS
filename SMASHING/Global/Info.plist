@@ -4,6 +4,8 @@
 <dict>
 	<key>KAKAO_APP_Key</key>
 	<string>$(KAKAO_APP_Key)</string>
+	<key>KAKAO_REST_API_Key</key>
+	<string>$(KAKAO_REST_API_Key)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

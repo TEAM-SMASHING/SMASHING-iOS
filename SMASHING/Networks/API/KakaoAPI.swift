@@ -42,7 +42,7 @@ extension KakaoMapAPI: TargetType {
 
     var headers: [String: String]? {
         return [
-            "Authorization": "KakaoAK a54a3c25c8873af96429a6b0adda130c",
+            "Authorization": "KakaoAK \(Environment.kakaoRESTAPIKey)",
             "Content-Type": "application/json"
         ]
     }
