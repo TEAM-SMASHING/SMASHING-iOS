@@ -14,7 +14,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .darkGray
     }
-    
 }
 
 import SwiftUI

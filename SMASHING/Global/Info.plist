@@ -11,6 +11,8 @@
 		<string>Pretendard-Regular.ttf</string>
 		<string>Pretendard-SemiBold.ttf</string>
 	</array>
+	<key>KAKAO_REST_API_Key</key>
+	<string>$(KAKAO_REST_API_Key)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
