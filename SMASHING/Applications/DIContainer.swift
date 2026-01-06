@@ -12,38 +12,41 @@ enum DIScope {
     case transient
 }
 
-class DIContainer {
+final class DIContainer {
 
-    //MARK: Singleton
+    // MARK: - Singleton
 
     static let shared = DIContainer()
     init() {}
 
-    //MARK: Storage
+    // MARK: - Storage
+
     private var factories: [ObjectIdentifier: (DIContainer) -> Any] = [:]
     private var scopes: [ObjectIdentifier: DIScope] = [:]
     private var singletonInstances: [ObjectIdentifier: Any] = [:]
 
-    //MARK: Register
+    // MARK: - Register
+
     func register<T>(type: T.Type, scope: DIScope = .singleton, component: @escaping (DIContainer) -> T) {
         let key = ObjectIdentifier(type)
-        factories[key] = component
-        scopes[key] = scope
+        self.factories[key] = component
+        self.scopes[key] = scope
     }
 
-    //MARK: Resolve
+    // MARK: - Resolve
+
     func resolve<T>(type: T.Type) -> T {
         let key = ObjectIdentifier(type)
-        let factory = factories[key] as! (DIContainer) -> T
-        let scope = scopes[key]!
+        let factory = self.factories[key] as! (DIContainer) -> T
+        let scope = self.scopes[key]!
 
         switch scope {
         case .singleton:
-            if let instance = singletonInstances[key] as? T {
+            if let instance = self.singletonInstances[key] as? T {
                 return instance
             }
             let newInstance = factory(self)
-            singletonInstances[key] = newInstance
+            self.singletonInstances[key] = newInstance
             return newInstance
 
         case .transient:
@@ -51,4 +54,27 @@ class DIContainer {
         }
     }
 
+}
+
+// MARK: - Dependency Registration
+
+extension DIContainer {
+    
+    func registerAllDependencies() {
+        registerServices()
+        registerViewModels()
+    }
+    
+    // MARK: - Services (Singleton)
+    
+    private func registerServices() {
+        
+    }
+    
+    // MARK: - ViewModels (Transient)
+    
+    private func registerViewModels() {
+        
+    }
+    
 }
