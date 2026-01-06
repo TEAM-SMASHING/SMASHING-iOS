@@ -1,5 +1,5 @@
 //
-//  AppDIContainer.swift
+//  DIContainer.swift
 //  SMASHING
 //
 //  Created by JIN on 1/6/26.
@@ -8,32 +8,47 @@
 import UIKit
 
 enum DIScope {
-
-    case SingleTon
-    case Tranient
+    case singleton
+    case transient
 }
 
 class DIContainer {
-    
-    //MARK: SingleTon
-    
+
+    //MARK: Singleton
+
     static let shared = DIContainer()
     private init() {}
-    
-    //MARK: ClassArray
-    private var services: [ObjectIdentifier: Any] = [:]
-    
+
+    //MARK: Storage
+    private var factories: [ObjectIdentifier: () -> Any] = [:]
+    private var scopes: [ObjectIdentifier: DIScope] = [:]
+    private var singletonInstances: [ObjectIdentifier: Any] = [:]
+
     //MARK: Register
-    func register<T>(type: T.Type, component: @escaping () -> T) {
+    func register<T>(type: T.Type, scope: DIScope, component: @escaping () -> T) {
         let key = ObjectIdentifier(type)
-        services[key] = component
+        factories[key] = component
+        scopes[key] = scope
     }
-    
+
     //MARK: Resolve
     func resolve<T>(type: T.Type) -> T {
         let key = ObjectIdentifier(type)
-        guard let component = services[key] as? () -> T else { return <#default value#> }
-        return component()
+        let factory = factories[key] as! () -> T
+        let scope = scopes[key]!
+        
+        switch scope {
+        case .singleton:
+            if let instance = singletonInstances[key] as? T {
+                return instance
+            }
+            let newInstance = factory()
+            singletonInstances[key] = newInstance
+            return newInstance
+            
+        case .transient:
+            return factory()
+        }
     }
     
 }
