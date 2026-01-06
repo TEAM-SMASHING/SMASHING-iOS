@@ -23,14 +23,10 @@ enum TabBarScene: String {
 final class TabBarSceneFactory: TabBarSceneFactoryProtocol {
     func makeScene(for tabBarScene: TabBarScene) -> UIViewController {
         switch tabBarScene {
-        case .home:
-            <#code#>
-        case .matchingSearch:
-            <#code#>
-        case .matchingManage:
-            <#code#>
-        case .profile:
-            <#code#>
+        case .home: return HomViewController()
+        case .matchingSearch: return MatchingSearchViewController()
+        case .matchingManage: return MatchingManageViewController()
+        case .profile: return ProfileViewController()
         }
     }
     
@@ -38,6 +34,10 @@ final class TabBarSceneFactory: TabBarSceneFactoryProtocol {
 }
 
 final class MainTabBarController: UITabBarController {
+    
+    private var factory: TabBarSceneFactoryProtocol = TabBarSceneFactory()
+    
+    static weak var shared: MainTabBarController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
