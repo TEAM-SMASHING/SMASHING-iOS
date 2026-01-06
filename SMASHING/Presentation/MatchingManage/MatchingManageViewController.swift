@@ -7,10 +7,16 @@
 
 import UIKit
 
-class MatchingManageViewController: UIViewController {
+final class MatchingManageViewController: BaseViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    // MARK: - Lifecycle
+
+    override func setUI() {
+        super.setUI()
     }
-    
+
+    override func setLayout() {
+        super.setLayout()
+    }
+
 }
