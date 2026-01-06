@@ -17,15 +17,15 @@ class DIContainer {
     //MARK: Singleton
 
     static let shared = DIContainer()
-    private init() {}
+    init() {}
 
     //MARK: Storage
-    private var factories: [ObjectIdentifier: () -> Any] = [:]
+    private var factories: [ObjectIdentifier: (DIContainer) -> Any] = [:]
     private var scopes: [ObjectIdentifier: DIScope] = [:]
     private var singletonInstances: [ObjectIdentifier: Any] = [:]
 
     //MARK: Register
-    func register<T>(type: T.Type, scope: DIScope, component: @escaping () -> T) {
+    func register<T>(type: T.Type, scope: DIScope = .singleton, component: @escaping (DIContainer) -> T) {
         let key = ObjectIdentifier(type)
         factories[key] = component
         scopes[key] = scope
@@ -34,21 +34,21 @@ class DIContainer {
     //MARK: Resolve
     func resolve<T>(type: T.Type) -> T {
         let key = ObjectIdentifier(type)
-        let factory = factories[key] as! () -> T
+        let factory = factories[key] as! (DIContainer) -> T
         let scope = scopes[key]!
-        
+
         switch scope {
         case .singleton:
             if let instance = singletonInstances[key] as? T {
                 return instance
             }
-            let newInstance = factory()
+            let newInstance = factory(self)
             singletonInstances[key] = newInstance
             return newInstance
-            
+
         case .transient:
-            return factory()
+            return factory(self)
         }
     }
-    
+
 }
