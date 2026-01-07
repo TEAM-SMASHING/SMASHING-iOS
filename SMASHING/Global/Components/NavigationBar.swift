@@ -66,13 +66,11 @@ final class CustomNavigationBar: BaseUIView {
         self.backgroundColor = .Background.canvas
     }
     
-    override
-    func setUI() {
+    override func setUI() {
         addSubviews(leftBackButton, titleLabel, rightButton)
     }
     
-    override
-    func setLayout() {
+    override func setLayout() {
         self.snp.makeConstraints {
             $0.height.equalTo(66)
         }

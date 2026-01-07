@@ -24,10 +24,17 @@ class TestViewController: UIViewController {
             })
         }
     
-    let smashingTextField = CommonTextField()
+    let searchTextField = SearchTextField().then {
+        $0.setPlaceholder(text: "닉네임을 입력해주세요.")
+    }
+    
+    let smashingTextField = CommonTextField().then {
+        $0.placeholder = "X 버튼이 있는 텍스트 필드"
+    }
     
     let smashingTextField1 = CommonTextField().then {
         $0.hideClearButtonAlways()
+        $0.placeholder = "X 버튼이 없는 텍스트 필드"
     }
     
     lazy var nextButton = CTAButton(
@@ -57,6 +64,7 @@ class TestViewController: UIViewController {
         self.hideKeyboardWhenDidTap()
         
         self.view.addSubview(customBar)
+        self.view.addSubview(searchTextField)
         self.view.addSubview(smashingTextField)
         self.view.addSubview(smashingTextField1)
         self.view.addSubview(nextButton)
@@ -65,6 +73,12 @@ class TestViewController: UIViewController {
         
         customBar.snp.makeConstraints { make in
             make.leading.trailing.top.equalTo(self.view.safeAreaLayoutGuide)
+        }
+        
+        searchTextField.snp.makeConstraints {
+            $0.top.equalTo(customBar.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.centerX.equalToSuperview()
         }
         
         smashingTextField.snp.makeConstraints {

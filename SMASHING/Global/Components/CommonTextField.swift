@@ -101,7 +101,7 @@ final class CommonTextField: UITextField {
         self.addPadding(left: 16, right: 16 + 24 + 16)
         
         self.font = .pretendard(.textSmM)
-        self.textColor = .white
+        self.textColor = .Text.primary
         self.layer.cornerRadius = 12
         self.layer.borderWidth = 1.0
         self.layer.borderColor = defaultBorderColor.cgColor
@@ -122,6 +122,8 @@ final class CommonTextField: UITextField {
         
         self.sendActions(for: .editingChanged)
         NotificationCenter.default.post(name: UITextField.textDidChangeNotification, object: self)
+        
+        let _ = becomeFirstResponder()
     }
     
     // MARK: - Private Methods
