@@ -53,15 +53,15 @@ final class CTAButton: UIButton {
     // MARK: - UI Update Methods
     
     private func updateStateAppearance() {
-        if !isEnabled {             // Disabled
-            self.backgroundColor = UIColor(red: 34/255, green: 37/255, blue: 41/255, alpha: 1.0)
-            self.setTitleColor(UIColor(red: 75/255, green: 80/255, blue: 89/255, alpha: 1.0), for: .normal)
-        } else if isHighlighted {   // Pressed
-            self.backgroundColor = UIColor(red: 54/255, green: 58/255, blue: 67/255, alpha: 1.0)
-            self.setTitleColor(.white, for: .normal)
-        } else {                    // Active
-            self.backgroundColor = .white
-            self.setTitleColor(.black, for: .normal)
+        if !isEnabled {
+            self.backgroundColor = .Button.backgroundPrimaryDisabled
+            self.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+        } else if isHighlighted {
+            self.backgroundColor = .Button.backgroundPrimaryPressed
+            self.setTitleColor( .Button.textPrimaryPressed, for: .normal)
+        } else {
+            self.backgroundColor = .Button.backgroundPrimaryActive
+            self.setTitleColor( .Button.textPrimaryActive, for: .normal)
         }
     }
     
