@@ -137,10 +137,10 @@ extension MainTabBarController {
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .clear
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: UIColor.systemBlue
+            .foregroundColor: UIColor(resource: .Text.primary)
         ]
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: UIColor.gray
+            .foregroundColor: UIColor(resource: .Text.disabled)
         ]
 
         self.tabBar.standardAppearance = appearance
@@ -150,13 +150,9 @@ extension MainTabBarController {
 
         private func addCustomTabBarBackground() {
         let customTabBarView = UIView().then {
-            $0.backgroundColor = .white
+            $0.backgroundColor = UIColor(resource: .Background.surface)
             $0.layer.cornerRadius = 20
             $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            $0.layer.shadowColor = UIColor.black.cgColor
-            $0.layer.shadowOpacity = 0.1
-            $0.layer.shadowOffset = CGSize(width: 0, height: -2)
-            $0.layer.shadowRadius = 8
         }
 
         self.tabBar.insertSubview(customTabBarView, at: 0)
