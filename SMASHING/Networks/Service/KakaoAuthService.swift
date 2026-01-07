@@ -38,11 +38,8 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
     private func loginWithApp(completion: @escaping (Result<String, NetworkError>) -> Void) {
         UserApi.shared.loginWithKakaoTalk { oauthToken, error in
             if let error = error {
-                print("❌ 카카오톡 로그인 실패: \(error)")
                 completion(.failure(.networkFail))
             } else if let token = oauthToken {
-                print("✅ 카카오톡 로그인 성공")
-                print("OAuth Token: \(token.accessToken)")
                 completion(.success(token.accessToken))
             }
         }
@@ -51,26 +48,17 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
     private func loginWithAccount(completion: @escaping (Result<String, NetworkError>) -> Void) {
         UserApi.shared.loginWithKakaoAccount { oauthToken, error in
             if let error = error {
-                print("❌ 카카오 계정 로그인 실패: \(error)")
                 completion(.failure(.networkFail))
             } else if let token = oauthToken {
-                print("✅ 카카오 계정 로그인 성공")
-                print("OAuth Token: \(token.accessToken)")
                 completion(.success(token.accessToken))
             }
         }
     }
     
     private func loginToServer(accessToken: String) -> AnyPublisher<KakaoLoginDataDTO, NetworkError> {
-        print("📤 서버에 로그인 요청 중...")
-        print("Access Token: \(accessToken)")
-        
         return NetworkProvider<KakaoAuthAPI>
             .requestPublisher(.login(accessToken: accessToken), type: KakaoLoginResponseDTO.self)
             .map { response in
-                print("✅ 서버 로그인 성공")
-                print("서버 Access Token: \(response.data.accessToken ?? "nil")")
-                print("서버 Refresh Token: \(response.data.refreshToken ?? "nil")")
                 return response.data
             }
             .eraseToAnyPublisher()
