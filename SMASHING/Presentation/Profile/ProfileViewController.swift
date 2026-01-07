@@ -13,6 +13,7 @@ final class ProfileViewController: BaseViewController {
 
     override func setUI() {
         super.setUI()
+        self.view.backgroundColor = .systemYellow
     }
 
     override func setLayout() {

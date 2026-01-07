@@ -13,6 +13,7 @@ final class MatchingManageViewController: BaseViewController {
 
     override func setUI() {
         super.setUI()
+        self.view.backgroundColor = .systemGreen
     }
 
     override func setLayout() {

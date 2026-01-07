@@ -13,6 +13,7 @@ final class MatchingSearchViewController: BaseViewController {
 
     override func setUI() {
         super.setUI()
+        self.view.backgroundColor = .systemBlue
     }
 
     override func setLayout() {

@@ -13,6 +13,7 @@ final class HomViewController: BaseViewController {
 
     override func setUI() {
         super.setUI()
+        self.view.backgroundColor = .systemRed
     }
 
     override func setLayout() {
