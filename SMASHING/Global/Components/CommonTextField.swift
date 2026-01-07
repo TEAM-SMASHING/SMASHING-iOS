@@ -14,12 +14,11 @@ final class CommonTextField: UITextField {
     
     // MARK: - Properties
     
-    private let defaultBorderColor: UIColor = .white
-    private let highlightedBorderColor: UIColor = .systemBlue
-    private let cursorColor: UIColor = .systemGray
-    private let placeholderColor: UIColor = .systemGray2
-    
-    // MARK: - Properties
+    private let defaultBorderColor: UIColor = .Border.secondary
+    private let highlightedBorderColor: UIColor = .Border.typing
+    private let cursorColor: UIColor = .Border.secondary
+    private let errorColor: UIColor = .Border.error
+    private let placeholderColor: UIColor = .Border.secondary
     
     private var isClearButtonHidden: Bool = false
     
@@ -37,9 +36,9 @@ final class CommonTextField: UITextField {
         $0.image = .icWarning
     }
     
-    private let errorLabel = UILabel().then {
+    private lazy var errorLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 12)
-        $0.textColor = .systemRed
+        $0.textColor = self.errorColor
     }
     
     private let clearButton = UIButton().then {
@@ -52,6 +51,8 @@ final class CommonTextField: UITextField {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        tintColor = cursorColor
+        setPlaceholderColor(.Text.disabled)
         setUI()
         setLayout()
         setTarget()
@@ -139,7 +140,7 @@ final class CommonTextField: UITextField {
     
     func setError(message: String?) {
         if let message = message {
-            self.layer.borderColor = UIColor.systemRed.cgColor
+            self.layer.borderColor = errorColor.cgColor
             errorLabel.text = message
             errorStackView.isHidden = false
         } else {
