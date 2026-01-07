@@ -6,23 +6,18 @@
 //
 
 import UIKit
+import SnapKit
+
+import Then
 
 protocol TabBarSceneFactoryProtocol {
     
-    func makeScene(for tabBarScene: TabBarScene) -> UIViewController
+    func makeViewController(for tab: MainTabBarController.Tab) -> UIViewController
 }
-
-enum TabBarScene: String {
-    case home
-    case matchingManage
-    case matchingSearch
-    case profile
-}
-
 
 final class TabBarSceneFactory: TabBarSceneFactoryProtocol {
-    func makeScene(for tabBarScene: TabBarScene) -> UIViewController {
-        switch tabBarScene {
+    func makeViewController(for tab: MainTabBarController.Tab) -> UIViewController {
+        switch tab {
         case .home: return HomViewController()
         case .matchingSearch: return MatchingSearchViewController()
         case .matchingManage: return MatchingManageViewController()
@@ -35,65 +30,139 @@ final class TabBarSceneFactory: TabBarSceneFactoryProtocol {
 
 final class MainTabBarController: UITabBarController {
 
+    //MARK: - Tab
+
+    enum Tab: Int, CaseIterable {
+        case home = 0
+        case matchingSearch
+        case matchingManage
+        case profile
+
+        var title: String {
+            switch self {
+            case .home: return "홈"
+            case .matchingSearch: return "매칭 검색"
+            case .matchingManage: return "매칭 관리"
+            case .profile: return "프로필"
+
+            }
+        }
+
+        var image: UIImage {
+            switch self {
+            case .home: return UIImage(resource: .icHomeUnselected)
+            case .matchingSearch: return UIImage(resource: .icSearchUnselected)
+            case .matchingManage: return UIImage(resource: .icTrophyUnselected)
+            case .profile: return UIImage(resource: .icProfileUnselected)
+            }
+        }
+
+        var selectedImage: UIImage {
+            switch self {
+            case .home: return UIImage(resource: .icHomeSelected)
+            case .matchingSearch: return UIImage(resource: .icSearchSelected)
+            case .matchingManage: return UIImage(resource: .icTrophySelected)
+            case .profile: return UIImage(resource: .icProfileSelected)
+            }
+        }
+    }
+
     // MARK: - Properties
 
-    private var factory: TabBarSceneFactoryProtocol = TabBarSceneFactory()
+    private var factory: TabBarSceneFactoryProtocol
+
+    private let defaultTab: Tab = .home
 
     static weak var shared: MainTabBarController?
+
+    // MARK: - Initializers
+
+    init(factory: TabBarSceneFactoryProtocol) {
+        self.factory = factory
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setTabBarAppearance()
+
+        MainTabBarController.shared = self
+
+        self.setupCustomTabBar()
         self.setupViewControllers()
+        self.selectedIndex = self.defaultTab.rawValue
+    }
+
+    // MARK: - Public Methods
+
+    func switchToTab(_ tab: Tab) {
+        self.selectedIndex = tab.rawValue
+        if let nav = self.selectedViewController as? UINavigationController {
+            nav.popToRootViewController(animated: true)
+        }
     }
 
     // MARK: - Setup
 
     private func setupViewControllers() {
-        let homeVC = self.factory.makeScene(for: .home)
-        homeVC.tabBarItem = UITabBarItem(
-            title: "홈",
-            image: UIImage(resource: .icHomeUnselected),
-            selectedImage: UIImage(resource: .icHomeSelected)
-        )
+        self.viewControllers = Tab.allCases.map { tab in
+            let viewController = self.factory.makeViewController(for: tab)
+            let icon = tab.image.withRenderingMode(.alwaysOriginal)
+            let selectedIcon = tab.selectedImage.withRenderingMode(.alwaysOriginal)
 
-        let matchingSearchVC = self.factory.makeScene(for: .matchingSearch)
-        matchingSearchVC.tabBarItem = UITabBarItem(
-            title: "매칭 검색",
-            image: UIImage(resource: .icSearchUnselected),
-            selectedImage: UIImage(resource: .icSearchSelected)
-        )
+            viewController.tabBarItem = UITabBarItem(
+                title: tab.title,
+                image: icon,
+                selectedImage: selectedIcon
+            )
+            viewController.tabBarItem.tag = tab.rawValue
 
-        let matchingManageVC = self.factory.makeScene(for: .matchingManage)
-        matchingManageVC.tabBarItem = UITabBarItem(
-            title: "매칭 관리",
-            image: UIImage(resource: .icTrophyUnselected),
-            selectedImage: UIImage(resource: .icTrophySelected)
-        )
-
-        let profileVC = self.factory.makeScene(for: .profile)
-        profileVC.tabBarItem = UITabBarItem(
-            title: "프로필",
-            image: UIImage(resource: .icProfileUnselected),
-            selectedImage: UIImage(resource: .icProfileSelected)
-        )
-
-        self.viewControllers = [homeVC, matchingSearchVC, matchingManageVC, profileVC]
+            return viewController
+        }
     }
 
-    private func setTabBarAppearance() {
+}
+
+// MARK: - Custom TabBar Setup
+
+extension MainTabBarController {
+
+        private func setupCustomTabBar() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .white
-        appearance.shadowColor = .darkGray
+        appearance.backgroundColor = .clear
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: UIColor.systemBlue
+        ]
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.gray
+        ]
 
-        let itemAppearance = UITabBarItemAppearance()
-
-        appearance.stackedLayoutAppearance = itemAppearance
         self.tabBar.standardAppearance = appearance
         self.tabBar.scrollEdgeAppearance = appearance
+        self.addCustomTabBarBackground()
+    }
+
+        private func addCustomTabBarBackground() {
+        let customTabBarView = UIView().then {
+            $0.backgroundColor = .white
+            $0.layer.cornerRadius = 20
+            $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            $0.layer.shadowColor = UIColor.black.cgColor
+            $0.layer.shadowOpacity = 0.1
+            $0.layer.shadowOffset = CGSize(width: 0, height: -2)
+            $0.layer.shadowRadius = 8
+        }
+
+        self.tabBar.insertSubview(customTabBarView, at: 0)
+        customTabBarView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
 
 }
