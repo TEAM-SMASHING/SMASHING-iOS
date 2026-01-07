@@ -18,7 +18,7 @@ final class CommonTextField: UITextField {
     private let highlightedBorderColor: UIColor = .Border.typing
     private let cursorColor: UIColor = .Border.secondary
     private let errorColor: UIColor = .Border.error
-    private let placeholderColor: UIColor = .Border.secondary
+    private let placeholderColor: UIColor = .Text.disabled
     
     private var isClearButtonHidden: Bool = false
     
