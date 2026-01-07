@@ -5,9 +5,18 @@
 //  Created by 이승준 on 12/29/25.
 //
 
+import Combine
 import UIKit
 
 extension UITextField {
+    
+    func textDidChangePublisher() -> AnyPublisher<String, Never> {
+        NotificationCenter.default
+            .publisher(for: UITextField.textDidChangeNotification, object: self)
+            .map { _ in self.text ?? "" }
+            .eraseToAnyPublisher()
+    }
+    
     /// 기본 textField를 설정하는 함수입니다
     func configureDefaultTextField() {
         self.autocorrectionType = .no
