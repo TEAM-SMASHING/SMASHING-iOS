@@ -14,12 +14,21 @@ import Then
 
 class TestViewController: UIViewController {
     
+    private lazy var customBar = CustomNavigationBar(
+        title: "타이틀",
+        leftAction: { [weak self] in
+            self?.smashingTextField.text = "타이틀"
+        }).then {
+            $0.setRightButton(image: .icBell, action: {
+                print("알림창으로 이동")
+            })
+        }
+    
     let smashingTextField = CommonTextField()
     
-    let smashingTextField1 = CommonTextField()
-        .then {
-            $0.hideClearButtonAlways()
-        }
+    let smashingTextField1 = CommonTextField().then {
+        $0.hideClearButtonAlways()
+    }
     
     lazy var nextButton = CTAButton(
         label: "에러 발생",
@@ -41,18 +50,22 @@ class TestViewController: UIViewController {
         $0.isEnabled = false
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .Background.canvas
         
         self.hideKeyboardWhenDidTap()
         
+        self.view.addSubview(customBar)
         self.view.addSubview(smashingTextField)
         self.view.addSubview(smashingTextField1)
         self.view.addSubview(nextButton)
         self.view.addSubview(resetToDefaultButton)
         self.view.addSubview(disabledButton)
+        
+        customBar.snp.makeConstraints { make in
+            make.leading.trailing.top.equalTo(self.view.safeAreaLayoutGuide)
+        }
         
         smashingTextField.snp.makeConstraints {
             $0.center.equalToSuperview()
