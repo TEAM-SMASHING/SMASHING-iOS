@@ -17,15 +17,24 @@ protocol TabBarSceneFactoryProtocol {
 
 final class TabBarSceneFactory: TabBarSceneFactoryProtocol {
     func makeViewController(for tab: MainTabBarController.Tab) -> UIViewController {
+        let viewController: UIViewController
+
         switch tab {
-        case .home: return HomViewController()
-        case .matchingSearch: return MatchingSearchViewController()
-        case .matchingManage: return MatchingManageViewController()
-        case .profile: return ProfileViewController()
+        case .home:
+            viewController = HomViewController()
+        case .matchingSearch:
+            viewController = MatchingSearchViewController()
+        case .matchingManage:
+            viewController = MatchingManageViewController()
+        case .profile:
+            viewController = ProfileViewController()
         }
+
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.setNavigationBarHidden(true, animated: true)
+        return navigationController
     }
-    
-    
+
 }
 
 final class MainTabBarController: UITabBarController {
