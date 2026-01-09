@@ -170,6 +170,8 @@ class OnboardingViewController: BaseViewController {
             return GenderViewController()
         case .chat:
             return OpenChatCheckViewController()
+        case .sports:
+            return SportsSelectionViewController()
         default:
             vc.view.backgroundColor = step.background
             return vc
@@ -180,6 +182,8 @@ class OnboardingViewController: BaseViewController {
         print("온보딩 프로세스 완료")
     }
 }
+
+
 
 import Combine
 
@@ -354,6 +358,17 @@ enum Sports: String, Codable {
         case tableTennis = "TT"
         case tennis = "TN"
         case badminton = "BM"
+    }
+    
+    var image: UIImage {
+        switch self {
+        case .tableTennis:
+            .icPingpong
+        case .tennis:
+            .icTennis
+        case .badminton:
+            .icBadminton
+        }
     }
 }
 
