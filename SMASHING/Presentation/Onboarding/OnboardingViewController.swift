@@ -10,69 +10,80 @@ import UIKit
 import SnapKit
 import Then
 
-class OnboardingViewController: BaseViewController {
+enum OnboardingType: Int, CaseIterable {
+    case nickname, gender, chat, sports, tier, area
     
-    enum OnboardingType: Int, CaseIterable {
-        case nickname, gender, chat, sports, tier, area
-        
-        var mainTitle: String {
-            switch self {
-            case .nickname:
-                "사용하실 닉네임을 입력해주세요"
-            case .gender:
-                "성별을 선택해주세요"
-            case .chat:
-                "카카오톡 오픈채팅 링크를 입력해주세요"
-            case .sports:
-                "주 스포츠 1개를 선택해주세요"
-            case .tier:
-                "배드민턴의 실력을 설정해주세요"
-            case .area:
-                "활동 지역을 설정해주세요"
-            }
-        }
-        
-        var subTitle: String {
-            switch self {
-            case .nickname:
-                "특수문자를 제외한 한글, 영어, 숫자만 가능해요 "
-            case .gender:
-                "매칭 시 성별을 보여드리기 위함이에요"
-            case .chat:
-                "매칭 시 상대방에게 공개돼요"
-            case .sports:
-                "회원가입 이후 스포츠 종목을 더 추가할 수 있어요"
-            case .tier:
-                "구력을 통해 임시 티어가 결정돼요!"
-            case .area:
-                "설정한 지역 내에서 라이벌을 찾아드려요"
-            }
-        }
-        
-        var background: UIColor {
-            switch self {
-            case .nickname:
-                    .systemRed
-            case .gender:
-                    .systemOrange
-            case .chat:
-                    .systemYellow
-            case .sports:
-                    .systemGreen
-            case .tier:
-                    .systemBlue
-            case .area:
-                    .systemPurple
-            }
+    var mainTitle: String {
+        switch self {
+        case .nickname:
+            "사용하실 닉네임을 입력해주세요"
+        case .gender:
+            "성별을 선택해주세요"
+        case .chat:
+            "카카오톡 오픈채팅 링크를 입력해주세요"
+        case .sports:
+            "주 스포츠 1개를 선택해주세요"
+        case .tier:
+            "배드민턴의 실력을 설정해주세요"
+        case .area:
+            "활동 지역을 설정해주세요"
         }
     }
+    
+    var subTitle: String {
+        switch self {
+        case .nickname:
+            "특수문자를 제외한 한글, 영어, 숫자만 가능해요 "
+        case .gender:
+            "매칭 시 성별을 보여드리기 위함이에요"
+        case .chat:
+            "매칭 시 상대방에게 공개돼요"
+        case .sports:
+            "회원가입 이후 스포츠 종목을 더 추가할 수 있어요"
+        case .tier:
+            "구력을 통해 임시 티어가 결정돼요!"
+        case .area:
+            "설정한 지역 내에서 라이벌을 찾아드려요"
+        }
+    }
+    
+    var background: UIColor {
+        switch self {
+        case .nickname:
+                .systemRed
+        case .gender:
+                .systemOrange
+        case .chat:
+                .systemYellow
+        case .sports:
+                .systemGreen
+        case .tier:
+                .systemBlue
+        case .area:
+                .systemPurple
+        }
+    }
+}
+
+class OnboardingViewController: BaseViewController {
     
     // MARK: - Properties
     
     private let containerView = OnboardingContainerView()
     private var currentStep: OnboardingType = .nickname
     
+    private var viewModel: OnboardingViewModel
+    
     // MARK: - Life Cycle
+    
+    init(viewModel: OnboardingViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         self.view = containerView
@@ -159,21 +170,117 @@ protocol OnboardingViewModelProtocol: AnyObject {
     associatedtype Input
     associatedtype Output
     
-    func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never>
+    var store: OnboardingObject{get}
+    
+    func transform(input: AnyPublisher<Input, Never>) -> Output
 }
 
-final class OnboardingViewModel {
+final class OnboardingViewModel: OnboardingViewModelProtocol {
+    
+    private var cancellables = Set<AnyCancellable>()
+    
+    var store = OnboardingObject()
     
     enum Input {
-        case hitNext
+        case hitNext // buttonEnabled.send(false) -> 만약 데이터 있으면 : buttonEnabled.send(true)
         case hitBack
+        
+        case complete
+        
+        case nicknameTyped(String) // N/10, 중복확인 버튼 활성화
+        case checkNicknameDuplication(String) // 이 String이 true면, 저장하기
+        
+        case genderTapped(Gender) // 저장하기
+        case kakaoOpenChatLinkTyped(String) // 버튼 비활성화!! & Debouncing -> 결과에 따라
+        case sportsTapped(Sports) // 저장하기
+        case tierTapped(Tier) // 저장하기
+        case areaTapped // 뷰 띄우기
     }
 
     struct Output {
-        static let buttonEnabled = CurrentValueSubject<Bool, Never>(false)
-        static let currentStep = CurrentValueSubject<OnboardingViewController.OnboardingType, Never>(.nickname)
+        let buttonEnabled = CurrentValueSubject<Bool, Never>(false)
+        
+        let currentStep = CurrentValueSubject<OnboardingType, Never>(.nickname)
+        // 처음 / 진행 / 마지막 나누어서 각각 동작이 달라질 수 있다.
+        
+        let dismissOnboarding: PassthroughSubject<Void, Never> = .init()
+        // 마지막이어서 가입 API 호출
+        
+        let checkNicknameDuplicationEnabled: PassthroughSubject<Bool, Never> = .init()
+        // 1 글자라도 있으면
+        
+        let nicknameDuplicationResult: PassthroughSubject<Bool, Never> = .init()
+        //
+        
+        let checkKakaoOpenChatLinkEnabled: PassthroughSubject<Bool, Never> = .init()
+        // 가능하면 저장하기
+        
+        let showMapSearchViewController: PassthroughSubject<Void, Never> = .init()
+        // Coordinator Pattern 쓰면 되는거 아님?
     }
+
+    let output = Output()
     
+    func transform(input: AnyPublisher<Input, Never>) -> Output {
+
+        input
+            .compactMap { input -> String? in
+                guard case let .kakaoOpenChatLinkTyped(keyword) = input else { return nil }
+                return keyword
+            }
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] keyword in
+                guard let self = self else { return }
+                // 카카오 오픈채팅 유효성 검사 API 연동
+            }
+            .store(in: &cancellables)
+
+        input
+            .sink { [weak self] input in
+                guard let self = self else { return }
+                switch input {
+                case .hitNext:
+                    // 다음 페이지 개산해서 반환
+                    // ViewModel을 주입하고 store를 확인한다.
+                    // store의 값으로 뷰를 그린다.
+                    // 값이 있으면, buttonEnabled.send(true)
+                    // 값이 없으면, buttonEnabled.send(false)
+                    return
+                case .hitBack:
+                    if output.currentStep.value == .nickname {
+                        output.dismissOnboarding.send()
+                    } else {
+                        // 이전 페이지 계산해서 알려주기
+                    }
+                case .complete:
+                    // API 호출
+                    // 결과에 따라, switch -> main
+                    return
+                case .nicknameTyped(let string):
+                    // 중복확인 버튼 활성화
+                    output.checkNicknameDuplicationEnabled.send(!string.isEmpty)
+                case .checkNicknameDuplication(let string):
+                    // API 호출
+                    return
+                case .genderTapped(let gender):
+                    store.gender = gender
+                    output.buttonEnabled.send(true)
+                case .sportsTapped(let sports):
+                    store.sports = sports
+                    output.buttonEnabled.send(true)
+                case .tierTapped(let tier):
+                    store.tier = tier
+                    output.buttonEnabled.send(true)
+                case .areaTapped:
+                    return
+                default :
+                    return
+                }
+            }
+            .store(in: &cancellables)
+        return output
+    }
 }
 
 final class OnboardingObject {
