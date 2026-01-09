@@ -154,10 +154,8 @@ final class SportsSelectionView: BaseUIView {
     @objc private func chipTapped(_ sender: UITapGestureRecognizer) {
         guard let selectedChip = sender.view as? SportsChip else { return }
         
-        // Single Selection 로직
         chips.forEach { $0.isSelected = ($0 === selectedChip) }
         
-        // 선택된 데이터 전달 (Enum 케이스 찾기)
         if let sport = getSport(from: selectedChip) {
             action?(sport)
         }
@@ -166,9 +164,6 @@ final class SportsSelectionView: BaseUIView {
     // MARK: - Private Methods
     
     private func getSport(from chip: SportsChip) -> Sports? {
-        // 칩 내부의 sport 프로퍼티를 가져오거나,
-        // 칩 생성 시 sport 값을 저장해두는 방식으로 구현
-        // (위의 SportsChip 코드에 저장된 sport 활용)
         return Mirror(reflecting: chip).children.first(where: { $0.label == "sport" })?.value as? Sports
     }
 }

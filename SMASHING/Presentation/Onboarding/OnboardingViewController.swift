@@ -24,7 +24,7 @@ enum OnboardingType: Int, CaseIterable {
         case .sports:
             "주 스포츠 1개를 선택해주세요"
         case .tier:
-            "배드민턴의 실력을 설정해주세요"
+            "실력을 설정해주세요"
         case .area:
             "활동 지역을 설정해주세요"
         }
@@ -172,6 +172,8 @@ class OnboardingViewController: BaseViewController {
             return OpenChatCheckViewController()
         case .sports:
             return SportsSelectionViewController()
+        case .tier:
+            return TierSelectionViewController()
         default:
             vc.view.backgroundColor = step.background
             return vc
@@ -182,8 +184,6 @@ class OnboardingViewController: BaseViewController {
         print("온보딩 프로세스 완료")
     }
 }
-
-
 
 import Combine
 
