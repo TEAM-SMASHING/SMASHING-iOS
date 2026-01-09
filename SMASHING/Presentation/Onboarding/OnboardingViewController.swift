@@ -168,6 +168,8 @@ class OnboardingViewController: BaseViewController {
             return NicknameViewController()
         case .gender:
             return GenderViewController()
+        case .chat:
+            return OpenChatCheckViewController()
         default:
             vc.view.backgroundColor = step.background
             return vc
@@ -178,9 +180,6 @@ class OnboardingViewController: BaseViewController {
         print("온보딩 프로세스 완료")
     }
 }
-
-
-
 
 import Combine
 
