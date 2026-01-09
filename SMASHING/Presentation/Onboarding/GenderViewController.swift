@@ -19,8 +19,15 @@ final class GenderViewController: BaseViewController {
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         view = genderView
         view.backgroundColor = .clear
+    }
+    
+    // MARK: - Setup Methods
+    
+    func configure(action: @escaping (Gender) -> Void) {
+        genderView.configure(action: action)
     }
 }
 
@@ -29,7 +36,7 @@ final class GenderView: BaseUIView {
     // MARK: - Properties
     
     private var action: ((Gender) -> Void)?
-    
+
     // MARK: - UI Components
     
     private let stackView = UIStackView().then {
@@ -40,14 +47,13 @@ final class GenderView: BaseUIView {
     
     private let maleButton = GenderButton(gender: .male)
     private let femaleButton = GenderButton(gender: .female)
-
-    // MARK: - Setup
+    
+    // MARK: - Setup Methods
     
     override func setUI() {
         addSubview(stackView)
         [maleButton, femaleButton].forEach { stackView.addArrangedSubview($0) }
         
-        // 탭 액션 연결
         maleButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(maleTapped)))
         femaleButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(femaleTapped)))
     }
@@ -55,44 +61,43 @@ final class GenderView: BaseUIView {
     override func setLayout() {
         stackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            // 고정 비율(Aspect Ratio) 사용으로 layoutSubviews 제거 가능
             $0.height.equalTo(stackView.snp.width).multipliedBy(0.5).offset(-11)
         }
     }
     
-    func configure(action: ((Gender) -> Void)? = nil) {
+    func configure(action: @escaping (Gender) -> Void) {
         self.action = action
     }
     
     // MARK: - Actions
+    
     @objc private func maleTapped() {
-        updateSelection(selected: .male)
-        action?(.male)
+        handleSelection(gender: .male)
     }
     
     @objc private func femaleTapped() {
-        updateSelection(selected: .female)
-        action?(.female)
+        handleSelection(gender: .female)
     }
     
-    private func updateSelection(selected: Gender) {
-        maleButton.isSelected = (selected == .male)
-        femaleButton.isSelected = (selected == .female)
+    private func handleSelection(gender: Gender) {
+        maleButton.isSelected = (gender == .male)
+        femaleButton.isSelected = (gender == .female)
+        action?(gender)
     }
 }
 
 final class GenderButton: BaseUIView {
     
     // MARK: - Properties
+    
     private let gender: Gender
     
     var isSelected: Bool = false {
-        didSet {
-            updateStyle()
-        }
+        didSet { updateStyle() }
     }
 
     // MARK: - UI Components
+    
     private let contentStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .center
@@ -109,18 +114,18 @@ final class GenderButton: BaseUIView {
     }
 
     // MARK: - Init
+    
     init(gender: Gender) {
         self.gender = gender
         super.init(frame: .zero)
-        setupData()
+        setupAttributes()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Methods
-    private func setupData() {
+    private func setupAttributes() {
         self.layer.cornerRadius = 10
         self.layer.borderWidth = 1
         self.label.text = gender.name
@@ -149,7 +154,7 @@ final class GenderButton: BaseUIView {
             self.label.textColor = .Text.primaryReverse
         } else {
             self.backgroundColor = .clear
-            self.layer.borderColor = UIColor.systemGray4.cgColor
+            self.layer.borderColor = UIColor.Border.secondary.cgColor
             self.imageView.image = gender.imageLg
             self.label.textColor = .Text.primary
         }
