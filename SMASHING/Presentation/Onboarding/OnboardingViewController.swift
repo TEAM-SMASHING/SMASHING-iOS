@@ -130,6 +130,12 @@ class OnboardingViewController: BaseViewController {
     }
     
     private func showStep(_ step: OnboardingType) {
+        for child in children {
+            child.willMove(toParent: nil)   // 1. 자식에게 제거될 것임을 알림
+            child.view.removeFromSuperview() // 2. 뷰 제거
+            child.removeFromParent()        // 3. 부모-자식 관계 해제
+        }
+        
         // 1. UI 상태 업데이트 (View에 직접 접근)
         containerView.mainTitleLabel.text = step.mainTitle
         containerView.subTitleLabel.text = step.subTitle
@@ -160,6 +166,8 @@ class OnboardingViewController: BaseViewController {
         switch step {
         case .nickname:
             return NicknameViewController()
+        case .gender:
+            return GenderViewController()
         default:
             vc.view.backgroundColor = step.background
             return vc
@@ -170,7 +178,6 @@ class OnboardingViewController: BaseViewController {
         print("온보딩 프로세스 완료")
     }
 }
-
 
 
 
@@ -309,6 +316,33 @@ enum Gender: String, Codable {
     enum CodingKeys: String, CodingKey {
         case male = "MALE"
         case female = "FEMALE"
+    }
+
+    var name: String {
+        switch self {
+        case .male:
+            "남성"
+        case .female:
+            "여성"
+        }
+    }
+
+    var imageLg: UIImage {
+        switch self {
+        case .male:
+            .icManLg
+        case .female:
+            .icWomanLg
+        }
+    }
+
+    var imageSm: UIImage {
+        switch self {
+        case .male:
+            .icManSm
+        case .female:
+            .icWomanSm
+        }
     }
 }
 
