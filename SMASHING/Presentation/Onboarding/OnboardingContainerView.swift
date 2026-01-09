@@ -86,8 +86,8 @@ class OnboardingContainerView: UIView {
         }
         
         containerView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview()
-            $0.top.equalTo(subTitleLabel.snp.bottom)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.top.equalTo(subTitleLabel.snp.bottom).offset(28)
             $0.bottom.equalTo(nextButton.snp.top)
         }
     }

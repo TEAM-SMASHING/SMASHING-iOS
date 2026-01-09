@@ -72,18 +72,18 @@ class OnboardingViewController: BaseViewController {
     private let containerView = OnboardingContainerView()
     private var currentStep: OnboardingType = .nickname
     
-    private var viewModel: OnboardingViewModel
+    // private var viewModel: OnboardingViewModel
     
     // MARK: - Life Cycle
     
-    init(viewModel: OnboardingViewModel) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
+//    init(viewModel: OnboardingViewModel) {
+//        self.viewModel = viewModel
+//        super.init(nibName: nil, bundle: nil)
+//    }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
     
     override func loadView() {
         self.view = containerView
@@ -154,15 +154,26 @@ class OnboardingViewController: BaseViewController {
     }
     
     private func makeChildViewController(for step: OnboardingType) -> UIViewController {
+        
         let vc = UIViewController()
-        vc.view.backgroundColor = step.background
-        return vc
+        
+        switch step {
+        case .nickname:
+            return NicknameViewController()
+        default:
+            vc.view.backgroundColor = step.background
+            return vc
+        }
     }
     
     private func finishOnboarding() {
         print("온보딩 프로세스 완료")
     }
 }
+
+
+
+
 
 import Combine
 
