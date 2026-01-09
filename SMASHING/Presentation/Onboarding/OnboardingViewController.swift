@@ -160,9 +160,6 @@ class OnboardingViewController: BaseViewController {
     }
     
     private func makeChildViewController(for step: OnboardingType) -> UIViewController {
-        
-        let vc = UIViewController()
-        
         switch step {
         case .nickname:
             return NicknameViewController()
@@ -174,9 +171,8 @@ class OnboardingViewController: BaseViewController {
             return SportsSelectionViewController()
         case .tier:
             return TierSelectionViewController()
-        default:
-            vc.view.backgroundColor = step.background
-            return vc
+        case .area:
+            return AreaSelectionViewController()
         }
     }
     
