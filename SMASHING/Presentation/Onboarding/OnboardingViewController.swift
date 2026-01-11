@@ -100,6 +100,8 @@ class OnboardingViewController: BaseViewController {
         }
     }
     
+    // MARK: - Private Methods
+    
     private func backButtonTapped() {
         let beforeIndex = currentStep.rawValue - 1
         if beforeIndex > -1 {
@@ -107,19 +109,17 @@ class OnboardingViewController: BaseViewController {
             currentStep = nextStep
             showStep(currentStep)
         } else {
-            // 로그인 화면으로 pop 혹은 dismiss 처리
             self.navigationController?.popViewController(animated: true)
         }
     }
     
     private func showStep(_ step: OnboardingType) {
         for child in children {
-            child.willMove(toParent: nil)   // 1. 자식에게 제거될 것임을 알림
-            child.view.removeFromSuperview() // 2. 뷰 제거
-            child.removeFromParent()        // 3. 부모-자식 관계 해제
+            child.willMove(toParent: nil)
+            child.view.removeFromSuperview()
+            child.removeFromParent()
         }
         
-        // 1. UI 상태 업데이트 (View에 직접 접근)
         containerView.mainTitleLabel.text = step.mainTitle
         containerView.subTitleLabel.text = step.subTitle
         
@@ -127,7 +127,6 @@ class OnboardingViewController: BaseViewController {
         let currentProgress = Float(step.rawValue + 1) / totalSteps
         containerView.progressBar.setProgress(currentProgress, animated: true)
         
-        // 2. 새로운 Child VC 생성 및 전환
         let nextVC = makeChildViewController(for: step)
         addChild(nextVC)
         containerView.containerView.addSubview(nextVC.view)
@@ -144,18 +143,12 @@ class OnboardingViewController: BaseViewController {
     
     private func makeChildViewController(for step: OnboardingType) -> UIViewController {
         switch step {
-        case .nickname:
-            return NicknameViewController()
-        case .gender:
-            return GenderViewController()
-        case .chat:
-            return OpenChatCheckViewController()
-        case .sports:
-            return SportsSelectionViewController()
-        case .tier:
-            return TierSelectionViewController()
-        case .area:
-            return AreaSelectionViewController()
+        case .nickname: return NicknameViewController()
+        case .gender:   return GenderViewController()
+        case .chat:     return OpenChatCheckViewController()
+        case .sports:   return SportsSelectionViewController()
+        case .tier:     return TierSelectionViewController()
+        case .area:     return AreaSelectionViewController()
         }
     }
     

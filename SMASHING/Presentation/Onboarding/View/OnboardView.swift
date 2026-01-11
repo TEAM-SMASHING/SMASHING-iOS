@@ -1,8 +1,8 @@
 //
-//  OnboardingContainerView.swift
+//  OnboardView.swift
 //  SMASHING
 //
-//  Created by 이승준 on 1/8/26.
+//  Created by 이승준 on 1/11/26.
 //
 
 import UIKit
@@ -10,57 +10,49 @@ import UIKit
 import SnapKit
 import Then
 
-class OnboardingContainerView: UIView {
+final class OnboardingView: BaseUIView {
     
     // MARK: - UI Components
     
     let navigationBar = CustomNavigationBar(title: "", leftAction: nil)
     
-    let progressBar = UIProgressView().then {
+    private let progressBar = UIProgressView().then {
         $0.tintColor = .State.progressFill
         $0.backgroundColor = .State.progressTrack
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 4
     }
     
-    let mainTitleLabel = UILabel().then {
+    private let mainTitleLabel = UILabel().then {
         $0.font = .pretendard(.titleXlSb)
         $0.textColor = .Text.primary
+        $0.numberOfLines = 0
     }
     
-    let subTitleLabel = UILabel().then {
+    private let subTitleLabel = UILabel().then {
         $0.font = .pretendard(.textMdM)
         $0.textColor = .Text.tertiary
+        $0.numberOfLines = 0
     }
     
-    let containerView = UIView().then {
+    let contentView = UIView().then {
         $0.backgroundColor = .Background.canvas
     }
     
     let nextButton = CTAButton(label: "다음")
     
-    // MARK: - Init
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    // MARK: - Setup Methods
+    
+    override func setUI() {
         backgroundColor = .Background.canvas
-        setupUI()
-        setupLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - Setup
-    private func setupUI() {
         addSubviews(
             navigationBar, progressBar,
             mainTitleLabel, subTitleLabel,
-            containerView, nextButton
+            contentView, nextButton
         )
     }
     
-    private func setupLayout() {
+    override func setLayout() {
         navigationBar.snp.makeConstraints {
             $0.horizontalEdges.top.equalTo(safeAreaLayoutGuide)
         }
@@ -86,10 +78,22 @@ class OnboardingContainerView: UIView {
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(16)
         }
         
-        containerView.snp.makeConstraints {
+        contentView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.top.equalTo(subTitleLabel.snp.bottom).offset(28)
             $0.bottom.equalTo(nextButton.snp.top)
         }
+    }
+    
+    // MARK: - Public Methods
+    
+    /// 단계별 UI 상태를 업데이트합니다.
+    func updateStepUI(title: String, subTitle: String, progress: Float, isLastStep: Bool) {
+        mainTitleLabel.text = title
+        subTitleLabel.text = subTitle
+        progressBar.setProgress(progress, animated: true)
+        
+        let buttonTitle = isLastStep ? "완료" : "다음"
+        nextButton.setTitle(buttonTitle, for: .normal)
     }
 }

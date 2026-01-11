@@ -23,29 +23,4 @@ final class OpenChatCheckViewController: BaseViewController {
         view = openChatCheckView
         view.backgroundColor = .clear
     }
-    
 }
-
-final class OpenChatCheckView: BaseUIView {
-    
-    // MARK: - Properties
-
-    // MARK: - UI Components
-    let textField = CommonTextField().then {
-        $0.placeholder = "오픈채팅 링크를 입력해주세요"
-    }
-
-    // MARK: - Setup Methods
-    // baseUIView/VC의 메소드 override 할때 setUI(), setLayout(), addTarget()
-    override func setUI() {
-        addSubviews(textField)
-    }
-    
-    override func setLayout() {
-        textField.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview()
-        }
-    }
-    
-}
-
