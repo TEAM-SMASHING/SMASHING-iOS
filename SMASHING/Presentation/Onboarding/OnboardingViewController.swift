@@ -33,7 +33,7 @@ enum OnboardingType: Int, CaseIterable {
     var subTitle: String {
         switch self {
         case .nickname:
-            "특수문자를 제외한 한글, 영어, 숫자만 가능해요 "
+            "특수문자를 제외한 한글, 영어, 숫자만 가능해요"
         case .gender:
             "매칭 시 성별을 보여드리기 위함이에요"
         case .chat:
@@ -44,23 +44,6 @@ enum OnboardingType: Int, CaseIterable {
             "구력을 통해 임시 티어가 결정돼요!"
         case .area:
             "설정한 지역 내에서 라이벌을 찾아드려요"
-        }
-    }
-    
-    var background: UIColor {
-        switch self {
-        case .nickname:
-                .systemRed
-        case .gender:
-                .systemOrange
-        case .chat:
-                .systemYellow
-        case .sports:
-                .systemGreen
-        case .tier:
-                .systemBlue
-        case .area:
-                .systemPurple
         }
     }
 }
