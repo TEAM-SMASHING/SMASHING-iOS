@@ -31,18 +31,17 @@ extension KakaoAuthAPI: BaseTargetType {
     
     var task: Moya.Task {
         switch self {
-        case .login:
-            return .requestPlain
+        case .login(let accessToken):
+            let parameters = [
+                "accessToken": accessToken
+            ]
+            return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         }
     }
     
     var headers: [String : String]? {
-        switch self {
-        case .login(let accessToken):
-            return [
-                "Authorization": accessToken,
-                "Content-Type": "application/json"
-            ]
-        }
+        return [
+            "Content-Type": "application/json"
+        ]
     }
 }

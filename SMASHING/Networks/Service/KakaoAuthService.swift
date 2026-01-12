@@ -11,12 +11,17 @@ import Combine
 import KakaoSDKUser
 import KakaoSDKAuth
 
+enum KakaoLoginResult {
+    case needSignUp(authId: String)
+    case success(accessToken: String, refreshToken: String, authId: String)
+}
+
 protocol KakaoAuthServiceProtocol {
-    func login() -> AnyPublisher<KakaoLoginDataDTO, NetworkError>
+    func login() -> AnyPublisher<KakaoLoginResult, NetworkError>
 }
 
 final class KakaoAuthService: KakaoAuthServiceProtocol {
-    func login() -> AnyPublisher<KakaoLoginDataDTO, NetworkError> {
+    func login() -> AnyPublisher<KakaoLoginResult, NetworkError> {
         return loginWithKakaoSDK()
             .flatMap { accessToken in
                 self.loginToServer(accessToken: accessToken)
@@ -55,11 +60,34 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
         }
     }
     
-    private func loginToServer(accessToken: String) -> AnyPublisher<KakaoLoginDataDTO, NetworkError> {
+    private func loginToServer(accessToken: String) -> AnyPublisher<KakaoLoginResult, NetworkError> {
         return NetworkProvider<KakaoAuthAPI>
             .requestPublisher(.login(accessToken: accessToken), type: KakaoLoginResponseDTO.self)
-            .map { response in
-                return response.data
+            .tryMap { response in
+                let data = response.data
+                
+                if response.statusCode == 200 {
+                    guard data.accessToken == nil, data.refreshToken == nil else {
+                        throw NetworkError.decoding
+                    }
+                    return .needSignUp(authId: data.authId)
+                }
+                
+                else if response.statusCode == 202 {
+                    guard let accessToken = data.accessToken,
+                          let refreshToken = data.refreshToken else {
+                        throw NetworkError.decoding
+                    }
+                    return .success(accessToken: accessToken, refreshToken: refreshToken, authId: data.authId)
+                }
+                
+                else {
+                    throw NetworkError.networkFail
+                }
+                
+            }
+            .mapError { error in
+                return error as? NetworkError ?? .networkFail
             }
             .eraseToAnyPublisher()
     }
