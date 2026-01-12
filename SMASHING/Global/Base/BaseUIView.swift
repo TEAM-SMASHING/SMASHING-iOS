@@ -16,6 +16,7 @@ class BaseUIView: UIView {
         backgroundColor = .white
         setUI()
         setLayout()
+        setGesture()
     }
 
     required init?(coder: NSCoder) {
@@ -26,4 +27,5 @@ class BaseUIView: UIView {
 
     func setUI() {}
     func setLayout() {}
+    func setGesture() {}
 }
