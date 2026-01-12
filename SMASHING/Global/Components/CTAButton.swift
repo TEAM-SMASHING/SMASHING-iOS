@@ -16,7 +16,7 @@ final class CTAButton: UIButton {
     
     private var action: (() -> Void)?
     
-    // MARK: - Init
+    // MARK: - Setup Methods
     
     init(label: String, action: (() -> Void)? = nil) {
         self.action = action
@@ -31,8 +31,6 @@ final class CTAButton: UIButton {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Setup Methods
     
     private func setAttributes(label: String) {
         self.setTitle(label, for: .normal)
@@ -50,7 +48,7 @@ final class CTAButton: UIButton {
         }
     }
     
-    // MARK: - UI Update Methods
+    // MARK: - Private Methods
     
     private func updateStateAppearance() {
         if !isEnabled {

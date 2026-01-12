@@ -104,6 +104,10 @@ final class CustomNavigationBar: BaseUIView {
         self.rightAction = action
     }
     
+    func setLeftButton(action: @escaping () -> Void) {
+        self.leftAction = action
+    }
+    
     // MARK: - Actions
     
     @objc private func leftButtonTapped() {
