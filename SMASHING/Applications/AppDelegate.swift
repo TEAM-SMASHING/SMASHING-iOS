@@ -16,11 +16,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        DIContainer.shared.registerAllDependencies()
         // Override point for customization after application launch.
         
         // Kakao SDK 초기화
         KakaoSDK.initSDK(appKey: Environment.kakaoAPPKey)
-        
         return true
     }
     
