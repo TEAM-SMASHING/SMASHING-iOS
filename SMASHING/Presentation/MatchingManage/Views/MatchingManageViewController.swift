@@ -14,13 +14,17 @@ final class MatchingManageViewController: BaseViewController {
     
     //MARK: - Properties
     
-    private var currentTabIndex: Int = 0
+    private var currentTabIndex: MatchingManageHeaderView.Tab = .received
     private var categories: [UIViewController] = []
-    
-    private let headerView = MatchingManageHeaderView()
-    
+        
     //MARK: - UI Components
-    
+
+    private lazy var navigationBar = CustomNavigationBar(title: "매칭 관리") { [weak self] in
+        self?.navigationController?.popViewController(animated: true)
+    }
+
+    private let headerView = MatchingManageHeaderView()
+
     private lazy var pageViewController: UIPageViewController = {
         let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         pageViewController.dataSource = self
@@ -29,20 +33,47 @@ final class MatchingManageViewController: BaseViewController {
     }()
 
     // MARK: - Lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
 
+    //MARK: - SetUp Methods
+    
     override func setUI() {
         super.setUI()
-        self.view.backgroundColor = .systemGreen
+        self.view.backgroundColor = UIColor(resource: .Background.canvas)
+        navigationBar.setLeftButtonHidden(true)
+        view.addSubviews(navigationBar, headerView, pageViewController.view)
+        addChild(pageViewController)
+        pageViewController.didMove(toParent: self)
     }
 
     override func setLayout() {
         super.setLayout()
-    }
 
+        navigationBar.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        headerView.snp.makeConstraints {
+            $0.top.equalTo(navigationBar.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(64)
+        }
+
+        pageViewController.view.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+    
 }
 
 extension MatchingManageViewController: UIPageViewControllerDelegate {
-
+    
     func pageViewController(
         _ pageViewController: UIPageViewController,
         didFinishAnimating finished: Bool,
@@ -51,10 +82,11 @@ extension MatchingManageViewController: UIPageViewControllerDelegate {
     ) {
         guard completed,
               let currentVC = pageViewController.viewControllers?.first,
-              let index = self.categories.firstIndex(of: currentVC) else { return }
-
-        self.currentTabIndex = index
-        self.headerView.updateSelectedTab(index: index)
+              let index = self.categories.firstIndex(of: currentVC),
+              let tab = MatchingManageHeaderView.Tab(rawValue: index) else { return }
+        
+        self.currentTabIndex = tab
+        self.headerView.updateSelectedTab(tab)
     }
 }
 

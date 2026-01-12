@@ -29,16 +29,9 @@ class MatchingManageHeaderView: BaseUIView {
     }
     
     //MARK: - UI Components
-    
-    private let titleLabel = UILabel().then {
-        $0.text = "매칭 관리"
-        $0.font = .pretendard(.textMdSb)
-        $0.textColor = .white
-        $0.textAlignment = .center
-    }
-    
+
     private let tabContainerView = UIView().then {
-        $0.backgroundColor = UIColor(resource: .Background.canvas)
+        $0.backgroundColor = UIColor(resource: .Background.surface)
         $0.layer.cornerRadius = 12
     }
     
@@ -53,11 +46,12 @@ class MatchingManageHeaderView: BaseUIView {
     private var selectedTab: Tab = .received
     
     //MARK: - Initialize
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
+        updateSelectedTab(.received)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -67,42 +61,35 @@ class MatchingManageHeaderView: BaseUIView {
     override func setUI() {
         super.setUI()
         self.backgroundColor = UIColor(resource: .Background.canvas)
-        addSubviews(titleLabel, tabContainerView)
+        addSubview(tabContainerView)
         tabContainerView.addSubviews(receivedButton, sentRequestButton, requestConfirmedButton)
     }
     
     override func setLayout() {
         super.setLayout()
-        
-        titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
-            $0.width.equalTo(59)
-            $0.height.equalTo(24)
-        }
-        
+
         tabContainerView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(113)
-            $0.bottom.equalToSuperview().offset(-11)
-            $0.width.equalTo(343)
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(48)
         }
         
         receivedButton.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(4)
-            $0.top.bottom.equalToSuperview().inset(4)
+            $0.top.bottom.equalToSuperview()
             $0.width.equalTo(sentRequestButton)
         }
         
         sentRequestButton.snp.makeConstraints {
             $0.leading.equalTo(receivedButton.snp.trailing).offset(4)
-            $0.top.bottom.equalToSuperview().inset(4)
+            $0.top.bottom.equalToSuperview()
             $0.width.equalTo(requestConfirmedButton)
         }
         
         requestConfirmedButton.snp.makeConstraints {
             $0.leading.equalTo(sentRequestButton.snp.trailing).offset(4)
             $0.trailing.equalToSuperview().offset(-4)
-            $0.top.bottom.equalToSuperview().inset(4)
+            $0.top.bottom.equalToSuperview()
             $0.width.equalTo(receivedButton)
         }
     }
@@ -112,9 +99,9 @@ class MatchingManageHeaderView: BaseUIView {
     private func createTabButton(for tab: Tab) -> UIButton {
         let button = UIButton()
         button.setTitle(tab.title, for: .normal)
-        button.setTitleColor(.black, for: .selected)
-        button.setTitleColor(UIColor(white: 0.5, alpha: 1.0), for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
+        button.setTitleColor(UIColor(resource: .Text.primaryReverse), for: .selected)
+        button.setTitleColor(UIColor(resource: .Text.disabled), for: .normal)
+        button.titleLabel?.font = .pretendard(.textSmSb)
         button.backgroundColor = .clear
         button.layer.cornerRadius = 10
         button.tag = tab.rawValue
@@ -137,7 +124,7 @@ class MatchingManageHeaderView: BaseUIView {
         UIView.animate(withDuration: 0.3) {
             self.tabButtons.forEach { button in
                 let isSelected = button.tag == tab.rawValue
-                button.backgroundColor = isSelected ? UIColor(resource: .Button.textPrimaryActive) : UIColor(resource: .Button.backgroundPrimaryActive)
+                button.backgroundColor = isSelected ? UIColor(resource: .Background.selected) : UIColor(resource: .Background.surface)
             }
         }
     }
