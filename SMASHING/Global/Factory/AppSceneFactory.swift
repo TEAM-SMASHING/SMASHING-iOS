@@ -21,7 +21,8 @@ final class AppSceneFactory: SceneFactory {
     func makeScene(for type: SceneType) -> UIViewController {
         switch type {
         default :
-            return ViewController()
+            let factory = TabBarSceneFactory()
+            return MainTabBarController(factory: factory)
         }
     }
 }
