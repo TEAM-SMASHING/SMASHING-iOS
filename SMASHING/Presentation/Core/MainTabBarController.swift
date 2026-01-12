@@ -10,33 +10,6 @@ import SnapKit
 
 import Then
 
-protocol TabBarSceneFactoryProtocol {
-    
-    func makeViewController(for tab: MainTabBarController.Tab) -> UIViewController
-}
-
-final class TabBarSceneFactory: TabBarSceneFactoryProtocol {
-    func makeViewController(for tab: MainTabBarController.Tab) -> UIViewController {
-        let viewController: UIViewController
-
-        switch tab {
-        case .home:
-            viewController = HomeViewController()
-        case .matchingSearch:
-            viewController = MatchingSearchViewController()
-        case .matchingManage:
-            viewController = MatchingManageViewController()
-        case .profile:
-            viewController = ProfileViewController()
-        }
-
-        let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.setNavigationBarHidden(true, animated: true)
-        return navigationController
-    }
-
-}
-
 final class MainTabBarController: UITabBarController {
 
     //MARK: - Tab
@@ -78,70 +51,37 @@ final class MainTabBarController: UITabBarController {
 
     // MARK: - Properties
 
-    private var factory: TabBarSceneFactoryProtocol
-
     private let defaultTab: Tab = .home
-
-    static weak var shared: MainTabBarController?
-
-    // MARK: - Initializers
-
-    init(factory: TabBarSceneFactoryProtocol) {
-        self.factory = factory
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
+    
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        MainTabBarController.shared = self
-
         self.setupCustomTabBar()
-        self.setupViewControllers()
         self.selectedIndex = self.defaultTab.rawValue
     }
-
-    // MARK: - Public Methods
-
-    func switchToTab(_ tab: Tab) {
-        self.selectedIndex = tab.rawValue
-        if let nav = self.selectedViewController as? UINavigationController {
-            nav.popToRootViewController(animated: true)
-        }
+    
+    static func setupTabBarItem(for viewController: UIViewController, with tab: Tab) {
+        let icon = tab.image.withRenderingMode(.alwaysOriginal)
+        let selectedIcon = tab.selectedImage.withRenderingMode(.alwaysOriginal)
+        let tabBarItem = UITabBarItem(
+            title: tab.title,
+            image: icon,
+            selectedImage: selectedIcon
+        )
+        
+        tabBarItem.tag = tab.rawValue
+        
+        viewController.tabBarItem = tabBarItem
     }
-
-    // MARK: - Setup
-
-    private func setupViewControllers() {
-        self.viewControllers = Tab.allCases.map { tab in
-            let viewController = self.factory.makeViewController(for: tab)
-            let icon = tab.image.withRenderingMode(.alwaysOriginal)
-            let selectedIcon = tab.selectedImage.withRenderingMode(.alwaysOriginal)
-
-            viewController.tabBarItem = UITabBarItem(
-                title: tab.title,
-                image: icon,
-                selectedImage: selectedIcon
-            )
-            viewController.tabBarItem.tag = tab.rawValue
-
-            return viewController
-        }
-    }
-
 }
 
 // MARK: - Custom TabBar Setup
 
 extension MainTabBarController {
 
-        private func setupCustomTabBar() {
+    private func setupCustomTabBar() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .clear
@@ -157,7 +97,7 @@ extension MainTabBarController {
         self.addCustomTabBarBackground()
     }
 
-        private func addCustomTabBarBackground() {
+    private func addCustomTabBarBackground() {
         let customTabBarView = UIView().then {
             $0.backgroundColor = UIColor(resource: .Background.surface)
             $0.layer.cornerRadius = 20
@@ -169,5 +109,6 @@ extension MainTabBarController {
             make.edges.equalToSuperview()
         }
     }
-
 }
+
+extension MainTabBarController: UITabBarControllerDelegate {}

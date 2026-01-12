@@ -32,7 +32,7 @@ final class TabBarCoordinator: Coordinator {
             coordinator.start()
         }
 
-        let tabBarController = MainTabBarController(factory: factory)
+        let tabBarController = MainTabBarController()
         tabBarController.viewControllers = controllers
         
         navigationController.setNavigationBarHidden(true, animated: false)
