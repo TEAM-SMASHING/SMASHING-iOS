@@ -14,7 +14,7 @@ protocol Coordinator: AnyObject {
     var navigationController: UINavigationController { get set }
     func start()
     func showNotification(transition: CATransition?)
-    func presentToast()
+    func presentToast(notificationType: NotificationType)
 }
 
 extension Coordinator {
