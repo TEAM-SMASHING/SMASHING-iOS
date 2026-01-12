@@ -21,7 +21,7 @@ final class TabBarSceneFactory: TabBarSceneFactoryProtocol {
 
         switch tab {
         case .home:
-            viewController = HomViewController()
+            viewController = HomeViewController()
         case .matchingSearch:
             viewController = MatchingSearchViewController()
         case .matchingManage:
