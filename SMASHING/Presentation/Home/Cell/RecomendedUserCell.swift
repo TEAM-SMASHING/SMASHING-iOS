@@ -39,12 +39,9 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.contentMode = .scaleAspectFit
     }
     
-    private let tierBadge = UILabel().then {
-        $0.text = "Gold I"
-        $0.setPretendard(.captionXsR)
-        $0.textColor = .Tier.bronzeText
-        $0.backgroundColor = .Tier.bronzeBackground
-        $0.textAlignment = .center
+    private let tierImage = UIImageView().then {
+        $0.image = .tierGoldStage1
+        $0.contentMode = .scaleAspectFit
     }
     
     private let recordStackView = UIStackView().then {
@@ -92,7 +89,7 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
         
         reviewStackView.addArrangedSubviews(reviewLabel, reviewCountLabel)
         
-        containerView.addSubviews(profileImageView, nickNameStackView, tierBadge, recordStackView, reviewStackView)
+        containerView.addSubviews(profileImageView, nickNameStackView, tierImage, recordStackView, reviewStackView)
         
         contentView.addSubview(containerView)
     }
@@ -117,14 +114,14 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.size.equalTo(20)
         }
         
-        tierBadge.snp.makeConstraints {
+        tierImage.snp.makeConstraints {
             $0.top.equalTo(nickName.snp.bottom).offset(4)
             $0.horizontalEdges.equalTo(containerView).inset(49.5)
             $0.height.equalTo(24)
         }
         
         recordStackView.snp.makeConstraints {
-            $0.top.equalTo(tierBadge.snp.bottom).offset(8)
+            $0.top.equalTo(tierImage.snp.bottom).offset(8)
             $0.horizontalEdges.equalTo(containerView).inset(19.5)
         }
         
