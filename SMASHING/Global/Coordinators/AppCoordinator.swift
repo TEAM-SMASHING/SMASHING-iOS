@@ -11,8 +11,6 @@ final class AppCoordinator: Coordinator {
 
     var childCoordinators: [Coordinator]
     var navigationController: UINavigationController
-    
-    var isJWTAhenticated: Bool = false
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -20,6 +18,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        
+        let root = NotificationViewController()
+        navigationController.pushViewController(root, animated: false)
     }
 }
