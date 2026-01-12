@@ -7,10 +7,6 @@
 .AppleDouble
 .LSOverride
 
-# Icon must end with two \r
-Icon
-
-
 # Thumbnails
 ._*
 
@@ -134,7 +130,11 @@ iOSInjectionProject/
 *.config
 *.xcconfig
 
+# Claude config (ignore everywhere)
+CLAUDE.md
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,swift,xcode
+
 
 **/claude.md
 **/Claude.md

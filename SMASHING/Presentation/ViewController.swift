@@ -7,14 +7,17 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+import SnapKit
+import Then
 
+class ViewController: UIViewController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
+        view.backgroundColor = .Background.canvas
+        
+        self.hideKeyboardWhenDidTap()
     }
-
-
 }
 
 import SwiftUI
