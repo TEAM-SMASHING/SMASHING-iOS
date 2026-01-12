@@ -59,6 +59,7 @@ final class NicknameView: BaseUIView {
         nicknameTextField.setMessage(message: "사용 가능한 닉네임입니다")
         // + 키보드 해제
         
+        // 실패한 경우
         nicknameTextField.setError(message: "이미 존재하는 닉네임이에요")
     }
 }
