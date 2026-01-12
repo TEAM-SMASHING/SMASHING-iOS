@@ -2,6 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BaseURL</key>
+	<string>$(BaseURL)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao$(KAKAO_APP_Key)</string>
+			</array>
+		</dict>
+	</array>
 	<key>UIDesignRequiresCompatibility</key>
 	<true/>
 	<key>KAKAO_APP_Key</key>
@@ -15,6 +28,12 @@
 	</array>
 	<key>KAKAO_REST_API_Key</key>
 	<string>$(KAKAO_REST_API_Key)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+		<string>kakaoplus</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
