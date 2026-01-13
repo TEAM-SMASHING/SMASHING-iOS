@@ -120,16 +120,3 @@ final class ChangeAddressView: BaseUIView {
         self.pushAddressSearchViewAction = pushAddressSearchViewAction
     }
 }
-
-final class ChangeAddressViewController: BaseViewController {
-    
-    // MARK: - Properties
-    
-    private let mainView = ChangeAddressView()
-    
-    // MARK: - Lifecycle
-    
-    override func viewDidLoad() {
-        self.view = mainView
-    }
-}
