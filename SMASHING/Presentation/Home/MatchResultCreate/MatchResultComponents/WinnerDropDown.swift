@@ -39,7 +39,7 @@ final class WinnerDropDown: UIButton {
     private let label = UILabel().then {
         $0.text = "승자 선택"
         $0.textColor = .Text.disabled
-        $0.setPretendard(.textSmMCentered )
+        $0.setPretendard(.textSmM)
         $0.textAlignment = .center
     }
     
