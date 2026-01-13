@@ -73,5 +73,4 @@ final class SatisfictionChip: BaseUIView {
             $0.size.equalTo(24)
         }
     }
-
 }

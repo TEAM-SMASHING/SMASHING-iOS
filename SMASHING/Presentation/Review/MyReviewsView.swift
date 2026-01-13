@@ -51,13 +51,16 @@ final class MyReviewsView: BaseUIView {
         $0.textColor = .Text.primary
     }
     
-    let reviewCollectionView: UICollectionView = {
+    lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.minimumLineSpacing = 0
         
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .gray
-        
-        return collectionView
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
+        cv.register(ReviewCollectionViewCell.self, forCellWithReuseIdentifier: ReviewCollectionViewCell.reuseIdentifier)
+        return cv
     }()
     
     // MARK: - Setup Methods
@@ -65,7 +68,7 @@ final class MyReviewsView: BaseUIView {
     override func setUI() {
         addSubviews(navigationBar, satisfactionLabel, satisfactionStackView,
                     quickReviewLabel, quickReviewStackView,
-                    allReviewLabel, reviewCollectionView)
+                    allReviewLabel, collectionView)
         
         [ReviewScore.best, .good, .bad].forEach { review in
             let chip = SatisfictionChip(review: review, num: Int.random(in: 0...150))
@@ -105,7 +108,7 @@ final class MyReviewsView: BaseUIView {
             $0.top.equalTo(quickReviewStackView.snp.bottom).offset(32)
         }
         
-        reviewCollectionView.snp.makeConstraints {
+        collectionView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.top.equalTo(allReviewLabel.snp.bottom).offset(8)
             $0.bottom.equalTo(safeAreaLayoutGuide)
