@@ -25,12 +25,14 @@ final class MatchingManageViewController: BaseViewController {
 
     private let headerView = MatchingManageHeaderView()
 
-    private lazy var pageViewController: UIPageViewController = {
-        let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        pageViewController.dataSource = self
-        pageViewController.delegate = self
-        return pageViewController
-    }()
+    private lazy var pageViewController = UIPageViewController(
+        transitionStyle: .scroll,
+        navigationOrientation: .horizontal,
+        options: nil
+    ).then {
+        $0.dataSource = self
+        $0.delegate = self
+    }
 
     // MARK: - Lifecycle
     
