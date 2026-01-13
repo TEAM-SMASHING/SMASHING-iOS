@@ -120,10 +120,11 @@ class MatchingManageHeaderView: BaseUIView {
     
     func updateSelectedTab(_ tab: Tab) {
         self.selectedTab = tab
-        
+
         UIView.animate(withDuration: 0.3) {
             self.tabButtons.forEach { button in
                 let isSelected = button.tag == tab.rawValue
+                button.isSelected = isSelected
                 button.backgroundColor = isSelected ? UIColor(resource: .Background.selected) : UIColor(resource: .Background.surface)
             }
         }
