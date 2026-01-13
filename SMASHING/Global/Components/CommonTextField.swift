@@ -18,25 +18,25 @@ final class CommonTextField: UITextField {
     private let highlightedBorderColor: UIColor = .Border.typing
     private let cursorColor: UIColor = .Border.secondary
     private let errorColor: UIColor = .Border.error
-    private let placeholderColor: UIColor = .Border.secondary
+    private let placeholderColor: UIColor = .Text.disabled
     
     private var isClearButtonHidden: Bool = false
     
     // MARK: - UI Components
     
-    private let errorStackView = UIStackView().then {
+    private let messageStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 4
         $0.alignment = .center
         $0.isHidden = true
     }
     
-    private let errorIconView = UIImageView().then {
+    private let iconView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.image = .icWarning
     }
     
-    private lazy var errorLabel = UILabel().then {
+    private lazy var messageLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 12)
         $0.textColor = self.errorColor
     }
@@ -66,8 +66,8 @@ final class CommonTextField: UITextField {
     // MARK: - Setup Methods
     
     private func setUI() {
-        [clearButton, errorStackView].forEach { addSubview($0) }
-        [errorIconView, errorLabel].forEach { errorStackView.addArrangedSubview($0) }
+        [clearButton, messageStackView].forEach { addSubview($0) }
+        [iconView, messageLabel].forEach { messageStackView.addArrangedSubview($0) }
     }
     
     private func setLayout() {
@@ -81,11 +81,11 @@ final class CommonTextField: UITextField {
             $0.trailing.equalToSuperview().offset(-16)
         }
         
-        errorIconView.snp.makeConstraints {
+        iconView.snp.makeConstraints {
             $0.width.height.equalTo(16)
         }
         
-        errorStackView.snp.makeConstraints {
+        messageStackView.snp.makeConstraints {
             $0.top.equalTo(self.snp.bottom).offset(6)
             $0.leading.equalToSuperview().offset(4)
         }
@@ -143,8 +143,22 @@ final class CommonTextField: UITextField {
     func setError(message: String?) {
         if let message = message {
             self.layer.borderColor = errorColor.cgColor
-            errorLabel.text = message
-            errorStackView.isHidden = false
+            messageLabel.text = message
+            messageLabel.textColor = errorColor
+            iconView.image = .icWarning
+            messageStackView.isHidden = false
+        } else {
+            resetToDefault()
+        }
+    }
+    
+    func setMessage(message: String?) {
+        if let message = message {
+            self.layer.borderColor = defaultBorderColor.cgColor
+            messageLabel.text = message
+            messageLabel.textColor = .Text.emphasis
+            iconView.image = .icCheck
+            messageStackView.isHidden = false
         } else {
             resetToDefault()
         }
@@ -152,7 +166,7 @@ final class CommonTextField: UITextField {
     
     func resetToDefault() {
         self.layer.borderColor = self.isFirstResponder ? highlightedBorderColor.cgColor : defaultBorderColor.cgColor
-        errorStackView.isHidden = true
+        messageStackView.isHidden = true
     }
     
     func hideClearButtonAlways() {
