@@ -55,9 +55,3 @@ final class AddressSearchView: BaseUIView {
         }
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    AddressSearchViewController()
-}
