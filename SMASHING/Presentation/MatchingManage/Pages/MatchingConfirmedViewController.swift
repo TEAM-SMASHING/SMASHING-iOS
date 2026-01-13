@@ -56,7 +56,7 @@ final class MatchingConfirmedViewController: BaseViewController {
     //MARK: - private Methods
     
     private func getTierName(tier: Int) -> String {
-        switch tierId {
+        switch tier {
         case 1:
             return "Bronze I"
         case 2:
@@ -91,7 +91,19 @@ extension MatchingConfirmedViewController: UICollectionViewDataSource {
         
         let match = self.matches[indexPath.row]
         let tierName = self.getTierName(tier: match.tierId)
-        
+        cell.configure(nickname: match.nickname, tier: tierName, wins: match.wins, losses: match.losses, reviews: match.reviewCount)
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+
+extension MatchingConfirmedViewController: UICollectionViewDelegateFlowLayout {
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = (collectionView.frame.width - 48) / 2
+        let height: CGFloat = 320
+        return CGSize(width: width, height: height)
     }
 }
 
