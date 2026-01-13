@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class HomViewController: BaseViewController {
+final class HomeViewController: BaseViewController {
 
     // MARK: - Lifecycle
 
@@ -28,5 +28,5 @@ import SwiftUI
 
 @available(iOS 18.0, *)
 #Preview {
-    HomViewController()
+    HomeViewController()
 }
