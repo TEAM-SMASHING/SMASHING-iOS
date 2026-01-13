@@ -17,9 +17,9 @@ final class ReceiveRequestViewController: BaseViewController {
     private lazy var collectionview : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 16
+        layout.minimumLineSpacing = 12
         layout.minimumInteritemSpacing = 11
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        layout.sectionInset = UIEdgeInsets(top: 12, left: 16, bottom: 16, right: 16)
 
         let collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionview.backgroundColor = .black

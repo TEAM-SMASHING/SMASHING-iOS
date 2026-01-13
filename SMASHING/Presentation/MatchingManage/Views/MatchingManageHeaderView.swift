@@ -32,7 +32,7 @@ class MatchingManageHeaderView: BaseUIView {
 
     private let tabContainerView = UIView().then {
         $0.backgroundColor = UIColor(resource: .Background.surface)
-        $0.layer.cornerRadius = 12
+        $0.layer.cornerRadius = 16
     }
     
     private lazy var receivedButton = createTabButton(for: .received)
@@ -70,26 +70,26 @@ class MatchingManageHeaderView: BaseUIView {
 
         tabContainerView.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
             $0.height.equalTo(48)
         }
         
         receivedButton.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(4)
-            $0.top.bottom.equalToSuperview()
-            $0.width.equalTo(sentRequestButton)
+            $0.top.bottom.equalToSuperview().inset(4)
         }
-        
+
         sentRequestButton.snp.makeConstraints {
             $0.leading.equalTo(receivedButton.snp.trailing).offset(4)
-            $0.top.bottom.equalToSuperview()
-            $0.width.equalTo(requestConfirmedButton)
+            $0.top.bottom.equalToSuperview().inset(4)
+            $0.width.equalTo(receivedButton)
         }
-        
+
         requestConfirmedButton.snp.makeConstraints {
             $0.leading.equalTo(sentRequestButton.snp.trailing).offset(4)
             $0.trailing.equalToSuperview().offset(-4)
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalToSuperview().inset(4)
             $0.width.equalTo(receivedButton)
         }
     }
@@ -103,7 +103,7 @@ class MatchingManageHeaderView: BaseUIView {
         button.setTitleColor(UIColor(resource: .Text.disabled), for: .normal)
         button.titleLabel?.font = .pretendard(.textSmSb)
         button.backgroundColor = .clear
-        button.layer.cornerRadius = 10
+        button.layer.cornerRadius = 12
         button.tag = tab.rawValue
         button.addTarget(self, action: #selector(tabButtonDidTap), for: .touchUpInside)
         return button
@@ -114,6 +114,7 @@ class MatchingManageHeaderView: BaseUIView {
     @objc private func tabButtonDidTap(_ sender: UIButton) {
         guard let tab = Tab(rawValue: sender.tag) else { return }
         self.updateSelectedTab(tab)
+        self.onTabSelected?(tab)
     }
     
     //MARK: Public Methods
