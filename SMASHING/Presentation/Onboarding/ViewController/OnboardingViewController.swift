@@ -74,7 +74,6 @@ class OnboardingViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .Background.canvas
         setupActions()
         showStep(.nickname)
     }

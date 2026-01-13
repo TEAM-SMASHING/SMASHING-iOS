@@ -20,6 +20,5 @@ final class NicknameViewController: BaseViewController {
     
     override func viewDidLoad() {
         view = nicknameView
-        view.backgroundColor = .clear
     }
 }
