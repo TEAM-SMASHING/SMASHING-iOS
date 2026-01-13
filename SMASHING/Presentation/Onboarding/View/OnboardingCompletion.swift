@@ -12,9 +12,9 @@ import Then
 
 final class OnboardingCompletionView: BaseUIView {
     
-    // MARK: - Actions
+    // MARK: - Properties
     
-    var action: (() -> Void)?
+    private var action: (() -> Void)?
     
     // MARK: - UI Properties
     
@@ -39,7 +39,7 @@ final class OnboardingCompletionView: BaseUIView {
     
     private lazy var checkButton = CTAButton(label: "완료", action: self.action)
     
-    // MARK: - Life Cycle
+    // MARK: - Setup Methods
     
     override func setUI() {
         addSubviews(containerView, checkButton)
@@ -75,16 +75,9 @@ final class OnboardingCompletionView: BaseUIView {
         }
     }
     
-}
-
-final class OnboardingCompletionViewController: BaseViewController {
-    
-    private let mainView = OnboardingCompletionView()
-    
-    override func viewDidLoad() {
-        view = mainView
+    func configure(action: (() -> Void)? ) {
+        self.action = action
     }
-    
 }
 
 import SwiftUI
