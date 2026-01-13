@@ -18,7 +18,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        let root = NotificationViewController()
+        let root = MyReviewsViewController()
         navigationController.pushViewController(root, animated: false)
 //        let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
 //        childCoordinators.append(tabBarCoordinator)
