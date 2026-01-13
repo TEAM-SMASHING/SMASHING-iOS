@@ -16,15 +16,15 @@ final class MatchingManageViewController: BaseViewController {
     
     private var currentTabIndex: MatchingManageHeaderView.Tab = .received
     private var categories: [UIViewController] = []
-        
+    
     //MARK: - UI Components
-
+    
     private lazy var navigationBar = CustomNavigationBar(title: "매칭 관리") { [weak self] in
         self?.navigationController?.popViewController(animated: true)
     }
-
+    
     private let headerView = MatchingManageHeaderView()
-
+    
     private lazy var pageViewController = UIPageViewController(
         transitionStyle: .scroll,
         navigationOrientation: .horizontal,
@@ -33,13 +33,16 @@ final class MatchingManageViewController: BaseViewController {
         $0.dataSource = self
         $0.delegate = self
     }
-
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupCategories()
+        setupInitialPage()
+        setupHeaderView()
     }
-
+    
     //MARK: - SetUp Methods
     
     override func setUI() {
@@ -50,28 +53,68 @@ final class MatchingManageViewController: BaseViewController {
         addChild(pageViewController)
         pageViewController.didMove(toParent: self)
     }
-
+    
+    private func setupCategories() {
+        let receivedVC = ReceiveRequestViewController()
+        let sentVC = SentRequestViewController()
+        let confirmedVC = MatchingConfirmedViewController()
+        
+        self.categories = [receivedVC, sentVC, confirmedVC]
+    }
+    
+    private func setupInitialPage() {
+        guard let firstVC = self.categories.first else { return }
+        self.pageViewController.setViewControllers(
+            [firstVC],
+            direction: .forward,
+            animated: false,
+            completion: nil
+        )
+    }
+    
+    private func setupHeaderView() {
+        self.headerView.onTabSelected = { [weak self] tab in
+            self?.moveToPage(tab: tab)
+        }
+    }
+    
+    private func moveToPage(tab: MatchingManageHeaderView.Tab) {
+        guard let currentVC = self.pageViewController.viewControllers?.first,
+              let currentIndex = self.categories.firstIndex(of: currentVC),
+              currentIndex != tab.rawValue else { return }
+        
+        let targetVC = self.categories[tab.rawValue]
+        let direction: UIPageViewController.NavigationDirection = currentIndex < tab.rawValue ? .forward : .reverse
+        
+        self.pageViewController.setViewControllers(
+            [targetVC],
+            direction: direction,
+            animated: true,
+            completion: { [weak self] _ in
+                self?.currentTabIndex = tab
+            }
+        )
+    }
+    
     override func setLayout() {
         super.setLayout()
-
+        
         navigationBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.trailing.equalToSuperview()
         }
-
+        
         headerView.snp.makeConstraints {
             $0.top.equalTo(navigationBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(64)
         }
-
+        
         pageViewController.view.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
-    
 }
 
 extension MatchingManageViewController: UIPageViewControllerDelegate {
