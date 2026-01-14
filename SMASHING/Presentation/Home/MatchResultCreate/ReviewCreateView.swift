@@ -10,15 +10,11 @@ import UIKit
 import SnapKit
 import Then
 
-enum SatisfactionLevel: Int, Codable {
-    case bad, good, great
-}
-
 final class ReviewCreateView: BaseUIView {
     
-    private var selectedSatisfaction: SatisfactionLevel?
+    private var selectedSatisfaction: ReviewScore?
     
-    private let navigationBar = CustomNavigationBar(title: "매칭 결과 작성")
+    private let navigationBar = CustomNavigationBar(title: "결과 작성")
     
     private let titleLabel = UILabel().then {
         $0.text = "밤이달이님과의 경기는 어떠셨나요?"
@@ -104,7 +100,7 @@ final class ReviewCreateView: BaseUIView {
     
     @objc
     private func greatButtonDidTap() {
-        updateSatisfaction(.great)
+        updateSatisfaction(.best)
     }
     
     override func setLayout() {
@@ -190,7 +186,7 @@ final class ReviewCreateView: BaseUIView {
         }
     }
     
-    func updateSatisfaction(_ level: SatisfactionLevel) {
+    func updateSatisfaction(_ level: ReviewScore) {
         selectedSatisfaction = level
         
         //하나만 선택하기 위해
@@ -203,7 +199,7 @@ final class ReviewCreateView: BaseUIView {
             badButton.setSelected(true)
         case .good:
             goodButton.setSelected(true)
-        case .great:
+        case .best:
             greatButton.setSelected(true)
         }
     }

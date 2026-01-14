@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class SatisfactionButton: UIView {
+final class SatisfactionButton: BaseUIView {
     private var circleButtonSizeConstraint: Constraint?
     
     var isSelectedState: Bool = false {
@@ -47,6 +47,7 @@ final class SatisfactionButton: UIView {
         super.init(frame: .zero)
         
         label.text = title
+        backgroundColor = .Background.surface
         setUI()
         setLayout()
     }
@@ -55,13 +56,13 @@ final class SatisfactionButton: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setUI() {
+    override func setUI() {
         circleButton.addSubviews(checkmark)
         stackView.addArrangedSubviews(circleButton, label)
         addSubviews(stackView)
     }
     
-    private func setLayout() {
+    override func setLayout() {
         stackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class RapidReviewChipContainer: UIView {
+final class RapidReviewChipContainer: BaseUIView {
     
     private let horizontalSpacing: CGFloat = 8
     private let verticalSpacing: CGFloat = 8
@@ -18,6 +18,7 @@ final class RapidReviewChipContainer: UIView {
     
     init(reviews: [RapidReview]) {
         super.init(frame: .zero)
+        backgroundColor = .Background.canvas
         setupChips(reviews: reviews)
     }
     
@@ -38,7 +39,6 @@ final class RapidReviewChipContainer: UIView {
         super.layoutSubviews()
         
         let containerWidth: CGFloat = bounds.width
-        print("📦 Container layoutSubviews - width: \(containerWidth), bounds: \(bounds)")
         guard containerWidth > 0 else { return }
         
         var currentX: CGFloat = 0

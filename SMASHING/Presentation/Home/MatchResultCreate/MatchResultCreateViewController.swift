@@ -45,13 +45,11 @@ final class MatchResultCreateViewController: BaseViewController {
     @objc
     private func didTapMyOptionButton() {
         mainView.updateSelectedWinner("밤이달이")
-        print("myOptionButtonTapped")
     }
     
     @objc
     private func didTapRivalOptionButton() {
         mainView.updateSelectedWinner("와구와구")
-        print("rivalOptionButtonTapped")
     }
     
 }

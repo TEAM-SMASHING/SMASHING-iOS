@@ -73,9 +73,3 @@ final class WinnerDropDown: UIButton {
         chevronImageView.isHidden = true
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    WinnerDropDown()
-}
