@@ -23,7 +23,7 @@ final class SatisfactionButton: UIView {
     
     private let stackView = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 8
+        $0.spacing = 10
         $0.alignment = .center
     }
     

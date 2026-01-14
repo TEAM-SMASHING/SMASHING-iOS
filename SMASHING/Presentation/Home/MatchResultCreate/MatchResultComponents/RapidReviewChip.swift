@@ -42,7 +42,7 @@ final class RapidReviewChip: UILabel {
         self.font = .pretendard(.textSmR)
         self.textAlignment = .center
         
-        self.layer.cornerRadius = 20
+        self.layer.cornerRadius = 18
         self.layer.borderWidth = 1
         self.layer.masksToBounds = true
         self.textInsets = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16)
