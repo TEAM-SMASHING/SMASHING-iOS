@@ -61,10 +61,8 @@ extension MyReviewsViewController: UICollectionViewDataSource {
         
         let data = mockReviews[indexPath.item]
         
-        // 셀에 데이터 바인딩
         cell.configure(data)
         
-        // 셀의 너비를 컬렉션 뷰 너비에 맞게 조정 (동적 높이 계산을 위해 필요)
         cell.contentView.snp.makeConstraints {
             $0.width.equalTo(collectionView.frame.width)
         }

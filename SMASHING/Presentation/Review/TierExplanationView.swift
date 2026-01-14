@@ -73,6 +73,28 @@ final class TierExplanationView: BaseUIView {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.showsHorizontalScrollIndicator = false
         collection.backgroundColor = .clear
+        collection.register(TierChipCell.self, forCellWithReuseIdentifier: TierChipCell.reuseIdentifier)
+        
+        return collection
+    }()
+    
+    private let recomandationLabel = UILabel().then {
+        $0.text = "승급을 위해 아래의 기술들을 연마해보세요"
+        $0.font = .pretendard(.textMdSb)
+        $0.textColor = .Text.primary
+    }
+    
+    let tierExplanationCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.minimumLineSpacing = 12
+        
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.showsHorizontalScrollIndicator = false
+        collection.backgroundColor = .clear
+        collection
+            .register(SkillExplanationCell.self, forCellWithReuseIdentifier: SkillExplanationCell.reuseIdentifier)
         
         return collection
     }()
@@ -80,7 +102,8 @@ final class TierExplanationView: BaseUIView {
     //MARK: - Lifecycle
     
     override func setUI() {
-        addSubviews(navigationBar, imageView, tierLabel, detailStack, tierCollectionView)
+        addSubviews(navigationBar, imageView, tierLabel, detailStack, tierCollectionView,
+                    recomandationLabel, tierExplanationCollectionView)
         
         detailStack.addArrangedSubviews(topPercentLabel, actualTierLabel)
     }
@@ -112,6 +135,23 @@ final class TierExplanationView: BaseUIView {
             $0.top.equalTo(detailStack.snp.bottom).offset(28)
             $0.height.equalTo(40)
         }
+        
+        recomandationLabel.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.top.equalTo(tierCollectionView.snp.bottom).offset(20)
+        }
+        
+        tierExplanationCollectionView.snp.makeConstraints {
+            $0.top.equalTo(recomandationLabel.snp.bottom).offset(8)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalTo(safeAreaLayoutGuide)
+        }
+    }
+    
+    func configure(oreTier: OreTier, sports: Sports) {
+        tierLabel.text = oreTier.rawValue
+        topPercentLabel.text = oreTier.percentage
+        actualTierLabel.text = oreTier.actualTier(sports: sports)
     }
 }
 
@@ -184,58 +224,130 @@ final class TierChipCell : BaseUICollectionViewCell, ReuseIdentifiable {
 final class TierExplanationViewController: BaseViewController {
     
     private let mainView = TierExplanationView()
-    
-    private var selectedIndex: Int = 1
+    private var sports: Sports = .tableTennis
+    private var oreTier: OreTier = .bronze
     
     override func loadView() {
         view = mainView
         
-        mainView.tierCollectionView
-            .register(TierChipCell.self, forCellWithReuseIdentifier: TierChipCell.reuseIdentifier)
+        mainView.configure(oreTier: oreTier, sports: sports)
         mainView.tierCollectionView.delegate = self
         mainView.tierCollectionView.dataSource = self
+        mainView.tierExplanationCollectionView.delegate = self
+        mainView.tierExplanationCollectionView.dataSource = self
     }
 }
 
+// MARK: - Extensions
+
 extension TierExplanationViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let tier = OreTier.allCases[indexPath.item]
-        
-        let label = UILabel().then {
-            $0.font = UIFont.pretendard(.textSmR)
-            $0.text = tier.rawValue
-            $0.textColor = .white
-            $0.sizeToFit()
+        if collectionView == mainView.tierCollectionView {
+            let tier = OreTier.allCases[indexPath.item]
+            let label = UILabel().then {
+                $0.font = UIFont.pretendard(.textSmR)
+                $0.text = tier.rawValue
+                $0.textColor = .white
+                $0.sizeToFit()
+            }
+            let cellWidth = label.frame.width + TierChipCell.horizontalPadding * 2
+            return CGSize(width: cellWidth, height: 40)
+        } else {
+            let width = collectionView.frame.width - 32
+            return CGSize(width: width, height: 110)
         }
-        
-        let cellWidth = label.frame.width + TierChipCell.horizontalPadding * 2
-        let cellHeight: CGFloat = 40
-        
-        return CGSize(width: cellWidth, height: cellHeight)
     }
 }
 
 extension TierExplanationViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return OreTier.allCases.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(TierChipCell.self, for: indexPath)
-        if indexPath.row == selectedIndex {
-            cell.selected()
+        if collectionView == mainView.tierCollectionView {
+            return OreTier.allCases.count
         } else {
-            cell.deselected()
+            return OreTier.diamond.skills(sports: .tableTennis).count
         }
-        cell.configure(with: OreTier.allCases[indexPath.row])
-        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if collectionView == mainView.tierCollectionView {
+            let cell = collectionView.dequeueReusableCell(TierChipCell.self, for: indexPath)
+            if indexPath.row == oreTier.index {
+                cell.selected()
+            } else {
+                cell.deselected()
+            }
+            cell.configure(with: OreTier.allCases[indexPath.row])
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(SkillExplanationCell.self, for: indexPath)
+            cell.contentView.snp.makeConstraints {
+                $0.width.equalTo(collectionView.frame.width)
+            }
+            cell.configure(with: oreTier.skills(sports: sports)[indexPath.row])
+            return cell
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == mainView.tierCollectionView && oreTier.index != indexPath.row {
+            oreTier = OreTier.allCases[indexPath.row]
+            collectionView.reloadData()
+            mainView.tierExplanationCollectionView.reloadData()
+            mainView.configure(oreTier: oreTier, sports: sports)
+        }
+    }
+}
+
+final class SkillExplanationCell: BaseUICollectionViewCell, ReuseIdentifiable {
+    
+    // MARK: - UI Components
+    
+    private let containerView = UIView().then {
+        $0.backgroundColor = .Background.surface
+        $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if selectedIndex != indexPath.row {
-            selectedIndex = indexPath.row
-            collectionView.reloadData()
+    private let titleLabel = UILabel().then {
+        $0.textColor = .Text.primary
+        $0.font = .pretendard(.textMdSb)
+        $0.numberOfLines = 1
+    }
+    
+    private let subtitleLabel = UILabel().then {
+        $0.textColor = .Text.secondary
+        $0.font = .pretendard(.textSmR)
+        $0.numberOfLines = 0
+        $0.lineBreakMode = .byWordWrapping
+    }
+    
+    // MARK: - Lifecycle
+    
+    override func setUI() {
+        contentView.addSubview(containerView)
+        containerView.addSubviews(titleLabel, subtitleLabel)
+    }
+    
+    override func setLayout() {
+        containerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
+        
+        titleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(12)
+            $0.leading.trailing.equalToSuperview().inset(16)
+        }
+        
+        subtitleLabel.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(12)
+        }
+    }
+    
+    func configure(with skill: SkillExplanation) {
+        titleLabel.text = skill.name
+        subtitleLabel.text = skill.explanation
     }
 }
 
