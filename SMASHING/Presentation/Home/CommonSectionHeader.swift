@@ -10,9 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class CommonSectionHeader: UICollectionReusableView {
-    static let identifier = "CommonSectionHeader"
-    
+final class CommonSectionHeader: UICollectionReusableView, ReuseIdentifiable {
     var onInfoButtonTapped: (() -> Void)?
     var onMoreButtonTapped: (() -> Void)?
     

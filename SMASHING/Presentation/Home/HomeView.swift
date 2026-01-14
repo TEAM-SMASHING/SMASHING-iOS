@@ -48,13 +48,13 @@ final class HomeView: UICollectionView {
         register(
             MatchingSectionHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: MatchingSectionHeader.identifier
+            withReuseIdentifier: MatchingSectionHeader.reuseIdentifier
         )
         
         register(
             CommonSectionHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: CommonSectionHeader.identifier
+            withReuseIdentifier: CommonSectionHeader.reuseIdentifier
         )
     }
     

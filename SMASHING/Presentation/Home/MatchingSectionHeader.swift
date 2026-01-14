@@ -10,9 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class MatchingSectionHeader: UICollectionReusableView {
-    static let identifier = "MatchingSectionHeader"
-    
+final class MatchingSectionHeader: UICollectionReusableView, ReuseIdentifiable {
     private let titleLabel = UILabel().then {
         $0.setPretendard(.title2xlSb)
         $0.textColor = .Text.primary

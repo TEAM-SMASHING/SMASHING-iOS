@@ -82,13 +82,13 @@ extension HomeViewController: UICollectionViewDataSource {
         
         switch sectionType {
         case .matching:
-            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MatchingSectionHeader.identifier, for: indexPath) as? MatchingSectionHeader else {
+            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MatchingSectionHeader.reuseIdentifier, for: indexPath) as? MatchingSectionHeader else {
                 return UICollectionReusableView()
             }
             header.configure(title: "동현님,", subTitle: "곧 다가오는 매칭이 있어요")
             return header
         case .recommendedUser:
-            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.identifier, for: indexPath) as? CommonSectionHeader else {
+            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.reuseIdentifier, for: indexPath) as? CommonSectionHeader else {
                 return UICollectionReusableView()
             }
             header.configure(title: "주변 추천 유저", showInfoButton: true)
@@ -97,7 +97,7 @@ extension HomeViewController: UICollectionViewDataSource {
             }
             return header
         case .ranking:
-            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.identifier, for: indexPath) as? CommonSectionHeader else {
+            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.reuseIdentifier, for: indexPath) as? CommonSectionHeader else {
                 return UICollectionReusableView()
             }
             header.configure(title: "우리 동네 랭커", showInfoButton: false, showMoreButton: true)
