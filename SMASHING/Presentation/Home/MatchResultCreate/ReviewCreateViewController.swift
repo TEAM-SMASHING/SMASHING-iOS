@@ -17,4 +17,9 @@ final class ReviewCreateViewController: BaseViewController {
     override func loadView() {
         view = mainView
     }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .Background.canvas
+    }
 }

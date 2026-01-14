@@ -16,6 +16,7 @@ final class MatchResultCreateViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setAddTarget()
+        view.backgroundColor = .Background.canvas
     }
     
     override func loadView() {
