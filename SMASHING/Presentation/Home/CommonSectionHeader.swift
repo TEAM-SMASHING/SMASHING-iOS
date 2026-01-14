@@ -21,16 +21,18 @@ final class CommonSectionHeader: UICollectionReusableView {
         $0.textColor = .Text.primary
     }
     
-    private let infoButton = UIButton().then {
+    private lazy var infoButton = UIButton().then {
         $0.setImage(.icInfo, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFit
+        $0.addTarget(self, action: #selector(infoButtonDidTap), for: .touchUpInside)
     }
     
-    private let moreButton = UIButton().then {
+    private lazy var moreButton = UIButton().then {
         $0.setTitle("모두 보기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textSmM)
         $0.setTitleColor(.Text.tertiary, for: .normal)
         $0.contentVerticalAlignment = .bottom
+        $0.addTarget(self, action: #selector(moreButtonDidTap), for: .touchUpInside)
     }
     
     override init(frame: CGRect) {
@@ -45,9 +47,6 @@ final class CommonSectionHeader: UICollectionReusableView {
     
     private func setUI() {
         addSubviews(titleLabel, infoButton, moreButton)
-        
-        infoButton.addTarget(self, action: #selector(infoButtonDidTap), for: .touchUpInside)
-        moreButton.addTarget(self, action: #selector(moreButtonDidTap), for: .touchUpInside)
     }
     
     @objc

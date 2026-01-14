@@ -108,16 +108,4 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.height.equalTo(42)
         }
     }
-    
-    override func setAction() {
-        
-    }
-    
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    MatchingCell()
-}
-

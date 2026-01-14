@@ -131,10 +131,3 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    RecomendedUserCell()
-}
-

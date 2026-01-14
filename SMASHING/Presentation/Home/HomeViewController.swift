@@ -126,10 +126,3 @@ extension HomeViewController {
         print("모두보기")
     }
 }
-
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    HomeViewController()
-}

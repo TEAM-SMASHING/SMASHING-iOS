@@ -86,9 +86,3 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    RankingCell()
-}
