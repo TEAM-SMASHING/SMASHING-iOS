@@ -14,6 +14,7 @@ final class MatchResultCreateView: BaseUIView {
     
     private var dropDownHeightConstraint: Constraint?
     private var isDropDownExpanded: Bool = false
+    private var selectedWinner: String?
     
     private let navigationBar = CustomNavigationBar(title: "결과 작성")
     
@@ -75,9 +76,7 @@ final class MatchResultCreateView: BaseUIView {
         $0.textColor = .Text.red
     }
     
-    private lazy var myScoreTextField = ScoreTextField().then {
-        $0.addTarget(self, action: #selector(scoreTextFieldDidChange), for: .editingChanged)
-    }
+    private lazy var myScoreTextField = ScoreTextField()
     
     private let semiColonLabel = UILabel().then {
         $0.text = ":"
@@ -85,9 +84,7 @@ final class MatchResultCreateView: BaseUIView {
         $0.textColor = .Text.primary
     }
     
-    private lazy var rivalScoreTextField = ScoreTextField().then {
-        $0.addTarget(self, action: #selector(scoreTextFieldDidChange), for: .editingChanged)
-    }
+    private lazy var rivalScoreTextField = ScoreTextField()
     
     let nextButton = CTAButton(label: "다음")
     
@@ -108,6 +105,18 @@ final class MatchResultCreateView: BaseUIView {
                     semiColonLabel,
                     rivalScoreTextField,
                     dropDownOptionsView)
+        
+        myScoreTextField.onDone = { [weak self] in
+            self?.updateScoreToMatchResultCard()
+            self?.validateWinnerAndScore()
+        }
+        
+        rivalScoreTextField.onDone = { [weak self] in
+            self?.updateScoreToMatchResultCard()
+            self?.validateWinnerAndScore()
+        }
+        
+        nextButton.isEnabled = false
     }
     
     override func setLayout() {
@@ -200,10 +209,13 @@ final class MatchResultCreateView: BaseUIView {
         }
     }
     
+    // MARK: UI Methods
+    
+    // 토글 드롭다운 뷰
     func toggleDropDown() {
         isDropDownExpanded.toggle()
         
-        let targetHeight: CGFloat = self.isDropDownExpanded ? 96 : 0 //옵션 두개 높이
+        let targetHeight: CGFloat = self.isDropDownExpanded ? 96 : 0
         
         dropDownHeightConstraint?.update(offset: targetHeight)
         
@@ -213,17 +225,54 @@ final class MatchResultCreateView: BaseUIView {
     }
     
     func updateSelectedWinner(_ winner: String) {
+        selectedWinner = winner
         winnerDropDown.updateSelectedWinner(winner)
         if isDropDownExpanded {
             toggleDropDown()
         }
+        updateWinnerUI()
+        validateWinnerAndScore()
     }
     
-    @objc
-    private func scoreTextFieldDidChange() {
-        let myScore = myScoreTextField.text ?? "0"
-        let rivalScore = rivalScoreTextField.text ?? "0"
+    private func updateScoreToMatchResultCard() {
+        let myScoreText: String
+        if let text = myScoreTextField.text, !text.isEmpty {
+            myScoreText = text
+        } else {
+            myScoreText = "0"
+        }
         
-        matchResultCard.updateScore(myScore: myScore, rivalScore: rivalScore)
+        let rivalScoreText: String
+        if let text = rivalScoreTextField.text, !text.isEmpty {
+            rivalScoreText = text
+        } else {
+            rivalScoreText = "0"
+        }
+        
+        matchResultCard.updateScore(myScore: myScoreText, rivalScore: rivalScoreText)
+    }
+    
+    private func updateWinnerUI() {
+        guard let selectedWinner = selectedWinner else {
+            return
+        }
+        
+        let isMyWin = (selectedWinner == myOptionButton.titleLabel?.text)
+        matchResultCard.updateWinnerCrown(isMyWin: isMyWin)
+    }
+    
+    private func validateWinnerAndScore() {
+        guard let selectedWinner = selectedWinner else {
+            nextButton.isEnabled = false
+            return
+        }
+        
+        let myScore = matchResultCard.getMyScore()
+        let rivalScore = matchResultCard.getRivalScore()
+        
+        let isMyWin = (selectedWinner == myOptionButton.titleLabel?.text)
+        let isScoreValid = isMyWin ? (myScore > rivalScore) : (rivalScore > myScore)
+        
+        nextButton.isEnabled = isScoreValid
     }
 }

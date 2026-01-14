@@ -12,6 +12,9 @@ import Then
 import SnapKit
 
 final class MatchResultCardView: BaseUIView {
+    private var currentMyScore: Int = 0
+    private var currentRivalScore: Int = 0
+    
     private let containerView = UIView().then {
         $0.backgroundColor = .Background.surface
         $0.layer.cornerRadius = 12
@@ -20,6 +23,12 @@ final class MatchResultCardView: BaseUIView {
     private let leftProfileStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 0
+    }
+    
+    private let leftCrownImageView = UIImageView().then {
+        $0.image = .icCrown
+        $0.contentMode = .scaleAspectFit
+        $0.isHidden = true
     }
     
     private let myImage = UIImageView().then {
@@ -61,6 +70,12 @@ final class MatchResultCardView: BaseUIView {
         $0.spacing = 0
     }
     
+    private let rightCrownImageView = UIImageView().then {
+        $0.image = .icCrown
+        $0.contentMode = .scaleAspectFit
+        $0.isHidden = true
+    }
+    
     private let rivalImage = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
         $0.contentMode = .scaleAspectFit
@@ -79,7 +94,9 @@ final class MatchResultCardView: BaseUIView {
         
         rightProfileStackView.addArrangedSubviews(rivalImage, rivalNickName)
         
-        containerView.addSubviews(leftProfileStackView,
+        containerView.addSubviews(leftCrownImageView,
+                                  rightCrownImageView,
+                                  leftProfileStackView,
                                   rightProfileStackView,
                                   myScore,
                                   scoreSemicolon,
@@ -103,6 +120,12 @@ final class MatchResultCardView: BaseUIView {
             $0.leading.equalTo(containerView.snp.leading).inset(38)
         }
         
+        leftCrownImageView.snp.makeConstraints {
+            $0.bottom.equalTo(leftProfileStackView.snp.top).offset(2)
+            $0.centerX.equalTo(leftProfileStackView)
+            $0.size.equalTo(24)
+        }
+        
         myScore.snp.makeConstraints {
             $0.trailing.equalTo(scoreSemicolon.snp.leading).offset(-2)
             $0.centerY.equalTo(scoreSemicolon)
@@ -118,6 +141,12 @@ final class MatchResultCardView: BaseUIView {
             $0.centerY.equalTo(scoreSemicolon)
         }
         
+        rightCrownImageView.snp.makeConstraints {
+            $0.bottom.equalTo(rightProfileStackView.snp.top).offset(2)
+            $0.centerX.equalTo(rightProfileStackView)
+            $0.size.equalTo(24)
+        }
+        
         rivalImage.snp.makeConstraints {
             $0.size.equalTo(64)
         }
@@ -128,9 +157,29 @@ final class MatchResultCardView: BaseUIView {
         }
     }
     
+    // MARK: UI Methods
+    
+    // 텍스트 필드에서 받은 스코어로 CardView의 스코어 갱신하기
     func updateScore(myScore: String, rivalScore: String) {
+        self.currentMyScore = Int(myScore) ?? 0
+        self.currentRivalScore = Int(rivalScore) ?? 0
+        
         self.myScore.text = myScore
         self.rivalScore.text = rivalScore
+    }
+    
+    // 드롭다운에서 선택한 승자에 왕관 씌우기
+    func updateWinnerCrown(isMyWin: Bool) {
+        leftCrownImageView.isHidden = !isMyWin
+        rightCrownImageView.isHidden = isMyWin
+    }
+    
+    func getMyScore() -> Int {
+        return currentMyScore
+    }
+    
+    func getRivalScore() -> Int {
+        return currentRivalScore
     }
     
     func configure(myName: String, myImage: UIImage?, rivalName: String, rivalImage: UIImage?) {
