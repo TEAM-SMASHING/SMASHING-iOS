@@ -7,6 +7,8 @@
 
 import UIKit
 
+import SnapKit
+
 final class NotificationViewController: BaseViewController {
     
     // MARK: - Properties
@@ -48,6 +50,11 @@ extension NotificationViewController: UICollectionViewDataSource, UICollectionVi
         }
         
         cell.configure(notification: dummyNotifications[indexPath.item])
+        
+        cell.contentView.snp.makeConstraints {
+            $0.width.equalTo(collectionView.frame.width)
+        }
+        
         return cell
     }
     

@@ -49,7 +49,6 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.font = .pretendard(.textSmM)
         $0.numberOfLines = 0
         $0.textColor = .Text.secondary
-        $0.lineBreakMode = .byWordWrapping
     }
     
     // MARK: - Setup Methods
@@ -87,7 +86,7 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
     func configure(notification: TempNotification) {
         typeLabel.text = notification.type.rawValue
         timeLabel.text = "10:00 AM"
-        contentLabel.text = "'와쿠와쿠' 님이 소중한 후기를 보내주셨어요! 지금 확인해볼까요를레히히"
+        contentLabel.text = "'와쿠와쿠' 님이 소중한 후기를 보내주셨어요! 지금 확인해 볼까요 를레히히"
         backgroundColor = notification.isNew ? .clear : .Background.surface
     }
 }
