@@ -11,61 +11,48 @@ import SnapKit
 import Then
 
 final class MatchingSearchViewController: BaseViewController {
-    
+
     //MARK: - UIComponents
-    
-    private lazy var collectionview : UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 12
-        layout.minimumInteritemSpacing = 11
-        layout.sectionInset = UIEdgeInsets(top: 12, left: 16, bottom: 16, right: 16)
-        
-        let collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionview.backgroundColor = .black
-        collectionview.delegate = self
-        collectionview.dataSource = self
-        collectionview.showsVerticalScrollIndicator = false
-        collectionview.register(
-            MatchingSearchCell.self,
-            forCellWithReuseIdentifier: MatchingSearchCell.reuseIdentifier
-        )
-        return collectionview
-    }()
-    
+
+    private let matchingSearchView = MatchingSearchView()
+
     //MARK: - Properties
 
     private var matches: [MatchingSearchMockData] = []
 
     // MARK: - Lifecycle
-    
+
+    override func loadView() {
+        view = matchingSearchView
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupCollectionView()
+        setupHeaderActions()
         loadMockData()
     }
 
-    override func setUI() {
-        super.setUI()
-        view.backgroundColor = UIColor(resource: .Background.canvas)
-        view.addSubview(collectionview)
+    // MARK: - Setup Methods
+
+    private func setupCollectionView() {
+        matchingSearchView.collectionView.delegate = self
+        matchingSearchView.collectionView.dataSource = self
     }
 
-    override func setLayout() {
-        super.setLayout()
-        collectionview.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+    private func setupHeaderActions() {
+        matchingSearchView.headerView.onSearchTapped = { [weak self] in
+            self?.navigateToSearch()
         }
     }
-    
-    //MARK: - private Methods
 
-    private func getTierName(tier: Int) -> String {
-        guard let tierEnum = Tier.from(tierId: tier) else {
-            return "Unranked"
-        }
-        return tierEnum.displayName
+    // MARK: - Navigation
+
+    private func navigateToSearch() {
+        let searchVC = SearchResultViewController()
+        navigationController?.pushViewController(searchVC, animated: true)
     }
-    
+
 }
 
 //MARK: - DataSource
@@ -88,11 +75,10 @@ extension MatchingSearchViewController: UICollectionViewDataSource {
         ) as! MatchingSearchCell
 
         let match = self.matches[indexPath.row]
-        let tierName = self.getTierName(tier: match.tierId)
         cell.configure(
             nickname: match.nickname,
             gender: match.gender,
-            tier: tierName,
+            tierId: match.tierId,
             wins: match.wins,
             losses: match.losses,
             reviews: match.reviewCount
@@ -231,7 +217,7 @@ extension MatchingSearchViewController {
                 reviewCount: 24
             )
         ]
-        self.collectionview.reloadData()
+        self.matchingSearchView.collectionView.reloadData()
     }
 
 }
