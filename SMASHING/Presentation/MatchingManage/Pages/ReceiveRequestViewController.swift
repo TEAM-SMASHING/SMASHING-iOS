@@ -58,17 +58,17 @@ final class ReceiveRequestViewController: BaseViewController {
     private func getTierName(tier: Int) -> String {
         switch tier {
         case 1:
-            return "Bronze I"
+            return "Iron I"
         case 2:
-            return "Silver I"
+            return "Bronze I"
         case 3:
-            return "Gold I"
+            return "Silver I"
         case 4:
-            return "Platinum I"
+            return "Gold I"
         case 5:
-            return "Diamond I"
+            return "Platinum I"
         case 6:
-            return "Master"
+            return "Diamond I"
         case 7:
             return "Challenger"
         default:
@@ -80,18 +80,31 @@ final class ReceiveRequestViewController: BaseViewController {
 
 extension ReceiveRequestViewController: UICollectionViewDataSource {
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int) -> Int {
         return self.matches.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ReceiveRequestCell.reuseIdentifier,
-            for: indexPath) as! ReceiveRequestCell
+            for: indexPath
+        ) as! ReceiveRequestCell
 
         let match = self.matches[indexPath.row]
         let tierName = self.getTierName(tier: match.tierId)
-        cell.configure(nickname: match.nickname, tier: tierName, wins: match.wins, losses: match.losses, reviews: match.reviewCount)
+        cell.configure(
+            nickname: match.nickname,
+            gender: match.gender,
+            tier: tierName,
+            wins: match.wins,
+            losses: match.losses,
+            reviews: match.reviewCount
+        )
         return cell
     }
 }
@@ -100,7 +113,11 @@ extension ReceiveRequestViewController: UICollectionViewDataSource {
 
 extension ReceiveRequestViewController: UICollectionViewDelegateFlowLayout {
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         let width = (collectionView.frame.width - 43) / 2
         let height: CGFloat = 224
         return CGSize(width: width, height: height)
