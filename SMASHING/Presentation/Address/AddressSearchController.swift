@@ -18,12 +18,8 @@ final class AddressSearchViewController: BaseViewController {
         "서울특별시 성북구 안암로 1길"
     ]
     
-    override func loadView() {
-        self.view = mainView
-    }
-    
     override func viewDidLoad() {
-        super.viewDidLoad()
+        self.view = mainView
         setDelegate()
     }
     
