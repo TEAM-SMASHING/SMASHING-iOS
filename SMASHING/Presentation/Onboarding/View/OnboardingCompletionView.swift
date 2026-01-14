@@ -79,9 +79,3 @@ final class OnboardingCompletionView: BaseUIView {
         self.action = action
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    OnboardingCompletionViewController()
-}
