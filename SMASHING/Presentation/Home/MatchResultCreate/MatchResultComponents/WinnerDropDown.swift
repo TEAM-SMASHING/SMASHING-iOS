@@ -70,6 +70,7 @@ final class WinnerDropDown: UIButton {
     func updateSelectedWinner(_ winner: String) {
         label.text = winner
         label.textColor = .Text.primary
+        chevronImageView.isHidden = true
     }
 }
 
