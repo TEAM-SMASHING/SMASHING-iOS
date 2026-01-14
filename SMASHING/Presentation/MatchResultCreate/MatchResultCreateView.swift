@@ -75,7 +75,9 @@ final class MatchResultCreateView: BaseUIView {
         $0.textColor = .Text.red
     }
     
-    private let myScoreTextField = ScoreTextField()
+    private lazy var myScoreTextField = ScoreTextField().then {
+        $0.addTarget(self, action: #selector(scoreTextFieldDidChange), for: .editingChanged)
+    }
     
     private let semiColonLabel = UILabel().then {
         $0.text = ":"
@@ -83,15 +85,13 @@ final class MatchResultCreateView: BaseUIView {
         $0.textColor = .Text.primary
     }
     
-    private let rivalScoreTextField = ScoreTextField()
+    private lazy var rivalScoreTextField = ScoreTextField().then {
+        $0.addTarget(self, action: #selector(scoreTextFieldDidChange), for: .editingChanged)
+    }
     
     let nextButton = CTAButton(label: "다음")
-        
+    
     override func setUI() {
-        
-        
-      
-        
         dropDownOptionsView.addSubviews(myOptionButton, rivalOptionButton)
         
         addSubviews(navigationBar,
@@ -108,9 +108,6 @@ final class MatchResultCreateView: BaseUIView {
                     semiColonLabel,
                     rivalScoreTextField,
                     dropDownOptionsView)
-        
-        myScoreTextField.addTarget(self, action: #selector(scoreTextFieldDidChange), for: .editingChanged)
-        rivalScoreTextField.addTarget(self, action: #selector(scoreTextFieldDidChange), for: .editingChanged)
     }
     
     override func setLayout() {
@@ -226,8 +223,6 @@ final class MatchResultCreateView: BaseUIView {
     private func scoreTextFieldDidChange() {
         let myScore = myScoreTextField.text ?? "0"
         let rivalScore = rivalScoreTextField.text ?? "0"
-        
-//        viewModel.updateScores(myScore: myScore, rivalScore: rivalScore)
         
         matchResultCard.updateScore(myScore: myScore, rivalScore: rivalScore)
     }

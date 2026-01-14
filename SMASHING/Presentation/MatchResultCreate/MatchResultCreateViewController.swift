@@ -37,7 +37,6 @@ final class MatchResultCreateViewController: BaseViewController {
     
     @objc
     private func didTapNextButton() {
-        print("didtapnextbutton")
         let vc = ReviewCreateViewController()
         navigationController?.pushViewController(vc, animated: true)
     }

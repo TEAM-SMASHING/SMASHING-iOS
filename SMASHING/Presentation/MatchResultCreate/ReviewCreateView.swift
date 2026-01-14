@@ -47,9 +47,16 @@ final class ReviewCreateView: BaseUIView {
         $0.backgroundColor = .Border.secondary
     }
     
-    private let badButton = SatisfactionButton(title: "별로예요")
-    private let goodButton = SatisfactionButton(title: "좋아요")
-    private let greatButton = SatisfactionButton(title: "최고예요")
+    private lazy var badButton = SatisfactionButton(title: "별로예요").then {
+        $0.circleButton.addTarget(self, action: #selector(badButtonDidTap), for: .touchUpInside)
+    }
+    private lazy var goodButton = SatisfactionButton(title: "좋아요").then {
+        $0.circleButton.addTarget(self, action: #selector(goodButtonDidTap), for: .touchUpInside)
+    }
+    
+    private lazy var greatButton = SatisfactionButton(title: "최고예요").then {
+        $0.circleButton.addTarget(self, action: #selector(greatButtonDidTap), for: .touchUpInside)
+    }
 
     private let rapidReviewSelectionLabel = UILabel().then {
         $0.text = "빠른 후기를 선택해주세요"
@@ -57,7 +64,7 @@ final class ReviewCreateView: BaseUIView {
         $0.textColor = .Text.primary
     }
     
-    let rapidReviewChipContainer = RapidReviewChipContainer(reviews: RapidReview.allCases)
+    let rapidReviewChipContainer = RapidReviewChipContainer()
     
     private let reviewDescription = UILabel().then {
         $0.text = "따뜻한 경기 후기를 보내주세요!"
@@ -83,9 +90,7 @@ final class ReviewCreateView: BaseUIView {
                     reviewTextView,
                     submitButton)
         
-        badButton.circleButton.addTarget(self, action: #selector(badButtonDidTap), for: .touchUpInside)
-        goodButton.circleButton.addTarget(self, action: #selector(goodButtonDidTap), for: .touchUpInside)
-        greatButton.circleButton.addTarget(self, action: #selector(greatButtonDidTap), for: .touchUpInside)
+        rapidReviewChipContainer.configure(reviews: RapidReview.allCases)
     }
     
     @objc

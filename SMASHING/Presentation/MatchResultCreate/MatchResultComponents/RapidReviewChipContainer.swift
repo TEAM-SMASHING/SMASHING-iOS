@@ -16,23 +16,17 @@ final class RapidReviewChipContainer: BaseUIView {
     private let verticalSpacing: CGFloat = 8
     private var chips: [RapidReviewChip] = []
     
-    init(reviews: [RapidReview]) {
-        super.init(frame: .zero)
-        backgroundColor = .Background.canvas
-        setupChips(reviews: reviews)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupChips(reviews: [RapidReview]) {
+    func configure(reviews: [RapidReview]) {
+        chips.forEach { $0.removeFromSuperview() }
+        chips.removeAll()
+        
         reviews.forEach { review in
             let chip = RapidReviewChip(review: review)
             chips.append(chip)
-            print(chips.count)
-            addSubview(chip)
+            addSubviews(chip)
         }
+        
+        setNeedsLayout()
     }
     
     override func layoutSubviews() {
