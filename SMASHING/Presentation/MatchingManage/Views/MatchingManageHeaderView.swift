@@ -22,7 +22,7 @@ class MatchingManageHeaderView: BaseUIView {
         var title: String {
             switch self {
             case .received: return "받은 요청"
-            case .sent: return "보낸 요청"
+            case .sent: return "보낸 매칭"
             case .confirmed: return "매칭 확정"
             }
         }
@@ -126,7 +126,10 @@ class MatchingManageHeaderView: BaseUIView {
             self.tabButtons.forEach { button in
                 let isSelected = button.tag == tab.rawValue
                 button.isSelected = isSelected
-                button.backgroundColor = isSelected ? UIColor(resource: .Background.selected) : UIColor(resource: .Background.surface)
+                button.backgroundColor = isSelected ? UIColor(
+                    resource: .Background.selected) : UIColor(
+                        resource: .Background.surface
+                    )
             }
         }
     }
