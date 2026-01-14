@@ -11,6 +11,7 @@ import SnapKit
 import Then
 
 enum HomeViewLayout: Int, CaseIterable {
+    case navigationBar
     case matching
     case recommendedUser
     case ranking
@@ -25,7 +26,9 @@ extension HomeViewLayout {
     
     var itemSize: NSCollectionLayoutSize {
         switch self {
-            case .matching:
+        case .navigationBar:
+            return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
+        case .matching:
             return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(202))
         case .recommendedUser:
             return NSCollectionLayoutSize(widthDimension: .absolute(166), heightDimension: .absolute(187))
@@ -40,8 +43,10 @@ extension HomeViewLayout {
     
     var groupSize: NSCollectionLayoutSize {
         switch self {
+        case .navigationBar:
+            return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
         case .matching:
-            return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(202))
+            return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(218))
         case .recommendedUser:
             return NSCollectionLayoutSize(widthDimension: .absolute(166), heightDimension: .absolute(187))
         case .ranking:
@@ -61,6 +66,8 @@ extension HomeViewLayout {
             return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(27))
         case .ranking:
             return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(27))
+        default:
+            return nil
         }
     }
     
@@ -70,18 +77,13 @@ extension HomeViewLayout {
     }
     
     var headerEdgeInsets: NSDirectionalEdgeInsets {
-        switch self {
-        case .matching:
-            return NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        case .recommendedUser:
-            return NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        case .ranking:
-            return NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        }
+        return defaultEdgeInsets
     }
     
     var sectionBehavior: UICollectionLayoutSectionOrthogonalScrollingBehavior {
         switch self {
+        case .navigationBar:
+            return .none
         case .matching:
             return .none
         case .recommendedUser:
@@ -93,6 +95,8 @@ extension HomeViewLayout {
     
     var sectionEdgeInsets: NSDirectionalEdgeInsets {
         switch self {
+        case .navigationBar:
+            return NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 20, trailing: 16)
         case .matching:
             return NSDirectionalEdgeInsets(top: 28, leading: 16, bottom: 40, trailing: 16)
         case .recommendedUser:
@@ -121,12 +125,12 @@ extension HomeViewLayout {
         section.orthogonalScrollingBehavior = self.sectionBehavior
         
         switch self {
-        case .matching:
-            break
         case .recommendedUser:
             section.interGroupSpacing = 12
         case .ranking:
             section.interGroupSpacing = 12
+        default:
+            break
         }
         
         if let header = self.header {

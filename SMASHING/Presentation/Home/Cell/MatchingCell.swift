@@ -34,12 +34,9 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.textAlignment = .center
     }
     
-    private let VSLabel = UILabel().then {
-        $0.text = "VS"
-        $0.setPretendard(.headerHeroB)
-        $0.textColor = .Text.secondary
-        $0.textAlignment = .center
-    }
+    private let VSImage = UIImageView().then {
+        $0.image = .icVs
+        $0.contentMode = .scaleAspectFit    }
     
     private let rightProfileStackView = UIStackView().then {
         $0.axis = .vertical
@@ -60,7 +57,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
     
     private let writeResultButton = UIButton().then {
-        $0.setTitle("매칭 결과 작성하기", for: .normal)
+        $0.setTitle("결과 작성하기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textMdM)
         $0.setTitleColor(.Text.blue, for: .normal) //emphasis 컬러 추가
         $0.backgroundColor = .Button.backgroundPrimaryActive
@@ -72,7 +69,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         
         rightProfileStackView.addArrangedSubviews(rivalImage, rivalNickName)
         
-        containerView.addSubviews(leftProfileStackView, rightProfileStackView, VSLabel, writeResultButton)
+        containerView.addSubviews(leftProfileStackView, rightProfileStackView, VSImage, writeResultButton)
         
         contentView.addSubviews(containerView)
     }
@@ -91,8 +88,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.leading.equalTo(containerView.snp.leading).inset(50.5)
         }
         
-        VSLabel.snp.makeConstraints {
-            $0.top.equalTo(containerView.snp.top).offset(49)
+        VSImage.snp.makeConstraints {
+            $0.top.equalTo(containerView.snp.top).offset(24)
             $0.centerX.equalToSuperview()
         }
         

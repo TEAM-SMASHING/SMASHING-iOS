@@ -13,9 +13,17 @@ import Then
 final class CommonSectionHeader: UICollectionReusableView {
     static let identifier = "CommonSectionHeader"
     
+    var onInfoButtonTapped: (() -> Void)?
+    var onMoreButtonTapped: (() -> Void)?
+    
     private let titleLabel = UILabel().then {
         $0.setPretendard(.subtitleLgSb)
         $0.textColor = .Text.primary
+    }
+    
+    private let infoButton = UIButton().then {
+        $0.setImage(.icInfo, for: .normal)
+        $0.imageView?.contentMode = .scaleAspectFit
     }
     
     private let moreButton = UIButton().then {
@@ -36,7 +44,20 @@ final class CommonSectionHeader: UICollectionReusableView {
     }
     
     private func setUI() {
-        addSubviews(titleLabel, moreButton)
+        addSubviews(titleLabel, infoButton, moreButton)
+        
+        infoButton.addTarget(self, action: #selector(infoButtonDidTap), for: .touchUpInside)
+        moreButton.addTarget(self, action: #selector(moreButtonDidTap), for: .touchUpInside)
+    }
+    
+    @objc
+    private func infoButtonDidTap() {
+        onInfoButtonTapped?()
+    }
+    
+    @objc
+    private func moreButtonDidTap() {
+        onMoreButtonTapped?()
     }
     
     private func setLayout() {
@@ -44,13 +65,20 @@ final class CommonSectionHeader: UICollectionReusableView {
             $0.leading.centerY.equalToSuperview()
         }
         
+        infoButton.snp.makeConstraints {
+            $0.leading.equalTo(titleLabel.snp.trailing).offset(2)
+            $0.centerY.equalToSuperview()
+            $0.size.equalTo(24)
+        }
+        
         moreButton.snp.makeConstraints {
             $0.trailing.bottom.equalToSuperview()
         }
     }
     
-    func configure(title: String, showMoreButton: Bool = false) {
+    func configure(title: String, showInfoButton: Bool, showMoreButton: Bool = false) {
         titleLabel.text = title
+        infoButton.isHidden = !showInfoButton
         moreButton.isHidden = !showMoreButton
     }
 }

@@ -40,6 +40,7 @@ final class HomeView: UICollectionView {
     }
     
     private func register() {
+        self.cellRegister(HomeNavigationBarCell.self)
         self.cellRegister(MatchingCell.self)
         self.cellRegister(RecomendedUserCell.self)
         self.cellRegister(RankingCell.self)

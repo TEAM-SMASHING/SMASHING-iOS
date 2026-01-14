@@ -106,7 +106,7 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
         
         nickNameStackView.snp.makeConstraints {
-            $0.top.equalTo(profileImageView.snp.bottom).offset(4)
+            $0.top.equalTo(profileImageView.snp.bottom)
             $0.centerX.equalTo(containerView).inset(13)
         }
         

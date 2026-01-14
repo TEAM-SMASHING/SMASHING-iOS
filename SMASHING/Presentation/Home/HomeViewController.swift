@@ -22,13 +22,13 @@ final class HomeViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setCollectionView()
+        view.backgroundColor = .Background.canvas
     }
     
     private func setCollectionView() {
         homeView.delegate = self
         homeView.dataSource = self
     }
-    
 }
 
 extension HomeViewController: UICollectionViewDataSource {
@@ -40,6 +40,8 @@ extension HomeViewController: UICollectionViewDataSource {
         guard let sectionType = HomeViewLayout(rawValue: section) else { return 0 }
         
         switch sectionType {
+        case .navigationBar:
+            return 1
         case .matching:
             return 1
         case .recommendedUser:
@@ -53,6 +55,9 @@ extension HomeViewController: UICollectionViewDataSource {
         guard let sectionType = HomeViewLayout(rawValue: indexPath.section) else { return UICollectionViewCell() }
         
         switch sectionType {
+        case .navigationBar:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNavigationBarCell.reuseIdentifier, for: indexPath) as? HomeNavigationBarCell else { return UICollectionViewCell() }
+            return cell
         case .matching:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.reuseIdentifier, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
             return cell
@@ -80,20 +85,28 @@ extension HomeViewController: UICollectionViewDataSource {
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MatchingSectionHeader.identifier, for: indexPath) as? MatchingSectionHeader else {
                 return UICollectionReusableView()
             }
-            header.configure(title: "동현님", subTitle: "곧 다가오는 매칭이 있어요")
+            header.configure(title: "동현님,", subTitle: "곧 다가오는 매칭이 있어요")
             return header
         case .recommendedUser:
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.identifier, for: indexPath) as? CommonSectionHeader else {
                 return UICollectionReusableView()
             }
-            header.configure(title: "주변 추천 유저")
+            header.configure(title: "주변 추천 유저", showInfoButton: true)
+            header.onInfoButtonTapped = { [weak self ] in
+                self?.showRecommendedUserInfo()
+            }
             return header
         case .ranking:
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.identifier, for: indexPath) as? CommonSectionHeader else {
                 return UICollectionReusableView()
             }
-            header.configure(title: "우리 동네 랭커", showMoreButton: true)
+            header.configure(title: "우리 동네 랭커", showInfoButton: false, showMoreButton: true)
+            header.onMoreButtonTapped = { [weak self] in
+                self?.showMore()
+            }
             return header
+        default:
+            return UICollectionReusableView()
         }
     }
     
@@ -101,6 +114,17 @@ extension HomeViewController: UICollectionViewDataSource {
 
 extension HomeViewController: UICollectionViewDelegate {
     
+}
+
+// MARK: Header Button
+extension HomeViewController {
+    private func showRecommendedUserInfo() {
+        print("유저 추천 인포 탭")
+    }
+    
+    private func showMore() {
+        print("모두보기")
+    }
 }
 
 
