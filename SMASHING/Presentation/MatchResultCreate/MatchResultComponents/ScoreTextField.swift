@@ -12,12 +12,15 @@ import Then
 
 final class ScoreTextField: UITextField {
     
+    var onDone: (() -> Void)?
+    
     private let defaultBorderColor: UIColor = .clear
     private let typingBorderColor: UIColor = .Border.typing
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
+        setupToolbar()
     }
     
     required init?(coder: NSCoder) {
@@ -41,6 +44,23 @@ final class ScoreTextField: UITextField {
             $0.width.equalTo(60)
             $0.height.equalTo(40)
         }
+    }
+    
+    private func setupToolbar() {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButton = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(doneButtonDidTap))
+        
+        toolbar.items = [flexSpace, doneButton]
+        self.inputAccessoryView = toolbar
+    }
+    
+    @objc
+    private func doneButtonDidTap() {
+        self.resignFirstResponder()
+        onDone?()
     }
     
     private func configurePlaceholderColor(_ color: UIColor) {
