@@ -13,6 +13,8 @@ import Then
 final class SatisfactionButton: UIView {
     private let titleText: String
     
+    private var circleButtonSizeConstraint: Constraint?
+    
     var isSelectedState: Bool = false {
         didSet {
             updateAppearance()
@@ -27,7 +29,7 @@ final class SatisfactionButton: UIView {
     
     let circleButton = UIButton().then {
         $0.backgroundColor = .Button.textPrimaryDisabled
-        $0.layer.cornerRadius = 28
+        $0.layer.cornerRadius = 15
         $0.clipsToBounds = true
     }
     
@@ -68,7 +70,7 @@ final class SatisfactionButton: UIView {
         }
         
         circleButton.snp.makeConstraints {
-            $0.size.equalTo(56)
+            circleButtonSizeConstraint = $0.size.equalTo(30).constraint
         }
         
         checkmark.snp.makeConstraints {
@@ -79,10 +81,14 @@ final class SatisfactionButton: UIView {
     
     private func updateAppearance() {
         if isSelectedState {
+            circleButtonSizeConstraint?.update(offset: 40)
+            circleButton.layer.cornerRadius = 20
             circleButton.backgroundColor = .Button.backgroundSecondaryActive
             checkmark.isHidden = false
             label.textColor = .Text.primary
         } else {
+            circleButtonSizeConstraint?.update(offset: 30)
+            circleButton.layer.cornerRadius = 15
             circleButton.backgroundColor = .Button.textPrimaryDisabled
             checkmark.isHidden = true
             label.textColor = .Text.disabled
