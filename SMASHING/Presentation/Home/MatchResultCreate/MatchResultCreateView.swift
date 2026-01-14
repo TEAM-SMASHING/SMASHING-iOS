@@ -52,8 +52,22 @@ final class MatchResultCreateView: BaseUIView {
         $0.textAlignment = .center
     }
     
-    private let score = UILabel().then {
-        $0.text = "0 : 0"
+    private let myScore = UILabel().then {
+        $0.text = "0"
+        $0.setPretendard(.headerHeroB)
+        $0.textColor = .Text.secondary
+        $0.textAlignment = .center
+    }
+    
+    private let scoreSemicolon = UILabel().then {
+        $0.text = ":"
+        $0.setPretendard(.headerHeroB)
+        $0.textColor = .Text.secondary
+        $0.textAlignment = .center
+    }
+    
+    private let rivalScore = UILabel().then {
+        $0.text = "0"
         $0.setPretendard(.headerHeroB)
         $0.textColor = .Text.secondary
         $0.textAlignment = .center
@@ -138,11 +152,31 @@ final class MatchResultCreateView: BaseUIView {
         
         rightProfileStackView.addArrangedSubviews(rivalImage, rivalNickName)
         
-        containerView.addSubviews(leftProfileStackView, rightProfileStackView, score)
+        containerView.addSubviews(leftProfileStackView,
+                                  rightProfileStackView,
+                                  myScore,
+                                  scoreSemicolon,
+                                  rivalScore)
         
         dropDownOptionsView.addSubviews(myOptionButton, rivalOptionButton)
         
-        addSubviews(navigationBar, titleLabel, subTitleLabel, containerView, winnerLabel, scoreLabel, winnerRequiredStar, winnerDropDown, scoreRequiredStar, nextButton, myScoreTextField, semiColonLabel, rivalScoreTextField, dropDownOptionsView)
+        addSubviews(navigationBar,
+                    titleLabel,
+                    subTitleLabel,
+                    containerView,
+                    winnerLabel,
+                    scoreLabel,
+                    winnerRequiredStar,
+                    winnerDropDown,
+                    scoreRequiredStar,
+                    nextButton,
+                    myScoreTextField,
+                    semiColonLabel,
+                    rivalScoreTextField,
+                    dropDownOptionsView)
+        
+        myScoreTextField.addTarget(self, action: #selector(scoreTextFieldDidChange), for: .editingChanged)
+        rivalScoreTextField.addTarget(self, action: #selector(scoreTextFieldDidChange), for: .editingChanged)
     }
     
     override func setLayout() {
@@ -176,10 +210,19 @@ final class MatchResultCreateView: BaseUIView {
             $0.leading.equalTo(containerView.snp.leading).inset(38)
         }
         
-        score.snp.makeConstraints {
-            $0.top.equalTo(containerView.snp.top).offset(50)
-            $0.bottom.equalTo(containerView.snp.bottom).inset(68)
+        myScore.snp.makeConstraints {
+            $0.trailing.equalTo(scoreSemicolon.snp.leading).offset(-2)
+            $0.centerY.equalTo(scoreSemicolon)
+        }
+        
+        scoreSemicolon.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.centerY.equalTo(myImage)
+        }
+        
+        rivalScore.snp.makeConstraints {
+            $0.leading.equalTo(scoreSemicolon.snp.trailing).offset(2)
+            $0.centerY.equalTo(scoreSemicolon)
         }
         
         rivalImage.snp.makeConstraints {
@@ -277,6 +320,16 @@ final class MatchResultCreateView: BaseUIView {
         if isDropDownExpanded {
             toggleDropDown()
         }
+    }
+    
+    @objc
+    private func scoreTextFieldDidChange() {
+        let myScore = myScoreTextField.text ?? "0"
+        let rivalScore = rivalScoreTextField.text ?? "0"
+        
+//        viewModel.updateScores(myScore: myScore, rivalScore: rivalScore)
+        self.myScore.text = "\(myScore)"
+        self.rivalScore.text = "\(rivalScore)"
     }
 }
 
