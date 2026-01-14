@@ -8,12 +8,16 @@
 import UIKit
 
 enum Gender: String, Codable {
-    case male = "남성"
-    case female = "여성"
-
-    enum CodingKeys: String, CodingKey {
-        case male = "MALE"
-        case female = "FEMALE"
+    case male = "MALE"
+    case female = "FEMALE"
+    
+    var displayName: String {
+        switch self {
+        case .male:
+            return "남성"
+        case .female:
+            return "여성"
+        }
     }
     
     var imageLg: UIImage {
