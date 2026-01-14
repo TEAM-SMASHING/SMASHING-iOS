@@ -49,7 +49,11 @@ final class MatchingManageViewController: BaseViewController {
         super.setUI()
         self.view.backgroundColor = UIColor(resource: .Background.canvas)
         navigationBar.setLeftButtonHidden(true)
-        view.addSubviews(navigationBar, headerView, pageViewController.view)
+        view.addSubviews(
+            navigationBar,
+            headerView,
+            pageViewController.view
+        )
         addChild(pageViewController)
         pageViewController.didMove(toParent: self)
     }
