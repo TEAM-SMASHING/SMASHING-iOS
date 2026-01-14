@@ -47,13 +47,15 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     private let contentLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
+        $0.numberOfLines = 0
         $0.textColor = .Text.secondary
+        $0.lineBreakMode = .byWordWrapping
     }
     
     // MARK: - Setup Methods
     
     override func setUI() {
-        addSubviews(profileImage, typeLabel, timeLabel, contentLabel)
+        contentView.addSubviews(profileImage, typeLabel, timeLabel, contentLabel)
     }
     
     override func setLayout() {
@@ -66,6 +68,7 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
         typeLabel.snp.makeConstraints {
             $0.leading.equalTo(profileImage.snp.trailing).offset(12)
             $0.top.equalToSuperview().offset(12)
+            $0.trailing.lessThanOrEqualTo(timeLabel.snp.leading).offset(-8)
         }
         
         timeLabel.snp.makeConstraints {
@@ -76,7 +79,7 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(typeLabel.snp.bottom).offset(4)
             $0.leading.equalTo(typeLabel)
-            $0.trailing.equalToSuperview().offset(16)
+            $0.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(12)
         }
     }
