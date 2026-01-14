@@ -11,8 +11,6 @@ import SnapKit
 import Then
 
 final class SatisfactionButton: UIView {
-    private let titleText: String
-    
     private var circleButtonSizeConstraint: Constraint?
     
     var isSelectedState: Bool = false {
@@ -46,7 +44,6 @@ final class SatisfactionButton: UIView {
     }
     
     init(title: String) {
-        self.titleText = title
         super.init(frame: .zero)
         
         label.text = title
