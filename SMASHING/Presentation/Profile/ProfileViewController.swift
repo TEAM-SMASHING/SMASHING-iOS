@@ -12,12 +12,11 @@ final class ProfileViewController: BaseViewController {
     // MARK: - Lifecycle
 
     override func setUI() {
-        super.setUI()
         self.view.backgroundColor = .systemYellow
     }
 
     override func setLayout() {
-        super.setLayout()
+        
     }
 
 }
