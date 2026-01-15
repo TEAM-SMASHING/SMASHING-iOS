@@ -13,7 +13,8 @@ import Then
 
 extension RankingViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return rankingData.count
+//        return rankingData.count
+        15
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -50,7 +51,7 @@ final class RankingViewController: BaseViewController {
         mainView.rankingCollectionView.delegate = self
         mainView.rankingCollectionView.dataSource = self
         
-        updateEmptyState()
+//        updateEmptyState()
     }
     
     private func updateEmptyState() {
