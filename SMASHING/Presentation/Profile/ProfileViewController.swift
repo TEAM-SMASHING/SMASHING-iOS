@@ -21,12 +21,3 @@ final class ProfileViewController: BaseViewController {
     }
 
 }
-
-// MARK: - Preview
-
-import SwiftUI
-
-@available(iOS 18.0, *)
-#Preview {
-    ProfileViewController()
-}

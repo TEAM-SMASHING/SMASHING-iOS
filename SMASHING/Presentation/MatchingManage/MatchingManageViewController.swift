@@ -21,12 +21,3 @@ final class MatchingManageViewController: BaseViewController {
     }
 
 }
-
-// MARK: - Preview
-
-import SwiftUI
-
-@available(iOS 18.0, *)
-#Preview {
-    MatchingManageViewController()
-}

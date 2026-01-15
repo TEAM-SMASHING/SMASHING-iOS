@@ -88,10 +88,3 @@ extension TierExplanationViewController: UICollectionViewDelegate, UICollectionV
         }
     }
 }
-
-
-import SwiftUI
-@available(iOS 19.0, *)
-#Preview {
-    TierExplanationViewController()
-}

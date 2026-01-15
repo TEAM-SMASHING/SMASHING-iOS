@@ -16,7 +16,7 @@ final class AreaSelectionView: BaseUIView {
     
     private let placeholderText = "주소를 검색해주세요"
     
-    private var action: (() -> Void)?
+    var action: (() -> Void)?
     
     // MARK: - UI Components
     
@@ -72,9 +72,5 @@ final class AreaSelectionView: BaseUIView {
             addressLabel.text = placeholderText
             addressLabel.textColor = .systemGray2
         }
-    }
-    
-    func configure(action: @escaping () -> Void) {
-        self.action = action
-    }
+    }    
 }

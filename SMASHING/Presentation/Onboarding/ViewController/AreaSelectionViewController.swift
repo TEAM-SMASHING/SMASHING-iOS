@@ -24,6 +24,6 @@ final class AreaSelectionViewController: BaseViewController {
     }
     
     func configure(action: @escaping () -> Void) {
-        areaSelectionView.configure(action: action)
+        areaSelectionView.action
     }
 }

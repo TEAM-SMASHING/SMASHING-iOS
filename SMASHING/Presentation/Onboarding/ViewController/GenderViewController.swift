@@ -26,6 +26,6 @@ final class GenderViewController: BaseViewController {
     // MARK: - Setup Methods
     
     func configure(action: @escaping (Gender) -> Void) {
-        genderView.configure(action: action)
+        genderView.action
     }
 }

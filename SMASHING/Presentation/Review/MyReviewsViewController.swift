@@ -70,9 +70,3 @@ extension MyReviewsViewController: UICollectionViewDataSource {
         return cell
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    MyReviewsViewController()
-}

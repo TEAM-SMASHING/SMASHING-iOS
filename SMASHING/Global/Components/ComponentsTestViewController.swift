@@ -111,9 +111,3 @@ class TestViewController: UIViewController {
         }
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    TestViewController()
-}

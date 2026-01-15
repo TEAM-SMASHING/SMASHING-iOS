@@ -14,7 +14,7 @@ final class NicknameView: BaseUIView {
     
     // MARK: - Properties
     
-    private var action: (() -> Void)?
+    var action: (() -> Void)?
 
     // MARK: - UI Components
     

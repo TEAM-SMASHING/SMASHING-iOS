@@ -12,6 +12,10 @@ import Then
 
 final class OnboardingView: BaseUIView {
     
+    // MARK: - Properties
+    
+    var nextAction: (() -> Void)?
+    
     // MARK: - UI Components
     
     let navigationBar = CustomNavigationBar(title: "", leftAction: nil)
@@ -39,17 +43,16 @@ final class OnboardingView: BaseUIView {
         $0.backgroundColor = .Background.canvas
     }
     
-    let nextButton = CTAButton(label: "다음")
+    lazy var nextButton = CTAButton(label: "다음") {
+        self.nextAction?()
+    }
     
     // MARK: - Setup Methods
     
     override func setUI() {
         backgroundColor = .Background.canvas
-        addSubviews(
-            navigationBar, progressBar,
-            mainTitleLabel, subTitleLabel,
-            contentView, nextButton
-        )
+        addSubviews(navigationBar, progressBar, mainTitleLabel, subTitleLabel,
+                    contentView, nextButton)
     }
     
     override func setLayout() {

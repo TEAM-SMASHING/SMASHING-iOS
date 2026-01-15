@@ -19,9 +19,3 @@ class ViewController: UIViewController {
         self.hideKeyboardWhenDidTap()
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    ViewController()
-}

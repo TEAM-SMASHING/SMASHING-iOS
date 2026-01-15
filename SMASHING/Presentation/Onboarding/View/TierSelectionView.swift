@@ -14,7 +14,8 @@ final class TierSelectionView: BaseUIView {
     
     // MARK: - Properties
     
-    private var action: ((Tier) -> Void)?
+    var action: ((Tier) -> Void)?
+    var nextAction: (() -> Void)?
     private var buttons: [TierButton] = []
     
     private let tierOptions: [(Tier, String)] = [

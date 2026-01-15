@@ -14,7 +14,7 @@ final class GenderView: BaseUIView {
     
     // MARK: - Properties
     
-    private var action: ((Gender) -> Void)?
+    var action: ((Gender) -> Void)?
 
     // MARK: - UI Components
     
@@ -42,10 +42,6 @@ final class GenderView: BaseUIView {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(stackView.snp.width).multipliedBy(0.5).offset(-11)
         }
-    }
-    
-    func configure(action: @escaping (Gender) -> Void) {
-        self.action = action
     }
     
     // MARK: - Actions

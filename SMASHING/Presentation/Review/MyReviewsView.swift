@@ -161,9 +161,3 @@ final class MyReviewsView: BaseUIView {
         }
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    MyReviewsViewController()
-}

@@ -48,6 +48,8 @@ final class SportsChip: BaseUIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Setup Methods
 
     private func setupAttributes() {
         self.layer.cornerRadius = 20

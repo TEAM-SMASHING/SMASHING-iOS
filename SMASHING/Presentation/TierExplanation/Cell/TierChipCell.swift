@@ -36,7 +36,6 @@ final class TierChipCell : BaseUICollectionViewCell, ReuseIdentifiable {
     }
     
     override func setLayout() {
-        
         label.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
