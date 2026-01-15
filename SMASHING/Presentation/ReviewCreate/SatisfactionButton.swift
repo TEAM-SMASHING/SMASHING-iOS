@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 final class SatisfactionButton: BaseUIView {
-    private var circleButtonSizeConstraint: Constraint?
+   // private var circleButtonSizeConstraint: Constraint?
     
     var isSelectedState: Bool = false {
         didSet {
@@ -48,8 +48,8 @@ final class SatisfactionButton: BaseUIView {
         
         label.text = title
         backgroundColor = .Background.surface
-        setUI()
-        setLayout()
+//        setUI()
+//        setLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -68,7 +68,8 @@ final class SatisfactionButton: BaseUIView {
         }
         
         circleButton.snp.makeConstraints {
-            circleButtonSizeConstraint = $0.size.equalTo(30).constraint
+//            circleButtonSizeConstraint = $0.size.equalTo(30).constraint
+            $0.size.equalTo(30)
         }
         
         checkmark.snp.makeConstraints {
@@ -79,13 +80,21 @@ final class SatisfactionButton: BaseUIView {
     
     private func updateAppearance() {
         if isSelectedState {
-            circleButtonSizeConstraint?.update(offset: 40)
+            circleButton.snp.updateConstraints {
+    //            circleButtonSizeConstraint = $0.size.equalTo(30).constraint
+                $0.size.equalTo(40)
+            }
+           // circleButtonSizeConstraint?.update(offset: 40)
             circleButton.layer.cornerRadius = 20
             circleButton.backgroundColor = .Button.backgroundSecondaryActive
             checkmark.isHidden = false
             label.textColor = .Text.primary
         } else {
-            circleButtonSizeConstraint?.update(offset: 30)
+//            circleButtonSizeConstraint?.update(offset: 30)
+            circleButton.snp.updateConstraints {
+//                circleButtonSizeConstraint = $0.size.equalTo(30).constraint
+                $0.size.equalTo(30)
+            }
             circleButton.layer.cornerRadius = 15
             circleButton.backgroundColor = .Button.textPrimaryDisabled
             checkmark.isHidden = true
