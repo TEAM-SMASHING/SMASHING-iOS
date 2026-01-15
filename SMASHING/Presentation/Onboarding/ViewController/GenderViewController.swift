@@ -21,7 +21,6 @@ final class GenderViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view = genderView
-        view.backgroundColor = .clear
     }
     
     // MARK: - Setup Methods

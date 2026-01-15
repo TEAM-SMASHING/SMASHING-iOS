@@ -19,7 +19,19 @@ final class NotificationViewController: BaseViewController {
         TempNotification(name: "와쿠와쿠", type: .matchingAccepted, tier: .gold1, isNew: true, time: "10:00 AM"),
         TempNotification(name: "시스템", type: .matchingRequested, tier: nil, isNew: false, time: "9:30 AM"),
         TempNotification(name: "매칭봇", type: .resultRejectedWinLoseReversed, tier: .silver3, isNew: true, time: "어제"),
-        TempNotification(name: "사용자123", type: .reviewReceived, tier: .bronze2, isNew: false, time: "2일 전")
+        TempNotification(name: "사용자123", type: .reviewReceived, tier: .bronze2, isNew: false, time: "2일 전"),
+        TempNotification(name: "와쿠와쿠", type: .matchingAccepted, tier: .gold1, isNew: true, time: "10:00 AM"),
+        TempNotification(name: "시스템", type: .matchingRequested, tier: nil, isNew: false, time: "9:30 AM"),
+        TempNotification(name: "매칭봇", type: .resultRejectedWinLoseReversed, tier: .silver3, isNew: true, time: "어제"),
+        TempNotification(name: "사용자123", type: .reviewReceived, tier: .bronze2, isNew: false, time: "2일 전"),
+        TempNotification(name: "와쿠와쿠", type: .matchingAccepted, tier: .gold1, isNew: true, time: "10:00 AM"),
+        TempNotification(name: "시스템", type: .matchingRequested, tier: nil, isNew: false, time: "9:30 AM"),
+        TempNotification(name: "매칭봇", type: .resultRejectedWinLoseReversed, tier: .silver3, isNew: true, time: "어제"),
+        TempNotification(name: "사용자123", type: .reviewReceived, tier: .bronze2, isNew: false, time: "2일 전"),
+        TempNotification(name: "와쿠와쿠", type: .matchingAccepted, tier: .gold1, isNew: true, time: "10:00 AM"),
+        TempNotification(name: "시스템", type: .matchingRequested, tier: nil, isNew: false, time: "9:30 AM"),
+        TempNotification(name: "매칭봇", type: .resultRejectedWinLoseReversed, tier: .silver3, isNew: true, time: "어제"),
+        TempNotification(name: "사용자123", type: .reviewReceived, tier: .bronze2, isNew: false, time: "2일 전"),
     ]
     
     // MARK: - Life Cycle

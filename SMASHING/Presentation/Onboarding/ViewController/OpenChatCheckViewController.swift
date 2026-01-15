@@ -21,6 +21,5 @@ final class OpenChatCheckViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view = openChatCheckView
-        view.backgroundColor = .clear
     }
 }

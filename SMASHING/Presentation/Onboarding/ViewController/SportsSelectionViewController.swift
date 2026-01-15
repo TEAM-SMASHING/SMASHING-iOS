@@ -21,7 +21,6 @@ final class SportsSelectionViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view = sportsView
-        view.backgroundColor = .clear
     }
     
     // MARK: - Setup Methods
