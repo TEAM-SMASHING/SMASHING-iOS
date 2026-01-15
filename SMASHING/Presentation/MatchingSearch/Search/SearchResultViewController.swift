@@ -41,11 +41,6 @@ final class SearchResultViewController: BaseViewController {
         searchResultView.tableView.delegate = self
         searchResultView.tableView.dataSource = self
         searchResultView.searchTextField.delegate = self
-        searchResultView.searchTextField.addTarget(
-            self,
-            action: #selector(textFieldDidChange),
-            for: .editingChanged
-        )
     }
 
     private func setupActions() {
@@ -105,10 +100,6 @@ extension SearchResultViewController: UITableViewDelegate {
 // MARK: - UITextFieldDelegate
 
 extension SearchResultViewController: UITextFieldDelegate {
-
-    @objc private func textFieldDidChange() {
-        
-    }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let searchText = textField.text, !searchText.isEmpty else {
