@@ -18,15 +18,19 @@ extension UILabel {
         guard let text = self.text else { return }
 
         let attributed = NSMutableAttributedString(string: text)
+        let font = UIFont.pretendard(style)
 
         let paragraph = NSMutableParagraphStyle()
         paragraph.minimumLineHeight = style.lineHeight
         paragraph.maximumLineHeight = style.lineHeight
-
+        
+        let baselineOffset = (style.lineHeight - font.lineHeight) / 2
+        
         attributed.addAttributes([
             .font: UIFont.pretendard(style),
             .kern: style.letterSpacing,
-            .paragraphStyle: paragraph
+            .paragraphStyle: paragraph,
+            .baselineOffset: baselineOffset
         ], range: NSRange(location: 0, length: attributed.length))
 
         self.attributedText = attributed
