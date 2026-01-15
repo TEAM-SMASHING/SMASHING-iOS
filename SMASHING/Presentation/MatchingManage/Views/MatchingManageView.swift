@@ -7,14 +7,55 @@
 
 import UIKit
 
-class MatchingManageView: UIView {
+import SnapKit
+import Then
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+final class MatchingManageView: BaseUIView {
+
+    //MARK: - UI Components
+
+    lazy var navigationBar = CustomNavigationBar(title: "매칭 관리") { [weak self] in
+        self?.onBackButtonTapped?()
     }
-    */
 
+    let headerView = MatchingManageHeaderView()
+
+    let pageViewContainer = UIView()
+
+    //MARK: - Callbacks
+
+    var onBackButtonTapped: (() -> Void)?
+
+    //MARK: - SetUp Methods
+
+    override func setUI() {
+        super.setUI()
+        self.backgroundColor = UIColor(resource: .Background.canvas)
+        navigationBar.setLeftButtonHidden(true)
+        addSubviews(
+            navigationBar,
+            headerView,
+            pageViewContainer
+        )
+    }
+
+    override func setLayout() {
+        super.setLayout()
+
+        navigationBar.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        headerView.snp.makeConstraints {
+            $0.top.equalTo(navigationBar.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        pageViewContainer.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(safeAreaLayoutGuide)
+        }
+    }
 }
