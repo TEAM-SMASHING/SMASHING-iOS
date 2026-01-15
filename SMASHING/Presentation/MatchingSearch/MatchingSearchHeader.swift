@@ -14,17 +14,17 @@ final class MatchingSearchHeader: BaseUIView {
 
     // MARK: - UI Components
     
-    private let regionStackView = UIStackView().then {
+    private let locationStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 4
     }
 
-    private let pinImageView = UIImageView().then {
+    private let locationImageView = UIImageView().then {
         $0.image = .icLocation
         $0.contentMode = .scaleAspectFit
     }
 
-    private let regionLabel = UILabel().then {
+    private let locationLabel = UILabel().then {
         $0.text = "양천구"
         $0.textColor = .Text.primary
         $0.font = .pretendard(.subtitleLgSb)
@@ -161,10 +161,10 @@ final class MatchingSearchHeader: BaseUIView {
     override func setUI() {
         backgroundColor = .Background.canvas
 
-        regionStackView.addArrangedSubviews(pinImageView, regionLabel, chevronImageView)
+        locationStackView.addArrangedSubviews(locationImageView, locationLabel, chevronImageView)
 
         addSubviews(
-            regionStackView,
+            locationStackView,
             topButtonStackView,
             filterStackView
         )
@@ -181,12 +181,12 @@ final class MatchingSearchHeader: BaseUIView {
     }
 
     override func setLayout() {
-        regionStackView.snp.makeConstraints {
+        locationStackView.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(12)
             $0.leading.equalToSuperview().offset(16)
         }
 
-        pinImageView.snp.makeConstraints {
+        locationImageView.snp.makeConstraints {
             $0.size.equalTo(24)
         }
 
@@ -195,7 +195,7 @@ final class MatchingSearchHeader: BaseUIView {
         }
 
         topButtonStackView.snp.makeConstraints {
-            $0.centerY.equalTo(regionStackView)
+            $0.centerY.equalTo(locationStackView)
             $0.trailing.equalToSuperview().inset(16)
         }
 
@@ -208,7 +208,7 @@ final class MatchingSearchHeader: BaseUIView {
         }
 
         filterStackView.snp.makeConstraints {
-            $0.top.equalTo(regionStackView.snp.bottom).offset(12)
+            $0.top.equalTo(locationStackView.snp.bottom).offset(12)
             $0.leading.equalToSuperview().offset(16)
             $0.bottom.equalToSuperview().inset(12)
         }
