@@ -1,0 +1,106 @@
+//
+//  ReviewCollectionViewCell.swift
+//  SMASHING
+//
+//  Created by 이승준 on 1/14/26.
+//
+
+import UIKit
+
+import SnapKit
+import Then
+
+final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
+    
+    // MARK: - UI Components
+    
+    private let profileImageView = UIImageView().then {
+        $0.backgroundColor = .systemGray5
+        $0.layer.cornerRadius = 20
+        $0.clipsToBounds = true
+    }
+    
+    private let nicknameLabel = UILabel().then {
+        $0.font = .pretendard(.textSmSb)
+        $0.textColor = .white
+    }
+    
+    private let dateLabel = UILabel().then {
+        $0.font = .pretendard(.textSmM)
+        $0.textColor = .systemGray2
+    }
+    
+    private let contentLabel = UILabel().then {
+        $0.font = .pretendard(.textSmM)
+        $0.textColor = .white
+        $0.numberOfLines = 0 // 100자까지 모두 보이도록 설정
+        $0.lineBreakMode = .byWordWrapping
+    }
+    
+    private let dividerView = UIView().then {
+        $0.backgroundColor = .Border.primary
+    }
+    
+    // MARK: - Initializer
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupHierarchy()
+        setupConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - UI Setup
+    
+    private func setupHierarchy() {
+        contentView.addSubviews(
+            profileImageView,
+            nicknameLabel,
+            dateLabel,
+            contentLabel,
+            dividerView
+        )
+    }
+    
+    private func setupConstraints() {
+        profileImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(16)
+            $0.leading.equalToSuperview()
+            $0.size.equalTo(40)
+        }
+        
+        nicknameLabel.snp.makeConstraints {
+            $0.top.equalTo(profileImageView)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(12)
+        }
+        
+        dateLabel.snp.makeConstraints {
+            $0.centerY.equalTo(nicknameLabel)
+            $0.leading.equalTo(nicknameLabel.snp.trailing).offset(8)
+        }
+        
+        contentLabel.snp.makeConstraints {
+            $0.top.equalTo(nicknameLabel.snp.bottom).offset(4)
+            $0.leading.equalTo(nicknameLabel)
+            $0.trailing.equalToSuperview()
+        }
+        
+        dividerView.snp.makeConstraints {
+            $0.top.equalTo(contentLabel.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+            $0.height.equalTo(1)
+        }
+    }
+    
+    // MARK: - Data Binding
+    
+    func configure(_ review :TempReview) {
+        nicknameLabel.text = review.nickname
+        dateLabel.text = review.date
+        contentLabel.text = review.content
+    }
+}
