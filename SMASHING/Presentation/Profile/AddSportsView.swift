@@ -1,8 +1,8 @@
 //
-//  OnboardView.swift
+//  AddSportsView.swift
 //  SMASHING
 //
-//  Created by 이승준 on 1/11/26.
+//  Created by 이승준 on 1/13/26.
 //
 
 import UIKit
@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class OnboardingView: BaseUIView {
+final class AddSportsView: BaseUIView {
     
     // MARK: - UI Components
     
@@ -96,3 +96,4 @@ final class OnboardingView: BaseUIView {
         nextButton.setTitle(buttonTitle, for: .normal)
     }
 }
+
