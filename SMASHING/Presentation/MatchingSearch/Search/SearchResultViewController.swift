@@ -16,12 +16,6 @@ final class SearchResultViewController: BaseViewController {
 
     private let searchResultView = SearchResultView()
 
-    //MARK: - Properties
-
-    private var allNicknames: [String] = []
-    private var filteredNicknames: [String] = []
-    private var recentSearches: [String] = []
-
     // MARK: - Lifecycle
 
     override func loadView() {
@@ -58,7 +52,7 @@ extension SearchResultViewController: UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        return filteredNicknames.count
+        return 10
     }
 
     func tableView(
@@ -66,10 +60,9 @@ extension SearchResultViewController: UITableViewDataSource {
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
-            withIdentifier: "SearchResultCell",
+            withIdentifier: SearchResultCell.reuseIdentifier,
             for: indexPath
         )
-        cell.textLabel?.text = filteredNicknames[indexPath.row]
         cell.textLabel?.font = .pretendard(.textMdM)
         cell.textLabel?.textColor = .Text.primary
         cell.backgroundColor = .Background.canvas
