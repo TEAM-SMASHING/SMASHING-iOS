@@ -14,7 +14,7 @@ final class TierExplanationView: BaseUIView {
     
     //MARK: - Properties
     
-    private var dismissAction: (() -> Void)?
+    var dismissAction: (() -> Void)?
     
     //MARK: - UI Components
     
@@ -30,7 +30,7 @@ final class TierExplanationView: BaseUIView {
     private let tierLabel = UILabel().then {
         $0.text = "티어 설명"
         $0.font = .pretendard(.titleXlSb)
-        $0.textColor = .Text.blue
+        $0.textColor = .Text.emphasis
         $0.textAlignment = .center
     }
     
@@ -349,10 +349,4 @@ final class SkillExplanationCell: BaseUICollectionViewCell, ReuseIdentifiable {
         titleLabel.text = skill.name
         subtitleLabel.text = skill.explanation
     }
-}
-
-import SwiftUI
-@available(iOS 19.0, *)
-#Preview {
-    TierExplanationViewController()
 }

@@ -14,23 +14,30 @@ final class MyprofileView: BaseUIView {
     
     // MARK: - UI Components
     
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    
     private let navigationBar = CustomNavigationBar(title: "프로필").then {
         $0.setLeftButtonHidden(true)
     }
     
-    private let profileCard = ProfileCard().then {
-        $0.addChallengeButton()
+    private let profileCard = ProfileCard()
+    
+    let tierCard = TierCard().then {
+        $0.addTierDetailButton()
     }
     
     private let winRateCard = WinRateCard()
     
-    private let reviewCard = ReviewCard()
-    
+    let reviewCard = ReviewCard()
     
     // MARK: - Setup Methods
     
     override func setUI() {
-        addSubviews(navigationBar, profileCard, winRateCard, reviewCard)
+        addSubview(navigationBar)
+        addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubviews(profileCard, winRateCard, reviewCard, tierCard)
     }
     
     override func setLayout() {
@@ -39,21 +46,37 @@ final class MyprofileView: BaseUIView {
             $0.horizontalEdges.equalToSuperview()
         }
         
-        profileCard.snp.makeConstraints {
+        scrollView.snp.makeConstraints {
             $0.top.equalTo(navigationBar.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
+        }
+        
+        profileCard.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(222)
+            $0.height.equalTo(160)
+        }
+        
+        tierCard.snp.makeConstraints {
+            $0.top.equalTo(profileCard.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(330)
         }
         
         winRateCard.snp.makeConstraints {
-            $0.top.equalTo(profileCard.snp.bottom).offset(20)
+            $0.top.equalTo(tierCard.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
         reviewCard.snp.makeConstraints {
             $0.top.equalTo(winRateCard.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(100)
+            $0.bottom.equalToSuperview().inset(20)
         }
     }
 }
@@ -62,7 +85,15 @@ final class ProfileCard: BaseUIView {
     
     // MARK: - Properties
     
+    private var challengeAction: (() -> Void)?
+    
     // MARK: - UI Componetns
+    
+    private let containerView = UIView().then {
+        $0.backgroundColor = .Background.surface
+        $0.layer.cornerRadius = 8
+        $0.clipsToBounds = true
+    }
     
     private let profileImage = UIImageView().then {
         $0.backgroundColor = .Background.overlay
@@ -118,14 +149,15 @@ final class ProfileCard: BaseUIView {
     // MARK: - Setup Methods
     
     override func setUI() {
-        addSubviews(profileImage, titleLabel, genderIcon, tierIcon,
+        addSubview(containerView)
+        containerView.addSubviews(profileImage, titleLabel, genderIcon, tierIcon,
                     recordLabel, reviewLabel, winLoseRecordLabel, reviewCountsLabel)
     }
     
     override func setLayout() {
-        self.clipsToBounds = true
-        self.layer.cornerRadius = 8
-        self.backgroundColor = .Background.surface
+        containerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
         
         profileImage.snp.makeConstraints {
             $0.top.leading.equalToSuperview().inset(16)
@@ -169,8 +201,6 @@ final class ProfileCard: BaseUIView {
             $0.centerY.equalTo(reviewLabel)
             $0.trailing.equalToSuperview().inset(16)
         }
-        
-        
     }
     
     func addChallengeButton() {
@@ -184,12 +214,151 @@ final class ProfileCard: BaseUIView {
     // MARK: - Actions
     
     @objc private func challengeButtonTapped() {
-        
+        challengeAction?()
     }
 }
 
+import UIKit
+
+import SnapKit
+import Then
+
 final class TierCard: BaseUIView {
     
+    // MARK: - Properties
+    
+    private var tierDetailAction: (() -> Void)?
+    
+    private var addAction: (() -> Void)?
+    
+    private var sportsSelectedAction: ((Sports) -> Void)?
+    
+    // MARK: - UI Components
+    
+    private let containerView = UIView().then {
+        $0.backgroundColor = .Background.surface
+        $0.layer.cornerRadius = 8
+        $0.clipsToBounds = true
+    }
+    
+    private let sportsStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 7
+    }
+    
+    private let tierImage = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+        $0.backgroundColor = .Background.overlay
+    }
+    
+    private let tierMark = UIImageView().then {
+        $0.contentMode = .scaleAspectFit
+    }
+    
+    private let progressBar = UIProgressView().then {
+        $0.tintColor = .State.progressFill
+        $0.backgroundColor = .State.progressTrack
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 4
+        $0.progress = 0.4
+    }
+    
+    private let lastLPLabel = UILabel().then {
+        $0.font = .pretendard(.textMdSb)
+        $0.textColor = .Text.primary
+        $0.text = "100"
+    }
+    
+    private let lpLeft = UILabel().then {
+        $0.font = .pretendard(.textMdSb)
+        $0.textColor = .Text.tertiary
+        $0.text = "LP 남았어요!"
+    }
+    
+    private let lpLabel = UILabel().then {
+        $0.font = .pretendard(.textMdSb)
+        $0.textColor = .Text.tertiary
+        $0.text = "LP"
+    }
+    
+    private let totalLPLabel = UILabel().then {
+        $0.font = .pretendard(.textMdSb)
+        $0.textColor = .Text.primary
+        $0.text = "500"
+    }
+    
+    private lazy var tierDetailButton = BlueCTAButton(label: "티어 설명").then {
+        $0.addTarget(self, action: #selector(detailTapped), for: .touchUpInside)
+    }
+    
+    override func setUI() {
+        addSubview(containerView)
+        
+        containerView.addSubviews(sportsStackView, tierImage, tierMark, progressBar,
+                                  lastLPLabel, lpLeft, lpLabel, totalLPLabel)
+        
+        sportsStackView.addArrangedSubviews(
+            SportsButtonChip(sports: .badminton, selected: true),
+            SportsButtonChip(sports: .tableTennis),
+            SportsButtonChip(sports: nil)
+        )
+    }
+    
+    override func setLayout() {
+        containerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        sportsStackView.snp.makeConstraints {
+            $0.leading.top.equalToSuperview().inset(16)
+        }
+        
+        tierImage.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(sportsStackView.snp.bottom).offset(20)
+            $0.size.equalTo(100)
+        }
+        
+        progressBar.snp.makeConstraints {
+            $0.top.equalTo(tierImage.snp.bottom).offset(32)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(8)
+        }
+        
+        lastLPLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(16)
+            $0.top.equalTo(progressBar.snp.bottom).offset(8)
+        }
+        
+        lpLeft.snp.makeConstraints {
+            $0.leading.equalTo(lastLPLabel.snp.trailing).offset(4)
+            $0.centerY.equalTo(lastLPLabel)
+        }
+        
+        totalLPLabel.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(16)
+            $0.centerY.equalTo(lastLPLabel)
+        }
+        
+        lpLabel.snp.makeConstraints {
+            $0.trailing.equalTo(totalLPLabel.snp.leading).inset(-4)
+            $0.centerY.equalTo(lastLPLabel)
+        }
+    }
+    
+    func addTierDetailButton() {
+        containerView.addSubview(tierDetailButton)
+        tierDetailButton.snp.makeConstraints {
+            $0.top.equalTo(lpLabel.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+        }
+    }
+    
+    // MARK: - Actions
+    
+    @objc private func detailTapped() {
+        tierDetailAction?()
+    }
 }
 
 import UIKit
@@ -342,12 +511,42 @@ final class ReviewCard: BaseUIView {
         $0.addTarget(self, action: #selector(seeAllButtonTapped), for: .touchUpInside)
     }
     
-    //
+    private let satisfactionStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.alignment = .leading
+    }
+    
+    private let noReviewLabel = UILabel().then {
+        $0.text = "아직 받은 후기가 없어요"
+        $0.font = .pretendard(.textSmR)
+        $0.textColor = .Text.primary
+    }
+    
+    lazy var reviewCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.minimumLineSpacing = 0
+        
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
+        cv.isScrollEnabled = false
+        cv.register(ReviewCollectionViewCell.self, forCellWithReuseIdentifier: ReviewCollectionViewCell.reuseIdentifier)
+        return cv
+    }()
+    
+    // MARK: - Setup Methods
     
     override func setUI() {
         addSubview(containerView)
         
-        containerView.addSubviews(titleLabel, seeAllButton)
+        containerView.addSubviews(titleLabel, seeAllButton, satisfactionStackView, noReviewLabel, reviewCollectionView)
+        
+        satisfactionStackView.addArrangedSubviews(
+            SatisfictionChip(review: .best, num: Int.random(in: 0...150)),
+            SatisfictionChip(review: .good,num: Int.random(in: 0...150)),
+            SatisfictionChip(review: .bad, num: Int.random(in: 0...150)))
     }
     
     override func setLayout() {
@@ -364,9 +563,25 @@ final class ReviewCard: BaseUIView {
             $0.trailing.equalToSuperview().inset(16)
         }
         
+        satisfactionStackView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(12)
+            $0.leading.equalToSuperview().offset(16)
+            $0.height.equalTo(40)
+        }
         
+        noReviewLabel.snp.makeConstraints {
+            $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(16)
+        }
+        
+        reviewCollectionView.snp.makeConstraints {
+            $0.top.equalTo(satisfactionStackView.snp.bottom).offset(15)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(16)
+        }
     }
-    
+        
     // MARK: - Actions
     
     @objc private func seeAllButtonTapped() {
