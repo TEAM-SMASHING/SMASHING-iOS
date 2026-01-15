@@ -8,14 +8,16 @@
 import UIKit
 
 enum Sports: String, Codable {
-    case tableTennis = "탁구"
-    case tennis = "테니스"
-    case badminton = "배드민턴"
+    case tableTennis = "TT"
+    case tennis = "TN"
+    case badminton = "BM"
     
-    enum CodingKeys: String, CodingKey {
-        case tableTennis = "TT"
-        case tennis = "TN"
-        case badminton = "BM"
+    var displayName: String {
+        switch self {
+        case .tableTennis: return "탁구"
+        case .tennis: return "테니스"
+        case .badminton: return "배드민턴"
+        }
     }
     
     var image: UIImage {
