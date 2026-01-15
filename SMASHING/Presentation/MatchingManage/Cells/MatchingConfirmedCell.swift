@@ -95,7 +95,6 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     // MARK: - Setup Methods
 
     override func setUI() {
-        super.setUI()
         contentView.addSubview(containerView)
         containerView.addSubviews(
             profileStackView,
@@ -119,8 +118,6 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
 
     override func setLayout() {
-        super.setLayout()
-
         containerView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -164,10 +161,6 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.height.equalTo(29)
         }
 
-    }
-
-    override func setAction() {
-        super.setAction()
     }
 
     // MARK: - Actions
