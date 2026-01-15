@@ -13,7 +13,7 @@ import Then
 
 extension RankingViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        10
+        return rankingData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -34,6 +34,9 @@ extension RankingViewController: UICollectionViewDelegateFlowLayout {
 final class RankingViewController: BaseViewController {
     private let mainView = RankingView()
     
+    
+    private var rankingData: [Any] = []
+    
     override func loadView() {
         view = mainView
     }
@@ -46,6 +49,12 @@ final class RankingViewController: BaseViewController {
         mainView.registerCells()
         mainView.rankingCollectionView.delegate = self
         mainView.rankingCollectionView.dataSource = self
+        
+        updateEmptyState()
+    }
+    
+    private func updateEmptyState() {
+        mainView.updateEmptyState(isEmpty: rankingData.isEmpty)
     }
     
     private func setDummyData() {

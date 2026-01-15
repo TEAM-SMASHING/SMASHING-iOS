@@ -91,20 +91,19 @@ final class TopThreePodium: BaseUIView {
         
         secondProfileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(47.5)
-            $0.leading.equalToSuperview().inset(30)
+            $0.centerX.equalTo(secondCard)
             $0.size.equalTo(40)
         }
         
         secondNicknameLabel.snp.makeConstraints {
             $0.top.equalTo(secondProfileImageView.snp.bottom).offset(4)
-            $0.centerX.equalTo(secondProfileImageView)
+            $0.centerX.equalTo(secondCard)
         }
         
         secondCard.snp.makeConstraints {
             $0.top.equalTo(secondNicknameLabel.snp.bottom).offset(4)
             $0.leading.equalToSuperview()
             $0.trailing.equalTo(firstCard.snp.leading)
-            $0.width.equalTo(100)
             $0.bottom.equalToSuperview()
         }
         
@@ -131,7 +130,7 @@ final class TopThreePodium: BaseUIView {
             $0.top.equalTo(firstNicknameLabel.snp.bottom).offset(4)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(130)
-            $0.width.equalTo(100)
+            $0.width.equalTo(117)
             $0.bottom.equalToSuperview()
         }
         
@@ -139,20 +138,19 @@ final class TopThreePodium: BaseUIView {
         
         thirdProfileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(51)
-            $0.trailing.equalToSuperview().inset(30)
+            $0.centerX.equalTo(thirdCard)
             $0.size.equalTo(40)
         }
         
         thirdNicknameLabel.snp.makeConstraints {
             $0.top.equalTo(thirdProfileImageView.snp.bottom).offset(4)
-            $0.centerX.equalTo(thirdProfileImageView)
+            $0.centerX.equalTo(thirdCard)
         }
         
         thirdCard.snp.makeConstraints {
             $0.top.equalTo(thirdNicknameLabel.snp.bottom).offset(4)
             $0.leading.equalTo(firstCard.snp.trailing)
             $0.trailing.equalToSuperview()
-            $0.width.equalTo(secondCard)
             $0.bottom.equalToSuperview()
         }
     }

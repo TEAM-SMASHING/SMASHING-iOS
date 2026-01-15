@@ -12,6 +12,10 @@ import SnapKit
 import Then
 
 final class RankingView: BaseUIView {
+    
+    // MARK: - Properties
+    private let rankingEmptyView = RankingEmptyView()
+    
     let navigationBar = CustomNavigationBar(title: "전체 랭킹")
     
     let topThreePodium = TopThreePodium()
@@ -55,8 +59,11 @@ final class RankingView: BaseUIView {
     
     override func setUI() {
         collectionViewContainer.addSubview(rankingCollectionView)
+        collectionViewContainer.addSubview(rankingEmptyView)
         
         addSubviews(backgroundEffectView, navigationBar, topThreePodium, collectionViewContainer)
+        
+        rankingEmptyView.isHidden = true
     }
     
     override func setLayout() {
@@ -78,16 +85,24 @@ final class RankingView: BaseUIView {
         collectionViewContainer.snp.makeConstraints {
             $0.top.equalTo(topThreePodium.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(safeAreaLayoutGuide
-            )
+            $0.bottom.equalTo(safeAreaLayoutGuide)
         }
         
         rankingCollectionView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(16)
+        }
+        
+        rankingEmptyView.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(16)
         }
     }
     
     func registerCells() {
         rankingCollectionView.register(RankingCell.self, forCellWithReuseIdentifier: RankingCell.reuseIdentifier)
+    }
+    
+    func updateEmptyState(isEmpty: Bool) {
+        rankingEmptyView.isHidden = !isEmpty
+        rankingCollectionView.isHidden = isEmpty
     }
 }
