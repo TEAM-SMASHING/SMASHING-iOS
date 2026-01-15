@@ -140,6 +140,10 @@ final class ProfileCard: BaseUIView {
         }
     }
     
+    func changeButtonState(isEnabled: Bool) {
+        challengeButton.isEnabled = isEnabled
+    }
+    
     // MARK: - Actions
     
     @objc private func challengeButtonTapped() {
