@@ -38,7 +38,7 @@ final class ReceiveRequestViewController: BaseViewController {
         super.viewDidLoad()
         loadMockData()
     }
-
+    
     //MARK: - Setup Methods
 
     override func setUI() {
