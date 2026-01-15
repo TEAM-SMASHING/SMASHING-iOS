@@ -34,7 +34,7 @@ final class SearchResultView: BaseUIView {
         $0.separatorStyle = .none
         $0.register(
             UITableViewCell.self,
-            forCellReuseIdentifier: "SearchResultCell"
+            forCellReuseIdentifier: SearchResultCell.reuseIdentifier
         )
     }
 
