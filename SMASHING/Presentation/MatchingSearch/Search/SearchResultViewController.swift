@@ -33,7 +33,6 @@ final class SearchResultViewController: BaseViewController {
         view.backgroundColor = .Background.canvas
         setupTableView()
         setupActions()
-        loadData()
     }
 
     // MARK: - Setup Methods
@@ -53,40 +52,6 @@ final class SearchResultViewController: BaseViewController {
         searchResultView.onBackButtonTapped = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
         }
-    }
-
-    private func loadData() {
-        // Mock 데이터에서 닉네임 추출
-        allNicknames = ["윤서", "민준", "지우", "서준", "하은", "도윤", "수아", "예준", "시우", "아린", "준우", "채원"]
-        filteredNicknames = Array(allNicknames.prefix(5)).sorted()
-        recentSearches = filteredNicknames
-    }
-
-    // MARK: - Helper Methods
-
-    private func filterNicknames(with searchText: String) {
-        if searchText.isEmpty {
-            filteredNicknames = Array(recentSearches.prefix(5)).sorted()
-            searchResultView.updateStatusLabel(text: "최근 5개 노출 (가나다순)")
-        } else {
-            filteredNicknames = allNicknames.filter { $0.contains(searchText) }.sorted()
-            searchResultView.updateStatusLabel(text: "검색어 입력")
-        }
-        searchResultView.tableView.reloadData()
-    }
-
-    private func performSearch(with nickname: String) {
-        // 최근 검색어에 추가
-        if !recentSearches.contains(nickname) {
-            recentSearches.insert(nickname, at: 0)
-            if recentSearches.count > 5 {
-                recentSearches.removeLast()
-            }
-        }
-
-        // 검색 결과로 필터링된 메인 화면으로 돌아가기
-        print("검색: \(nickname)")
-        navigationController?.popViewController(animated: true)
     }
 }
 
@@ -127,14 +92,13 @@ extension SearchResultViewController: UITableViewDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         let selectedNickname = filteredNicknames[indexPath.row]
-        performSearch(with: selectedNickname)
     }
 
     func tableView(
         _ tableView: UITableView,
         heightForRowAt indexPath: IndexPath
     ) -> CGFloat {
-        return 44
+        return 45
     }
 }
 
@@ -144,14 +108,12 @@ extension SearchResultViewController: UITextFieldDelegate {
 
     @objc private func textFieldDidChange() {
         let searchText = searchResultView.searchTextField.text ?? ""
-        filterNicknames(with: searchText)
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let searchText = textField.text, !searchText.isEmpty else {
             return true
         }
-        performSearch(with: searchText)
         textField.resignFirstResponder()
         return true
     }
