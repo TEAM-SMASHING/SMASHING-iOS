@@ -59,7 +59,7 @@ final class SatisfictionChip: BaseUIView {
 
     override func setUI() {
         addSubview(contentStackView)
-        [imageView, label].forEach { contentStackView.addArrangedSubview($0) }
+        contentStackView.addArrangedSubviews(imageView, label)
     }
 
     override func setLayout() {

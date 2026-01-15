@@ -38,11 +38,32 @@ final class MyReviewsView: BaseUIView {
         $0.textColor = .Text.primary
     }
     
-    private let quickReviewStackView = UIStackView().then {
+    private let firstReviewStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
         $0.alignment = .leading
-        $0.backgroundColor = .gray
+    }
+    
+    private let secondReviewStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.alignment = .leading
+    }
+
+    private let goodMannerCountChip = ReviewCountChip().then {
+        $0.configure(with: .goodManner, count: 0)
+    }
+    
+    private let onTimeCountChip = ReviewCountChip().then {
+        $0.configure(with: .onTime, count: 0)
+    }
+    
+    private let fairPlayCountChip = ReviewCountChip().then {
+        $0.configure(with: .fairPlay, count: 0)
+    }
+
+    private let fastResponseCountChip = ReviewCountChip().then {
+        $0.configure(with: .fastResponse, count: 0)
     }
     
     private let allReviewLabel = UILabel().then {
@@ -67,8 +88,11 @@ final class MyReviewsView: BaseUIView {
     
     override func setUI() {
         addSubviews(navigationBar, satisfactionLabel, satisfactionStackView,
-                    quickReviewLabel, quickReviewStackView,
+                    quickReviewLabel, firstReviewStackView, secondReviewStackView,
                     allReviewLabel, collectionView)
+        
+        firstReviewStackView.addArrangedSubviews(goodMannerCountChip, onTimeCountChip)
+        secondReviewStackView.addArrangedSubviews(fairPlayCountChip, fastResponseCountChip)
         
         [ReviewScore.best, .good, .bad].forEach { review in
             let chip = SatisfictionChip(review: review, num: Int.random(in: 0...150))
@@ -97,15 +121,21 @@ final class MyReviewsView: BaseUIView {
             $0.top.equalTo(satisfactionStackView.snp.bottom).offset(32)
         }
         
-        quickReviewStackView.snp.makeConstraints {
-            $0.top.equalTo(quickReviewLabel.snp.bottom).offset(8)
+        firstReviewStackView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
-            $0.height.equalTo(88)
+            $0.top.equalTo(quickReviewLabel.snp.bottom).offset(8)
+            $0.height.equalTo(40)
+        }
+        
+        secondReviewStackView.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(16)
+            $0.top.equalTo(firstReviewStackView.snp.bottom).offset(8)
+            $0.height.equalTo(40)
         }
         
         allReviewLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
-            $0.top.equalTo(quickReviewStackView.snp.bottom).offset(32)
+            $0.top.equalTo(secondReviewStackView.snp.bottom).offset(32)
         }
         
         collectionView.snp.makeConstraints {
@@ -114,4 +144,26 @@ final class MyReviewsView: BaseUIView {
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
+    
+    func configure(_ data: [ReviewTag: Int]) {
+        for key in data.keys {
+            let count = data[key] ?? 0
+            switch key {
+            case .goodManner:
+                goodMannerCountChip.updateCount(count)
+            case .onTime:
+                onTimeCountChip.updateCount(count)
+            case .fairPlay:
+                fairPlayCountChip.updateCount(count)
+            case .fastResponse:
+                fastResponseCountChip.updateCount(count)
+            }
+        }
+    }
+}
+
+import SwiftUI
+@available(iOS 18.0, *)
+#Preview {
+    MyReviewsViewController()
 }

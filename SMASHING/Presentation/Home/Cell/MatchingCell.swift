@@ -30,13 +30,14 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let myNickName = UILabel().then {
         $0.text = "밤이달이"
         $0.setPretendard(.textSmM)
-        $0.textColor = .Text.blue //muted 추가
+        $0.textColor = .Text.muted
         $0.textAlignment = .center
     }
     
     private let VSImage = UIImageView().then {
         $0.image = .icVs
-        $0.contentMode = .scaleAspectFit    }
+        $0.contentMode = .scaleAspectFit
+    }
     
     private let rightProfileStackView = UIStackView().then {
         $0.axis = .vertical
@@ -52,14 +53,14 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let rivalNickName = UILabel().then {
         $0.text = "와구와구"
         $0.setPretendard(.textSmM)
-        $0.textColor = .Text.blue //muted 추가
+        $0.textColor = .Text.muted
         $0.textAlignment = .center
     }
     
     private let writeResultButton = UIButton().then {
         $0.setTitle("결과 작성하기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textMdM)
-        $0.setTitleColor(.Text.blue, for: .normal) //emphasis 컬러 추가
+        $0.setTitleColor(.Text.emphasis, for: .normal)
         $0.backgroundColor = .Button.backgroundPrimaryActive
         $0.layer.cornerRadius = 8
     }
