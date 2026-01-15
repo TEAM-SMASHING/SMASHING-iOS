@@ -44,6 +44,14 @@ final class MatchingSearchViewController: BaseViewController {
         matchingSearchView.headerView.onSearchTapped = { [weak self] in
             self?.navigateToSearch()
         }
+
+        matchingSearchView.headerView.onTierFilterTapped = { [weak self] in
+            self?.presentTierFilterBottomSheet()
+        }
+
+        matchingSearchView.headerView.onGenderFilterTapped = { [weak self] in
+            self?.presentGenderFilterBottomSheet()
+        }
     }
 
     // MARK: - Navigation
@@ -51,6 +59,39 @@ final class MatchingSearchViewController: BaseViewController {
     private func navigateToSearch() {
         let searchVC = SearchResultViewController()
         navigationController?.pushViewController(searchVC, animated: true)
+    }
+
+    // MARK: - Filter Actions
+
+    private func presentTierFilterBottomSheet() {
+        let tierFilterVC = TierFilterBottomSheetViewController()
+        tierFilterVC.onTierSelected = { [weak self] tier in
+            self?.matchingSearchView.headerView.updateTierFilterButton(with: tier.simpleDisplayName)
+        }
+
+        if let sheet = tierFilterVC.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+        }
+
+        present(tierFilterVC, animated: true)
+    }
+
+    private func presentGenderFilterBottomSheet() {
+        let genderFilterVC = GenderFilterBottomSheetViewController()
+        genderFilterVC.onGenderSelected = { [weak self] genderName in
+            self?.matchingSearchView.headerView.updateGenderFilterButton(with: genderName)
+        }
+
+        if let sheet = genderFilterVC.sheetPresentationController {
+            let customDetent = UISheetPresentationController.Detent.custom { _ in
+                return 282
+            }
+            sheet.detents = [customDetent]
+            sheet.prefersGrabberVisible = true
+        }
+
+        present(genderFilterVC, animated: true)
     }
 
 }
