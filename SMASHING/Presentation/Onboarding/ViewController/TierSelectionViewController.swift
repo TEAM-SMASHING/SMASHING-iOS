@@ -21,7 +21,6 @@ final class TierSelectionViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view = selectionView
-        view.backgroundColor = .clear
     }
     
     // MARK: - Setup Methods

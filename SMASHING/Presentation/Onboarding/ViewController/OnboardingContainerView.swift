@@ -42,7 +42,6 @@ class OnboardingContainerView: UIView {
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .Background.canvas
         setupUI()
         setupLayout()
     }

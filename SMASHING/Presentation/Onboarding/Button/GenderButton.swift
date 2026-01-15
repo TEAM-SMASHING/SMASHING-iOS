@@ -52,7 +52,7 @@ final class GenderButton: BaseUIView {
     private func setupAttributes() {
         self.layer.cornerRadius = 10
         self.layer.borderWidth = 1
-        self.label.text = gender.name
+        self.label.text = gender.rawValue
         updateStyle()
     }
 
