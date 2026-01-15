@@ -98,7 +98,7 @@ final class ReviewCard: BaseUIView {
         noReviewLabel.snp.makeConstraints {
             $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(16)
+            // $0.bottom.equalToSuperview().inset(16)
         }
         
         reviewCollectionView.snp.makeConstraints {

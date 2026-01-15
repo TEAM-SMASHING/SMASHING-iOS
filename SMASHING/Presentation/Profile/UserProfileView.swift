@@ -12,6 +12,12 @@ import Then
 
 final class UserProfileView: BaseUIView {
     
+    // MARK: - Enum
+    
+    enum Mode {
+        case plain, canAccept, cannotChallenge
+    }
+    
     // MARK: - Properties
     
     var skipAction: (() -> Void)?
@@ -96,10 +102,6 @@ final class UserProfileView: BaseUIView {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(20)
         }
-    }
-    
-    enum Mode {
-        case plain, canAccept, cannotChallenge
     }
     
     func configure(mode: UserProfileView.Mode) {
