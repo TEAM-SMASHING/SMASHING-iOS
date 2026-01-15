@@ -39,7 +39,7 @@ final class SportsButtonChip: UIButton {
     init(sports: Sports?, selected: Bool = false) {
         if sports != nil {
             contentStackView.addArrangedSubview(label)
-            label.text = sports!.rawValue
+            label.text = sports!.displayName
         } else {
             contentStackView.addArrangedSubview(plusImage)
         }

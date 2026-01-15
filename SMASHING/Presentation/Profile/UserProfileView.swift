@@ -10,50 +10,10 @@ import UIKit
 import SnapKit
 import Then
 
-final class UserProfileViewController: UIViewController {
-    
-    // MARK: - Properties
-    
-    private let mainView = UserProfileView()
-    
-    // MARK: - Lifecycle
-    
-    override func viewDidLoad() {
-        view = mainView
-        
-        mainView.configure(mode: .canAccept)
-        mainView.reviewCard.reviewCollectionView.delegate = self
-        mainView.reviewCard.reviewCollectionView.dataSource = self
-    }
-}
-
-extension UserProfileViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return TempReview.mockReviews.count > 3 ? 3 : TempReview.mockReviews.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ReviewCollectionViewCell.reuseIdentifier,
-            for: indexPath
-        ) as? ReviewCollectionViewCell else { return UICollectionViewCell() }
-        
-        let data = TempReview.mockReviews[indexPath.item]
-        
-        cell.configure(data)
-        
-        cell.contentView.snp.makeConstraints {
-            $0.width.equalTo(collectionView.frame.width)
-        }
-        
-        return cell
-    }
-}
-
-
 final class UserProfileView: BaseUIView {
     
     // MARK: - Properties
+    
     var skipAction: (() -> Void)?
     var acceptAction: (() -> Void)?
     
@@ -193,13 +153,4 @@ final class UserProfileView: BaseUIView {
         skipAction?()
         configure(mode: .plain)
     }
-}
-
-// MARK: - Preview
-
-import SwiftUI
-
-@available(iOS 18.0, *)
-#Preview {
-    UserProfileViewController()
 }

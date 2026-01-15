@@ -19,8 +19,9 @@ final class AppCoordinator: Coordinator {
     
     func start() {
 
-        let root = HomeViewController()
+        let root = MyProfileViewController()
         navigationController.pushViewController(root, animated: false)
+        navigationController.isNavigationBarHidden = true
 //        let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
 //        childCoordinators.append(tabBarCoordinator)
 //        tabBarCoordinator.start()
