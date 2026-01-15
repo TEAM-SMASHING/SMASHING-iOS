@@ -43,7 +43,7 @@ enum OnboardingType: Int, CaseIterable {
         case .tier:
             "구력을 통해 임시 티어가 결정돼요!"
         case .area:
-            "설정한 지역 내에서 라이벌을 찾아드려요"
+            "서울 소재 주소만 입력가능해요"
         }
     }
 }
@@ -74,7 +74,6 @@ class OnboardingViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .Background.canvas
         setupActions()
         showStep(.nickname)
     }
