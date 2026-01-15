@@ -10,11 +10,11 @@ import UIKit
 import SnapKit
 import Then
 
-final class MyprofileViewController: UIViewController {
+final class MyProfileViewController: UIViewController {
     
     // MARK: - Properties
     
-    private let mainView = MyprofileView()
+    private let mainView = MyProfileView()
     
     // MARK: - Lifecycle
     
@@ -25,7 +25,7 @@ final class MyprofileViewController: UIViewController {
     }
 }
 
-extension MyprofileViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension MyProfileViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return TempReview.mockReviews.count > 3 ? 3 : TempReview.mockReviews.count
     }

@@ -79,9 +79,3 @@ final class SportsButtonChip: UIButton {
         label.textColor = isSelected ? .Text.primaryReverse : .Text.secondary
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    MyprofileViewController()
-}
