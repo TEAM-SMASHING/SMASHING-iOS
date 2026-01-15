@@ -6,24 +6,27 @@
 //
 
 enum SSEEventType: String, Codable {
-    case matchingReceived = "내가 요청 받음"
-    case matchingUpdated = "상대가 요청을 수락/거절/삭제"
-    case matchingRequestNotificationCreated = "매칭 요청 알림 생성"
-    case matchingAcceptNotificationCreated = "매칭 수락 알림 생성"
-    case gameUpdated = "게임 관련 변경 사항"
-    case gameResultSubmittedNotificationCreated = "게임 결과 제출 알림 생성"
-    case gameResultRejectedNotificationCreated = "게임 결과 거절 알림 생성"
-    case reviewReceivedNotificationCreated = "리뷰 제출 알림 생성"
+    case matchingReceived = "MATCHING_RECEIVED"
+    case matchingUpdated = "MATCHING_UPDATED"
+    case matchingRequestNotificationCreated = "MATCHING_REQUEST_NOTIFICATION_CREATED"
+    case matchingAcceptNotificationCreated = "MATCHING_ACCEPT_NOTIFICATION_CREATED"
+    case gameUpdated = "GAME_UPDATED"
+    case gameResultSubmittedNotificationCreated = "GAME_RESULT_SUBMITTED_NOTIFICATION_CREATED"
+    case gameResultRejectedNotificationCreated = "GAME_RESULT_REJECTED_NOTIFICATION_CREATED"
+    case reviewReceivedNotificationCreated = "REVIEW_RECEIVED_NOTIFICATION_CREATED"
     
-    enum CodingKeys: String, CodingKey {
-        case matchingReceived = "MATCHING_RECEIVED"
-        case matchingUpdated = "MATCHING_UPDATED"
-        case matchingRequestNotificationCreated = "MATCHING_REQUEST_NOTIFICATION_CREATED"
-        case matchingAcceptNotificationCreated = "MATCHING_ACCEPT_NOTIFICATION_CREATED"
-        case gameUpdated = "GAME_UPDATED"
-        case gameResultSubmittedNotificationCreated = "GAME_RESULT_SUBMITTED_NOTIFICATION_CREATED"
-        case gameResultRejectedNotificationCreated = "GAME_RESULT_REJECTED_NOTIFICATION_CREATED"
-        case reviewReceivedNotificationCreated = "REVIEW_RECEIVED_NOTIFICATION_CREATED"
+    
+    var displayText: String {
+        switch self {
+        case .matchingReceived: return "내가 요청 받음"
+        case .matchingUpdated: return "상대가 요청을 수락/거절/삭제"
+        case .matchingRequestNotificationCreated: return "매칭 요청 알림 생성"
+        case .matchingAcceptNotificationCreated: return "매칭 수락 알림 생성"
+        case .gameUpdated: return "게임 관련 변경 사항"
+        case .gameResultSubmittedNotificationCreated: return "게임 결과 제출 알림 생성"
+        case .gameResultRejectedNotificationCreated: return "게임 결과 거절 알림 생성"
+        case .reviewReceivedNotificationCreated: return "리뷰 제출 알림 생성"
+        }
     }
     
     var eventName: String {

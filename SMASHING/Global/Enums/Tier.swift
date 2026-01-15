@@ -5,44 +5,24 @@
 //  Created by 이승준 on 1/13/26.
 //
 
-enum Tier: Codable {
-    case iron
-    case bronze3
-    case bronze2
-    case bronze1
-    case silver3
-    case silver2
-    case silver1
-    case gold3
-    case gold2
-    case gold1
-    case platinum3
-    case platinum2
-    case platinum1
-    case diamond3
-    case diamond2
-    case diamond1
-    case challenger
-
-    enum CodingKeys: String, CodingKey {
-        case iron = "IRON"
-        case bronze3 = "BRONZE_3"
-        case bronze2 = "BRONZE_2"
-        case bronze1 = "BRONZE_1"
-        case silver3 = "SILVER_3"
-        case silver2 = "SILVER_2"
-        case silver1 = "SILVER_1"
-        case gold3 = "GOLD_3"
-        case gold2 = "GOLD_2"
-        case gold1 = "GOLD_1"
-        case platinum3 = "PLATINUM_3"
-        case platinum2 = "PLATINUM_2"
-        case platinum1 = "PLATINUM_1"
-        case diamond3 = "DIAMOND_3"
-        case diamond2 = "DIAMOND_2"
-        case diamond1 = "DIAMOND_1"
-        case challenger = "CHALLENGER"
-    }
+enum Tier: String, Codable {
+    case iron = "IRON"
+    case bronze3 = "BRONZE_3"
+    case bronze2 = "BRONZE_2"
+    case bronze1 = "BRONZE_1"
+    case silver3 = "SILVER_3"
+    case silver2 = "SILVER_2"
+    case silver1 = "SILVER_1"
+    case gold3 = "GOLD_3"
+    case gold2 = "GOLD_2"
+    case gold1 = "GOLD_1"
+    case platinum3 = "PLATINUM_3"
+    case platinum2 = "PLATINUM_2"
+    case platinum1 = "PLATINUM_1"
+    case diamond3 = "DIAMOND_3"
+    case diamond2 = "DIAMOND_2"
+    case diamond1 = "DIAMOND_1"
+    case challenger = "CHALLENGER"
 }
 
 extension Tier {
