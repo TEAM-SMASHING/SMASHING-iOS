@@ -21,7 +21,6 @@ final class AreaSelectionViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view = areaSelectionView
-        view.backgroundColor = .clear
     }
     
     func configure(action: @escaping () -> Void) {

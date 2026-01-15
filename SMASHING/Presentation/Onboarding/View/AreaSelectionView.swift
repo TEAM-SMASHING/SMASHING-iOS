@@ -21,17 +21,18 @@ final class AreaSelectionView: BaseUIView {
     // MARK: - UI Components
     
     private lazy var addressButton = UIButton().then {
-        $0.backgroundColor = UIColor(red: 30/255, green: 31/255, blue: 34/255, alpha: 1.0)
+        $0.backgroundColor = .Background.canvas
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+        $0.layer.borderColor = UIColor.Text.disabled.cgColor
         $0.addTarget(self, action: #selector(addressButtonDidTap), for: .touchUpInside)
     }
     
     private let addressLabel = UILabel().then {
         $0.text = "주소를 검색해주세요"
-        $0.textColor = .systemGray2
+        $0.textColor = .Text.disabled
         $0.font = .systemFont(ofSize: 16)
+        $0.isUserInteractionEnabled = false
     }
 
     // MARK: - Setup Methods

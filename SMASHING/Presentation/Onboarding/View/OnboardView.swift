@@ -87,7 +87,6 @@ final class OnboardingView: BaseUIView {
     
     // MARK: - Public Methods
     
-    /// 단계별 UI 상태를 업데이트합니다.
     func updateStepUI(title: String, subTitle: String, progress: Float, isLastStep: Bool) {
         mainTitleLabel.text = title
         subTitleLabel.text = subTitle
