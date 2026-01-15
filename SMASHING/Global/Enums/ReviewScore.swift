@@ -12,9 +12,9 @@ enum ReviewScore: String, Codable {
 
     var displayText: String {
         switch self {
-        case .bad: return "별로에요"
+        case .bad: return "별로예요"
         case .good: return "좋아요"
-        case .best: return "최고에요"
+        case .best: return "최고예요"
         }
     }
 }
