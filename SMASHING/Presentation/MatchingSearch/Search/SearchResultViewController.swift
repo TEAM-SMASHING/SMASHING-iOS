@@ -91,7 +91,7 @@ extension SearchResultViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        let selectedNickname = filteredNicknames[indexPath.row]
+        
     }
 
     func tableView(
@@ -107,7 +107,7 @@ extension SearchResultViewController: UITableViewDelegate {
 extension SearchResultViewController: UITextFieldDelegate {
 
     @objc private func textFieldDidChange() {
-        let searchText = searchResultView.searchTextField.text ?? ""
+        
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
