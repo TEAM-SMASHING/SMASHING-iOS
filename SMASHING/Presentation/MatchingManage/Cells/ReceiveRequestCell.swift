@@ -90,21 +90,23 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.alignment = .center
     }
 
-    private let skipButton = UIButton().then {
+    private lazy var skipButton = UIButton().then {
         $0.setTitle("건너뛰기", for: .normal)
         $0.setTitleColor(.Text.tertiary, for: .normal)
         $0.titleLabel?.font = .pretendard(.captionXsR)
         $0.backgroundColor = .clear
+        $0.addTarget(self, action: #selector(skipButtonDidTap), for: .touchUpInside)
     }
 
-    private let acceptButton = UIButton().then {
+    private lazy var acceptButton = UIButton().then {
         $0.setTitle("수락", for: .normal)
         $0.setTitleColor(.Text.primary, for: .normal)
         $0.titleLabel?.font = .pretendard(.textSmM)
         $0.backgroundColor = .Button.backgroundSecondaryActive
         $0.layer.cornerRadius = 4
+        $0.addTarget(self, action: #selector(acceptButtonDidTap), for: .touchUpInside)
     }
-
+    
     private let buttonStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .fillEqually
@@ -120,7 +122,6 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     // MARK: - Setup Methods
 
     override func setUI() {
-        super.setUI()
         contentView.addSubview(containerView)
         containerView.addSubviews(
             profileStackView,
@@ -136,8 +137,6 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
 
     override func setLayout() {
-        super.setLayout()
-
         containerView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -176,14 +175,6 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
     }
 
-    // MARK: - Actions
-    
-    override func setAction() {
-        super.setAction()
-        skipButton.addTarget(self, action: #selector(skipButtonDidTap), for: .touchUpInside)
-        acceptButton.addTarget(self, action: #selector(acceptButtonDidTap), for: .touchUpInside)
-    }
-
     @objc private func skipButtonDidTap() {
         self.onSkipTapped?()
     }
@@ -193,7 +184,7 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
 
     // MARK: - Configuration
-
+    
     func configure(
         nickname: String,
         gender: String,
