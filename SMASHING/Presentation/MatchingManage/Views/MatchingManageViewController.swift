@@ -43,7 +43,6 @@ final class MatchingManageViewController: BaseViewController {
     //MARK: - SetUp Methods
 
     override func setUI() {
-        super.setUI()
         self.view.addSubview(matchingManageView)
         matchingManageView.pageViewContainer.addSubview(pageViewController.view)
         addChild(pageViewController)
@@ -54,7 +53,6 @@ final class MatchingManageViewController: BaseViewController {
         let receivedVC = ReceiveRequestViewController()
         let sentVC = SentRequestViewController()
         let confirmedVC = MatchingConfirmedViewController()
-        
         self.categories = [receivedVC, sentVC, confirmedVC]
     }
     
@@ -99,8 +97,6 @@ final class MatchingManageViewController: BaseViewController {
     }
     
     override func setLayout() {
-        super.setLayout()
-
         matchingManageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

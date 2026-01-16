@@ -29,7 +29,6 @@ final class MatchingManageView: BaseUIView {
     //MARK: - SetUp Methods
 
     override func setUI() {
-        super.setUI()
         self.backgroundColor = UIColor(resource: .Background.canvas)
         navigationBar.setLeftButtonHidden(true)
         addSubviews(
@@ -40,8 +39,6 @@ final class MatchingManageView: BaseUIView {
     }
 
     override func setLayout() {
-        super.setLayout()
-
         navigationBar.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.trailing.equalToSuperview()
