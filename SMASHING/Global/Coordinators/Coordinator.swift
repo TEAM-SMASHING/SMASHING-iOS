@@ -32,6 +32,7 @@ extension Coordinator {
         navigationController.viewControllers.last?.view.addSubview(toast)
         
         toast.configure(title: notificationType.displayText, action: { [weak self] in
+
             guard let self = self else { return }
             
             let transition = CATransition().then {
