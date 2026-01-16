@@ -171,10 +171,18 @@ final class MatchingSearchHeader: BaseUIView {
 
         topButtonStackView.addArrangedSubviews(searchButton, notificationButton)
 
-        tierfilterStackView.addArrangedSubviews(tierFilterLabel, tierFilterIconView, tierFilterCloseIconView)
+        tierfilterStackView.addArrangedSubviews(
+            tierFilterLabel,
+            tierFilterIconView,
+            tierFilterCloseIconView
+        )
         tierFilterContainer.addSubview(tierfilterStackView)
 
-        genderFilterStackView.addArrangedSubviews(genderFilterLabel, genderFilterIconView, genderFilterCloseIconView)
+        genderFilterStackView.addArrangedSubviews(
+            genderFilterLabel,
+            genderFilterIconView,
+            genderFilterCloseIconView
+        )
         genderFilterContainer.addSubview(genderFilterStackView)
 
         filterStackView.addArrangedSubviews(tierFilterContainer, genderFilterContainer)
