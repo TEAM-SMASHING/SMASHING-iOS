@@ -63,10 +63,12 @@ extension SentRequestViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: SentRequestCell.reuseIdentifier,
             for: indexPath
-        ) as! SentRequestCell
+        ) as? SentRequestCell else {
+            return UICollectionViewCell()
+        }
 
         let match = self.matches[indexPath.row]
         cell.configure(

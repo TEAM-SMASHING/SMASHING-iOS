@@ -91,13 +91,14 @@ extension MatchingConfirmedViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+       guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: MatchingConfirmedCell.reuseIdentifier,
             for: indexPath
-        ) as! MatchingConfirmedCell
+       ) as? MatchingConfirmedCell else {
+           return UICollectionViewCell()
+       }
 
         let match = self.matches[indexPath.row]
-        let tierName = self.getTierName(tier: match.tierId)
         cell.configure(
             nickname: match.nickname,
             gender: match.gender,

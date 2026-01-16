@@ -90,10 +90,12 @@ extension ReceiveRequestViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ReceiveRequestCell.reuseIdentifier,
             for: indexPath
-        ) as! ReceiveRequestCell
+        ) as? ReceiveRequestCell else {
+            return UICollectionViewCell()
+        }
 
         let match = self.matches[indexPath.row]
         cell.configure(
