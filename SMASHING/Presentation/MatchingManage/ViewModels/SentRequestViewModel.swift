@@ -15,8 +15,9 @@ final class SentRequestViewModel: InputOutputProtocol {
     
     enum Input {
         case viewDidLoad
-        case pullToRefresh
-        case tapCancel(requestID: Int)
+        case refresh
+        case closeTapped(index: Int)
+        case cancelConfirmed(index: Int)
     }
     
     //MARK: - OutPut
@@ -30,32 +31,18 @@ final class SentRequestViewModel: InputOutputProtocol {
     
     //MARK: - Properties
     
-    private let sentRequestResutSubject = CurrentValueSubject<[SentRequestResultDTO], Never>([])
+    private let requestListSubject = CurrentValueSubject<[SentRequestResultDTO], Never>([])
     private let isLoadingSubject = CurrentValueSubject<Bool, Never>(false)
-    private let errorSubject = CurrentValueSubject<String?, Never>(nil)
+    private let errorMessageSubject = PassthroughSubject<String, Never>()
     private let showCancelAlertSubject = PassthroughSubject<Int, Never>()
     private let itemRemovedSubject = PassthroughSubject<Int, Never>()
+    
+    //MARK: - Properties
     
     let requestCancelled = PassthroughSubject<Void, Never>()
     let refreshFromParent = PassthroughSubject<Void, Never>()
     
     private var cancellables: Set<AnyCancellable> = []
-
-    
-    // 2. 각 행동에 어떻게 반응해야 하는가?
-      //    - 화면 진입 → API 호출하여 보낸 요청 목록 fetch
-      //    - 새로고침 → API 재호출 (Throttling 0.5초)
-      //    - 닫기 탭 → 확인 알럿 표시 → API 호출 → 목록에서 제거
-
-      // 3. UI에 무엇을 보여줄 것인가?
-      //    - 보낸 요청 목록 (프로필, 닉네임, 티어, 승/패/리뷰)
-      //    - 로딩 상태 (스피너)
-      //    - 에러 메시지 (토스트/알럿)
-      //    - 빈 상태 (보낸 요청이 없을 때)
-      //    - 취소 확인 알럿
-    
-    //MARK: - Properties
-    
     
     func transform(input: AnyPublisher<Input, Never>) -> Output {
         input
@@ -63,13 +50,27 @@ final class SentRequestViewModel: InputOutputProtocol {
                 guard let self else { return }
                 switch event {
                 case .viewDidLoad:
-                    self.fetchSentList
-                case .pullToRefresh:
-                    self.refreshFromParent.send()
-                case .tapCancel(requestID: let requestID):
-                    self.showCancelAlertSubject.send(requestID)
+                    self.fetchSentList()
+                case .refresh:
+                    self.handleRefresh()
+                case .cancelConfirmed(let index):
+                    self.cancelRequest(at: index)
                 }
             }
+            .store(in: &cancellables)
+        
+        refreshFromParent
+            .sink { [weak self] in
+                self?.fetchSentList()
+            }
+            .store(in: &cancellables)
+        
+        return Output(
+            requestList: requestListSubject.eraseToAnyPublisher(),
+            isLoading: isLoadingSubject.eraseToAnyPublisher(),
+            errorMessage: errorMessageSubject.eraseToAnyPublisher(),
+            itemRemoved: itemRemovedSubject.eraseToAnyPublisher()
+        )
     }
     
 }
