@@ -47,7 +47,6 @@ final class SentRequestViewController: BaseViewController {
     }
 
     override func setLayout() {
-        super.setLayout()
         collectionview.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

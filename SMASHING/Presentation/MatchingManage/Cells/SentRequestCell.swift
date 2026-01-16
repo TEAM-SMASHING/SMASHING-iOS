@@ -18,9 +18,10 @@ final class SentRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.layer.cornerRadius = 8
     }
 
-    private let closeButton = UIButton().then {
+    private lazy var closeButton = UIButton().then {
         $0.setImage(.icCloseSm, for: .normal)
         $0.tintColor = .Text.tertiary
+        $0.addTarget(self, action: #selector(closeButtonDidTap), for: .touchUpInside)
     }
 
     private let profileImageView = UIImageView().then {
@@ -102,7 +103,6 @@ final class SentRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     // MARK: - Setup Methods
 
     override func setUI() {
-        super.setUI()
         contentView.addSubview(containerView)
         containerView.addSubviews(
             closeButton,
@@ -117,8 +117,6 @@ final class SentRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
 
     override func setLayout() {
-        super.setLayout()
-
         containerView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -156,11 +154,6 @@ final class SentRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.leading.trailing.equalToSuperview().inset(19.5)
             $0.bottom.equalToSuperview().offset(-16)
         }
-    }
-
-    override func setAction() {
-        super.setAction()
-        closeButton.addTarget(self, action: #selector(closeButtonDidTap), for: .touchUpInside)
     }
 
     // MARK: - Actions
