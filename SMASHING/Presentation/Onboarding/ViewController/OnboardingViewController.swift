@@ -48,42 +48,50 @@ enum OnboardingType: Int, CaseIterable {
     }
 }
 
-class OnboardingViewController: BaseViewController {
-    
+final class OnboardingViewController: BaseViewController {
+
     // MARK: - Properties
-    
+
     private let containerView = OnboardingContainerView()
     private var currentStep: OnboardingType = .nickname
-    
-    // private var viewModel: OnboardingViewModel
-    
+
+    private var viewModel: OnboardingViewModelProtocol
+    private var input = PassthroughSubject<OnboardingViewModel.Input, Never>()
+    private var cancellables: Set<AnyCancellable> = []
+
     // MARK: - Life Cycle
-    
-//    init(viewModel: OnboardingViewModel) {
-//        self.viewModel = viewModel
-//        super.init(nibName: nil, bundle: nil)
-//    }
-    
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
-    override func loadView() {
-        self.view = containerView
+
+    init(viewModel: OnboardingViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
     }
-    
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
-        super.viewDidLoad()
+        self.view = containerView
         setupActions()
         showStep(.nickname)
+        bind()
     }
-    
+
     private func setupActions() {
         containerView.navigationBar.setLeftButton { [weak self] in
-            self?.backButtonTapped()
+            guard let self else { return }
+            input.send(.hitBack)
         }
         
-        containerView.nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+        containerView.nextAction = { [weak self] in
+            guard let self else { return }
+            input.send(.hitNext)
+            nextButtonTapped()
+        }
+    }
+
+    private func bind() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
     }
     
     // MARK: - Actions
@@ -142,8 +150,8 @@ class OnboardingViewController: BaseViewController {
     
     private func makeChildViewController(for step: OnboardingType) -> UIViewController {
         switch step {
-        case .nickname: return NicknameViewController()
-        case .gender:   return GenderViewController()
+        case .nickname: return NicknameViewController(viewModel: viewModel, input: input)
+        case .gender:   return GenderViewController(viewModel: viewModel, input: input)
         case .chat:     return OpenChatCheckViewController()
         case .sports:   return SportsSelectionViewController()
         case .tier:     return TierSelectionViewController()
@@ -158,13 +166,10 @@ class OnboardingViewController: BaseViewController {
 
 import Combine
 
-protocol OnboardingViewModelProtocol: AnyObject {
-    associatedtype Input
-    associatedtype Output
-    
+protocol OnboardingViewModelProtocol: InputOutputProtocol where Input == OnboardingViewModel.Input,
+                    Output == OnboardingViewModel.Output {
+    associatedtype NavigationEvent
     var store: OnboardingObject{get}
-    
-    func transform(input: AnyPublisher<Input, Never>) -> Output
 }
 
 final class OnboardingViewModel: OnboardingViewModelProtocol {
@@ -210,20 +215,39 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
         let showMapSearchViewController: PassthroughSubject<Void, Never> = .init()
         // Coordinator Pattern 쓰면 되는거 아님?
     }
+    
+    struct NavigationEvent {
+        
+    }
 
     let output = Output()
     
     func transform(input: AnyPublisher<Input, Never>) -> Output {
-
+        
         input
             .compactMap { input -> String? in
-                guard case let .kakaoOpenChatLinkTyped(keyword) = input else { return nil }
-                return keyword
+                guard case let .nicknameTyped(text) = input else { return nil }
+                return text
             }
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .removeDuplicates()
-            .sink { [weak self] keyword in
+            .sink { [weak self] text in
                 guard let self = self else { return }
+                // 검색 API 호출
+                print(text)
+            }
+            .store(in: &cancellables)
+        
+        input
+            .compactMap { input -> String? in
+                guard case let .kakaoOpenChatLinkTyped(text) = input else { return nil }
+                return text
+            }
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] text in
+                guard let self = self else { return }
+                print(text)
                 // 카카오 오픈채팅 유효성 검사 API 연동
             }
             .store(in: &cancellables)
@@ -240,25 +264,21 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     // 값이 없으면, buttonEnabled.send(false)
                     return
                 case .hitBack:
-                    if output.currentStep.value == .nickname {
-                        output.dismissOnboarding.send()
-                    } else {
-                        // 이전 페이지 계산해서 알려주기
-                    }
+                                        print("Hit Back")
                 case .complete:
+                    // 주소 View에서 호출하면 됨
                     // API 호출
                     // 결과에 따라, switch -> main
                     return
-                case .nicknameTyped(let string):
-                    // 중복확인 버튼 활성화
-                    output.checkNicknameDuplicationEnabled.send(!string.isEmpty)
                 case .checkNicknameDuplication(let string):
                     // API 호출
                     return
                 case .genderTapped(let gender):
+                    print(gender)
                     store.gender = gender
                     output.buttonEnabled.send(true)
                 case .sportsTapped(let sports):
+                    print(sports)
                     store.sports = sports
                     output.buttonEnabled.send(true)
                 case .tierTapped(let tier):

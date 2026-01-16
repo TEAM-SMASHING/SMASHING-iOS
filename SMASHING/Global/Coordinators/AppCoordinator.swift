@@ -18,14 +18,12 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        showLoginFlow()
+        showOnboardingFlow()
     }
     
-    // 로그인 플로우 시작
     private func showLoginFlow() {
         let loginCoordinator = LoginCoordinator(navigationController: navigationController)
         
-        // 클로저를 통해 다음 단계 연결
         loginCoordinator.finishWithOnboarding = { [weak self] in
             self?.removeChildCoordinator(loginCoordinator)
             self?.showOnboardingFlow()

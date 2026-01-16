@@ -14,7 +14,7 @@ final class OpenChatCheckViewController: BaseViewController {
     
     // MARK: - Properties
     
-    private let openChatCheckView = OpenChatCheckView()
+    let openChatCheckView = OpenChatCheckView()
     
     // MARK: - Lifecycle
     

@@ -18,6 +18,8 @@ final class OnboardingCoordinator: Coordinator {
     }
 
     func start() {
-        navigationController.pushViewController(OnboardingViewController(), animated: true)
+        let viewModel = OnboardingViewModel()
+        let viewController = OnboardingViewController(viewModel: viewModel)
+        navigationController.pushViewController(viewController, animated: true)
     }
 }

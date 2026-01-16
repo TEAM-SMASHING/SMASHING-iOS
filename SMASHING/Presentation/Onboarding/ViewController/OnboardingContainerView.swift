@@ -10,11 +10,16 @@ import UIKit
 import SnapKit
 import Then
 
-class OnboardingContainerView: UIView {
+final class OnboardingContainerView: UIView {
+    
+    // MARK: - Actions
+    
+    var backAction: (() -> Void)?
+    var nextAction: (() -> Void)?
     
     // MARK: - UI Components
     
-    let navigationBar = CustomNavigationBar(title: "", leftAction: nil)
+    lazy var navigationBar = CustomNavigationBar(title: "", leftAction: self.backAction ?? {})
     
     let progressBar = UIProgressView().then {
         $0.tintColor = .State.progressFill
@@ -37,9 +42,12 @@ class OnboardingContainerView: UIView {
         $0.backgroundColor = .Background.canvas
     }
     
-    let nextButton = CTAButton(label: "다음")
+    lazy var nextButton = CTAButton(label: "다음").then {
+        $0.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+    }
     
     // MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -51,6 +59,7 @@ class OnboardingContainerView: UIView {
     }
     
     // MARK: - Setup
+    
     private func setupUI() {
         addSubviews(
             navigationBar, progressBar,
@@ -91,4 +100,10 @@ class OnboardingContainerView: UIView {
             $0.bottom.equalTo(nextButton.snp.top)
         }
     }
+    
+    // MARK: - Actions
+    
+    @objc private func nextButtonTapped() {
+        nextAction?()
+    }    
 }

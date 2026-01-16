@@ -14,7 +14,7 @@ final class GenderView: BaseUIView {
     
     // MARK: - Properties
     
-    private var action: ((Gender) -> Void)?
+    var action: ((Gender) -> Void)?
 
     // MARK: - UI Components
     
