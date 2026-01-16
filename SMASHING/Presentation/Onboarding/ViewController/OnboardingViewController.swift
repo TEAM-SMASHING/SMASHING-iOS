@@ -154,7 +154,7 @@ final class OnboardingViewController: BaseViewController {
         case .gender:   return GenderViewController(viewModel: viewModel, input: input)
         case .chat:     return OpenChatCheckViewController(viewModel: viewModel, input: input)
         case .sports:   return SportsSelectionViewController(viewModel: viewModel, input: input)
-        case .tier:     return TierSelectionViewController()
+        case .tier:     return ExperienceSelectionViewController(viewModel: viewModel, input: input)
         case .area:     return AreaSelectionViewController()
         }
     }
@@ -278,6 +278,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     store.sports = sports
                     output.buttonEnabled.send(true)
                 case .tierTapped(let tier):
+                    print(tier)
                     store.tier = tier
                     output.buttonEnabled.send(true)
                 case .areaTapped:

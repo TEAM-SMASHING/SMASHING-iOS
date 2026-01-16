@@ -111,7 +111,7 @@ class AddSportsViewController: BaseViewController {
     private func makeChildViewController(for step: AddSportsType) -> UIViewController {
         switch step {
         case .sportsSelection: return EditSportsSelectionViewController()
-        case .tierSelection: return TierSelectionViewController()
+        case .tierSelection: return EditTierSelectionViewController()
         }
     }
     

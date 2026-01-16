@@ -10,11 +10,11 @@ import UIKit
 import SnapKit
 import Then
 
-final class TierSelectionView: BaseUIView {
+final class ExperienceSelectionView: BaseUIView {
     
     // MARK: - Properties
     
-    private var action: ((SportsExperienceType) -> Void)?
+    var action: ((SportsExperienceType) -> Void)?
     private var buttons: [TierButton] = []
     
     private let tierOptions: [SportsExperienceType] = [.lt3Months, .lt6Months, .lt1Year,
