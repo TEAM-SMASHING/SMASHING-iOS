@@ -52,7 +52,7 @@ final class SportsChip: BaseUIView {
     private func setupAttributes() {
         self.layer.cornerRadius = 20
         self.layer.borderWidth = 1
-        self.label.text = sport.rawValue
+        self.label.text = sport.displayName
         updateStyle()
     }
 

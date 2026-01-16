@@ -14,8 +14,7 @@ final class TierButton: BaseUIView {
     
     // MARK: - Properties
     
-    private let tier: Tier
-    private let title: String
+    private let tier: SportsExperienceType
     
     var isSelected: Bool = false {
         didSet { updateStyle() }
@@ -41,9 +40,9 @@ final class TierButton: BaseUIView {
 
     // MARK: - Init
     
-    init(tier: Tier, title: String) {
+    init(tier: SportsExperienceType) {
         self.tier = tier
-        self.title = title
+        label.text = tier.displayText
         super.init(frame: .zero)
         backgroundColor = .clear
         setupAttributes()
@@ -54,7 +53,7 @@ final class TierButton: BaseUIView {
     }
 
     private func setupAttributes() {
-        self.label.text = title
+        // self.label.text = title
         updateStyle()
     }
 
@@ -85,7 +84,7 @@ final class TierButton: BaseUIView {
     
     // MARK: - Public Methods
     
-    func getTier() -> Tier {
+    func getTier() -> SportsExperienceType {
         return self.tier
     }
 }

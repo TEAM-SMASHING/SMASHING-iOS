@@ -25,7 +25,7 @@ final class TierSelectionViewController: BaseViewController {
     
     // MARK: - Setup Methods
     
-    func configure(action: @escaping (Tier) -> Void) {
+    func configure(action: @escaping (SportsExperienceType) -> Void) {
         selectionView.configure(action: action)
     }
 }

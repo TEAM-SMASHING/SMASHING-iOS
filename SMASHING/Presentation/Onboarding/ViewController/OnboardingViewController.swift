@@ -152,8 +152,8 @@ final class OnboardingViewController: BaseViewController {
         switch step {
         case .nickname: return NicknameViewController(viewModel: viewModel, input: input)
         case .gender:   return GenderViewController(viewModel: viewModel, input: input)
-        case .chat:     return OpenChatCheckViewController(viewModel: viewModel, input: input)d
-        case .sports:   return SportsSelectionViewController()
+        case .chat:     return OpenChatCheckViewController(viewModel: viewModel, input: input)
+        case .sports:   return SportsSelectionViewController(viewModel: viewModel, input: input)
         case .tier:     return TierSelectionViewController()
         case .area:     return AreaSelectionViewController()
         }
@@ -184,13 +184,12 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
         
         case complete
         
-        case nicknameTyped(String) // N/10, 중복확인 버튼 활성화
-        case checkNicknameDuplication(String) // 이 String이 true면, 저장하기
+        case nicknameTyped(String) // N/10
         
         case genderTapped(Gender) // 저장하기
         case kakaoOpenChatLinkTyped(String) // 버튼 비활성화!! & Debouncing -> 결과에 따라
         case sportsTapped(Sports) // 저장하기
-        case tierTapped(Tier) // 저장하기
+        case tierTapped(SportsExperienceType) // 저장하기
         case areaTapped // 뷰 띄우기
     }
 
@@ -247,8 +246,8 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
             .removeDuplicates()
             .sink { [weak self] text in
                 guard let self = self else { return }
-                print(text)
                 // 카카오 오픈채팅 유효성 검사 API 연동
+                print(text)
             }
             .store(in: &cancellables)
 
@@ -264,14 +263,11 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     // 값이 없으면, buttonEnabled.send(false)
                     return
                 case .hitBack:
-                                        print("Hit Back")
+                    print("Hit Back")
                 case .complete:
                     // 주소 View에서 호출하면 됨
                     // API 호출
                     // 결과에 따라, switch -> main
-                    return
-                case .checkNicknameDuplication(let string):
-                    // API 호출
                     return
                 case .genderTapped(let gender):
                     print(gender)
@@ -300,5 +296,5 @@ final class OnboardingObject {
     var gender: Gender? = nil
     var kakaoOpenChatLink: String? = nil
     var sports: Sports? = nil
-    var tier: Tier? = nil
+    var tier: SportsExperienceType? = nil
 }

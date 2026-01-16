@@ -14,7 +14,7 @@ final class SportsSelectionView: BaseUIView {
     
     // MARK: - Properties
     
-    private var action: ((Sports) -> Void)?
+    var action: ((Sports) -> Void)?
     private var chips: [SportsChip] = []
     private var selections: [Sports]
 

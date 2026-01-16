@@ -14,17 +14,12 @@ final class TierSelectionView: BaseUIView {
     
     // MARK: - Properties
     
-    private var action: ((Tier) -> Void)?
+    private var action: ((SportsExperienceType) -> Void)?
     private var buttons: [TierButton] = []
     
-    private let tierOptions: [(Tier, String)] = [
-        (.iron, "3개월 미만"),
-        (.bronze3, "3개월 이상 ~ 6개월 미만"),
-        (.bronze2, "6개월 이상 ~ 1년 미만"),
-        (.bronze1, "1년 이상 ~ 1년 반 미만"),
-        (.silver3, "1년 반 이상")
-    ]
-
+    private let tierOptions: [SportsExperienceType] = [.lt3Months, .lt6Months, .lt1Year,
+                                                    .lt1_6Years, .gte2Years]
+        
     // MARK: - UI Components
     
     private let stackView = UIStackView().then {
@@ -38,8 +33,8 @@ final class TierSelectionView: BaseUIView {
     override func setUI() {
         addSubview(stackView)
         
-        tierOptions.forEach { option in
-            let button = TierButton(tier: option.0, title: option.1)
+        tierOptions.forEach { tier in
+            let button = TierButton(tier: tier)
             button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(buttonTapped(_:))))
             buttons.append(button)
             stackView.addArrangedSubview(button)
@@ -53,7 +48,7 @@ final class TierSelectionView: BaseUIView {
         }
     }
     
-    func configure(action: @escaping (Tier) -> Void) {
+    func configure(action: @escaping (SportsExperienceType) -> Void) {
         self.action = action
     }
     
