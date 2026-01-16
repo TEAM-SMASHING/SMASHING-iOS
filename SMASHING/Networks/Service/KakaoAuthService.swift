@@ -42,7 +42,7 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
     
     private func loginWithApp(completion: @escaping (Result<String, NetworkError>) -> Void) {
         UserApi.shared.loginWithKakaoTalk { oauthToken, error in
-            if let error = error {
+            if let _ = error {
                 completion(.failure(.networkFail))
             } else if let token = oauthToken {
                 completion(.success(token.accessToken))
@@ -52,7 +52,7 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
     
     private func loginWithAccount(completion: @escaping (Result<String, NetworkError>) -> Void) {
         UserApi.shared.loginWithKakaoAccount { oauthToken, error in
-            if let error = error {
+            if let _ = error {
                 completion(.failure(.networkFail))
             } else if let token = oauthToken {
                 completion(.success(token.accessToken))

@@ -90,9 +90,13 @@ final class LoginViewModel: LoginViewModelProtocol {
                 }
             } receiveValue: { loginResult in
                 switch loginResult {
-                case .needSignUp(let authId):
+                case .needSignUp(let userId):
+                    _ = KeychainService.add(key: Environment.userIdKey, value: userId)
                     self.navigationEvent.onboardingEvent.send()
-                case .success(let accessToken, let refreshToken, let authId):
+                case .success(let accessToken, let refreshToken, let userId):
+                    _ = KeychainService.add(key: Environment.userIdKey, value: userId)
+                    _ = KeychainService.add(key: Environment.accessTokenKey, value: accessToken)
+                    _ = KeychainService.add(key: Environment.refreshTokenKey, value: refreshToken)
                     self.navigationEvent.tabBarEvent.send()
                 }
             }
