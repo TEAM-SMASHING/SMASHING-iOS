@@ -26,7 +26,7 @@ enum Tier: Codable, Equatable {
     case diamond2
     case diamond1
     case challenger
-
+    
     enum CodingKeys: String, CodingKey {
         case iron = "IRON"
         case bronze3 = "BRONZE_3"
@@ -46,7 +46,8 @@ enum Tier: Codable, Equatable {
         case diamond1 = "DIAMOND_1"
         case challenger = "CHALLENGER"
     }
-
+}
+    
 extension Tier {
     var order: Int {
         switch self {
@@ -69,7 +70,7 @@ extension Tier {
         case .challenger: return 17
         }
     }
-
+    
     var displayName: String {
         switch self {
         case .iron: return "아이언"
@@ -91,7 +92,7 @@ extension Tier {
         case .challenger: return "챌린저"
         }
     }
-
+    
     var simpleDisplayName: String {
         switch self {
         case .iron: return "아이언"
@@ -103,7 +104,7 @@ extension Tier {
         case .challenger: return "챌린저"
         }
     }
-
+    
     var backgroundColor: UIColor {
         switch self {
         case .iron:
@@ -122,7 +123,7 @@ extension Tier {
             return .Tier.challengerBackground
         }
     }
-
+    
     var textColor: UIColor {
         switch self {
         case .iron:
@@ -141,7 +142,7 @@ extension Tier {
             return .Tier.challengerText
         }
     }
-
+    
     static func from(tierId: Int) -> Tier? {
         switch tierId {
         case 1: return .iron
@@ -164,7 +165,7 @@ extension Tier {
         default: return nil
         }
     }
-
+    
     static var filterTiers: [Tier] {
         return [
             .iron,
@@ -177,3 +178,4 @@ extension Tier {
         ]
     }
 }
+
