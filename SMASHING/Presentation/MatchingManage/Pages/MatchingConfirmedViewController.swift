@@ -11,16 +11,16 @@ import SnapKit
 import Then
 
 final class MatchingConfirmedViewController: BaseViewController {
-
+    
     //MARK: -UIComponents
-
+    
     private lazy var collectionview : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 12
         layout.minimumInteritemSpacing = 11
         layout.sectionInset = UIEdgeInsets(top: 12, left: 16, bottom: 16, right: 16)
-
+        
         let collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionview.backgroundColor = .black
         collectionview.delegate = self
@@ -29,53 +29,29 @@ final class MatchingConfirmedViewController: BaseViewController {
         collectionview.register(MatchingConfirmedCell.self, forCellWithReuseIdentifier: MatchingConfirmedCell.reuseIdentifier)
         return collectionview
     }()
-
+    
     //MARK: - Properties
-
+    
     private var matches: [TempRequesterInfo] = []
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadMockData()
     }
-
+    
     //MARK: - Setup Methods
-
+    
     override func setUI() {
         view.backgroundColor = UIColor(resource: .Background.canvas)
         view.addSubviews(collectionview)
     }
-
+    
     override func setLayout() {
         super.setLayout()
         collectionview.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
-
-    //MARK: - private Methods
-
-    private func getTierName(tier: Int) -> String {
-        switch tier {
-        case 1:
-            return "Iron I"
-        case 2:
-            return "Bronze I"
-        case 3:
-            return "Silver I"
-        case 4:
-            return "Gold I"
-        case 5:
-            return "Platinum I"
-        case 6:
-            return "Diamond I"
-        case 7:
-            return "Challenger"
-        default:
-            return "Unranked"
-        }
-    }
-
 }
 
 extension MatchingConfirmedViewController: UICollectionViewDataSource {
