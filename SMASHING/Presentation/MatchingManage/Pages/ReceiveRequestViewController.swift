@@ -52,30 +52,6 @@ final class ReceiveRequestViewController: BaseViewController {
             $0.edges.equalToSuperview()
         }
     }
-
-    //MARK: - private Methods
-
-    private func getTierName(tier: Int) -> String {
-        switch tier {
-        case 1:
-            return "Iron I"
-        case 2:
-            return "Bronze I"
-        case 3:
-            return "Silver I"
-        case 4:
-            return "Gold I"
-        case 5:
-            return "Platinum I"
-        case 6:
-            return "Diamond I"
-        case 7:
-            return "Challenger"
-        default:
-            return "Unranked"
-        }
-    }
-
 }
 
 extension ReceiveRequestViewController: UICollectionViewDataSource {
