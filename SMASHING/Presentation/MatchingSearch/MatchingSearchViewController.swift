@@ -110,10 +110,12 @@ extension MatchingSearchViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: MatchingSearchCell.reuseIdentifier,
             for: indexPath
-        ) as! MatchingSearchCell
+        ) as? MatchingSearchCell else {
+            return UICollectionViewCell()
+        }
 
         let match = self.matches[indexPath.row]
         cell.configure(

@@ -71,7 +71,6 @@ final class GenderFilterBottomSheetViewController: BaseViewController {
         }
         
         confirmButton.snp.makeConstraints {
-            $0.top.equalTo(tableView.snp.bottom).offset(4)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(46)
@@ -115,11 +114,12 @@ extension GenderFilterBottomSheetViewController: UITableViewDataSource {
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
+        guard let cell = tableView.dequeueReusableCell(
             withIdentifier: GenderFilterTableViewCell.reuseIdentifier,
             for: indexPath
-        ) as! GenderFilterTableViewCell
-
+        ) as? GenderFilterTableViewCell else {
+            return UITableViewCell()
+        }
         let gender = self.genderList[indexPath.row]
         let isSelected = gender == self.selectedGender
         cell.configure(gender: gender, isSelected: isSelected)

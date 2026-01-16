@@ -115,12 +115,14 @@ final class MatchingSearchHeader: BaseUIView {
         $0.spacing = 8
         $0.alignment = .leading
     }
-
+    
     // MARK: - Properties
 
     var onSearchTapped: (() -> Void)?
     var onTierFilterTapped: (() -> Void)?
     var onGenderFilterTapped: (() -> Void)?
+    var onTierFilterReset: (() -> Void)?
+    var onGenderFilterReset: (() -> Void)?
 
     // MARK: - Public Methods
 

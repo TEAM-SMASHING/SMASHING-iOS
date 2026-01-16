@@ -116,11 +116,12 @@ extension TierFilterBottomSheetViewController: UITableViewDataSource {
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
+        guard let cell = tableView.dequeueReusableCell(
             withIdentifier: TierFilterTableViewCell.reuseIdentifier,
             for: indexPath
-        ) as! TierFilterTableViewCell
-
+        ) as? TierFilterTableViewCell else {
+           return UITableViewCell()
+        }
         let tier = self.tierList[indexPath.row]
         let isSelected = tier == self.selectedTier
         cell.configure(tier: tier, isSelected: isSelected)

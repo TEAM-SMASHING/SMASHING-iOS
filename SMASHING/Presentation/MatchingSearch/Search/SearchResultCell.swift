@@ -7,6 +7,6 @@
 
 import UIKit
 
-class SearchResultCell: BaseUICollectionViewCell, ReuseIdentifiable {
+class SearchResultCell: BaseUITableViewCell, ReuseIdentifiable {
 
 }
