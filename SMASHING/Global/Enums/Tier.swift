@@ -5,6 +5,7 @@
 //  Created by 이승준 on 1/13/26.
 //
 
+
 import UIKit
 
 enum Tier: Codable, Equatable {
@@ -45,7 +46,6 @@ enum Tier: Codable, Equatable {
         case diamond1 = "DIAMOND_1"
         case challenger = "CHALLENGER"
     }
-}
 
 extension Tier {
     var order: Int {

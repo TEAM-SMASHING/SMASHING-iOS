@@ -16,6 +16,7 @@ final class SportsSelectionView: BaseUIView {
     
     private var action: ((Sports) -> Void)?
     private var chips: [SportsChip] = []
+    private var selections: [Sports]
 
     // MARK: - UI Components
     
@@ -27,10 +28,19 @@ final class SportsSelectionView: BaseUIView {
     
     // MARK: - Setup Methods
     
+    init(selections: [Sports] = [.badminton, .tableTennis, .tennis]) {
+        self.selections = selections
+        super.init(frame: .zero)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func setUI() {
         addSubview(stackView)
         
-        [Sports.badminton, .tableTennis, .tennis].forEach { sport in
+        selections.forEach { sport in
             let chip = SportsChip(sport: sport)
             chip.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(chipTapped(_:))))
             chips.append(chip)
