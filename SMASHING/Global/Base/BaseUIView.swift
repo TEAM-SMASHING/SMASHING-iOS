@@ -13,9 +13,10 @@ class BaseUIView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .Background.canvas
         setUI()
         setLayout()
+        setGesture()
     }
 
     required init?(coder: NSCoder) {
@@ -26,4 +27,5 @@ class BaseUIView: UIView {
 
     func setUI() {}
     func setLayout() {}
+    func setGesture() {}
 }
