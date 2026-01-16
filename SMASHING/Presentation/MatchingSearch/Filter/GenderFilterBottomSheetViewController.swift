@@ -123,7 +123,6 @@ extension GenderFilterBottomSheetViewController: UITableViewDataSource {
         let gender = self.genderList[indexPath.row]
         let isSelected = gender == self.selectedGender
         cell.configure(gender: gender, isSelected: isSelected)
-
         return cell
     }
 }

@@ -297,6 +297,8 @@ final class MatchingSearchHeader: BaseUIView {
 
     @objc private func tierFilterCloseButtonDidTap() {
         resetTierFilterButton()
+        onTierFilterReset?()
+
     }
 
     @objc private func genderFilterButtonDidTap() {
@@ -305,6 +307,7 @@ final class MatchingSearchHeader: BaseUIView {
 
     @objc private func genderFilterCloseButtonDidTap() {
         resetGenderFilterButton()
+        onGenderFilterReset?()
     }
 }
 
