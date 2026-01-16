@@ -84,7 +84,7 @@ final class LoginViewModel: LoginViewModelProtocol {
             .sink { completion in
                 switch completion {
                 case .finished:
-                    print("로그인 프로세스 종료")
+                    break
                 case .failure(let error):
                     print("로그인 중 에러 발생: \(error)")
                 }
