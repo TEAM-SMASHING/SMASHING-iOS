@@ -26,7 +26,7 @@ enum Tier: Codable, Equatable {
     case diamond2
     case diamond1
     case challenger
-
+    
     enum CodingKeys: String, CodingKey {
         case iron = "IRON"
         case bronze3 = "BRONZE_3"
@@ -46,6 +46,7 @@ enum Tier: Codable, Equatable {
         case diamond1 = "DIAMOND_1"
         case challenger = "CHALLENGER"
     }
+}
 
 extension Tier {
     var order: Int {

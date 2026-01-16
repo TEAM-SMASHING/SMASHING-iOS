@@ -40,23 +40,20 @@ final class AppCoordinator: Coordinator {
         loginCoordinator.start()
     }
     
-    // 온보딩 플로우로 Root 교체 및 Push
     private func showOnboardingFlow() {
-        navigationController.viewControllers.removeAll() // 기존 로그인 스택 제거
+        navigationController.viewControllers.removeAll()
         let onboardingCoordinator = OnboardingCoordinator(navigationController: navigationController)
         childCoordinators.append(onboardingCoordinator)
         onboardingCoordinator.start()
     }
     
-    // 메인 탭바 플로우로 Root 교체 및 Push
     private func showTabBarFlow() {
-        navigationController.viewControllers.removeAll() // 기존 로그인 스택 제거
+        navigationController.viewControllers.removeAll()
         let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
         childCoordinators.append(tabBarCoordinator)
         tabBarCoordinator.start()
     }
     
-    // 사용이 끝난 자식 코디네이터 제거 함수
     private func removeChildCoordinator(_ coordinator: Coordinator) {
         childCoordinators = childCoordinators.filter { $0 !== coordinator }
     }
