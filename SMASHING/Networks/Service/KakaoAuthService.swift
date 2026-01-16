@@ -66,10 +66,10 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
             .tryMap { response in
                 let data = response.data
                 if response.statusCode == 202 {
-                    guard data.accessToken == nil, data.refreshToken == nil else {
+                    guard data.accessToken == nil, data.refreshToken == nil, data.userId == nil else {
                         throw NetworkError.decoding
                     }
-                    return .needSignUp(authId: data.userId ?? "")
+                    return .needSignUp(authId: data.userId!)
                 } else if response.statusCode == 200 {
                     guard let accessToken = data.accessToken,
                           let refreshToken = data.refreshToken else {

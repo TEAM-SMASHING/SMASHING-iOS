@@ -6,7 +6,6 @@
 //
 
 import Combine
-import Foundation
 
 protocol KakaoMapServiceProtocol {
     func searchAddress(query: String) -> AnyPublisher<KakaoAddressResponseDTO, NetworkError>
