@@ -96,11 +96,10 @@ extension ReceiveRequestViewController: UICollectionViewDataSource {
         ) as! ReceiveRequestCell
 
         let match = self.matches[indexPath.row]
-        let tierName = self.getTierName(tier: match.tierId)
         cell.configure(
             nickname: match.nickname,
             gender: match.gender,
-            tier: tierName,
+            tierId: match.tierId,
             wins: match.wins,
             losses: match.losses,
             reviews: match.reviewCount

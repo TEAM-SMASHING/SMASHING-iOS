@@ -101,7 +101,7 @@ extension MatchingConfirmedViewController: UICollectionViewDataSource {
         cell.configure(
             nickname: match.nickname,
             gender: match.gender,
-            tier: tierName,
+            tierId: match.tierId,
             wins: match.wins,
             losses: match.losses,
             reviews: match.reviewCount

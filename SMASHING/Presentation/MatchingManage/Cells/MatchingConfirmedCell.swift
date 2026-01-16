@@ -81,7 +81,7 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     private let writeResult = UIButton().then {
         $0.setTitle("결과 작성하기", for: .normal)
-        $0.setTitleColor(.Text.blue, for: .normal)
+        $0.setTitleColor(.Text.emphasis, for: .normal)
         $0.backgroundColor = .Button.backgroundPrimaryActive
         $0.titleLabel?.font = .pretendard(.textSmM)
         $0.layer.cornerRadius = 4
@@ -178,43 +178,26 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     func configure(
         nickname: String,
         gender: String,
-        tier: String,
+        tierId: Int,
         wins: Int,
         losses: Int,
         reviews: Int) {
         self.nicknameLabel.text = nickname
         self.genderIconImageView.image = gender == "MALE" ? .icManSm : .icWomanSm
-        self.configureTierBadge(tier: tier)
+        self.configureTierBadge(tierId: tierId)
     }
-
-    private func configureTierBadge(tier: String) {
-        self.tierBadgeLabel.text = tier
-
-        if tier.contains("Iron") {
-            self.tierBadgeLabel.backgroundColor = .Tier.ironBackground
-            self.tierBadgeLabel.textColor = .Tier.ironText
-        } else if tier.contains("Bronze") {
-            self.tierBadgeLabel.backgroundColor = .Tier.bronzeBackground
-            self.tierBadgeLabel.textColor = .Tier.bronzeText
-        } else if tier.contains("Silver") {
-            self.tierBadgeLabel.backgroundColor = .Tier.silverBackground
-            self.tierBadgeLabel.textColor = .Tier.silverText
-        } else if tier.contains("Gold") {
-            self.tierBadgeLabel.backgroundColor = .Tier.goldBackground
-            self.tierBadgeLabel.textColor = .Tier.goldText
-        } else if tier.contains("Platinum") {
-            self.tierBadgeLabel.backgroundColor = .Tier.platinumBackground
-            self.tierBadgeLabel.textColor = .Tier.platinumText
-        } else if tier.contains("Diamond") {
-            self.tierBadgeLabel.backgroundColor = .Tier.diamondBackground
-            self.tierBadgeLabel.textColor = .Tier.diamondText
-        } else if tier.contains("Challenger") {
-            self.tierBadgeLabel.backgroundColor = .Tier.challengerBackground
-            self.tierBadgeLabel.textColor = .Tier.challengerText
-        } else {
+    
+    private func configureTierBadge(tierId: Int) {
+        guard let tier = Tier.from(tierId: tierId) else {
+            self.tierBadgeLabel.text = "Unranked"
             self.tierBadgeLabel.backgroundColor = .Background.canvasReverse
             self.tierBadgeLabel.textColor = .Text.primary
+            return
         }
+        
+        self.tierBadgeLabel.text = tier.displayName
+        self.tierBadgeLabel.backgroundColor = tier.backgroundColor
+        self.tierBadgeLabel.textColor = tier.textColor
     }
 }
 
