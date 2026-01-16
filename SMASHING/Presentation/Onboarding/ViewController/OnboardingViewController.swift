@@ -152,7 +152,7 @@ final class OnboardingViewController: BaseViewController {
         switch step {
         case .nickname: return NicknameViewController(viewModel: viewModel, input: input)
         case .gender:   return GenderViewController(viewModel: viewModel, input: input)
-        case .chat:     return OpenChatCheckViewController()
+        case .chat:     return OpenChatCheckViewController(viewModel: viewModel, input: input)d
         case .sports:   return SportsSelectionViewController()
         case .tier:     return TierSelectionViewController()
         case .area:     return AreaSelectionViewController()
