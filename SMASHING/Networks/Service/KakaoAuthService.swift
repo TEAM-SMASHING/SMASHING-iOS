@@ -62,25 +62,23 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
     
     private func loginToServer(accessToken: String) -> AnyPublisher<KakaoLoginResult, NetworkError> {
         return NetworkProvider<KakaoAuthAPI>
-            .requestPublisher(.login(accessToken: accessToken), type: KakaoLoginResponseDTO.self)
+            .requestPublisher(.login(accessToken: accessToken), type: KakaoLoginDataDTO.self)
             .tryMap { response in
                 let data = response.data
-                
-                if response.statusCode == 200 {
+                if response.statusCode == 202 {
                     guard data.accessToken == nil, data.refreshToken == nil else {
                         throw NetworkError.decoding
                     }
-                    return .needSignUp(authId: data.authId)
-                } else if response.statusCode == 202 {
+                    return .needSignUp(authId: data.userId ?? "")
+                } else if response.statusCode == 200 {
                     guard let accessToken = data.accessToken,
                           let refreshToken = data.refreshToken else {
                         throw NetworkError.decoding
                     }
-                    return .success(accessToken: accessToken, refreshToken: refreshToken, authId: data.authId)
+                    return .success(accessToken: accessToken, refreshToken: refreshToken, authId: data.userId ?? "")
                 } else {
                     throw NetworkError.networkFail
                 }
-                
             }
             .mapError { error in
                 return error as? NetworkError ?? .networkFail

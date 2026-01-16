@@ -8,22 +8,17 @@
 import Foundation
 
 // MARK: - Login Response
-struct KakaoLoginResponseDTO: Decodable {
-    let status: String
-    let statusCode: Int
-    let data: KakaoLoginDataDTO
-    let timestamp: String
-}
 
 struct KakaoLoginDataDTO: Decodable {
     let accessToken: String?
     let refreshToken: String?
-    let authId: String
-    let kakaoId: String?
+    let kakaoId: String
+    let userId: String?
     let isCompletedSignUp: Bool
 }
 
 // MARK: - Error Response
+
 struct KakaoAuthErrorDTO: Decodable {
     let status: String
     let statusCode: Int
