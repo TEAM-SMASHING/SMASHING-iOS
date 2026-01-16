@@ -20,7 +20,7 @@ final class LoginView: BaseUIView {
     
     private let logoImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.backgroundColor = .darkGray
+        $0.image = .smashingBanner
     }
     
     private let buttonStack = UIStackView().then {
@@ -45,7 +45,7 @@ final class LoginView: BaseUIView {
         logoImageView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(200)
+            $0.height.equalTo(80)
         }
         
         buttonStack.snp.makeConstraints {

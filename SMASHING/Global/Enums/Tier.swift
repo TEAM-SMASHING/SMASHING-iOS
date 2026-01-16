@@ -47,7 +47,7 @@ enum Tier: Codable, Equatable {
         case challenger = "CHALLENGER"
     }
 }
-    
+
 extension Tier {
     var order: Int {
         switch self {
