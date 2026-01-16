@@ -12,6 +12,9 @@ import SnapKit
 import Then
 
 final class myRankingScoreView: BaseUIView {
+    
+    // MARK: - UI Components
+    
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
         $0.contentMode = .scaleAspectFill
@@ -40,6 +43,8 @@ final class myRankingScoreView: BaseUIView {
         $0.tintColor = .white
     }
     
+    // MARK: - Lifecycle
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -50,11 +55,14 @@ final class myRankingScoreView: BaseUIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup Methods
+    
     override func setUI() {
         nameAndTierStackView.addArrangedSubviews(nameLabel, tierLabel)
         
         addSubviews(profileImageView, nameAndTierStackView, tierEmblem)
     }
+    
     override func setLayout() {
         profileImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()

@@ -12,7 +12,8 @@ import SnapKit
 import Then
 
 final class RankingEmptyView: BaseUIView {
-    // MARK: - Propertry
+    
+    // MARK: - UIComponents
     
     private let emptyLabel = UILabel().then {
         $0.text = "아직 동네 랭커가 없어요"
@@ -20,6 +21,8 @@ final class RankingEmptyView: BaseUIView {
         $0.font = .pretendard(.textMdM)
         $0.textAlignment = .center
     }
+    
+    // MARK: - Setup Methods
     
     override func setUI() {
         addSubviews(emptyLabel)

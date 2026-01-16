@@ -13,6 +13,8 @@ import Then
 
 final class RankingCardView: BaseUIView {
     
+    // MARK: - UI Components
+    
     private let gradientLayer = CAGradientLayer().then {
         $0.colors = [UIColor.Background.overlay.cgColor, UIColor.Background.canvas.cgColor]
         $0.locations = [0.4, 0.9]
@@ -41,6 +43,8 @@ final class RankingCardView: BaseUIView {
         $0.font = .pretendard(.captionXxsR)
         $0.textColor = .Text.tertiary
     }
+    
+    // MARK: - Setup Methods
     
     override func setUI() {
         containerView.layer.addSublayer(gradientLayer)
@@ -78,6 +82,8 @@ final class RankingCardView: BaseUIView {
             $0.bottom.equalToSuperview().inset(20)
         }
     }
+    
+    // MARK: - Public Methods
     
     func configure(rankImage: UIImage?, tierImage: UIImage?, lp: Int) {
         self.rankImage.image = rankImage

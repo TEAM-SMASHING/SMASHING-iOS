@@ -13,7 +13,8 @@ import Then
 
 final class RankingView: BaseUIView {
     
-    // MARK: - Properties
+    // MARK: - UI Components
+    
     private let rankingEmptyView = RankingEmptyView()
     
     let navigationBar = CustomNavigationBar(title: "전체 랭킹")
@@ -28,15 +29,6 @@ final class RankingView: BaseUIView {
         $0.layer.shadowRadius = 100
         $0.layer.shadowOpacity = 1.0
         $0.layer.masksToBounds = false
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        // Spread 효과를 위해 shadowPath 설정
-        let spread: CGFloat = 100
-        let rect = backgroundEffectView.bounds.insetBy(dx: -spread, dy: -spread)
-        backgroundEffectView.layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: backgroundEffectView.layer.cornerRadius + spread).cgPath
     }
     
     private let collectionViewContainer = UIView().then {
@@ -58,6 +50,17 @@ final class RankingView: BaseUIView {
     }()
     
     private let myRankingScore = myRankingScoreView()
+    
+    // MARK: - Setup Methods
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        // Spread 효과를 위해 shadowPath 설정
+        let spread: CGFloat = 100
+        let rect = backgroundEffectView.bounds.insetBy(dx: -spread, dy: -spread)
+        backgroundEffectView.layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: backgroundEffectView.layer.cornerRadius + spread).cgPath
+    }
     
     override func setUI() {
         collectionViewContainer.addSubview(rankingCollectionView)
@@ -105,6 +108,8 @@ final class RankingView: BaseUIView {
             $0.height.equalTo(88)
         }
     }
+    
+    // MARK: - Public Methods
     
     func registerCells() {
         rankingCollectionView.register(RankingCell.self, forCellWithReuseIdentifier: RankingCell.reuseIdentifier)

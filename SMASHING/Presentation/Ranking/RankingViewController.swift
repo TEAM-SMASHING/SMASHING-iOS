@@ -11,32 +11,17 @@ import Combine
 import SnapKit
 import Then
 
-extension RankingViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return rankingData.count
-        15
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RankingCell", for: indexPath) as? RankingCell else {
-            return UICollectionViewCell()
-        }
-        return cell
-    }
-}
-
-extension RankingViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width
-        return CGSize(width: width, height: 62)
-    }
-}
-
 final class RankingViewController: BaseViewController {
-    private let mainView = RankingView()
     
+    // MARK: - Properties
     
     private var rankingData: [Any] = []
+    
+    // MARK: - UI Components
+    
+    private let mainView = RankingView()
+    
+    // MARK: - Lifecycle
     
     override func loadView() {
         view = mainView
@@ -51,8 +36,10 @@ final class RankingViewController: BaseViewController {
         mainView.rankingCollectionView.delegate = self
         mainView.rankingCollectionView.dataSource = self
         
-//        updateEmptyState()
+        //        updateEmptyState()
     }
+    
+    // MARK: - Private Methods
     
     private func updateEmptyState() {
         mainView.updateEmptyState(isEmpty: rankingData.isEmpty)
@@ -82,5 +69,28 @@ final class RankingViewController: BaseViewController {
                 lp: 1156
             )
         )
+    }
+}
+
+// MARK: - Extensions
+
+extension RankingViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        //        return rankingData.count
+        15
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RankingCell", for: indexPath) as? RankingCell else {
+            return UICollectionViewCell()
+        }
+        return cell
+    }
+}
+
+extension RankingViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.bounds.width
+        return CGSize(width: width, height: 62)
     }
 }

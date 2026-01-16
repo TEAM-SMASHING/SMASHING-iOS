@@ -12,7 +12,8 @@ import SnapKit
 import Then
 
 final class TopThreePodium: BaseUIView {
-    // MARK: - Components
+    
+    // MARK: - UI Components
     
     // 왕관(1등 전용)
     private let crownImageView = UIImageView().then {
@@ -36,7 +37,6 @@ final class TopThreePodium: BaseUIView {
     }
     
     private let secondCard = RankingCardView()
-    
     
     // 1등 (중앙)
     private let firstProfileImageView = UIImageView().then {
@@ -71,6 +71,9 @@ final class TopThreePodium: BaseUIView {
     }
     
     private let thirdCard = RankingCardView()
+    
+    
+    // MARK: - Setup Methods
     
     override func setUI() {
         addSubviews(crownImageView,
@@ -154,6 +157,8 @@ final class TopThreePodium: BaseUIView {
             $0.bottom.equalToSuperview()
         }
     }
+    
+    // MARK: - Public Methods
     
     func configure(
         first: (nickname: String, profileImage: UIImage?, rankImage: UIImage?, tierImage: UIImage?, lp: Int),
