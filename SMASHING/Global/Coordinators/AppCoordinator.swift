@@ -19,7 +19,7 @@ final class AppCoordinator: Coordinator {
     
     func start() {
 
-        let root = MyProfileViewController()
+        let root = TierExplanationViewController()
         navigationController.pushViewController(root, animated: false)
         navigationController.isNavigationBarHidden = true
 //        let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)

@@ -40,7 +40,7 @@ extension MyProfileViewController: UICollectionViewDelegate, UICollectionViewDat
         
         cell.configure(data)
         
-        cell.contentView.snp.makeConstraints {
+        cell.contentView.snp.remakeConstraints {
             $0.width.equalTo(collectionView.frame.width)
         }
         

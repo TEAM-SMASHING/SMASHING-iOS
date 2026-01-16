@@ -14,7 +14,7 @@ final class ProfileCard: BaseUIView {
     
     // MARK: - Properties
     
-    private var challengeAction: (() -> Void)?
+    var challengeAction: (() -> Void)?
     
     // MARK: - UI Componetns
     
