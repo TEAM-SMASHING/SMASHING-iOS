@@ -8,8 +8,8 @@
 import Foundation
 
 struct GenericResponse<T: Decodable>: Decodable {
-    let isSuccess: Bool
-    let code: String
-    let message: String
-    let result: T
+    let status: String
+    let statusCode: Int
+    let data: T
+    let timestamp: String
 }

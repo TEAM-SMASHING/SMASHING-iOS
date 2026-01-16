@@ -19,6 +19,8 @@ struct KakaoLoginDataDTO: Decodable {
     let accessToken: String?
     let refreshToken: String?
     let authId: String
+    let kakaoId: String?
+    let isCompletedSignUp: Bool
 }
 
 // MARK: - Error Response

@@ -71,17 +71,13 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
                         throw NetworkError.decoding
                     }
                     return .needSignUp(authId: data.authId)
-                }
-                
-                else if response.statusCode == 202 {
+                } else if response.statusCode == 202 {
                     guard let accessToken = data.accessToken,
                           let refreshToken = data.refreshToken else {
                         throw NetworkError.decoding
                     }
                     return .success(accessToken: accessToken, refreshToken: refreshToken, authId: data.authId)
-                }
-                
-                else {
+                } else {
                     throw NetworkError.networkFail
                 }
                 
