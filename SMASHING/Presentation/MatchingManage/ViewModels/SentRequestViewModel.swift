@@ -2,48 +2,55 @@
 //  SentRequestViewModel.swift
 //  SMASHING
 //
-//  Created by JIN on 1/17/26.
+//  Created by Claude on 1/17/26.
 //
 
-import UIKit
-
+import Foundation
 import Combine
 
-final class SentRequestViewModel: InputOutputProtocol {
-    
-    //MARK: - Input
-    
+// MARK: - Protocol
+
+protocol SentRequestViewModelProtocol: InputOutputProtocol
+where Input == SentRequestViewModel.Input, Output == SentRequestViewModel.Output {}
+
+// MARK: - ViewModel
+
+final class SentRequestViewModel: SentRequestViewModelProtocol {
+
+    // MARK: - Input/Output Types
+
     enum Input {
         case viewDidLoad
         case refresh
         case closeTapped(index: Int)
-        case cancelConfirmed(index: Int)
     }
-    
-    //MARK: - OutPut
-    
+
     struct Output {
-        let requestList: AnyPublisher<[SentRequestResultDTO], Never>
+        let requestList: AnyPublisher<[TempRequesterInfo], Never>
         let isLoading: AnyPublisher<Bool, Never>
         let errorMessage: AnyPublisher<String, Never>
-        let itemRemoved: AnyPublisher<Int, Never>     
+        let itemRemoved: AnyPublisher<Int, Never>
     }
-    
-    //MARK: - Properties
-    
-    private let requestListSubject = CurrentValueSubject<[SentRequestResultDTO], Never>([])
+
+    // MARK: - Private Subjects
+
+    private let requestListSubject = CurrentValueSubject<[TempRequesterInfo], Never>([])
     private let isLoadingSubject = CurrentValueSubject<Bool, Never>(false)
     private let errorMessageSubject = PassthroughSubject<String, Never>()
-    private let showCancelAlertSubject = PassthroughSubject<Int, Never>()
     private let itemRemovedSubject = PassthroughSubject<Int, Never>()
-    
-    //MARK: - Properties
-    
+
+    // MARK: - Public Subjects
+
     let requestCancelled = PassthroughSubject<Void, Never>()
     let refreshFromParent = PassthroughSubject<Void, Never>()
-    
-    private var cancellables: Set<AnyCancellable> = []
-    
+
+    // MARK: - Properties
+
+    private var cancellables = Set<AnyCancellable>()
+    private var lastRefreshTime: Date?
+
+    // MARK: - Transform
+
     func transform(input: AnyPublisher<Input, Never>) -> Output {
         input
             .sink { [weak self] event in
@@ -51,20 +58,22 @@ final class SentRequestViewModel: InputOutputProtocol {
                 switch event {
                 case .viewDidLoad:
                     self.fetchSentList()
+
                 case .refresh:
                     self.handleRefresh()
-                case .cancelConfirmed(let index):
+
+                case .closeTapped(let index):
                     self.cancelRequest(at: index)
                 }
             }
             .store(in: &cancellables)
-        
+
         refreshFromParent
             .sink { [weak self] in
                 self?.fetchSentList()
             }
             .store(in: &cancellables)
-        
+
         return Output(
             requestList: requestListSubject.eraseToAnyPublisher(),
             isLoading: isLoadingSubject.eraseToAnyPublisher(),
@@ -72,170 +81,77 @@ final class SentRequestViewModel: InputOutputProtocol {
             itemRemoved: itemRemovedSubject.eraseToAnyPublisher()
         )
     }
-    
-}
 
-
-final class SearchViewModel_JIN: InputOutputStructProtocol {
-
-    // MARK: - Input
-
-    enum Input {
-        case searchTextChanged(String)
-        case loadMoreTriggered
-    }
-
-    // MARK: - Output
-
-    struct Output {
-        let movies: AnyPublisher<[MovieDTO], Never>
-        let isLoading: AnyPublisher<Bool, Never>
-        let error: AnyPublisher<String?, Never>
-    }
-
-    // MARK: - Properties
-
-    private let moviesSubject = CurrentValueSubject<[MovieDTO], Never>([])
-    private let isLoadingSubject = CurrentValueSubject<Bool, Never>(false)
-    private let errorSubject = CurrentValueSubject<String?, Never>(nil)
-
-    private var cancellables = Set<AnyCancellable>()
-    private var currentQuery: String = ""
-    private var currentPage: Int = 1
-
-    // MARK: - Transform
-
-    func transform(input: AnyPublisher<Input, Never>) -> Output {
-
-        input
-            .compactMap { event -> String? in
-                if case .searchTextChanged(let text) = event {
-                    return text
-                }
-                return nil
-            }
-            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-            .sink { [weak self] text in
-                self?.handleSearchTextChanged(text)
-            }
-            .store(in: &cancellables)
-        input
-            .filter { event in
-                if case .loadMoreTriggered = event {
-                    return true
-                }
-                return false
-            }
-            .throttle(for: .seconds(0.3), scheduler: DispatchQueue.main, latest: true)
-            .sink { [weak self] _ in
-                self?.handleLoadMore()
-            }
-            .store(in: &cancellables)
-
-        return Output(
-            movies: moviesSubject.eraseToAnyPublisher(),
-            isLoading: isLoadingSubject.eraseToAnyPublisher(),
-            error: errorSubject.eraseToAnyPublisher()
-        )
-    }
-    
-    
     // MARK: - Private Methods
-    
-    private func handleSearchTextChanged(_ text: String) {
-        currentQuery = text
-        currentPage = 1
-        fetchMovies(query: text, page: 1, isNewSearch: true)
-    }
 
-    private func handleLoadMore() {
-        currentPage += 1
-        fetchMovies(query: currentQuery, page: currentPage, isNewSearch: false)
-    }
-}
-
-// MARK: - API
-
-extension SearchViewModel_JIN {
-
-    private func fetchMovies(query: String, page: Int, isNewSearch: Bool) {
-        guard !query.isEmpty else {
-            moviesSubject.send([])
+    private func handleRefresh() {
+        // Throttling: 0.5초 이내 재요청 방지
+        let now = Date()
+        if let lastTime = lastRefreshTime, now.timeIntervalSince(lastTime) < 0.5 {
             return
         }
+        lastRefreshTime = now
+        fetchSentList()
+    }
 
+    private func fetchSentList() {
         isLoadingSubject.send(true)
 
-        Task {
-            do {
-                let movies = try await loadMovies(query: query, page: page)
-                if isNewSearch {
-                    self.moviesSubject.send(movies)
-                } else {
-                    var currentMovies = self.moviesSubject.value
-                    currentMovies.append(contentsOf: movies)
-                    self.moviesSubject.send(currentMovies)
-                }
-                self.isLoadingSubject.send(false)
-            } catch {
-                self.errorSubject.send("영화 검색 실패: \(error.localizedDescription)")
-                self.isLoadingSubject.send(false)
-            }
+        // TODO: 실제 API 호출로 교체
+        // NetworkProvider<MatchingAPI>.request(.getSentRequests, type: GenericResponse<[SentRequestInfo]>.self) { ... }
+
+        // Mock 데이터 (API 연동 전)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self else { return }
+
+            let mockData = [
+                TempRequesterInfo(
+                    userId: "0USER000111225",
+                    nickname: "나는다섯글자인간임ㅅㄱ",
+                    gender: "MALE",
+                    tierId: 4,
+                    wins: 30,
+                    losses: 15,
+                    reviewCount: 8
+                ),
+                TempRequesterInfo(
+                    userId: "0USER000111226",
+                    nickname: "하은",
+                    gender: "FEMALE",
+                    tierId: 2,
+                    wins: 15,
+                    losses: 20,
+                    reviewCount: 4
+                )
+            ]
+
+            self.requestListSubject.send(mockData)
+            self.isLoadingSubject.send(false)
         }
     }
 
-    private func loadMovies(query: String, page: Int) async throws -> [MovieDTO] {
-     
-         return try await loadMoviesFromAPI(query: query, page: page)
+    private func cancelRequest(at index: Int) {
+        guard index < requestListSubject.value.count else { return }
 
-        // Mock 테스트
-        // return try await loadMoviesFromMock(query: query, page: page)
-    }
+        let request = requestListSubject.value[index]
+        isLoadingSubject.send(true)
 
-    // MARK: - API Call
+        // TODO: 실제 API 호출로 교체
+        // NetworkProvider<MatchingAPI>.request(.cancelRequest(requestId: request.userId), type: GenericResponse<EmptyResponse>.self) { ... }
 
-    private func loadMoviesFromAPI(query: String, page: Int) async throws -> [MovieDTO] {
-        return try await withCheckedThrowingContinuation { continuation in
-            NetworkProvider<MovieAPI>.request(
-                .searchMovieList(movieNm: query, curPage: page, itemPerPage: 10),
-                type: MovieListResponse.self
-            ) { result in
-                switch result {
-                case .success(let response):
-                    continuation.resume(returning: response.movieListResult.movieList)
-                case .failure(let error):
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
+        // Mock 취소 처리 (API 연동 전)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            guard let self else { return }
 
-    // MARK: - Mock Test
+            var currentList = self.requestListSubject.value
+            currentList.remove(at: index)
+            self.requestListSubject.send(currentList)
+            self.isLoadingSubject.send(false)
+            self.itemRemovedSubject.send(index)
 
-    private func loadMoviesFromMock(query: String, page: Int) async throws -> [MovieDTO] {
-      
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-
-        return generateDummyMovies(query: query, page: page)
-    }
-
-    private func generateDummyMovies(query: String, page: Int) -> [MovieDTO] {
-        return (1...10).map { index in
-            MovieDTO(
-                movieCd: "\((page - 1) * 10 + index)",
-                movieNm: "\(query) 영화 \((page - 1) * 10 + index)",
-                movieNmEn: "\(query) Movie \((page - 1) * 10 + index)",
-                prdtYear: "202\(index % 5)",
-                openDt: "2024010\(index % 9 + 1)",
-                typeNm: "장편",
-                prdtStatNm: "개봉",
-                nationAlt: "한국",
-                genreAlt: "드라마",
-                repNationNm: "한국",
-                repGenreNm: "드라마",
-                directors: [DirectorDTO(peopleNm: "감독\(index)")],
-                companys: [CompanyDTO(companyCd: "C00\(index)", companyNm: "제작사\(index)")]
-            )
+            // 탭 간 통신: 취소 완료 알림
+            self.requestCancelled.send()
         }
     }
 }
+
