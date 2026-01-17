@@ -90,8 +90,36 @@ final class SentRequestService: SentRequestServiceProtocol {
     }
     
     func cancelSentRequest(requestId: String, completion: @escaping (NetworkResult<Bool>) -> Void) {
-        <#code#>
+        print("====== [SentRequestService] cancelSentRequest 호출 - requestId: \(requestId) ======")
+
+        provider.request(.cancelSentRequest(resultId: requestId)) { result in
+            switch result {
+            case .success(let response):
+                print("[SentRequestService] 네트워크 성공 - StatusCode: \(response.statusCode)")
+                
+                if let jsonString = String(data: response.data, encoding: .utf8) {
+                    print("[SentRequestService] Raw Response: \(jsonString)")
+                }
+                
+                if (200...299).contains(response.statusCode) {
+                    print("[SentRequestService] 취소 성공")
+                    completion(.success(true))
+                } else {
+                    print("[SentRequestService] 취소 실패 - 잘못된 StatusCode")
+                    completion(.pathError)
+                }
+                
+            case .failure(let error):
+                print("[SentRequestService] 네트워크 실패")
+                print("  - Error: \(error.localizedDescription)")
+                if let response = error.response {
+                    print("  - StatusCode: \(response.statusCode)")
+                    if let body = String(data: response.data, encoding: .utf8) {
+                        print("  - Response Body: \(body)")
+                    }
+                }
+                completion(.networkError)
+            }
+        }
     }
-    
-    
 }
