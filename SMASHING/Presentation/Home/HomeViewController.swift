@@ -19,15 +19,60 @@ final class HomeViewController: BaseViewController {
         
     }
     
+    private let viewModel: HomeViewModel
+    
+    private let input = PassthroughSubject<HomeViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
+    
+    //Data
+//    private var recentMatching: RecentMatchingDTO?
+    private var recommendedUsers: [RecommendedUserDTO] = []
+    private var rankings: [RankingUserDTO] = []
+    
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setCollectionView()
         view.backgroundColor = .Background.canvas
+        bind()
+        input.send(.viewDidLoad)
+        
+        _ = KeychainService.add(key: Environment.accessTokenKey, value: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwUDZLRjZURFBUQ0ZSIiwidHlwZSI6IkFDQ0VTU19UT0tFTiIsInJvbGVzIjpbXSwiaWF0IjoxNzY4NTg5Mzg0LCJleHAiOjEyMDk3NzY4NTg5Mzg0fQ.VwumDSiP-4x5VoW-39UOj83Zc-XBsHJVdrngA5hmpl0")
     }
     
     private func setCollectionView() {
         homeView.delegate = self
         homeView.dataSource = self
+    }
+    
+    private func bind() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output.recommendedUsers
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] users in
+                self?.recommendedUsers = users
+                self?.homeView.reloadSections(IndexSet(integer: HomeViewLayout.recommendedUser.rawValue))
+            }
+            .store(in: &cancellables)
+        
+        output.rankings
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] rankings in
+                print("🟡 [HomeVC] rankings 바인딩: \(rankings.count)개")
+                self?.rankings = rankings
+                self?.homeView.reloadSections(IndexSet(integer: HomeViewLayout.ranking.rawValue))
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -45,9 +90,9 @@ extension HomeViewController: UICollectionViewDataSource {
         case .matching:
             return 1
         case .recommendedUser:
-            return 3
+            return recommendedUsers.count
         case .ranking:
-            return 5
+            return rankings.count
         }
     }
     
@@ -64,9 +109,13 @@ extension HomeViewController: UICollectionViewDataSource {
             
         case .recommendedUser:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecomendedUserCell.reuseIdentifier, for: indexPath) as? RecomendedUserCell else { return UICollectionViewCell() }
+            let user = recommendedUsers[indexPath.item]
+            cell.configure(with: user)
             return cell
         case .ranking:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RankingCell.reuseIdentifier, for: indexPath) as? RankingCell else { return UICollectionViewCell() }
+            let ranker = rankings[indexPath.item]
+            cell.configure(with: ranker)
             return cell
         }
     }
