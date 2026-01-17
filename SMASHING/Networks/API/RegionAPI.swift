@@ -20,7 +20,7 @@ extension RegionAPI: BaseTargetType {
     var path: String {
         switch self {
         case .getRecommendedUsers:
-            return "/api/v1/users/me/regions/recommendation"
+            return "/api/v1/users/regions/recommendation"
         case .getLocalRanking:
             return "/api/v1/users/me/regions/leaderboard"
         case .getLocalUsers:
