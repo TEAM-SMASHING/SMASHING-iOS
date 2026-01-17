@@ -68,7 +68,9 @@ final class AddressSearchViewModel: AddressSearchViewModelProtocol {
                 isFetching = false
             }, receiveValue: { [weak self] response in
                 guard let self else { return }
-                searchResults = response.documents.map { $0.addressName }
+                searchResults = response.documents
+                    .filter { $0.address?.region1depthName.contains("서울") ?? false }
+                    .map { $0.addressName }
                 output.dataFetched.send()
                 isFetching = false
             })
@@ -82,13 +84,6 @@ final class AddressSearchViewModel: AddressSearchViewModelProtocol {
 import UIKit
 
 final class AddressSearchViewController: BaseViewController {
-    
-    private let dummyAddresses = [
-        "서울특별시",
-        "서울특별시 성북구",
-        "서울특별시 성북구 안암로",
-        "서울특별시 성북구 안암로 1길"
-    ]
     
     // MARK: - Properties
     
