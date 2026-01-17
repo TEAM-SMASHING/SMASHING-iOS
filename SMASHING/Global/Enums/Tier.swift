@@ -145,23 +145,23 @@ extension Tier {
     
     static func from(tierId: Int) -> Tier? {
         switch tierId {
-        case 1: return .iron
-        case 2: return .bronze3
-        case 3: return .bronze2
-        case 4: return .bronze1
-        case 5: return .silver3
-        case 6: return .silver2
-        case 7: return .silver1
-        case 8: return .gold3
-        case 9: return .gold2
-        case 10: return .gold1
-        case 11: return .platinum3
-        case 12: return .platinum2
-        case 13: return .platinum1
-        case 14: return .diamond3
-        case 15: return .diamond2
-        case 16: return .diamond1
-        case 17: return .challenger
+        case 1, 18, 35: return .iron
+        case 2, 19, 36: return .bronze3
+        case 3, 20, 37: return .bronze2
+        case 4, 21, 38: return .bronze1
+        case 5, 22, 39: return .silver3
+        case 6, 23, 40: return .silver2
+        case 7, 24, 41: return .silver1
+        case 8, 25, 42: return .gold3
+        case 9, 26, 43: return .gold2
+        case 10, 27, 44: return .gold1
+        case 11, 28, 45: return .platinum3
+        case 12, 29, 46: return .platinum2
+        case 13, 30, 47: return .platinum1
+        case 14, 31, 48: return .diamond3
+        case 15, 32, 49: return .diamond2
+        case 16, 33, 50: return .diamond1
+        case 17, 34, 51: return .challenger
         default: return nil
         }
     }
