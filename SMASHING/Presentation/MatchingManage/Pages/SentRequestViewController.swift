@@ -69,6 +69,7 @@ final class SentRequestViewController: BaseViewController {
         super.viewDidLoad()
         bind()
         input.send(.viewDidLoad)
+        _ = KeychainService.add(key:Environment.accessTokenKey , value: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwUDZWVksyRk1HNEZYIiwidHlwZSI6IkFDQ0VTU19UT0tFTiIsInJvbGVzIjpbXSwiaWF0IjoxNzY4NjU5ODE1LCJleHAiOjEyMDk3NzY4NjU5ODE1fQ.9Hao_dtvvKs-1D2Rdy7C6RGcREFQMo2JXqapTOajNoc")
     }
 
     // MARK: - Setup Methods
@@ -98,12 +99,13 @@ final class SentRequestViewController: BaseViewController {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
 
         output.requestList
+            .combineLatest(output.isLoading)
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] requests in
+            .sink { [weak self] requests, isLoading in
                 guard let self else { return }
                 self.requestList = requests
                 self.collectionView.reloadData()
-                self.emptyLabel.isHidden = !requests.isEmpty
+                self.emptyLabel.isHidden = isLoading || !requests.isEmpty
             }
             .store(in: &cancellables)
 
@@ -135,12 +137,18 @@ final class SentRequestViewController: BaseViewController {
 
         output.itemRemoved
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] index in
+            .sink { [weak self] _ in
                 guard let self else { return }
-                self.collectionView.performBatchUpdates {
-                    self.collectionView.deleteItems(at: [IndexPath(item: index, section: 0)])
-                }
+                // reloadData is already called in requestList binding
+                // Just update emptyLabel here
                 self.emptyLabel.isHidden = !self.requestList.isEmpty
+            }
+            .store(in: &cancellables)
+
+        // 무한 스크롤
+        collectionView.reachedBottomPublisher
+            .sink { [weak self] in
+                self?.input.send(.loadMore)
             }
             .store(in: &cancellables)
     }
@@ -184,16 +192,7 @@ extension SentRequestViewController: UICollectionViewDataSource {
         }
 
         let request = self.requestList[indexPath.row]
-        let receiver = request.receiver
-
-        cell.configure(
-            nickname: receiver.nickname,
-            gender: receiver.gender,
-            tierId: receiver.tierID,
-            wins: receiver.wins,
-            losses: receiver.losses,
-            reviews: receiver.reviewCount
-        )
+        cell.configure(with: request.receiver)
 
         cell.onCloseTapped = { [weak self] in
             self?.closeButtonDidTap(at: indexPath.item)
@@ -218,17 +217,3 @@ extension SentRequestViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - UIScrollViewDelegate (무한 스크롤)
-
-extension SentRequestViewController {
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-        let frameHeight = scrollView.frame.size.height
-
-        if offsetY > contentHeight - frameHeight - 100 {
-            input.send(.loadMore)
-        }
-    }
-}

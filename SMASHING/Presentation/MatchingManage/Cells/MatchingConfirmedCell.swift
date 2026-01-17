@@ -86,9 +86,16 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.titleLabel?.font = .pretendard(.textSmM)
         $0.layer.cornerRadius = 4
     }
+    
+    private lazy var closeButton = UIButton().then {
+        $0.setImage(.icCloseSm, for: .normal)
+        $0.tintColor = .Text.tertiary
+        $0.addTarget(self, action: #selector(closeButtonDidTap), for: .touchUpInside)
+    }
 
     // MARK: - Properties
-
+    
+    var onCloseTapped: (() -> Void)?
     var onSkipTapped: (() -> Void)?
     var onAcceptTapped: (() -> Void)?
 
@@ -99,7 +106,8 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
         containerView.addSubviews(
             profileStackView,
             kakaoLinkStackView,
-            writeResult
+            writeResult,
+            closeButton
         )
         nicknameStackView.addArrangedSubviews(
             nicknameLabel,
@@ -120,6 +128,11 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     override func setLayout() {
         containerView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        
+        closeButton.snp.makeConstraints {
+            $0.top.trailing.equalToSuperview().inset(15.5)
+            $0.size.equalTo(20)
         }
         
         profileStackView.snp.makeConstraints {
@@ -162,29 +175,33 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
 
     }
-
+    
     // MARK: - Actions
 
-    @objc private func skipButtonDidTap() {
-        self.onSkipTapped?()
-    }
-
-    @objc private func acceptButtonDidTap() {
-        self.onAcceptTapped?()
+    @objc private func closeButtonDidTap() {
+        self.onCloseTapped?()
     }
 
     // MARK: - Configuration
 
-    func configure(
-        nickname: String,
-        gender: String,
-        tierId: Int,
-        wins: Int,
-        losses: Int,
-        reviews: Int) {
-        self.nicknameLabel.text = nickname
-        self.genderIconImageView.image = gender == "MALE" ? .icManSm : .icWomanSm
-        self.configureTierBadge(tierId: tierId)
+    func configure(with game: MatchingConfirmedGameDTO) {
+        let opponent = game.opponent
+        self.nicknameLabel.text = opponent.nickname
+        self.genderIconImageView.image = opponent.gender == "MALE" ? .icManSm : .icWomanSm
+        self.configureTierBadge(tierId: opponent.tierID)
+        self.updateWriteResultButton(isLocked: game.isSubmitLocked)
+    }
+
+    private func updateWriteResultButton(isLocked: Bool) {
+        if isLocked {
+            self.writeResult.setTitle("결과 작성 대기중", for: .normal)
+            self.writeResult.backgroundColor = .Button.textPrimaryDisabled
+            self.writeResult.isEnabled = false
+        } else {
+            self.writeResult.setTitle("결과 작성하기", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundPrimaryActive
+            self.writeResult.isEnabled = true
+        }
     }
     
     private func configureTierBadge(tierId: Int) {
