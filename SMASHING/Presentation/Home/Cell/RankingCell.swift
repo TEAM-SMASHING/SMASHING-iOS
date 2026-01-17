@@ -19,6 +19,14 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let tierImageView = UIImageView().then {
         $0.image = .icGold
         $0.contentMode = .scaleAspectFit
+        $0.isHidden = true
+    }
+    
+    private let rankLabel = UILabel().then {
+        $0.text = "4"
+        $0.textColor = .Text.primary
+        $0.font = .pretendard(.textSmM)
+        $0.textAlignment = .center
     }
     
     private let profileImageView = UIImageView().then {
@@ -52,7 +60,7 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     override func setUI() {
         nameAndTierStackView.addArrangedSubviews(nameLabel, tierLabel)
         
-        containerView.addSubviews(tierImageView, profileImageView, nameAndTierStackView, tierEmblem)
+        containerView.addSubviews(tierImageView, rankLabel, profileImageView, nameAndTierStackView, tierEmblem)
         
         contentView.addSubview(containerView)
     }
@@ -63,6 +71,12 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
         
         tierImageView.snp.makeConstraints {
+            $0.leading.equalTo(containerView.snp.leading).inset(21)
+            $0.centerY.equalToSuperview()
+            $0.size.equalTo(24)
+        }
+        
+        rankLabel.snp.makeConstraints {
             $0.leading.equalTo(containerView.snp.leading).inset(21)
             $0.centerY.equalToSuperview()
             $0.size.equalTo(24)
@@ -84,5 +98,26 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.centerY.equalToSuperview()
             $0.size.equalTo(30)
         }
+    }
+    
+    func configure(with ranker: RankingUserDTO) {
+        
+        if ranker.rank.description == "1" {
+            rankLabel.isHidden = true
+            tierImageView.isHidden = false
+            tierImageView.image = .icGold
+        } else if ranker.rank.description == "2" {
+            rankLabel.isHidden = true
+            tierImageView.isHidden = false
+            tierImageView.image = .icSliver
+        } else if ranker.rank.description == "3" {
+            rankLabel.isHidden = true
+            tierImageView.isHidden = false
+            tierImageView.image = .icBronze
+        } else {
+            rankLabel.text = ranker.rank.description
+        }
+        nameLabel.text = ranker.nickname
+        tierLabel.text = ranker.tierWithLpText
     }
 }
