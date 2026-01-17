@@ -9,6 +9,8 @@ import Combine
 
 protocol AddressSearchViewModelProtocol: InputOutputProtocol where Input == AddressSearchViewModel.Input, Output == AddressSearchViewModel.Output {
     var searchResults: [String] {get}
+    associatedtype NavigationEvent
+    var navigationEvent: NavigationEvent {get}
 }
 
 final class AddressSearchViewModel: AddressSearchViewModelProtocol {
@@ -22,13 +24,20 @@ final class AddressSearchViewModel: AddressSearchViewModelProtocol {
     enum Input {
         case searchAddress(String)
         case reachedBottom
+        case backTapped(String)
     }
     
     struct Output {
         let dataFetched = PassthroughSubject<Void, Never>()
     }
     
+    struct NavigationEvent {
+        let backTapped = PassthroughSubject<String, Never>()
+    }
+    
     let output = Output()
+    let navigationEvent = NavigationEvent()
+    
     let addressService: KakaoAddressServiceProtocol
     
     init(addressService: KakaoAddressServiceProtocol) {
@@ -43,6 +52,8 @@ final class AddressSearchViewModel: AddressSearchViewModelProtocol {
                     self?.handleSearch(query)
                 case .reachedBottom:
                     self?.handleLoadNextPage()
+                case .backTapped(let address):
+                    self?.navigationEvent.backTapped.send(address)
                 }
             }
             .store(in: &cancellables)
@@ -159,9 +170,6 @@ extension AddressSearchViewController: UICollectionViewDataSource, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // 이걸 어떻게 처리할까?
-        // 터치
-            // 텍스트 필드에 추가
-            // 뒤로가면,
+        inputSubject.send(.backTapped(viewModel.searchResults[indexPath.item].replacingOccurrences(of: "서울 ", with: "")))
     }
 }
