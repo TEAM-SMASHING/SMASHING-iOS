@@ -52,6 +52,18 @@ final class NicknameViewController: BaseViewController {
                 input.send(.nicknameTyped(text))
             }
             .store(in: &cancellables)
-            
+        
+        viewModel.output
+            .checkNicknameDuplicationEnabled
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isAvailable in
+                guard let self else { return }
+                if isAvailable {
+                    nicknameView.nicknameTextField.setMessage(message: "사용 가능한 닉네임입니다")
+                } else {
+                    nicknameView.nicknameTextField.setError(message: "이미 존재하는 닉네임입니다")
+                }
+            }
+            .store(in: &cancellables)
     }
 }

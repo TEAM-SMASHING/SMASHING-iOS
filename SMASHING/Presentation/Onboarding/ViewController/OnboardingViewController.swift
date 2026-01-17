@@ -55,13 +55,13 @@ final class OnboardingViewController: BaseViewController {
     private let containerView = OnboardingContainerView()
     private var currentStep: OnboardingType = .nickname
 
-    private var viewModel: OnboardingViewModelProtocol
+    private var viewModel: any OnboardingViewModelProtocol
     private var input = PassthroughSubject<OnboardingViewModel.Input, Never>()
     private var cancellables: Set<AnyCancellable> = []
 
     // MARK: - Life Cycle
 
-    init(viewModel: OnboardingViewModelProtocol) {
+    init(viewModel: any OnboardingViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -92,6 +92,13 @@ final class OnboardingViewController: BaseViewController {
 
     private func bind() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output.buttonEnabled
+            .sink { [weak self] bool in
+                guard let self else { return }
+                containerView.nextButton.isEnabled = bool
+            }
+            .store(in: &cancellables)
     }
     
     // MARK: - Actions
@@ -155,7 +162,7 @@ final class OnboardingViewController: BaseViewController {
         case .chat:     return OpenChatCheckViewController(viewModel: viewModel, input: input)
         case .sports:   return SportsSelectionViewController(viewModel: viewModel, input: input)
         case .tier:     return ExperienceSelectionViewController(viewModel: viewModel, input: input)
-        case .area:     return AreaSelectionViewController()
+        case .area:     return AreaSelectionViewController(viewModel: viewModel, input: input)
         }
     }
     
@@ -170,6 +177,7 @@ protocol OnboardingViewModelProtocol: InputOutputProtocol where Input == Onboard
                     Output == OnboardingViewModel.Output {
     associatedtype NavigationEvent
     var store: OnboardingObject{get}
+    var output: Output {get}
 }
 
 final class OnboardingViewModel: OnboardingViewModelProtocol {
@@ -177,6 +185,8 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     private var cancellables = Set<AnyCancellable>()
     
     var store = OnboardingObject()
+    
+    let userService = UserService()
     
     enum Input {
         case hitNext // buttonEnabled.send(false) -> 만약 데이터 있으면 : buttonEnabled.send(true)
@@ -190,7 +200,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
         case kakaoOpenChatLinkTyped(String) // 버튼 비활성화!! & Debouncing -> 결과에 따라
         case sportsTapped(Sports) // 저장하기
         case tierTapped(SportsExperienceType) // 저장하기
-        case areaTapped // 뷰 띄우기
+        case addressTapped // 뷰 띄우기
     }
 
     struct Output {
@@ -216,10 +226,12 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     }
     
     struct NavigationEvent {
+        let addressPushEvent = PassthroughSubject<Void, Never>()
         
     }
 
-    let output = Output()
+    var output = Output()
+    let navigationEvent = NavigationEvent()
     
     func transform(input: AnyPublisher<Input, Never>) -> Output {
         
@@ -230,10 +242,19 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
             }
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .removeDuplicates()
-            .sink { [weak self] text in
+            .flatMap { [weak self] text -> AnyPublisher<Bool, Never> in
+                guard let self = self, !text.isEmpty else {
+                    return Just(false).eraseToAnyPublisher()
+                }
+                return self.userService.checkNicknameAvailability(nickname: text)
+                    .replaceError(with: false)
+                    .eraseToAnyPublisher()
+            }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isAvailable in
                 guard let self = self else { return }
-                // 검색 API 호출
-                print(text)
+                output.buttonEnabled.send(isAvailable)
+                output.checkNicknameDuplicationEnabled.send(isAvailable)
             }
             .store(in: &cancellables)
         
@@ -270,18 +291,16 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     // 결과에 따라, switch -> main
                     return
                 case .genderTapped(let gender):
-                    print(gender)
                     store.gender = gender
                     output.buttonEnabled.send(true)
                 case .sportsTapped(let sports):
-                    print(sports)
                     store.sports = sports
                     output.buttonEnabled.send(true)
                 case .tierTapped(let tier):
-                    print(tier)
                     store.tier = tier
                     output.buttonEnabled.send(true)
-                case .areaTapped:
+                case .addressTapped:
+                    navigationEvent.addressPushEvent.send()
                     return
                 default :
                     return
