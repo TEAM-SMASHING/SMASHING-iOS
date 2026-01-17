@@ -24,7 +24,8 @@ final class AddressSearchViewModel: AddressSearchViewModelProtocol {
     enum Input {
         case searchAddress(String)
         case reachedBottom
-        case backTapped(String)
+        case addressSelected(String)
+        case backTapped
     }
     
     struct Output {
@@ -32,7 +33,8 @@ final class AddressSearchViewModel: AddressSearchViewModelProtocol {
     }
     
     struct NavigationEvent {
-        let backTapped = PassthroughSubject<String, Never>()
+        let backTapped = PassthroughSubject<Void, Never>()
+        let addressSelected = PassthroughSubject<String, Never>()
     }
     
     let output = Output()
@@ -52,8 +54,10 @@ final class AddressSearchViewModel: AddressSearchViewModelProtocol {
                     self?.handleSearch(query)
                 case .reachedBottom:
                     self?.handleLoadNextPage()
-                case .backTapped(let address):
-                    self?.navigationEvent.backTapped.send(address)
+                case .addressSelected(let address):
+                    self?.navigationEvent.addressSelected.send(address)
+                case .backTapped:
+                    self?.navigationEvent.backTapped.send()
                 }
             }
             .store(in: &cancellables)
@@ -118,13 +122,21 @@ final class AddressSearchViewController: BaseViewController {
         self.view = mainView
         setDelegate()
         bind()
+        setActions()
     }
-    
+
     private func setDelegate() {
         mainView.resultCollectionView.dataSource = self
         mainView.resultCollectionView.delegate = self
     }
-    
+
+    private func setActions() {
+        mainView.backAction = { [weak self] in
+            guard let self else { return }
+            inputSubject.send(.backTapped)
+        }
+    }
+
     func bind() {
         let output = viewModel.transform(input: inputSubject.eraseToAnyPublisher())
         
@@ -170,6 +182,6 @@ extension AddressSearchViewController: UICollectionViewDataSource, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        inputSubject.send(.backTapped(viewModel.searchResults[indexPath.item].replacingOccurrences(of: "서울 ", with: "")))
+        inputSubject.send(.addressSelected(viewModel.searchResults[indexPath.item].replacingOccurrences(of: "서울 ", with: "")))
     }
 }

@@ -66,6 +66,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     struct NavigationEvent {
         let addressPushEvent = PassthroughSubject<Void, Never>()
         let backToLoginEvent = PassthroughSubject<Void, Never>()
+        let pushToOnboardingCompletionEvent = PassthroughSubject<Void, Never>()
     }
 
     var output = Output()
@@ -135,9 +136,9 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     case .sports:
                         output.buttonEnabled.send(store.tier != nil)
                     case .tier:
-                        output.buttonEnabled.send(store.address.isEmpty)
+                        output.buttonEnabled.send(!store.address.isEmpty)
                     case .address:
-                        output.buttonEnabled.send(false)
+                        navigationEvent.pushToOnboardingCompletionEvent.send()
                     }
                 case .hitBack(let before):
                     output.buttonEnabled.send(false)
@@ -157,9 +158,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     }
                     break
                 case .complete:
-                    // 주소 View에서 호출하면 됨
-                    // API 호출
-                    // 결과에 따라, switch -> main
+                    navigationEvent.pushToOnboardingCompletionEvent.send()
                     break
                 case .genderTapped(let gender):
                     store.gender = gender

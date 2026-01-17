@@ -14,7 +14,8 @@ final class AddressSearchView: BaseUIView {
     
     // MARK: - Properties
     
-    var backAction: ((String) -> Void)?
+    var backAction: (() -> Void)?
+    var addressSelected: ((String) -> Void)?
     
     // MARK: - UI Components
     
@@ -63,6 +64,6 @@ final class AddressSearchView: BaseUIView {
     // MARK: - Actions
     
     @objc private func backButtonTapped() {
-        backAction?(searchTextField.text ?? "")
+        backAction?()
     }
 }
