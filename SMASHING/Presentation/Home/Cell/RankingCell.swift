@@ -19,6 +19,14 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let tierImageView = UIImageView().then {
         $0.image = .icGold
         $0.contentMode = .scaleAspectFit
+        $0.isHidden = true
+    }
+    
+    private let rankLabel = UILabel().then {
+        $0.text = "4"
+        $0.textColor = .Text.primary
+        $0.font = .pretendard(.textSmM)
+        $0.textAlignment = .center
     }
     
     private let profileImageView = UIImageView().then {
@@ -52,7 +60,7 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     override func setUI() {
         nameAndTierStackView.addArrangedSubviews(nameLabel, tierLabel)
         
-        containerView.addSubviews(tierImageView, profileImageView, nameAndTierStackView, tierEmblem)
+        containerView.addSubviews(tierImageView, rankLabel, profileImageView, nameAndTierStackView, tierEmblem)
         
         contentView.addSubview(containerView)
     }
@@ -63,6 +71,12 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
         
         tierImageView.snp.makeConstraints {
+            $0.leading.equalTo(containerView.snp.leading).inset(21)
+            $0.centerY.equalToSuperview()
+            $0.size.equalTo(24)
+        }
+        
+        rankLabel.snp.makeConstraints {
             $0.leading.equalTo(containerView.snp.leading).inset(21)
             $0.centerY.equalToSuperview()
             $0.size.equalTo(24)
@@ -84,5 +98,12 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.centerY.equalToSuperview()
             $0.size.equalTo(30)
         }
+    }
+    
+    func configureAllRankingView(with ranker: RankingUserDTO) {
+        tierImageView.isHidden = true
+        rankLabel.text = ranker.rank.description
+        nameLabel.text = ranker.nickname
+        tierLabel.text = ranker.tierWithLpText
     }
 }
