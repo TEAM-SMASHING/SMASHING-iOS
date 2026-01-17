@@ -10,11 +10,11 @@ import Foundation
 import Alamofire
 import Moya
 
-enum KakaoMapAPI {
+enum KakaoAddressAPI {
     case searchAddress(query: String, analyzeType: String = "similar", page: Int = 1, size: Int = 10)
 }
 
-extension KakaoMapAPI: TargetType {
+extension KakaoAddressAPI: TargetType {
     var baseURL: URL {
         return URL(string: "https://dapi.kakao.com/v2/local")!
     }

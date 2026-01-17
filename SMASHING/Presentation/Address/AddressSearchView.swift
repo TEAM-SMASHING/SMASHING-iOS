@@ -12,13 +12,18 @@ import Then
 
 final class AddressSearchView: BaseUIView {
     
+    // MARK: - Properties
+    
+    var backAction: ((String) -> Void)?
+    
     // MARK: - UI Components
     
-    private let backButtton = UIButton().then {
+    private lazy var backButtton = UIButton().then {
         $0.setImage(.icArrowLeft, for: .normal)
+        $0.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
     }
     
-    private let searchTextField = SearchTextField()
+    let searchTextField = SearchTextField()
     
     let resultCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .vertical
@@ -53,5 +58,11 @@ final class AddressSearchView: BaseUIView {
             $0.bottom.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
+    }
+    
+    // MARK: - Actions
+    
+    @objc private func backButtonTapped() {
+        backAction?(searchTextField.text ?? "")
     }
 }
