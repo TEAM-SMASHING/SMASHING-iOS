@@ -129,7 +129,7 @@ final class OnboardingViewController: BaseViewController {
             currentStep = nextStep
             showStep(currentStep)
         } else {
-            backAction?() // Coordinator에 연결
+            backAction?()
         }
     }
     
@@ -174,5 +174,18 @@ final class OnboardingViewController: BaseViewController {
     
     private func finishOnboarding() {
         print("온보딩 프로세스 완료")
+    }
+    
+    func updateSelectedAddress(_ address: String) {
+        self.input.send(.addressSelected(address))
+        if currentStep == .address {
+            updateAddressUI(address)
+        }
+    }
+    
+    private func updateAddressUI(_ address: String) {
+        if let areaVC = children.first(where: { $0 is AreaSelectionViewController }) as? AreaSelectionViewController {
+            (areaVC.view as? AreaSelectionView)?.updateAddress(address: address)
+        }
     }
 }

@@ -27,6 +27,8 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
         case hitNext(OnboardingType) // buttonEnabled.send(false) -> 만약 데이터 있으면 : buttonEnabled.send(true)
         case hitBack(OnboardingType)
         
+        case addressSelected(String)
+        
         case complete
         
         case nicknameTyped(String)
@@ -58,6 +60,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
         
         let showMapSearchViewController: PassthroughSubject<Void, Never> = .init()
         // Coordinator Pattern 쓰면 되는거 아님?
+        let addressUpdated = PassthroughSubject<String, Never>()
     }
     
     struct NavigationEvent {
@@ -134,7 +137,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     case .tier:
                         output.buttonEnabled.send(store.address.isEmpty)
                     case .address:
-                        output.buttonEnabled.send(true)
+                        output.buttonEnabled.send(false)
                     }
                 case .hitBack(let before):
                     output.buttonEnabled.send(false)
@@ -169,7 +172,9 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     output.buttonEnabled.send(true)
                 case .addressTapped:
                     navigationEvent.addressPushEvent.send()
-                    break
+                case .addressSelected(let address):
+                    store.address = address
+                    output.buttonEnabled.send(true)
                 default :
                     break
                 }

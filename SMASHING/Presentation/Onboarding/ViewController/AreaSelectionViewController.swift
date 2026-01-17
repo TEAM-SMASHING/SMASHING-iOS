@@ -44,6 +44,7 @@ final class AreaSelectionViewController: BaseViewController {
     private func bind() {
         areaSelectionView.action = { [weak self] in
             guard let self else { return }
+            print("hello")
             input.send(.addressTapped)
         }
     }

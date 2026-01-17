@@ -18,7 +18,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        showAddressFlow()
+        showLoginFlow()
     }
     
     private func showLoginFlow() {
@@ -45,6 +45,13 @@ final class AppCoordinator: Coordinator {
         onboardingCoordinator.start()
     }
     
+    private func showAddressFlow() {
+        navigationController.viewControllers.removeAll()
+        let addressCoordinator = AddressCoordinator(navigationController: navigationController)
+        childCoordinators.append(addressCoordinator)
+        addressCoordinator.start()
+    }
+    
     private func showTabBarFlow() {
         navigationController.viewControllers.removeAll()
         let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
@@ -54,12 +61,5 @@ final class AppCoordinator: Coordinator {
     
     private func removeChildCoordinator(_ coordinator: Coordinator) {
         childCoordinators = childCoordinators.filter { $0 !== coordinator }
-    }
-    
-    private func showAddressFlow() {
-        navigationController.viewControllers.removeAll()
-        let onboardingCoordinator = AddressCoordinator(navigationController: navigationController)
-        childCoordinators.append(onboardingCoordinator)
-        onboardingCoordinator.start()
     }
 }
