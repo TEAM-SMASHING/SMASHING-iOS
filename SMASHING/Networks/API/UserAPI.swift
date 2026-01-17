@@ -12,6 +12,7 @@ import Moya
 
 enum UserAPI {
     case checkNicknameAvailability(nickname: String)
+    case validateOpenchatUrl(url: String)
 }
 
 extension UserAPI: BaseTargetType {
@@ -19,6 +20,8 @@ extension UserAPI: BaseTargetType {
         switch self {
         case .checkNicknameAvailability:
             return "/api/v1/users/nickname-availability"
+        case .validateOpenchatUrl:
+            return "/api/v1/users/openchat/validate"
         }
     }
 
@@ -26,6 +29,8 @@ extension UserAPI: BaseTargetType {
         switch self {
         case .checkNicknameAvailability:
             return .get
+        case .validateOpenchatUrl:
+            return .post
         }
     }
 
@@ -35,6 +40,11 @@ extension UserAPI: BaseTargetType {
             return .requestParameters(
                 parameters: ["nickname": nickname],
                 encoding: URLEncoding.queryString
+            )
+        case .validateOpenchatUrl(let url):
+            return .requestParameters(
+                parameters: ["openchatUrl": url],
+                encoding: JSONEncoding.default
             )
         }
     }

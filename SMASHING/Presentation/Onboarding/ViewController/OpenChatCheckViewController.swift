@@ -53,6 +53,18 @@ final class OpenChatCheckViewController: BaseViewController {
                 input.send(.kakaoOpenChatLinkTyped(text))
             }
             .store(in: &cancellables)
-            
+        
+        viewModel.output
+            .checkKakaoOpenChatLinkEnabled
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isAvailable in
+                guard let self else { return }
+                if isAvailable {
+                    openChatCheckView.textField.resetToDefault()
+                } else {
+                    openChatCheckView.textField.setError(message: "유효하지 않은 링크입니다")
+                }
+            }
+            .store(in: &cancellables)
     }
 }

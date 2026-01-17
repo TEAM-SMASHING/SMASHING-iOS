@@ -265,10 +265,19 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
             }
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .removeDuplicates()
-            .sink { [weak self] text in
+            .flatMap { [weak self] text -> AnyPublisher<Bool, Never> in
+                guard let self = self, !text.isEmpty else {
+                    return Just(false).eraseToAnyPublisher()
+                }
+                return self.userService.validateOpenchatUrl(url: text)
+                    .replaceError(with: false)
+                    .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isAvailable in
                 guard let self = self else { return }
-                // 카카오 오픈채팅 유효성 검사 API 연동
-                print(text)
+                output.buttonEnabled.send(isAvailable)
+                output.checkKakaoOpenChatLinkEnabled.send(isAvailable)
             }
             .store(in: &cancellables)
 
