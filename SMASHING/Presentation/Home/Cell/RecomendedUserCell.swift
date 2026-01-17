@@ -133,7 +133,7 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     func configure(with user: RecommendedUserDTO) {
         nickName.text = user.nickname
-        if  user.gender == "여자" {
+        if  user.gender == "Female" {
             genderImageView.image  = .icWomanSm
         } else {
             genderImageView.image = .icManSm

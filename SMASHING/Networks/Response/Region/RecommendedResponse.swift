@@ -8,7 +8,7 @@
 import Foundation
 
 struct RecommendedUserResponseDTO: Decodable {
-    let recommendUsers: [RecommendedUserDTO]
+    let recommendedUsers: [RecommendedUserDTO]
 }
 
 struct RecommendedUserDTO: Decodable {
