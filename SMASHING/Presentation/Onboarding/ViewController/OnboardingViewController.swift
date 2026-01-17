@@ -85,7 +85,7 @@ final class OnboardingViewController: BaseViewController {
         
         containerView.nextAction = { [weak self] in
             guard let self else { return }
-            input.send(.hitNext)
+            input.send(.hitNext(currentStep))
             nextButtonTapped()
         }
     }
@@ -189,12 +189,12 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     let userService = UserService()
     
     enum Input {
-        case hitNext // buttonEnabled.send(false) -> 만약 데이터 있으면 : buttonEnabled.send(true)
+        case hitNext(OnboardingType) // buttonEnabled.send(false) -> 만약 데이터 있으면 : buttonEnabled.send(true)
         case hitBack
         
         case complete
         
-        case nicknameTyped(String) // N/10
+        case nicknameTyped(String)
         
         case genderTapped(Gender) // 저장하기
         case kakaoOpenChatLinkTyped(String) // 버튼 비활성화!! & Debouncing -> 결과에 따라
@@ -276,12 +276,24 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
             .sink { [weak self] input in
                 guard let self = self else { return }
                 switch input {
-                case .hitNext:
-                    // 다음 페이지 개산해서 반환
-                    // ViewModel을 주입하고 store를 확인한다.
+                case .hitNext(let before):
+                    // 다음 페이지 계산 (ViewController)
+                    output.buttonEnabled.send(false)
+                    switch before {
+                    case .nickname:
+                        output.buttonEnabled.send(!store.nickname.isEmpty)
+                    case .gender:
+                        output.buttonEnabled.send(!store.kakaoOpenChatLink.isEmpty)
+                    case .chat:
+                        output.buttonEnabled.send(store.sports != nil)
+                    case .sports:
+                        output.buttonEnabled.send(store.tier != nil)
+                    case .tier:
+                        output.buttonEnabled.send(store.address.isEmpty)
+                    case .area:
+                        output.buttonEnabled.send(true)
+                    }
                     // store의 값으로 뷰를 그린다.
-                    // 값이 있으면, buttonEnabled.send(true)
-                    // 값이 없으면, buttonEnabled.send(false)
                     return
                 case .hitBack:
                     print("Hit Back")
@@ -314,7 +326,8 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
 final class OnboardingObject {
     var nickname: String = ""
     var gender: Gender? = nil
-    var kakaoOpenChatLink: String? = nil
+    var kakaoOpenChatLink: String = ""
     var sports: Sports? = nil
     var tier: SportsExperienceType? = nil
+    var address: String = ""
 }
