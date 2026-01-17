@@ -5,11 +5,22 @@
 //  Created by JIN on 1/17/26.
 //
 
-import UIKit
+import Foundation
+
+// MARK: - CursorResponse (페이지네이션 응답)
+
+struct SentRequestCursorResponseDTO: Codable {
+    let snapshotAt: String
+    let results: [SentRequestResultDTO]
+    let nextCursor: String?
+    let hasNext: Bool
+}
+
+// MARK: - SentMatchingSummaryResponse
 
 struct SentRequestResultDTO: Codable {
     let matchingID: String
-    let createdAt: Date
+    let createdAt: String
     let status: String
     let receiver: SentRequestReceiverDTO
 
@@ -19,7 +30,7 @@ struct SentRequestResultDTO: Codable {
     }
 }
 
-// MARK: - Receiver
+// MARK: - ReceiverSummary
 
 struct SentRequestReceiverDTO: Codable {
     let userID: String
@@ -37,8 +48,4 @@ struct SentRequestReceiverDTO: Codable {
         case tierID = "tierId"
         case tierName, wins, losses
     }
-}
-
-struct SentRequestListDTO: Codable {
-    let requests: [SentRequestResultDTO]
 }
