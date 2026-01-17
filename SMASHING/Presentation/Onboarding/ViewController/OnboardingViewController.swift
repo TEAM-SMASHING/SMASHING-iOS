@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 enum OnboardingType: Int, CaseIterable {
-    case nickname, gender, chat, sports, tier, area
+    case nickname, gender, chat, sports, tier, address
     
     var mainTitle: String {
         switch self {
@@ -25,7 +25,7 @@ enum OnboardingType: Int, CaseIterable {
             "주 스포츠 1개를 선택해주세요"
         case .tier:
             "실력을 설정해주세요"
-        case .area:
+        case .address:
             "활동 지역을 설정해주세요"
         }
     }
@@ -42,13 +42,17 @@ enum OnboardingType: Int, CaseIterable {
             "회원가입 이후 스포츠 종목을 더 추가할 수 있어요"
         case .tier:
             "구력을 통해 임시 티어가 결정돼요!"
-        case .area:
+        case .address:
             "서울 소재 주소만 입력가능해요"
         }
     }
 }
 
 final class OnboardingViewController: BaseViewController {
+    
+    // MARK: - Properties
+    
+    var backAction: (() -> Void)?
 
     // MARK: - Properties
 
@@ -80,7 +84,8 @@ final class OnboardingViewController: BaseViewController {
     private func setupActions() {
         containerView.navigationBar.setLeftButton { [weak self] in
             guard let self else { return }
-            input.send(.hitBack)
+            input.send(.hitBack(currentStep))
+            backButtonTapped()
         }
         
         containerView.nextAction = { [weak self] in
@@ -123,7 +128,7 @@ final class OnboardingViewController: BaseViewController {
             currentStep = nextStep
             showStep(currentStep)
         } else {
-            self.navigationController?.popViewController(animated: true)
+            backAction?() // Coordinator에 연결
         }
     }
     
@@ -162,7 +167,7 @@ final class OnboardingViewController: BaseViewController {
         case .chat:     return OpenChatCheckViewController(viewModel: viewModel, input: input)
         case .sports:   return SportsSelectionViewController(viewModel: viewModel, input: input)
         case .tier:     return ExperienceSelectionViewController(viewModel: viewModel, input: input)
-        case .area:     return AreaSelectionViewController(viewModel: viewModel, input: input)
+        case .address:  return AreaSelectionViewController(viewModel: viewModel, input: input)
         }
     }
     
@@ -190,7 +195,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     
     enum Input {
         case hitNext(OnboardingType) // buttonEnabled.send(false) -> 만약 데이터 있으면 : buttonEnabled.send(true)
-        case hitBack
+        case hitBack(OnboardingType)
         
         case complete
         
@@ -227,7 +232,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     
     struct NavigationEvent {
         let addressPushEvent = PassthroughSubject<Void, Never>()
-        
+        let backToLoginEvent = PassthroughSubject<Void, Never>()
     }
 
     var output = Output()
@@ -286,7 +291,6 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                 guard let self = self else { return }
                 switch input {
                 case .hitNext(let before):
-                    // 다음 페이지 계산 (ViewController)
                     output.buttonEnabled.send(false)
                     switch before {
                     case .nickname:
@@ -299,18 +303,31 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                         output.buttonEnabled.send(store.tier != nil)
                     case .tier:
                         output.buttonEnabled.send(store.address.isEmpty)
-                    case .area:
+                    case .address:
                         output.buttonEnabled.send(true)
                     }
-                    // store의 값으로 뷰를 그린다.
-                    return
-                case .hitBack:
-                    print("Hit Back")
+                case .hitBack(let before):
+                    output.buttonEnabled.send(false)
+                    switch before {
+                    case .nickname:
+                        navigationEvent.backToLoginEvent.send()
+                    case .gender:
+                        output.buttonEnabled.send(!store.nickname.isEmpty)
+                    case .chat:
+                        output.buttonEnabled.send(store.gender != nil)
+                    case .sports:
+                        output.buttonEnabled.send(!store.kakaoOpenChatLink.isEmpty)
+                    case .tier:
+                        output.buttonEnabled.send(store.sports != nil)
+                    case .address:
+                        output.buttonEnabled.send(store.tier != nil)
+                    }
+                    break
                 case .complete:
                     // 주소 View에서 호출하면 됨
                     // API 호출
                     // 결과에 따라, switch -> main
-                    return
+                    break
                 case .genderTapped(let gender):
                     store.gender = gender
                     output.buttonEnabled.send(true)
@@ -322,9 +339,9 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     output.buttonEnabled.send(true)
                 case .addressTapped:
                     navigationEvent.addressPushEvent.send()
-                    return
+                    break
                 default :
-                    return
+                    break
                 }
             }
             .store(in: &cancellables)

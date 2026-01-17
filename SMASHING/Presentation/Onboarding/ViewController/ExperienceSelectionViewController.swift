@@ -28,6 +28,8 @@ final class ExperienceSelectionViewController: BaseViewController {
         self.viewModel = viewModel
         self.input = input
         super.init(nibName: nil, bundle: nil)
+        guard let experience = viewModel.store.tier else { return }
+        tierSelectionView.handleSelection(for: experience)
     }
     
     @MainActor required init?(coder: NSCoder) {

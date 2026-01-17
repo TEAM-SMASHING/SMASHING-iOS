@@ -40,8 +40,8 @@ final class SportsSelectionView: BaseUIView {
     override func setUI() {
         addSubview(stackView)
         
-        selections.forEach { sport in
-            let chip = SportsChip(sport: sport)
+        selections.forEach { sports in
+            let chip = SportsChip(sports: sports)
             chip.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(chipTapped(_:))))
             chips.append(chip)
             stackView.addArrangedSubview(chip)
@@ -60,6 +60,10 @@ final class SportsSelectionView: BaseUIView {
         self.action = action
     }
     
+    func handleSelection(for sports: Sports) {
+        chips.first{ $0.getSports() == sports }?.isSelected = true
+    }
+    
     // MARK: - Actions
     
     @objc private func chipTapped(_ sender: UITapGestureRecognizer) {
@@ -67,14 +71,14 @@ final class SportsSelectionView: BaseUIView {
         
         chips.forEach { $0.isSelected = ($0 === selectedChip) }
         
-        if let sport = getSport(from: selectedChip) {
-            action?(sport)
+        if let sports = getSports(from: selectedChip) {
+            action?(sports)
         }
     }
     
     // MARK: - Private Methods
     
-    private func getSport(from chip: SportsChip) -> Sports? {
-        return Mirror(reflecting: chip).children.first(where: { $0.label == "sport" })?.value as? Sports
+    private func getSports(from chip: SportsChip) -> Sports? {
+        return Mirror(reflecting: chip).children.first(where: { $0.label == "sports" })?.value as? Sports
     }
 }

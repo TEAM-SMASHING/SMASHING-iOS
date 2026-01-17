@@ -52,6 +52,10 @@ final class ExperienceSelectionView: BaseUIView {
         self.action = action
     }
     
+    func handleSelection(for tier: SportsExperienceType) {
+        buttons.first{ $0.getTier() == tier }?.isSelected = true
+    }
+    
     // MARK: - Actions
     
     @objc private func buttonTapped(_ sender: UITapGestureRecognizer) {

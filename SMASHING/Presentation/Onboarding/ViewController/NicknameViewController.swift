@@ -27,6 +27,10 @@ final class NicknameViewController: BaseViewController {
          input: PassthroughSubject<OnboardingViewModel.Input, Never>) {
         self.viewModel = viewModel
         self.input = input
+        self.nicknameView.nicknameTextField.text = viewModel.store.nickname
+        if !viewModel.store.nickname.isEmpty {
+            self.nicknameView.nicknameTextField.setMessage(message: "사용 가능한 닉네임입니다")
+        }
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,6 +64,7 @@ final class NicknameViewController: BaseViewController {
                 guard let self else { return }
                 if isAvailable {
                     nicknameView.nicknameTextField.setMessage(message: "사용 가능한 닉네임입니다")
+                    viewModel.store.nickname = nicknameView.nicknameTextField.text ?? ""
                 } else {
                     nicknameView.nicknameTextField.setError(message: "이미 존재하는 닉네임입니다")
                 }

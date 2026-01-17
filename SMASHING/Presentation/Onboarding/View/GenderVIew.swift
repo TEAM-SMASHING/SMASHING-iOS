@@ -58,7 +58,7 @@ final class GenderView: BaseUIView {
         handleSelection(gender: .female)
     }
     
-    private func handleSelection(gender: Gender) {
+    func handleSelection(gender: Gender) {
         maleButton.isSelected = (gender == .male)
         femaleButton.isSelected = (gender == .female)
         action?(gender)

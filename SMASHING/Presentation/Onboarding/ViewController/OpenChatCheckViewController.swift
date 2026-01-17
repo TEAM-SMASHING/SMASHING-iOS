@@ -27,6 +27,7 @@ final class OpenChatCheckViewController: BaseViewController {
          input: PassthroughSubject<OnboardingViewModel.Input, Never>) {
         self.viewModel = viewModel
         self.input = input
+        self.openChatCheckView.textField.text = viewModel.store.kakaoOpenChatLink
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,7 +61,8 @@ final class OpenChatCheckViewController: BaseViewController {
             .sink { [weak self] isAvailable in
                 guard let self else { return }
                 if isAvailable {
-                    openChatCheckView.textField.resetToDefault()
+                    openChatCheckView.textField.setMessage(message: nil)
+                    viewModel.store.kakaoOpenChatLink = openChatCheckView.textField.text ?? ""
                 } else {
                     openChatCheckView.textField.setError(message: "유효하지 않은 링크입니다")
                 }

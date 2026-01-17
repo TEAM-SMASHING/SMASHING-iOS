@@ -28,6 +28,8 @@ final class SportsSelectionViewController: BaseViewController {
         self.viewModel = viewModel
         self.input = input
         super.init(nibName: nil, bundle: nil)
+        guard let sports = viewModel.store.sports else { return }
+        self.sportsView.handleSelection(for: sports)
     }
     
     @MainActor required init?(coder: NSCoder) {

@@ -28,6 +28,8 @@ final class GenderViewController: BaseViewController {
         self.viewModel = viewModel
         self.input = input
         super.init(nibName: nil, bundle: nil)
+        guard let gender = viewModel.store.gender else { return }
+        genderView.handleSelection(gender: gender)
     }
     
     @MainActor required init?(coder: NSCoder) {
