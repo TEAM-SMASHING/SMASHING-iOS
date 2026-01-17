@@ -8,14 +8,15 @@
 import Foundation
 import Combine
 
-protocol UserServiceProtocol {
+protocol OnboardingUserServiceProtocol {
     func checkNicknameAvailability(nickname: String) -> AnyPublisher<Bool, NetworkError>
     func validateOpenchatUrl(url: String) -> AnyPublisher<Bool, NetworkError>
+    func signup(request: SignupRequestDTO) -> AnyPublisher<SignupDataDTO, NetworkError>
 }
 
-final class UserService: UserServiceProtocol {
+final class OnboardingUserService: OnboardingUserServiceProtocol {
     func checkNicknameAvailability(nickname: String) -> AnyPublisher<Bool, NetworkError> {
-        return NetworkProvider<UserAPI>
+        return NetworkProvider<OnboardingUserAPI>
             .requestPublisher(.checkNicknameAvailability(nickname: nickname), type: NicknameAvailabilityDTO.self)
             .map { response in
                 return response.data.available
@@ -27,13 +28,26 @@ final class UserService: UserServiceProtocol {
     }
     
     func validateOpenchatUrl(url: String) -> AnyPublisher<Bool, NetworkError> {
-        return NetworkProvider<UserAPI>
+        return NetworkProvider<OnboardingUserAPI>
             .requestPublisher(.validateOpenchatUrl(url: url), type: OpenchatValidationDTO.self)
             .map { response in
-                // 서버 응답의 valid 값을 반환
                 return response.data.valid
             }
-            .mapError { $0 }
+            .mapError { error in
+                return error
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func signup(request: SignupRequestDTO) -> AnyPublisher<SignupDataDTO, NetworkError> {
+        return NetworkProvider<OnboardingUserAPI>
+            .requestPublisher(.signup(request: request), type: SignupDataDTO.self)
+            .map { response in
+                return response.data
+            }
+            .mapError { error in
+                return error
+            }
             .eraseToAnyPublisher()
     }
 }

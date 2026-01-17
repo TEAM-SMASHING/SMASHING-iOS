@@ -21,45 +21,31 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     
     var store = OnboardingObject()
     
-    let userService = UserService()
+    let onboardingUserService = OnboardingUserService()
     
     enum Input {
-        case hitNext(OnboardingType) // buttonEnabled.send(false) -> 만약 데이터 있으면 : buttonEnabled.send(true)
+        case hitNext(OnboardingType)
         case hitBack(OnboardingType)
         
         case addressSelected(String)
-        
         case complete
-        
         case nicknameTyped(String)
         
-        case genderTapped(Gender) // 저장하기
-        case kakaoOpenChatLinkTyped(String) // 버튼 비활성화!! & Debouncing -> 결과에 따라
-        case sportsTapped(Sports) // 저장하기
-        case tierTapped(SportsExperienceType) // 저장하기
-        case addressTapped // 뷰 띄우기
+        case genderTapped(Gender)
+        case kakaoOpenChatLinkTyped(String)
+        case sportsTapped(Sports)
+        case tierTapped(SportsExperienceType)
+        case addressTapped
     }
 
     struct Output {
         let buttonEnabled = CurrentValueSubject<Bool, Never>(false)
-        
         let currentStep = CurrentValueSubject<OnboardingType, Never>(.nickname)
-        // 처음 / 진행 / 마지막 나누어서 각각 동작이 달라질 수 있다.
-        
         let dismissOnboarding: PassthroughSubject<Void, Never> = .init()
-        // 마지막이어서 가입 API 호출
-        
         let checkNicknameDuplicationEnabled: PassthroughSubject<Bool, Never> = .init()
-        // 1 글자라도 있으면
-        
         let nicknameDuplicationResult: PassthroughSubject<Bool, Never> = .init()
-        //
-        
         let checkKakaoOpenChatLinkEnabled: PassthroughSubject<Bool, Never> = .init()
-        // 가능하면 저장하기
-        
         let showMapSearchViewController: PassthroughSubject<Void, Never> = .init()
-        // Coordinator Pattern 쓰면 되는거 아님?
         let addressUpdated = PassthroughSubject<String, Never>()
     }
     
@@ -85,7 +71,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                 guard let self = self, !text.isEmpty else {
                     return Just(false).eraseToAnyPublisher()
                 }
-                return self.userService.checkNicknameAvailability(nickname: text)
+                return self.onboardingUserService.checkNicknameAvailability(nickname: text)
                     .replaceError(with: false)
                     .eraseToAnyPublisher()
             }
@@ -108,7 +94,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                 guard let self = self, !text.isEmpty else {
                     return Just(false).eraseToAnyPublisher()
                 }
-                return self.userService.validateOpenchatUrl(url: text)
+                return self.onboardingUserService.validateOpenchatUrl(url: text)
                     .replaceError(with: false)
                     .eraseToAnyPublisher()
             }
@@ -138,7 +124,43 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     case .tier:
                         output.buttonEnabled.send(!store.address.isEmpty)
                     case .address:
-                        navigationEvent.pushToOnboardingCompletionEvent.send()
+                        print("complete 101")
+                        
+                        onboardingUserService
+                            .signup(
+                                request: SignupRequestDTO(
+                                    kakaoId: KeychainService.get(key: Environment.kakaoId)!,
+                                    nickname: store.nickname,
+                                    gender: store.gender?.rawValue ?? "",
+                                    openChatUrl: store.kakaoOpenChatLink,
+                                    sportCode: store.sports?.rawValue ?? "",
+                                    experienceRange: store.tier?.rawValue ?? "",
+                                    region: store.address
+                                )
+                            )
+                            .receive(on: DispatchQueue.main)
+                                .sink { completion in
+                                    switch completion {
+                                    case .finished:
+                                        break
+                                    case .failure(let error):
+                                        print("회원가입 실패: \(error)")
+                                    }
+                                } receiveValue: { [weak self] response in
+                                    guard let self else { return }
+                                    _ = KeychainService
+                                        .add(
+                                            key: Environment.accessTokenKey,
+                                            value: response.accessToken
+                                        )
+                                    _ = KeychainService
+                                        .add(
+                                            key: Environment.refreshTokenKey,
+                                            value: response.refreshToken
+                                        )
+                                    navigationEvent.pushToOnboardingCompletionEvent.send()
+                                }
+                                .store(in: &cancellables)
                     }
                 case .hitBack(let before):
                     output.buttonEnabled.send(false)

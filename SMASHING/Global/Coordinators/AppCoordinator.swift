@@ -43,6 +43,11 @@ final class AppCoordinator: Coordinator {
         let onboardingCoordinator = OnboardingCoordinator(navigationController: navigationController)
         childCoordinators.append(onboardingCoordinator)
         onboardingCoordinator.start()
+        
+        onboardingCoordinator.confirmAction = { [weak self] in
+            guard let self else { return }
+            showTabBarFlow()
+        }
     }
     
     private func showAddressFlow() {

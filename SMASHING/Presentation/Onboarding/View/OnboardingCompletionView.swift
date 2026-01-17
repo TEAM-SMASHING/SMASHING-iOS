@@ -14,7 +14,7 @@ final class OnboardingCompletionView: BaseUIView {
     
     // MARK: - Properties
     
-    private var action: (() -> Void)?
+    var action: (() -> Void)?
     
     // MARK: - UI Properties
     
@@ -73,9 +73,5 @@ final class OnboardingCompletionView: BaseUIView {
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(18)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
-    }
-    
-    func configure(action: (() -> Void)? ) {
-        self.action = action
     }
 }

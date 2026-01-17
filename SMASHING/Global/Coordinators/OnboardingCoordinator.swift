@@ -14,6 +14,8 @@ final class OnboardingCoordinator: Coordinator {
     var navigationController: UINavigationController
     var cancellables: Set<AnyCancellable> = []
     
+    var confirmAction: (() -> Void)?
+    
     private weak var onboardingViewController: OnboardingViewController?
 
     init(navigationController: UINavigationController) {
@@ -26,11 +28,19 @@ final class OnboardingCoordinator: Coordinator {
         let viewController = OnboardingViewController(viewModel: viewModel)
         self.onboardingViewController = viewController
         
-        viewModel.navigationEvent.addressPushEvent.sink { [weak self] in
-            guard let self else { return }
-            pushAddressFlow()
-        }
-        .store(in: &cancellables)
+        viewModel.navigationEvent.addressPushEvent
+            .sink { [weak self] in
+                guard let self else { return }
+                pushAddressFlow()
+            }
+            .store(in: &cancellables)
+        
+        viewModel.navigationEvent.pushToOnboardingCompletionEvent
+            .sink { [weak self] in
+                guard let self else { return }
+                confirmAction?()
+            }
+            .store(in: &cancellables)
         
         navigationController.pushViewController(viewController, animated: true)
     }
@@ -48,5 +58,14 @@ final class OnboardingCoordinator: Coordinator {
         }
         
         addressCoordinator.start()
+    }
+    
+    private func pushToOnboardingCompletion() {
+        let onboardingCompletionViewController = OnboardingCompletionViewController()
+        navigationController.pushViewController(onboardingCompletionViewController, animated: true)
+        onboardingCompletionViewController.nextAction = { [weak self] in
+            guard let self else { return }
+            
+        }
     }
 }

@@ -10,30 +10,55 @@ import Foundation
 import Alamofire
 import Moya
 
-enum UserAPI {
-    case checkNicknameAvailability(nickname: String)
-    case validateOpenchatUrl(url: String)
+// MARK: - Signup Request
+
+struct SignupRequestDTO: Encodable {
+    let kakaoId: String
+    let nickname: String
+    let gender: String
+    let openChatUrl: String
+    let sportCode: String
+    let experienceRange: String
+    let region: String
 }
 
-extension UserAPI: BaseTargetType {
+// MARK: - Signup Response Data
+
+struct SignupDataDTO: Decodable {
+    let accessToken: String
+    let refreshToken: String
+    let userId: String
+}
+
+enum OnboardingUserAPI {
+    case checkNicknameAvailability(nickname: String)
+    case validateOpenchatUrl(url: String)
+    case signup(request: SignupRequestDTO)
+}
+
+extension OnboardingUserAPI: BaseTargetType {
     var path: String {
         switch self {
         case .checkNicknameAvailability:
             return "/api/v1/users/nickname-availability"
         case .validateOpenchatUrl:
             return "/api/v1/users/openchat/validate"
+        case .signup:
+            return "/api/v1/auth/signup"
         }
     }
-
+    
     var method: Moya.Method {
         switch self {
         case .checkNicknameAvailability:
             return .get
         case .validateOpenchatUrl:
             return .post
+        case .signup:
+            return .post
         }
     }
-
+    
     var task: Moya.Task {
         switch self {
         case .checkNicknameAvailability(let nickname):
@@ -46,6 +71,8 @@ extension UserAPI: BaseTargetType {
                 parameters: ["openchatUrl": url],
                 encoding: JSONEncoding.default
             )
+        case .signup(let request):
+            return .requestJSONEncodable(request)
         }
     }
 }
