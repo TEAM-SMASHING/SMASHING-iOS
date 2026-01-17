@@ -7,10 +7,28 @@
 
 import UIKit
 
+import Combine
 import SnapKit
 import Then
 
 final class SentRequestViewController: BaseViewController {
+    
+    private let viewModel: SentRequestViewModel
+    private let input: PassthroughSubject<SentRequestViewModel.Input, Never> = .init()
+    private var cancellables = Set<AnyCancellable>()
+    
+    init(viewModel: SentRequestViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func bind() {
+        
+    }
     
     //MARK: -UIComponents
     
@@ -33,6 +51,11 @@ final class SentRequestViewController: BaseViewController {
     //MARK: - Properties
     
     private var matches: [TempRequesterInfo] = []
+    
+    //MARK: - initialize
+    
+    
+    //MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,7 +124,7 @@ extension SentRequestViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - Data
 
 extension SentRequestViewController {
-
+    
     private func loadMockData() {
         self.matches = [
             TempRequesterInfo(
@@ -125,5 +148,4 @@ extension SentRequestViewController {
         ]
         self.collectionview.reloadData()
     }
-
 }

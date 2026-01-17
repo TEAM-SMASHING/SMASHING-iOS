@@ -51,7 +51,7 @@ final class MatchingManageViewController: BaseViewController {
     
     private func setupCategories() {
         let receivedVC = ReceiveRequestViewController()
-        let sentVC = SentRequestViewController()
+        let sentVC = SentRequestViewController(viewModel: SentRequestViewModel())
         let confirmedVC = MatchingConfirmedViewController()
         self.categories = [receivedVC, sentVC, confirmedVC]
     }

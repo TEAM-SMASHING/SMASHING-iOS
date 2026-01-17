@@ -15,7 +15,7 @@ enum SentRequestResultAPI {
     case cancelSentRequest(resultId: String)
 }
 
-extension SentRequestResultAPI {
+extension SentRequestResultAPI: BaseTargetType {
     
     var path: String {
         switch self {
