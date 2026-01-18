@@ -14,8 +14,9 @@ protocol HomeViewModelProtocol: InputOutputProtocol where Input == HomeViewModel
 
 final class HomeViewModel: HomeViewModelProtocol {
     
-    init(regionService: RegionServiceProtocol) {
+    init(regionService: RegionServiceProtocol, matchingConfirmedService: MatchingConfirmedServiceProtocol) {
         self.regionService = regionService
+        self.matchingConfirmedService = matchingConfirmedService
     }
     
     enum Input {
@@ -36,7 +37,7 @@ final class HomeViewModel: HomeViewModelProtocol {
     
     struct Output {
         
-        // TODO: // let recentMatchings = PassthroughSubject<RecentMatchinDTO, Never>()  /*결과 확정 전인 수락된 매칭 목록 조회 API 오래된순으로 해서 size 1 가져오기
+        let recentMatchings = PassthroughSubject<[MatchingConfirmedGameDTO], Never>()
         let recommendedUsers = PassthroughSubject<[RecommendedUserDTO], Never>()
         let rankings = PassthroughSubject<[RankingUserDTO], Never>()
         
@@ -51,6 +52,7 @@ final class HomeViewModel: HomeViewModelProtocol {
     private var cancellables = Set<AnyCancellable>()
     
     private let regionService: RegionServiceProtocol
+    private let matchingConfirmedService: MatchingConfirmedServiceProtocol
     
     let output = Output()
     
@@ -84,9 +86,25 @@ final class HomeViewModel: HomeViewModelProtocol {
     
     private func fetchHomeData() {
         output.isLoading.send(true)
-//        fetchRecentMatching()
+        fetchRecentMatching()
         fetchRecommendedUsers()
         fetchRankings()
+    }
+    
+    private func fetchRecentMatching() {
+        matchingConfirmedService.getConfirmedGameList(snapshotAt: nil, cursor: nil, size: 1, order: "oldest")
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                self.output.isLoading.send(false)
+                if case .failure(let error) = completion {
+                    self.output.error.send(error)
+                }
+            } receiveValue: { [weak self] response in
+                guard let self else { return }
+                output.recentMatchings.send(response.results)
+            }
+            .store(in: &cancellables)
     }
     
     private func fetchRecommendedUsers() {

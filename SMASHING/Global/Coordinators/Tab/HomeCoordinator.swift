@@ -21,7 +21,8 @@ final class HomeCoordinator: Coordinator {
 
     func start() {
         let regionService = RegionService()
-        let viewModel = HomeViewModel(regionService: regionService)
+        let matchingConfirmedService = MatchingConfirmedService()
+        let viewModel = HomeViewModel(regionService: regionService, matchingConfirmedService: matchingConfirmedService)
         let homeVC = HomeViewController(viewModel: viewModel)
         
         bindNavigationEvents(output: viewModel.output)
@@ -37,7 +38,7 @@ final class HomeCoordinator: Coordinator {
     }
     
     private func showRanking() {
-//        let regionService = RegionService()
+        let regionService = RegionService()
 //                let viewModel = RankingViewModel(regionService: regionService)
 //                let rankingVC = RankingViewController(viewModel: viewModel)
         let rankingVC = RankingViewController()

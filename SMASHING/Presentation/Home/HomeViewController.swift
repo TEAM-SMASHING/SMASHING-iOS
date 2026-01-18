@@ -12,19 +12,18 @@ import Then
 import SnapKit
 
 final class HomeViewController: BaseViewController {
+    
     private let homeView = HomeView()
     
     override func loadView() {
         view = homeView
-        
     }
     
     private let viewModel: HomeViewModel
     private let input = PassthroughSubject<HomeViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
     
-    //Data
-//    private var recentMatching: RecentMatchingDTO?
+    private var recentMatching: [MatchingConfirmedGameDTO] = []
     private var recommendedUsers: [RecommendedUserDTO] = []
     private var rankings: [RankingUserDTO] = []
     
@@ -52,6 +51,14 @@ final class HomeViewController: BaseViewController {
     
     private func bind() {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output.recentMatchings
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] matching in
+                self?.recentMatching = matching
+                self?.homeView.reloadSections(IndexSet(integer: HomeViewLayout.matching.rawValue))
+            }
+            .store(in: &cancellables)
         
         output.recommendedUsers
             .receive(on: DispatchQueue.main)
@@ -83,7 +90,7 @@ extension HomeViewController: UICollectionViewDataSource {
         case .navigationBar:
             return 1
         case .matching:
-            return 1
+            return recentMatching.isEmpty ? 0 : 1
         case .recommendedUser:
             return recommendedUsers.count
         case .ranking:
@@ -100,6 +107,8 @@ extension HomeViewController: UICollectionViewDataSource {
             return cell
         case .matching:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.reuseIdentifier, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
+            let matching = recentMatching[indexPath.item]
+            cell.configure(with: matching)
             return cell
             
         case .recommendedUser:
@@ -156,7 +165,6 @@ extension HomeViewController: UICollectionViewDataSource {
 }
 
 extension HomeViewController: UICollectionViewDelegate {
-    
     // 추후 프로필 이동 기능 구현 예정
 //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 //
