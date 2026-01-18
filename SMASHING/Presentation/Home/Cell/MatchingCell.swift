@@ -30,7 +30,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let myNickName = UILabel().then {
         $0.text = "밤이달이"
         $0.setPretendard(.textSmM)
-        $0.textColor = .Text.muted //muted 추가
+        $0.textColor = .Text.muted
         $0.textAlignment = .center
     }
     
@@ -52,14 +52,14 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let rivalNickName = UILabel().then {
         $0.text = "와구와구"
         $0.setPretendard(.textSmM)
-        $0.textColor = .Text.muted //muted 추가
+        $0.textColor = .Text.muted
         $0.textAlignment = .center
     }
     
     private let writeResultButton = UIButton().then {
         $0.setTitle("결과 작성하기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textMdM)
-        $0.setTitleColor(.Text.muted, for: .normal) //emphasis 컬러 추가
+        $0.setTitleColor(.Text.muted, for: .normal)
         $0.backgroundColor = .Button.backgroundPrimaryActive
         $0.layer.cornerRadius = 8
     }

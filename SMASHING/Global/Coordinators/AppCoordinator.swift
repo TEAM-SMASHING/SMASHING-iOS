@@ -18,12 +18,43 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-
-        let root = TierExplanationViewController()
-        navigationController.pushViewController(root, animated: false)
-        navigationController.isNavigationBarHidden = true
-//        let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
-//        childCoordinators.append(tabBarCoordinator)
-//        tabBarCoordinator.start()
+        showLoginFlow()
+    }
+    
+    // 로그인 플로우 시작
+    private func showLoginFlow() {
+        let loginCoordinator = LoginCoordinator(navigationController: navigationController)
+        
+        // 클로저를 통해 다음 단계 연결
+        loginCoordinator.finishWithOnboarding = { [weak self] in
+            self?.removeChildCoordinator(loginCoordinator)
+            self?.showOnboardingFlow()
+        }
+        
+        loginCoordinator.finishWithTabBar = { [weak self] in
+            self?.removeChildCoordinator(loginCoordinator)
+            self?.showTabBarFlow()
+        }
+        
+        childCoordinators.append(loginCoordinator)
+        loginCoordinator.start()
+    }
+    
+    private func showOnboardingFlow() {
+        navigationController.viewControllers.removeAll()
+        let onboardingCoordinator = OnboardingCoordinator(navigationController: navigationController)
+        childCoordinators.append(onboardingCoordinator)
+        onboardingCoordinator.start()
+    }
+    
+    private func showTabBarFlow() {
+        navigationController.viewControllers.removeAll()
+        let tabBarCoordinator = TabBarCoordinator(navigationController: navigationController)
+        childCoordinators.append(tabBarCoordinator)
+        tabBarCoordinator.start()
+    }
+    
+    private func removeChildCoordinator(_ coordinator: Coordinator) {
+        childCoordinators = childCoordinators.filter { $0 !== coordinator }
     }
 }

@@ -17,6 +17,7 @@ final class SocialLoginButton: UIButton {
     private let mainStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
+        $0.isUserInteractionEnabled = false
     }
     
     private let iconImageView = UIImageView().then {
