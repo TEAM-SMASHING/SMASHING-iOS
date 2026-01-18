@@ -37,7 +37,9 @@ final class OnboardingCompletionView: BaseUIView {
         $0.font = .pretendard(.textMdM)
     }
     
-    private lazy var checkButton = CTAButton(label: "완료", action: self.action)
+    private lazy var checkButton = CTAButton(label: "완료").then {
+        $0.addTarget(self, action: #selector(ctaButtonTapped), for: .touchUpInside)
+    }
     
     // MARK: - Setup Methods
     
@@ -73,5 +75,11 @@ final class OnboardingCompletionView: BaseUIView {
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(18)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
+    }
+    
+    // MARK: - Acitions
+    
+    @objc private func ctaButtonTapped() {
+        action?()
     }
 }
