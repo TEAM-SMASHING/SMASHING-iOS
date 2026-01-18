@@ -25,11 +25,9 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     enum Input {
         case hitNext(OnboardingType)
         case hitBack(OnboardingType)
-        
         case addressSelected(String)
         case complete
         case nicknameTyped(String)
-        
         case genderTapped(Gender)
         case kakaoOpenChatLinkTyped(String)
         case sportsTapped(Sports)
@@ -54,7 +52,6 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     let output = Output()
     
     func transform(input: AnyPublisher<Input, Never>) -> Output {
-        
         input
             .compactMap { input -> String? in
                 guard case let .nicknameTyped(text) = input else { return nil }
@@ -119,8 +116,6 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     case .tier:
                         output.buttonEnabled.send(!store.address.isEmpty)
                     case .address:
-                        print("complete 101")
-                        
                         onboardingUserService
                             .signup(
                                 request: SignupRequestDTO(
