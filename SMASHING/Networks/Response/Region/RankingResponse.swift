@@ -16,7 +16,7 @@ struct RankingUserDTO: Decodable {
     let rank: Int
     let userId: String
     let nickname: String
-    let tierId: Int64
+    let tierCode: String
     let lp: Int
     
     var tier: Tier? {
@@ -30,7 +30,7 @@ struct RankingUserDTO: Decodable {
 }
 
 struct MyRankingDTO: Decodable {
-    let nickName: String
+    let nickname: String
     let tierId: Int64
     let lp: Int
     
