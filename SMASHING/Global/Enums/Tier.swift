@@ -27,49 +27,9 @@ enum Tier: Codable, Equatable {
     case diamond1
     case challenger
     
-    enum CodingKeys: String, CodingKey {
-        case iron = "IRON"
-        case bronze3 = "BRONZE_3"
-        case bronze2 = "BRONZE_2"
-        case bronze1 = "BRONZE_1"
-        case silver3 = "SILVER_3"
-        case silver2 = "SILVER_2"
-        case silver1 = "SILVER_1"
-        case gold3 = "GOLD_3"
-        case gold2 = "GOLD_2"
-        case gold1 = "GOLD_1"
-        case platinum3 = "PLATINUM_3"
-        case platinum2 = "PLATINUM_2"
-        case platinum1 = "PLATINUM_1"
-        case diamond3 = "DIAMOND_3"
-        case diamond2 = "DIAMOND_2"
-        case diamond1 = "DIAMOND_1"
-        case challenger = "CHALLENGER"
-    }
 }
 
 extension Tier {
-    var order: Int {
-        switch self {
-        case .iron: return 1
-        case .bronze3: return 2
-        case .bronze2: return 3
-        case .bronze1: return 4
-        case .silver3: return 5
-        case .silver2: return 6
-        case .silver1: return 7
-        case .gold3: return 8
-        case .gold2: return 9
-        case .gold1: return 10
-        case .platinum3: return 11
-        case .platinum2: return 12
-        case .platinum1: return 13
-        case .diamond3: return 14
-        case .diamond2: return 15
-        case .diamond1: return 16
-        case .challenger: return 17
-        }
-    }
     
     var displayName: String {
         switch self {
@@ -143,25 +103,25 @@ extension Tier {
         }
     }
     
-    static func from(tierId: Int) -> Tier? {
-        switch tierId {
-        case 1, 18, 35: return .iron
-        case 2, 19, 36: return .bronze3
-        case 3, 20, 37: return .bronze2
-        case 4, 21, 38: return .bronze1
-        case 5, 22, 39: return .silver3
-        case 6, 23, 40: return .silver2
-        case 7, 24, 41: return .silver1
-        case 8, 25, 42: return .gold3
-        case 9, 26, 43: return .gold2
-        case 10, 27, 44: return .gold1
-        case 11, 28, 45: return .platinum3
-        case 12, 29, 46: return .platinum2
-        case 13, 30, 47: return .platinum1
-        case 14, 31, 48: return .diamond3
-        case 15, 32, 49: return .diamond2
-        case 16, 33, 50: return .diamond1
-        case 17, 34, 51: return .challenger
+    static func from(tierCode: String) -> Tier? {
+        switch tierCode {
+        case "IR": return .iron
+        case "BR3": return .bronze3
+        case "BR2": return .bronze2
+        case "BR1": return .bronze1
+        case "SV3": return .silver3
+        case "SV2": return .silver2
+        case "SV1": return .silver1
+        case "GO3": return .gold3
+        case "GO2": return .gold2
+        case "GO1": return .gold1
+        case "PT3": return .platinum3
+        case "PT2": return .platinum2
+        case "PT1": return .platinum1
+        case "DM3": return .diamond3
+        case "DM2": return .diamond2
+        case "DM1": return .diamond1
+        case "CH": return .challenger
         default: return nil
         }
     }
@@ -178,4 +138,6 @@ extension Tier {
         ]
     }
 }
+
+
 
