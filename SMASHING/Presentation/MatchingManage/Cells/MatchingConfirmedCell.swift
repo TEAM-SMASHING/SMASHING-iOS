@@ -188,7 +188,7 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
         let opponent = game.opponent
         self.nicknameLabel.text = opponent.nickname
         self.genderIconImageView.image = opponent.gender == "MALE" ? .icManSm : .icWomanSm
-        self.configureTierBadge(tierId: opponent.tierID)
+        self.configureTierBadge(tierCode: opponent.tierCode)
         self.updateWriteResultButton(isLocked: game.isSubmitLocked)
     }
 
@@ -203,15 +203,15 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
             self.writeResult.isEnabled = true
         }
     }
-    
-    private func configureTierBadge(tierId: Int) {
-        guard let tier = Tier.from(tierId: tierId) else {
+
+    private func configureTierBadge(tierCode: String?) {
+        guard let tierCode = tierCode, let tier = Tier.from(tierCode: tierCode) else {
             self.tierBadgeLabel.text = "Unranked"
             self.tierBadgeLabel.backgroundColor = .Background.canvasReverse
             self.tierBadgeLabel.textColor = .Text.primary
             return
         }
-        
+
         self.tierBadgeLabel.text = tier.displayName
         self.tierBadgeLabel.backgroundColor = tier.backgroundColor
         self.tierBadgeLabel.textColor = tier.textColor
