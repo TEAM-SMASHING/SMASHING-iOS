@@ -36,7 +36,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     private let VSImage = UIImageView().then {
         $0.image = .icVs
-        $0.contentMode = .scaleAspectFit    }
+        $0.contentMode = .scaleAspectFit
+    }
     
     private let rightProfileStackView = UIStackView().then {
         $0.axis = .vertical
@@ -52,6 +53,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let rivalNickName = UILabel().then {
         $0.text = "와구와구"
         $0.setPretendard(.textSmM)
+        $0.textColor = .Text.muted
         $0.textColor = .Text.muted
         $0.textAlignment = .center
     }
