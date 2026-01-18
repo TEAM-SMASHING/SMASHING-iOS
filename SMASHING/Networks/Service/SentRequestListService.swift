@@ -76,8 +76,7 @@ final class MockSentRequestService: SentRequestServiceProtocol {
                         nickname: "나는다섯글자인간임ㅅㄱ",
                         gender: "MALE",
                         reviewCount: 8,
-                        tierID: 4,
-                        tierName: "골드",
+                        tierCode: "GO1",
                         wins: 30,
                         losses: 15
                     )
@@ -91,8 +90,7 @@ final class MockSentRequestService: SentRequestServiceProtocol {
                         nickname: "하은",
                         gender: "FEMALE",
                         reviewCount: 4,
-                        tierID: 2,
-                        tierName: "실버",
+                        tierCode: "SV2",
                         wins: 15,
                         losses: 20
                     )
@@ -106,8 +104,7 @@ final class MockSentRequestService: SentRequestServiceProtocol {
                         nickname: "스매싱왕",
                         gender: "MALE",
                         reviewCount: 15,
-                        tierID: 5,
-                        tierName: "다이아몬드",
+                        tierCode: "DM1",
                         wins: 50,
                         losses: 10
                     )
