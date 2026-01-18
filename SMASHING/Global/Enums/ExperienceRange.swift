@@ -5,7 +5,9 @@
 //  Created by 이승준 on 1/17/26.
 //
 
-enum ExperienceRange: String, CaseIterable {
+import Foundation
+
+enum ExperienceRange: String, CaseIterable, Codable {
     case lt3Months   = "LT_3_MONTHS"
     case lt6Months   = "LT_6_MONTHS"
     case lt1Year     = "LT_1_YEAR"
