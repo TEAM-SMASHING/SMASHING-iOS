@@ -169,17 +169,17 @@ final class SentRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
         self.genderIconImageView.image = receiver.gender == "MALE" ? .icManSm : .icWomanSm
         self.recordValueLabel.text = "\(receiver.wins)승 \(receiver.losses)패"
         self.reviewValueLabel.text = "\(receiver.reviewCount)"
-        self.configureTierBadge(tierId: receiver.tierID)
+        self.configureTierBadge(tierCode: receiver.tierCode)
     }
 
-    private func configureTierBadge(tierId: Int) {
-        guard let tier = Tier.from(tierId: tierId) else {
+    private func configureTierBadge(tierCode: String) {
+        guard let tier = Tier.from(tierCode: tierCode) else {
             self.tierBadgeLabel.text = "Unranked"
             self.tierBadgeLabel.backgroundColor = .Background.canvasReverse
             self.tierBadgeLabel.textColor = .Text.primary
             return
         }
-        
+
         self.tierBadgeLabel.text = tier.displayName
         self.tierBadgeLabel.backgroundColor = tier.backgroundColor
         self.tierBadgeLabel.textColor = tier.textColor
