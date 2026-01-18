@@ -184,30 +184,23 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
 
     // MARK: - Configuration
-    
-    func configure(
-        nickname: String,
-        gender: String,
-        tierId: Int,
-        wins: Int,
-        losses: Int,
-        reviews: Int
-    ) {
-        self.nicknameLabel.text = nickname
-        self.genderIconImageView.image = gender == "MALE" ? .icManSm : .icWomanSm
-        self.recordValueLabel.text = "\(wins)승 \(losses)패"
-        self.reviewValueLabel.text = "\(reviews)"
-        self.configureTierBadge(tierId: tierId)
+
+    func configure(with requester: RequesterSummaryDTO) {
+        self.nicknameLabel.text = requester.nickname
+        self.genderIconImageView.image = requester.gender == "MALE" ? .icManSm : .icWomanSm
+        self.recordValueLabel.text = "\(requester.wins)승 \(requester.losses)패"
+        self.reviewValueLabel.text = "\(requester.reviewCount)"
+        self.configureTierBadge(tierCode: requester.tierCode)
     }
-    
-    private func configureTierBadge(tierId: Int) {
-        guard let tier = Tier.from(tierId: tierId) else {
+
+    private func configureTierBadge(tierCode: String) {
+        guard let tier = Tier.from(tierCode: tierCode) else {
             self.tierBadgeLabel.text = "Unranked"
             self.tierBadgeLabel.backgroundColor = .Background.canvasReverse
             self.tierBadgeLabel.textColor = .Text.primary
             return
         }
-        
+
         self.tierBadgeLabel.text = tier.displayName
         self.tierBadgeLabel.backgroundColor = tier.backgroundColor
         self.tierBadgeLabel.textColor = tier.textColor
