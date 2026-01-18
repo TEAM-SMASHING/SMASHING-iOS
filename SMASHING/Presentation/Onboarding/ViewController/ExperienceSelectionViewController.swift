@@ -1,8 +1,8 @@
 //
-//  GenderViewController.swift
+//  TierSelectionViewController.swift
 //  SMASHING
 //
-//  Created by 이승준 on 1/9/26.
+//  Created by 이승준 on 1/17/26.
 //
 
 import Combine
@@ -11,11 +11,11 @@ import UIKit
 import SnapKit
 import Then
 
-final class GenderViewController: BaseViewController {
+final class ExperienceSelectionViewController: BaseViewController {
     
     // MARK: - Properties
-    
-    private let genderView = GenderView()
+        
+    let tierSelectionView = ExperienceSelectionView()
     
     private var viewModel: any OnboardingViewModelProtocol
     private var cancellables: Set<AnyCancellable> = []
@@ -28,8 +28,8 @@ final class GenderViewController: BaseViewController {
         self.viewModel = viewModel
         self.input = input
         super.init(nibName: nil, bundle: nil)
-        guard let gender = viewModel.store.gender else { return }
-        genderView.handleSelection(gender: gender)
+        guard let experience = viewModel.store.experienceRange else { return }
+        tierSelectionView.handleSelection(for: experience)
     }
     
     @MainActor required init?(coder: NSCoder) {
@@ -39,20 +39,15 @@ final class GenderViewController: BaseViewController {
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
-        view = genderView
+        super.viewDidLoad()
+        view = tierSelectionView
         bind()
     }
     
     private func bind() {
-        genderView.action = { [weak self] gender in
+        tierSelectionView.action = { [weak self] expetienceRange in
             guard let self else { return }
-            input.send(.genderTapped(gender))
+            input.send(.experienceRangeTapped(expetienceRange))
         }
-    }
-    
-    // MARK: - Setup Methods
-    
-    func configure(action: @escaping (Gender) -> Void) {
-        genderView.configure(action: action)
     }
 }

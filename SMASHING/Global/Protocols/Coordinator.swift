@@ -50,5 +50,3 @@ extension Coordinator {
         toast.show()
     }
 }
-
-

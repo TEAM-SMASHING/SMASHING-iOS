@@ -69,7 +69,8 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
                     guard data.accessToken == nil, data.refreshToken == nil, data.userId == nil else {
                         throw NetworkError.decoding
                     }
-                    return .needSignUp(authId: data.userId!)
+                    _ = KeychainService.add(key: Environment.kakaoId, value: data.kakaoId)
+                    return .needSignUp(authId: data.kakaoId)
                 } else if response.statusCode == 200 {
                     guard let accessToken = data.accessToken,
                           let refreshToken = data.refreshToken else {

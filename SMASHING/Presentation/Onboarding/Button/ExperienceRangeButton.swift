@@ -10,12 +10,11 @@ import UIKit
 import SnapKit
 import Then
 
-final class TierButton: BaseUIView {
+final class ExperienceRangeButton: BaseUIView {
     
     // MARK: - Properties
     
-    private let tier: Tier
-    private let title: String
+    private let experienceRange: ExperienceRange
     
     var isSelected: Bool = false {
         didSet { updateStyle() }
@@ -41,9 +40,9 @@ final class TierButton: BaseUIView {
 
     // MARK: - Init
     
-    init(tier: Tier, title: String) {
-        self.tier = tier
-        self.title = title
+    init(tier: ExperienceRange) {
+        self.experienceRange = tier
+        label.text = tier.displayText
         super.init(frame: .zero)
         backgroundColor = .clear
         setupAttributes()
@@ -54,7 +53,7 @@ final class TierButton: BaseUIView {
     }
 
     private func setupAttributes() {
-        self.label.text = title
+        // self.label.text = title
         updateStyle()
     }
 
@@ -85,7 +84,7 @@ final class TierButton: BaseUIView {
     
     // MARK: - Public Methods
     
-    func getTier() -> Tier {
-        return self.tier
+    func getExperienceRange() -> ExperienceRange {
+        return self.experienceRange
     }
 }

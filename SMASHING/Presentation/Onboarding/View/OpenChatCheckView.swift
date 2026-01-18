@@ -11,8 +11,6 @@ import SnapKit
 import Then
 
 final class OpenChatCheckView: BaseUIView {
-    
-    // MARK: - Properties
 
     // MARK: - UI Components
     
