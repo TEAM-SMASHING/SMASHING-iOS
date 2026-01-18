@@ -10,7 +10,6 @@ import Foundation
 
 protocol OnboardingViewModelProtocol: InputOutputProtocol where Input == OnboardingViewModel.Input,
                     Output == OnboardingViewModel.Output {
-    associatedtype NavigationEvent
     var store: OnboardingObject{get}
     var output: Output {get}
 }
@@ -47,16 +46,12 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
         let checkKakaoOpenChatLinkEnabled: PassthroughSubject<Bool, Never> = .init()
         let showMapSearchViewController: PassthroughSubject<Void, Never> = .init()
         let addressUpdated = PassthroughSubject<String, Never>()
-    }
-    
-    struct NavigationEvent {
-        let addressPushEvent = PassthroughSubject<Void, Never>()
-        let backToLoginEvent = PassthroughSubject<Void, Never>()
-        let pushToOnboardingCompletionEvent = PassthroughSubject<Void, Never>()
+        let navAddressPushEvent = PassthroughSubject<Void, Never>()
+        let navBackToLoginEvent = PassthroughSubject<Void, Never>()
+        let navPushToOnboardingCompletionEvent = PassthroughSubject<Void, Never>()
     }
 
-    var output = Output()
-    let navigationEvent = NavigationEvent()
+    let output = Output()
     
     func transform(input: AnyPublisher<Input, Never>) -> Output {
         
@@ -158,7 +153,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                                             key: Environment.refreshTokenKey,
                                             value: response.refreshToken
                                         )
-                                    navigationEvent.pushToOnboardingCompletionEvent.send()
+                                    output.navPushToOnboardingCompletionEvent.send()
                                 }
                                 .store(in: &cancellables)
                     }
@@ -166,7 +161,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     output.buttonEnabled.send(false)
                     switch before {
                     case .nickname:
-                        navigationEvent.backToLoginEvent.send()
+                        output.navBackToLoginEvent.send()
                     case .gender:
                         output.buttonEnabled.send(!store.nickname.isEmpty)
                     case .chat:
@@ -180,7 +175,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     }
                     break
                 case .complete:
-                    navigationEvent.pushToOnboardingCompletionEvent.send()
+                    output.navPushToOnboardingCompletionEvent.send()
                     break
                 case .genderTapped(let gender):
                     store.gender = gender
@@ -192,7 +187,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     store.tier = tier
                     output.buttonEnabled.send(true)
                 case .addressTapped:
-                    navigationEvent.addressPushEvent.send()
+                    output.navAddressPushEvent.send()
                 case .addressSelected(let address):
                     store.address = address
                     output.buttonEnabled.send(true)

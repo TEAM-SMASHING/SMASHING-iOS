@@ -49,5 +49,3 @@ extension Coordinator {
         toast.show()
     }
 }
-
-

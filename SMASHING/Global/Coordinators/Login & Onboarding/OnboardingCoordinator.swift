@@ -28,17 +28,17 @@ final class OnboardingCoordinator: Coordinator {
         let viewController = OnboardingViewController(viewModel: viewModel)
         self.onboardingViewController = viewController
         
-        viewModel.navigationEvent.addressPushEvent
+        viewModel.output.navAddressPushEvent
             .sink { [weak self] in
                 guard let self else { return }
                 pushAddressFlow()
             }
             .store(in: &cancellables)
         
-        viewModel.navigationEvent.pushToOnboardingCompletionEvent
+        viewModel.output.navPushToOnboardingCompletionEvent
             .sink { [weak self] in
                 guard let self else { return }
-                confirmAction?()
+                pushToOnboardingCompletion()
             }
             .store(in: &cancellables)
         
@@ -65,7 +65,7 @@ final class OnboardingCoordinator: Coordinator {
         navigationController.pushViewController(onboardingCompletionViewController, animated: true)
         onboardingCompletionViewController.nextAction = { [weak self] in
             guard let self else { return }
-            
+            confirmAction?()
         }
     }
 }
