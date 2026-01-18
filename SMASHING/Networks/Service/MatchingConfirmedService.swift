@@ -60,10 +60,14 @@ final class MatchingConfirmedService: MatchingConfirmedServiceProtocol {
 // MARK: - MockMatchingConfirmedService
 
 final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
+
     func cancelGame(gameId: String) -> AnyPublisher<Void, NetworkError> {
-        <#code#>
+        return Just(())
+            .delay(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .setFailureType(to: NetworkError.self)
+            .eraseToAnyPublisher()
     }
-    
+
     func getConfirmedGameList(
         snapshotAt: String?,
         cursor: String?,
