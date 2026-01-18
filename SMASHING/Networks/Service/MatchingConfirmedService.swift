@@ -17,12 +17,14 @@ protocol MatchingConfirmedServiceProtocol {
         size: Int?,
         order: String?
     ) -> AnyPublisher<MatchingConfirmedCursorResponseDTO, NetworkError>
+
+    func cancelGame(gameId: String) -> AnyPublisher<Void, NetworkError>
 }
 
 // MARK: - MatchingConfirmedService
 
 final class MatchingConfirmedService: MatchingConfirmedServiceProtocol {
-
+    
     func getConfirmedGameList(
         snapshotAt: String?,
         cursor: String?,
@@ -31,7 +33,11 @@ final class MatchingConfirmedService: MatchingConfirmedServiceProtocol {
     ) -> AnyPublisher<MatchingConfirmedCursorResponseDTO, NetworkError> {
         return NetworkProvider<MatchingConfirmedAPI>
             .requestPublisher(
-                .getConfirmedGameList(snapshotAt: snapshotAt, cursor: cursor, size: size, order: order),
+                .getConfirmedGameList(
+                    snapshotAt: snapshotAt,
+                    cursor: cursor,
+                    size: size,
+                    order: order),
                 type: MatchingConfirmedCursorResponseDTO.self
             )
             .map { response in
@@ -39,12 +45,25 @@ final class MatchingConfirmedService: MatchingConfirmedServiceProtocol {
             }
             .eraseToAnyPublisher()
     }
+    
+    func cancelGame(gameId: String) -> AnyPublisher<Void, NetworkError> {
+        return NetworkProvider<MatchingConfirmedAPI>
+            .requestPublisher(
+                .cancelGame(gameId: gameId)
+                , type: EmptyResponse.self
+            )
+            .map { _ in }
+            .eraseToAnyPublisher()
+    }
 }
 
 // MARK: - MockMatchingConfirmedService
 
 final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
-
+    func cancelGame(gameId: String) -> AnyPublisher<Void, NetworkError> {
+        <#code#>
+    }
+    
     func getConfirmedGameList(
         snapshotAt: String?,
         cursor: String?,
@@ -63,8 +82,7 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
                         nickname: "도윤",
                         openchatUrl: "https://open.kakao.com/o/example1",
                         gender: "MALE",
-                        tierID: 6,
-                        tierName: "플래티넘"
+                        tierCode: "PT1"
                     ),
                     submitAvailableAt: "2026-01-17T11:00:00+09:00",
                     remainingSeconds: 1570,
@@ -79,8 +97,7 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
                         nickname: "수아",
                         openchatUrl: "https://open.kakao.com/o/example2",
                         gender: "FEMALE",
-                        tierID: 5,
-                        tierName: "다이아몬드"
+                        tierCode: "DM1"
                     ),
                     submitAvailableAt: "2026-01-17T10:30:00+09:00",
                     remainingSeconds: 0,
@@ -95,8 +112,7 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
                         nickname: "예준",
                         openchatUrl: nil,
                         gender: "MALE",
-                        tierID: 7,
-                        tierName: "마스터"
+                        tierCode: "CH"
                     ),
                     submitAvailableAt: "2026-01-17T10:00:00+09:00",
                     remainingSeconds: 0,
@@ -106,7 +122,7 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
             nextCursor: cursor == nil ? "eyJpZCI6IjBQMksyS0ZTRzNMWUYifQ" : nil,
             hasNext: cursor == nil
         )
-
+        
         return Just(mockData)
             .delay(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .setFailureType(to: NetworkError.self)
