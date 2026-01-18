@@ -5,7 +5,7 @@
 //  Created by 이승준 on 1/17/26.
 //
 
-enum SportsExperienceType: String, CaseIterable {
+enum ExperienceRange: String, CaseIterable {
     case lt3Months   = "LT_3_MONTHS"
     case lt6Months   = "LT_6_MONTHS"
     case lt1Year     = "LT_1_YEAR"
@@ -13,7 +13,7 @@ enum SportsExperienceType: String, CaseIterable {
     case gte2Years   = "GTE_2_YEARS"
 }
 
-extension SportsExperienceType {
+extension ExperienceRange {
     var displayText: String {
         switch self {
         case .lt3Months:

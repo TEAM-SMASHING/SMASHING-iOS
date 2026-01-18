@@ -14,10 +14,10 @@ final class ExperienceSelectionView: BaseUIView {
     
     // MARK: - Properties
     
-    var action: ((SportsExperienceType) -> Void)?
-    private var buttons: [TierButton] = []
+    var action: ((ExperienceRange) -> Void)?
+    private var buttons: [ExperienceRangeButton] = []
     
-    private let tierOptions: [SportsExperienceType] = [.lt3Months, .lt6Months, .lt1Year,
+    private let tierOptions: [ExperienceRange] = [.lt3Months, .lt6Months, .lt1Year,
                                                     .lt1_6Years, .gte2Years]
         
     // MARK: - UI Components
@@ -34,7 +34,7 @@ final class ExperienceSelectionView: BaseUIView {
         addSubview(stackView)
         
         tierOptions.forEach { tier in
-            let button = TierButton(tier: tier)
+            let button = ExperienceRangeButton(tier: tier)
             button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(buttonTapped(_:))))
             buttons.append(button)
             stackView.addArrangedSubview(button)
@@ -48,21 +48,21 @@ final class ExperienceSelectionView: BaseUIView {
         }
     }
     
-    func configure(action: @escaping (SportsExperienceType) -> Void) {
+    func configure(action: @escaping (ExperienceRange) -> Void) {
         self.action = action
     }
     
-    func handleSelection(for tier: SportsExperienceType) {
-        buttons.first{ $0.getTier() == tier }?.isSelected = true
+    func handleSelection(for experienceRange: ExperienceRange) {
+        buttons.first{ $0.getExperienceRange() == experienceRange }?.isSelected = true
     }
     
     // MARK: - Actions
     
     @objc private func buttonTapped(_ sender: UITapGestureRecognizer) {
-        guard let selectedButton = sender.view as? TierButton else { return }
+        guard let selectedButton = sender.view as? ExperienceRangeButton else { return }
         
         buttons.forEach { $0.isSelected = ($0 === selectedButton) }
         
-        action?(selectedButton.getTier())
+        action?(selectedButton.getExperienceRange())
     }
 }

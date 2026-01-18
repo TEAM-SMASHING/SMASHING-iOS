@@ -33,7 +33,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
         case genderTapped(Gender)
         case kakaoOpenChatLinkTyped(String)
         case sportsTapped(Sports)
-        case tierTapped(SportsExperienceType)
+        case experienceRangeTapped(ExperienceRange)
         case addressTapped
     }
 
@@ -115,7 +115,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     case .chat:
                         output.buttonEnabled.send(store.sports != nil)
                     case .sports:
-                        output.buttonEnabled.send(store.tier != nil)
+                        output.buttonEnabled.send(store.experienceRange != nil)
                     case .tier:
                         output.buttonEnabled.send(!store.address.isEmpty)
                     case .address:
@@ -129,7 +129,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                                     gender: store.gender?.rawValue ?? "",
                                     openChatUrl: store.kakaoOpenChatLink,
                                     sportCode: store.sports?.rawValue ?? "",
-                                    experienceRange: store.tier?.rawValue ?? "",
+                                    experienceRange: store.experienceRange?.rawValue ?? "",
                                     region: store.address
                                 )
                             )
@@ -171,7 +171,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                     case .tier:
                         output.buttonEnabled.send(store.sports != nil)
                     case .address:
-                        output.buttonEnabled.send(store.tier != nil)
+                        output.buttonEnabled.send(store.experienceRange != nil)
                     }
                     break
                 case .complete:
@@ -183,8 +183,8 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                 case .sportsTapped(let sports):
                     store.sports = sports
                     output.buttonEnabled.send(true)
-                case .tierTapped(let tier):
-                    store.tier = tier
+                case .experienceRangeTapped(let experienceRange):
+                    store.experienceRange = experienceRange
                     output.buttonEnabled.send(true)
                 case .addressTapped:
                     output.navAddressPushEvent.send()
@@ -205,6 +205,6 @@ final class OnboardingObject {
     var gender: Gender? = nil
     var kakaoOpenChatLink: String = ""
     var sports: Sports? = nil
-    var tier: SportsExperienceType? = nil
+    var experienceRange: ExperienceRange? = nil
     var address: String = ""
 }
