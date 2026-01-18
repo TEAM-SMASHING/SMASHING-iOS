@@ -59,7 +59,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let writeResultButton = UIButton().then {
         $0.setTitle("결과 작성하기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textMdM)
-        $0.setTitleColor(.Text.emphasis, for: .normal)
+        $0.setTitleColor(.Text.muted, for: .normal)
         $0.backgroundColor = .Button.backgroundPrimaryActive
         $0.layer.cornerRadius = 8
     }
