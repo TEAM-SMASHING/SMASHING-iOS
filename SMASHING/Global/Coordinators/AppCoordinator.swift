@@ -18,7 +18,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        showOnboardingFlow()
+        showLoginFlow()
     }
     
     private func showLoginFlow() {
