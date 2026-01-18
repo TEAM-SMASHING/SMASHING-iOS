@@ -25,7 +25,7 @@ final class AreaSelectionView: BaseUIView {
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.Text.disabled.cgColor
-        $0.addTarget(self, action: #selector(didTapAddressButton), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(addressButtonDidTap), for: .touchUpInside)
     }
     
     private let addressLabel = UILabel().then {
@@ -58,7 +58,7 @@ final class AreaSelectionView: BaseUIView {
     
     // MARK: - Actions
     
-    @objc private func didTapAddressButton() {
+    @objc private func addressButtonDidTap() {
         action?()
     }
     
