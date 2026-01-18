@@ -23,6 +23,7 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
         case viewDidLoad
         case refresh
         case loadMore
+        case closeTapped(index: Int)
     }
 
     struct Output {
@@ -30,6 +31,7 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
         let isLoading: AnyPublisher<Bool, Never>
         let isLoadingMore: AnyPublisher<Bool, Never>
         let errorMessage: AnyPublisher<String, Never>
+        let itemRemoved: AnyPublisher<Int, Never>
     }
 
     // MARK: - Private Subjects
@@ -38,6 +40,7 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
     private let isLoadingSubject = CurrentValueSubject<Bool, Never>(false)
     private let isLoadingMoreSubject = CurrentValueSubject<Bool, Never>(false)
     private let errorMessageSubject = PassthroughSubject<String, Never>()
+    private let itemRemovedSubject = PassthroughSubject<Int, Never>()
 
     // MARK: - Public Subjects
 
@@ -76,6 +79,9 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
 
                 case .loadMore:
                     self.fetchNextPage()
+
+                case .closeTapped(let index):
+                    self.cancelGame(at: index)
                 }
             }
             .store(in: &cancellables)
@@ -90,7 +96,8 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
             gameList: gameListSubject.eraseToAnyPublisher(),
             isLoading: isLoadingSubject.eraseToAnyPublisher(),
             isLoadingMore: isLoadingMoreSubject.eraseToAnyPublisher(),
-            errorMessage: errorMessageSubject.eraseToAnyPublisher()
+            errorMessage: errorMessageSubject.eraseToAnyPublisher(),
+            itemRemoved: itemRemovedSubject.eraseToAnyPublisher()
         )
     }
 
@@ -143,7 +150,12 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
 
         isLoadingMoreSubject.send(true)
 
-        service.getConfirmedGameList(snapshotAt: snapshotAt, cursor: nextCursor, size: 20, order: "LATEST")
+        service.getConfirmedGameList(
+            snapshotAt: snapshotAt,
+            cursor: nextCursor,
+            size: 20,
+            order: "LATEST"
+        )
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
@@ -165,6 +177,43 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
                 }
             )
             .store(in: &cancellables)
+    }
+
+    private func cancelGame(at index: Int) {
+        guard index < gameListSubject.value.count else { return }
+
+        let gameId = gameListSubject.value[index].gameID
+
+        service.cancelGame(gameId: gameId)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    if case .failure(let error) = completion {
+                        self?.handleCancelError(error)
+                    }
+                },
+                receiveValue: { [weak self] _ in
+                    guard let self else { return }
+                    var currentList = self.gameListSubject.value
+                    currentList.remove(at: index)
+                    self.gameListSubject.send(currentList)
+                    self.itemRemovedSubject.send(index)
+                }
+            )
+            .store(in: &cancellables)
+    }
+
+    private func handleCancelError(_ error: NetworkError) {
+        switch error {
+        case .forbidden:
+            errorMessageSubject.send("경기 참여자만 취소할 수 있습니다.")
+        case .notFound:
+            errorMessageSubject.send("게임을 찾을 수 없습니다.")
+        case .badRequest:
+            errorMessageSubject.send("결과가 확정된 경기는 취소할 수 없습니다.")
+        default:
+            errorMessageSubject.send("경기 취소에 실패했습니다.")
+        }
     }
 
     private func handleError(_ error: NetworkError) {
