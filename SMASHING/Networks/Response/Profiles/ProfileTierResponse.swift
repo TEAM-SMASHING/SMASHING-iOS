@@ -24,10 +24,6 @@ struct ActiveProfile: Decodable {
     let wins: Int
     let losses: Int
     let reviews: Int?
-    
-//    var oreTier: OreTier? {
-//        OreTier.allCases.first { $0.index == tierId }
-//    }
 }
 
 struct SimpleProfile: Decodable {

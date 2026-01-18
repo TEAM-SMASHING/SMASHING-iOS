@@ -5,6 +5,8 @@ import Combine
 final class ProfileTestViewController: UIViewController {
     
     private let profileService: ProfileUserServiceType = ProfileUserService()
+    // 검색 서비스를 추가합니다.
+    private let searchService: SearchUserServiceType = SearchUserService()
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI Components
@@ -41,8 +43,9 @@ final class ProfileTestViewController: UIViewController {
         addButton(title: "3. 새 프로필 생성 (탁구)", action: #selector(testCreateProfile))
         addButton(title: "4. 활성 프로필 변경", action: #selector(testUpdateActiveProfile))
         addButton(title: "5. 타 유저 프로필 조회", action: #selector(testFetchOtherUserProfile))
-        // 6번 버튼 새로 추가
         addButton(title: "6. 내 지역 업데이트", action: #selector(testUpdateRegion))
+        // 7번 검색 버튼 추가
+        addButton(title: "7. 유저 검색 (ze)", action: #selector(testSearchUser))
     }
     
     private func addButton(title: String, action: Selector) {
@@ -118,7 +121,6 @@ extension ProfileTestViewController {
             .store(in: &cancellables)
     }
 
-    // 6. 지역 업데이트 테스트 함수 추가
     @objc private func testUpdateRegion() {
         let testRegion = "서울 특별시 도봉구"
         print("🚀 [TEST] 지역 업데이트 시작 (지역: \(testRegion))...")
@@ -128,6 +130,23 @@ extension ProfileTestViewController {
                 self?.handleCompletion(completion, label: "지역 업데이트")
             } receiveValue: { _ in
                 print("✅ [SUCCESS] 지역 업데이트 성공!")
+            }
+            .store(in: &cancellables)
+    }
+    
+    // 7. 유저 검색 테스트 함수 추가
+    @objc private func testSearchUser() {
+        let keyword = "ze"
+        print("🚀 [TEST] 유저 검색 시작 (키워드: \(keyword))...")
+        
+        searchService.searchUser(nickname: keyword)
+            .sink { [weak self] completion in
+                self?.handleCompletion(completion, label: "유저 검색")
+            } receiveValue: { users in
+                print("✅ [SUCCESS] 검색 결과: \(users.count)명 발견")
+                users.forEach { user in
+                    print("  - 닉네임: \(user.nickname) (ID: \(user.userId))")
+                }
             }
             .store(in: &cancellables)
     }

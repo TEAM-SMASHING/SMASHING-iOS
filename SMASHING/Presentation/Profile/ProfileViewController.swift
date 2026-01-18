@@ -18,5 +18,4 @@ final class ProfileViewController: BaseViewController {
     override func setLayout() {
         
     }
-
 }
