@@ -28,7 +28,7 @@ final class ExperienceSelectionViewController: BaseViewController {
         self.viewModel = viewModel
         self.input = input
         super.init(nibName: nil, bundle: nil)
-        guard let experience = viewModel.store.tier else { return }
+        guard let experience = viewModel.store.experienceRange else { return }
         tierSelectionView.handleSelection(for: experience)
     }
     
@@ -45,9 +45,9 @@ final class ExperienceSelectionViewController: BaseViewController {
     }
     
     private func bind() {
-        tierSelectionView.action = { [weak self] tier in
+        tierSelectionView.action = { [weak self] expetienceRange in
             guard let self else { return }
-            input.send(.tierTapped(tier))
+            input.send(.experienceRangeTapped(expetienceRange))
         }
     }
 }
