@@ -121,7 +121,7 @@ extension MatchingSearchViewController: UICollectionViewDataSource {
         cell.configure(
             nickname: match.nickname,
             gender: match.gender,
-            tierId: match.tierId,
+            tierCode: match.tierCode,
             wins: match.wins,
             losses: match.losses,
             reviews: match.reviewCount
@@ -155,7 +155,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111222",
                 nickname: "윤서",
                 gender: "FEMALE",
-                tierId: 3,
+                tierCode: "BR1",
                 wins: 12,
                 losses: 7,
                 reviewCount: 5
@@ -164,7 +164,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111223",
                 nickname: "민준",
                 gender: "MALE",
-                tierId: 5,
+                tierCode: "SV1",
                 wins: 45,
                 losses: 12,
                 reviewCount: 15
@@ -173,7 +173,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111224",
                 nickname: "지우",
                 gender: "FEMALE",
-                tierId: 2,
+                tierCode: "BR2",
                 wins: 8,
                 losses: 10,
                 reviewCount: 3
@@ -182,7 +182,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111225",
                 nickname: "서준",
                 gender: "MALE",
-                tierId: 10,
+                tierCode: "GO1",
                 wins: 78,
                 losses: 34,
                 reviewCount: 22
@@ -191,7 +191,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111226",
                 nickname: "하은",
                 gender: "FEMALE",
-                tierId: 7,
+                tierCode: "SV1",
                 wins: 56,
                 losses: 28,
                 reviewCount: 18
@@ -200,7 +200,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111227",
                 nickname: "도윤",
                 gender: "MALE",
-                tierId: 16,
+                tierCode: "DM1",
                 wins: 120,
                 losses: 45,
                 reviewCount: 35
@@ -209,7 +209,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111228",
                 nickname: "수아",
                 gender: "FEMALE",
-                tierId: 1,
+                tierCode: "IR",
                 wins: 5,
                 losses: 15,
                 reviewCount: 2
@@ -218,7 +218,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111229",
                 nickname: "예준",
                 gender: "MALE",
-                tierId: 17,
+                tierCode: "CH",
                 wins: 156,
                 losses: 52,
                 reviewCount: 48
@@ -227,7 +227,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111230",
                 nickname: "시우",
                 gender: "MALE",
-                tierId: 4,
+                tierCode: "BR1",
                 wins: 23,
                 losses: 18,
                 reviewCount: 8
@@ -236,7 +236,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111231",
                 nickname: "아린",
                 gender: "FEMALE",
-                tierId: 13,
+                tierCode: "PT1",
                 wins: 89,
                 losses: 41,
                 reviewCount: 28
@@ -245,7 +245,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111232",
                 nickname: "준우",
                 gender: "MALE",
-                tierId: 8,
+                tierCode: "GO1",
                 wins: 67,
                 losses: 30,
                 reviewCount: 19
@@ -254,7 +254,7 @@ extension MatchingSearchViewController {
                 userId: "0USER000111233",
                 nickname: "채원",
                 gender: "FEMALE",
-                tierId: 11,
+                tierCode: "GO3",
                 wins: 72,
                 losses: 38,
                 reviewCount: 24
@@ -271,7 +271,7 @@ struct MatchingSearchMockData {
     let userId: String
     let nickname: String
     let gender: String
-    let tierId: Int
+    let tierCode: String
     let wins: Int
     let losses: Int
     let reviewCount: Int
