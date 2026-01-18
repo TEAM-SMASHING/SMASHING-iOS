@@ -46,7 +46,7 @@ extension Tier {
         case .platinum3: return "Platinum III"
         case .platinum2: return "Platinum II"
         case .platinum1: return "Platinum I"
-        case .diamond3: return "Platinum III"
+        case .diamond3: return "Diamond III"
         case .diamond2: return "Diamond II"
         case .diamond1: return "Diamond I"
         case .challenger: return "Challenger"
