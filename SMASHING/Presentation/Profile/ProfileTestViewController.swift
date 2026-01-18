@@ -4,9 +4,9 @@ import Combine
 
 final class ProfileTestViewController: UIViewController {
     
-    private let profileService: ProfileUserServiceType = ProfileUserService()
+    private let profileService: UserProfileServiceType = UserProfileService()
     // 검색 서비스를 추가합니다.
-    private let searchService: SearchUserServiceType = SearchUserService()
+    private let searchService: UserSearchServiceType = UserSearchService()
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI Components

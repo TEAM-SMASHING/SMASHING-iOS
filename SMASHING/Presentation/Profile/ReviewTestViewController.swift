@@ -10,7 +10,7 @@ import Combine
 
 final class ReviewTestViewController: UIViewController {
     
-    private let reviewService: ReviewUserServiceType = ReviewUserService()
+    private let reviewService: UserReviewServiceType = UserReviewService()
     private var cancellables = Set<AnyCancellable>()
     
     // 이전에 사용하셨던 테스트용 토큰을 그대로 사용합니다.

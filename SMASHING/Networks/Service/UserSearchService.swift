@@ -8,11 +8,11 @@
 import Combine
 import Foundation
 
-protocol SearchUserServiceType {
+protocol UserSearchServiceType {
     func searchUser(nickname: String) -> AnyPublisher<[UserSummary], NetworkError>
 }
 
-final class SearchUserService: SearchUserServiceType {
+final class UserSearchService: UserSearchServiceType {
     func searchUser(nickname: String) -> AnyPublisher<[UserSummary], NetworkError> {
         return NetworkProvider<SearchUserTarget>
             .requestPublisher(.searchUser(nickname: nickname), type: UserSearchResponse.self)

@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-protocol ProfileUserServiceType {
+protocol UserProfileServiceType {
     func fetchMyProfileTier() -> AnyPublisher<ProfileTierResponse, NetworkError>
     func fetchMyProfiles() -> AnyPublisher<ProfileListResponse, NetworkError>
     func createProfile(sport: Sports, experience: ExperienceRange) -> AnyPublisher<Void, NetworkError>
@@ -17,7 +17,7 @@ protocol ProfileUserServiceType {
     func updateRegion(region: String) -> AnyPublisher<Void, NetworkError>
 }
 
-final class ProfileUserService: ProfileUserServiceType {
+final class UserProfileService: UserProfileServiceType {
     func fetchMyProfileTier() -> AnyPublisher<ProfileTierResponse, NetworkError> {
         return NetworkProvider<ProfileUserTarget>.requestPublisher(.getMyProfileTier, type: ProfileTierResponse.self)
             .map { response in

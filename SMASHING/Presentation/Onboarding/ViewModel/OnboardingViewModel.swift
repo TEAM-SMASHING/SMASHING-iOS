@@ -20,7 +20,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
     
     var store = OnboardingObject()
     
-    let onboardingUserService = OnboardingUserService()
+    let onboardingUserService = UserOnboardingService()
     
     enum Input {
         case hitNext(OnboardingType)
