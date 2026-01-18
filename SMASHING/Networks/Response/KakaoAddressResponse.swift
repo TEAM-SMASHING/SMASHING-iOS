@@ -52,8 +52,17 @@ struct KakaoAddressInfoDTO: Decodable {
     let x: String
     let y: String
     
+    let subAddressNo: String
+    let region1depthName: String
+    let region2depthName: String
+    let region3depthName: String
+    
     enum CodingKeys: String, CodingKey {
         case addressName = "address_name"
+        case subAddressNo = "sub_address_no"
+        case region1depthName = "region_1depth_name"
+        case region2depthName = "region_2depth_name"
+        case region3depthName = "region_3depth_name"
         case x, y
     }
 }

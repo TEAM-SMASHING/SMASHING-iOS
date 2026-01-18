@@ -14,7 +14,7 @@ final class OnboardingCompletionView: BaseUIView {
     
     // MARK: - Properties
     
-    private var action: (() -> Void)?
+    var action: (() -> Void)?
     
     // MARK: - UI Properties
     
@@ -37,7 +37,9 @@ final class OnboardingCompletionView: BaseUIView {
         $0.font = .pretendard(.textMdM)
     }
     
-    private lazy var checkButton = CTAButton(label: "완료", action: self.action)
+    private lazy var checkButton = CTAButton(label: "완료").then {
+        $0.addTarget(self, action: #selector(ctaButtonTapped), for: .touchUpInside)
+    }
     
     // MARK: - Setup Methods
     
@@ -75,7 +77,9 @@ final class OnboardingCompletionView: BaseUIView {
         }
     }
     
-    func configure(action: (() -> Void)? ) {
-        self.action = action
+    // MARK: - Acitions
+    
+    @objc private func ctaButtonTapped() {
+        action?()
     }
 }

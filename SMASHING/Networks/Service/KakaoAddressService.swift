@@ -7,18 +7,15 @@
 
 import Combine
 
-protocol KakaoMapServiceProtocol {
+protocol KakaoAddressServiceProtocol {
     func searchAddress(query: String) -> AnyPublisher<KakaoAddressResponseDTO, NetworkError>
 }
 
-final class KakaoMapService: KakaoMapServiceProtocol {
+final class KakaoAddressService: KakaoAddressServiceProtocol {
     func searchAddress(query: String) -> AnyPublisher<KakaoAddressResponseDTO, NetworkError> {
-        return NetworkProvider<KakaoMapAPI>
-            .requestPublisher(
-                .searchAddress(query: query),
-                type: KakaoAddressResponseDTO.self
-            )
-            .map { $0.data }
+        return NetworkProvider<KakaoAddressAPI>
+            .kakaoAddressRequestPublisher(.searchAddress(query: query),
+                                          type: KakaoAddressResponseDTO.self)
             .eraseToAnyPublisher()
     }
 }
