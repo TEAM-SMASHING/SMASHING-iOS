@@ -102,7 +102,7 @@ extension MatchingConfirmedViewController: UICollectionViewDataSource {
         cell.configure(
             nickname: match.nickname,
             gender: match.gender,
-            tierId: match.tierId,
+            tierCode: match.tierCode,
             wins: match.wins,
             losses: match.losses,
             reviews: match.reviewCount
@@ -131,44 +131,44 @@ extension MatchingConfirmedViewController: UICollectionViewDelegateFlowLayout {
 extension MatchingConfirmedViewController {
 
     private func loadMockData() {
-        self.matches = [
-            TempRequesterInfo(
-                userId: "0USER000111227",
-                nickname: "도윤",
-                gender: "MALE",
-                tierId: 6,
-                wins: 89,
-                losses: 34,
-                reviewCount: 25
-            ),
-            TempRequesterInfo(
-                userId: "0USER000111228",
-                nickname: "수아",
-                gender: "FEMALE",
-                tierId: 5,
-                wins: 67,
-                losses: 28,
-                reviewCount: 18
-            ),
-            TempRequesterInfo(
-                userId: "0USER000111229",
-                nickname: "예준",
-                gender: "MALE",
-                tierId: 7,
-                wins: 120,
-                losses: 40,
-                reviewCount: 35
-            ),
-            TempRequesterInfo(
-                userId: "0USER000111230",
-                nickname: "시우",
-                gender: "MALE",
-                tierId: 4,
-                wins: 45,
-                losses: 22,
-                reviewCount: 12
-            )
-        ]
+//        self.matches = [
+//            TempRequesterInfo(
+//                userId: "0USER000111227",
+//                nickname: "도윤",
+//                gender: "MALE",
+//                tierId: 6,
+//                wins: 89,
+//                losses: 34,
+//                reviewCount: 25
+//            ),
+//            TempRequesterInfo(
+//                userId: "0USER000111228",
+//                nickname: "수아",
+//                gender: "FEMALE",
+//                tierId: 5,
+//                wins: 67,
+//                losses: 28,
+//                reviewCount: 18
+//            ),
+//            TempRequesterInfo(
+//                userId: "0USER000111229",
+//                nickname: "예준",
+//                gender: "MALE",
+//                tierId: 7,
+//                wins: 120,
+//                losses: 40,
+//                reviewCount: 35
+//            ),
+//            TempRequesterInfo(
+//                userId: "0USER000111230",
+//                nickname: "시우",
+//                gender: "MALE",
+//                tierId: 4,
+//                wins: 45,
+//                losses: 22,
+//                reviewCount: 12
+//            )
+//        ]
         self.collectionview.reloadData()
     }
 

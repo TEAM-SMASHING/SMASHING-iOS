@@ -74,7 +74,7 @@ extension SentRequestViewController: UICollectionViewDataSource {
         cell.configure(
             nickname: match.nickname,
             gender: match.gender,
-            tierId: match.tierId,
+            tierCode: match.tierCode,
             wins: match.wins,
             losses: match.losses,
             reviews: match.reviewCount
@@ -103,26 +103,26 @@ extension SentRequestViewController: UICollectionViewDelegateFlowLayout {
 extension SentRequestViewController {
 
     private func loadMockData() {
-        self.matches = [
-            TempRequesterInfo(
-                userId: "0USER000111225",
-                nickname: "나는다섯글자인간임ㅅㄱ",
-                gender: "MALE",
-                tierId: 4,
-                wins: 30,
-                losses: 15,
-                reviewCount: 8
-            ),
-            TempRequesterInfo(
-                userId: "0USER000111226",
-                nickname: "하은",
-                gender: "FEMALE",
-                tierId: 2,
-                wins: 15,
-                losses: 20,
-                reviewCount: 4
-            )
-        ]
+//        self.matches = [
+//            TempRequesterInfo(
+//                userId: "0USER000111225",
+//                nickname: "나는다섯글자인간임ㅅㄱ",
+//                gender: "MALE",
+//                tierId: 4,
+//                wins: 30,
+//                losses: 15,
+//                reviewCount: 8
+//            ),
+//            TempRequesterInfo(
+//                userId: "0USER000111226",
+//                nickname: "하은",
+//                gender: "FEMALE",
+//                tierId: 2,
+//                wins: 15,
+//                losses: 20,
+//                reviewCount: 4
+//            )
+//        ]
         self.collectionview.reloadData()
     }
 

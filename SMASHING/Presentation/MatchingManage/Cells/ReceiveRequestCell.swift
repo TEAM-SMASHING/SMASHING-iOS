@@ -188,7 +188,7 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     func configure(
         nickname: String,
         gender: String,
-        tierId: Int,
+        tierCode: String,
         wins: Int,
         losses: Int,
         reviews: Int
@@ -197,11 +197,11 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
         self.genderIconImageView.image = gender == "MALE" ? .icManSm : .icWomanSm
         self.recordValueLabel.text = "\(wins)승 \(losses)패"
         self.reviewValueLabel.text = "\(reviews)"
-        self.configureTierBadge(tierId: tierId)
+        self.configureTierBadge(tierCode: tierCode)
     }
     
-    private func configureTierBadge(tierId: Int) {
-        guard let tier = Tier.from(tierId: tierId) else {
+    private func configureTierBadge(tierCode: String) {
+        guard let tier = Tier.from(tierCode: tierCode) else {
             self.tierBadgeLabel.text = "Unranked"
             self.tierBadgeLabel.backgroundColor = .Background.canvasReverse
             self.tierBadgeLabel.textColor = .Text.primary
