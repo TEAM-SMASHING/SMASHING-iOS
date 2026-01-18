@@ -41,13 +41,11 @@ struct OpponentSummaryDTO: Codable {
     let nickname: String
     let openchatUrl: String?
     let gender: String
-    let tierID: Int
-    let tierName: String
+    let tierCode: String?
 
     enum CodingKeys: String, CodingKey {
         case userID = "userId"
         case nickname, openchatUrl, gender
-        case tierID = "tierId"
-        case tierName
+        case tierCode
     }
 }
