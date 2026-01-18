@@ -21,7 +21,6 @@ final class HomeViewModel: HomeViewModelProtocol {
     enum Input {
         //Life Cycle
         case viewDidLoad
-        case viewWillAppear
         
         //매칭 섹션
         case matchingResultCreateButtonTapped
@@ -37,24 +36,23 @@ final class HomeViewModel: HomeViewModelProtocol {
     
     struct Output {
         
-        // TODO: //        let recentMatchings = PassthroughSubject<RecentMatchinDTO, Never>()  /*결과 확정 전인 수락된 매칭 목록 조회 API 오래된순으로 해서 size 1 가져오기
+        // TODO: // let recentMatchings = PassthroughSubject<RecentMatchinDTO, Never>()  /*결과 확정 전인 수락된 매칭 목록 조회 API 오래된순으로 해서 size 1 가져오기
         let recommendedUsers = PassthroughSubject<[RecommendedUserDTO], Never>()
         let rankings = PassthroughSubject<[RankingUserDTO], Never>()
-
+        
         let isLoading = PassthroughSubject<Bool, Never>()
         let error = PassthroughSubject<Error, Never>()
-
-        let navigateToMatchResultCreate = PassthroughSubject<Int, Never>()
-        let navigateToMatchingManageTab = PassthroughSubject<Void, Never>()
-        let navigateToSelectedUserProfile = PassthroughSubject<Int, Never>()
-        let navigateToRanking = PassthroughSubject<Void, Never>()
+        
+        let navToMatchResultCreate = PassthroughSubject<Int, Never>()
+        let navToMatchingManageTab = PassthroughSubject<Void, Never>()
+        let navToSelectedUserProfile = PassthroughSubject<Int, Never>()
+        let navToRanking = PassthroughSubject<Void, Never>()
     }
-    
     private var cancellables = Set<AnyCancellable>()
     
     private let regionService: RegionServiceProtocol
     
-    private let output = Output()
+    let output = Output()
     
     func transform(input: AnyPublisher<Input, Never>) -> Output {
         input
@@ -71,24 +69,22 @@ final class HomeViewModel: HomeViewModelProtocol {
         switch input {
         case .viewDidLoad:
             fetchHomeData()
-        case .viewWillAppear:
-            break
         case .matchingResultCreateButtonTapped:
             break
         case .matchingSeeAllTapped:
-            break
+            output.navToMatchingManageTab.send()
         case .recommendedUserTapped:
             break
         case .rankingUserTapped:
             break
         case .rankingSeeAllTapped:
-            break
+            output.navToRanking.send()
         }
     }
     
     private func fetchHomeData() {
-//        fetchRecentMatching()
         output.isLoading.send(true)
+//        fetchRecentMatching()
         fetchRecommendedUsers()
         fetchRankings()
     }
@@ -103,7 +99,6 @@ final class HomeViewModel: HomeViewModelProtocol {
                     self.output.error.send(error)
                 }
             } receiveValue: { [weak self] response in
-                print("추천 유저 수신")
                 guard let self else { return }
                 output.recommendedUsers.send(response.recommendedUsers)
             }
@@ -120,8 +115,6 @@ final class HomeViewModel: HomeViewModelProtocol {
                     self.output.error.send(error)
                 }
             } receiveValue: { [weak self] response in
-                print("🟢 [HomeViewModel] 랭킹 데이터 수신: \(response.topUsers.count)명")
-                           print("🟢 [HomeViewModel] 첫번째 유저: \(response.topUsers.first?.nickname ?? "없음")")
                 guard let self else { return }
                 
                 let top5 = Array(response.topUsers.prefix(5))
