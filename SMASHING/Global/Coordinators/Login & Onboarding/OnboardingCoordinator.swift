@@ -43,7 +43,6 @@ final class OnboardingCoordinator: Coordinator {
             .store(in: &cancellables)
         
         navigationController.pushViewController(viewController, animated: true)
-        pushToOnboardingCompletion()
     }
     
     private func pushAddressFlow() {
