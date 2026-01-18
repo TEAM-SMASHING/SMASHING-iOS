@@ -18,7 +18,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        navigationController.pushViewController(ProfileTestViewController(), animated: true)
+        navigationController.pushViewController(ReviewTestViewController(), animated: true)
         // showLoginFlow()
     }
     
