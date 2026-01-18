@@ -110,4 +110,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.height.equalTo(42)
         }
     }
+    
+    func configure(with matching: MatchingConfirmedGameDTO) {
+        rivalNickName.text = matching.opponent.nickname
+    }
 }

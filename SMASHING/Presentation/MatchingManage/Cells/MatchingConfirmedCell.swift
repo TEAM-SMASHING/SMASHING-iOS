@@ -178,17 +178,17 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     func configure(
         nickname: String,
         gender: String,
-        tierId: Int,
+        tierCode: String,
         wins: Int,
         losses: Int,
         reviews: Int) {
         self.nicknameLabel.text = nickname
         self.genderIconImageView.image = gender == "MALE" ? .icManSm : .icWomanSm
-        self.configureTierBadge(tierId: tierId)
+        self.configureTierBadge(tierCode: tierCode)
     }
     
-    private func configureTierBadge(tierId: Int) {
-        guard let tier = Tier.from(tierId: tierId) else {
+    private func configureTierBadge(tierCode: String) {
+        guard let tier = Tier.from(tierCode: tierCode) else {
             self.tierBadgeLabel.text = "Unranked"
             self.tierBadgeLabel.backgroundColor = .Background.canvasReverse
             self.tierBadgeLabel.textColor = .Text.primary

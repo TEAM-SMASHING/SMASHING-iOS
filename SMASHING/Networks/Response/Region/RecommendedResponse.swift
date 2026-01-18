@@ -8,13 +8,13 @@
 import Foundation
 
 struct RecommendedUserResponseDTO: Decodable {
-    let recommendUsers: [RecommendedUserDTO]
+    let recommendedUsers: [RecommendedUserDTO]
 }
 
 struct RecommendedUserDTO: Decodable {
     let userId: String
     let nickname: String
-    let tierId: Int
+    let tierCode: String
     let wins: Int
     let losses: Int
     let reviews: Int
