@@ -31,7 +31,7 @@ extension MatchingConfirmedAPI: BaseTargetType {
         case .getConfirmedGameList:
             return .get
         case .cancelGame:
-            return .delete
+            return .put
         }
     }
 
