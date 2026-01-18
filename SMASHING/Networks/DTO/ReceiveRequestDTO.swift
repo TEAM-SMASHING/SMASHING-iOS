@@ -1,51 +1,49 @@
 //
-//  SentRequestResultDTO.swift
+//  ReceiveRequestDTO.swift
 //  SMASHING
 //
-//  Created by JIN on 1/17/26.
+//  Created by JIN on 1/18/26.
 //
 
 import Foundation
 
-// MARK: - CursorResponse (페이지네이션 응답)
+// MARK: - CursorResponse
 
-struct SentRequestCursorResponseDTO: Codable {
+struct ReceiveRequestCursorResponseDTO: Codable {
     let snapshotAt: String
-    let results: [SentRequestResultDTO]
+    let results: [ReceiveRequestResultDTO]
     let nextCursor: String?
     let hasNext: Bool
 }
 
-// MARK: - SentMatchingSummaryResponse
+// MARK: - ReceivedMatchingSummary
 
-struct SentRequestResultDTO: Codable {
+struct ReceiveRequestResultDTO: Codable {
     let matchingID: String
     let createdAt: String
     let status: String
-    let receiver: SentRequestReceiverDTO
+    let requester: RequesterSummaryDTO
 
     enum CodingKeys: String, CodingKey {
         case matchingID = "matchingId"
-        case createdAt, status, receiver
+        case createdAt, status, requester
     }
 }
 
-// MARK: - ReceiverSummary
+// MARK: - RequesterSummary
 
-struct SentRequestReceiverDTO: Codable {
+struct RequesterSummaryDTO: Codable {
     let userID: String
     let nickname: String
     let gender: String
     let reviewCount: Int
-    let tierID: Int
-    let tierName: String
+    let tierCode: String
     let wins: Int
     let losses: Int
 
     enum CodingKeys: String, CodingKey {
         case userID = "userId"
         case nickname, gender, reviewCount
-        case tierID = "tierId"
-        case tierName, wins, losses
+        case tierCode, wins, losses
     }
 }
