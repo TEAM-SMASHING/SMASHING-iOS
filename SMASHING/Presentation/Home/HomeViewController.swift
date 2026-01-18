@@ -37,7 +37,6 @@ final class HomeViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setCollectionView()
@@ -65,7 +64,6 @@ final class HomeViewController: BaseViewController {
         output.rankings
             .receive(on: DispatchQueue.main)
             .sink { [weak self] rankings in
-                print("🟡 [HomeVC] rankings 바인딩: \(rankings.count)개")
                 self?.rankings = rankings
                 self?.homeView.reloadSections(IndexSet(integer: HomeViewLayout.ranking.rawValue))
             }
@@ -155,11 +153,14 @@ extension HomeViewController: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
     }
-    
 }
 
 extension HomeViewController: UICollectionViewDelegate {
     
+    // 추후 프로필 이동 기능 구현 예정
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//
+//    }
 }
 
 // MARK: Header Button

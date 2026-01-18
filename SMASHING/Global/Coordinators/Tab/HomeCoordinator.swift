@@ -26,8 +26,6 @@ final class HomeCoordinator: Coordinator {
         
         bindNavigationEvents(output: viewModel.output)
         navigationController.pushViewController(homeVC, animated: true)
-        
-        
     }
     
     private func bindNavigationEvents(output: HomeViewModel.Output) {
@@ -39,7 +37,7 @@ final class HomeCoordinator: Coordinator {
     }
     
     private func showRanking() {
-        let regionService = RegionService()
+//        let regionService = RegionService()
 //                let viewModel = RankingViewModel(regionService: regionService)
 //                let rankingVC = RankingViewController(viewModel: viewModel)
         let rankingVC = RankingViewController()
