@@ -69,6 +69,7 @@ final class MatchingConfirmedViewController: BaseViewController {
         super.viewDidLoad()
         bind()
         input.send(.viewDidLoad)
+        _ = KeychainService.add(key:Environment.accessTokenKey , value: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwUDZWVksyRk1HNEZYIiwidHlwZSI6IkFDQ0VTU19UT0tFTiIsInJvbGVzIjpbXSwiaWF0IjoxNzY4NjU5ODE1LCJleHAiOjEyMDk3NzY4NjU5ODE1fQ.9Hao_dtvvKs-1D2Rdy7C6RGcREFQMo2JXqapTOajNoc")
     }
 
     // MARK: - Setup Methods
@@ -134,7 +135,14 @@ final class MatchingConfirmedViewController: BaseViewController {
             }
             .store(in: &cancellables)
 
-        // 무한 스크롤
+        output.itemRemoved
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.emptyLabel.isHidden = !self.gameList.isEmpty
+            }
+            .store(in: &cancellables)
+
         collectionView.reachedBottomPublisher
             .sink { [weak self] in
                 self?.input.send(.loadMore)
@@ -146,6 +154,21 @@ final class MatchingConfirmedViewController: BaseViewController {
 
     func refresh() {
         input.send(.refresh)
+    }
+
+    private func closeButtonDidTap(at index: Int) {
+        let popup = ConfirmPopupViewController(
+            title: "정말 매칭을 취소하시겠어요?",
+            message: "매칭 상대도 동의해야 취소가 완료돼요.",
+            cancelTitle: "아니요",
+            confirmTitle: "취소하기"
+        )
+
+        popup.onConfirmTapped = { [weak self] in
+            self?.input.send(.closeTapped(index: index))
+        }
+
+        present(popup, animated: true)
     }
 
     // MARK: - Helper Methods
@@ -181,6 +204,10 @@ extension MatchingConfirmedViewController: UICollectionViewDataSource {
 
         let game = self.gameList[indexPath.row]
         cell.configure(with: game)
+
+        cell.onCloseTapped = { [weak self] in
+            self?.closeButtonDidTap(at: indexPath.item)
+        }
 
         return cell
     }

@@ -124,7 +124,6 @@ final class SentRequestViewController: BaseViewController {
         output.isLoadingMore
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoadingMore in
-                // 필요시 하단 로딩 인디케이터 표시
             }
             .store(in: &cancellables)
 
@@ -145,7 +144,6 @@ final class SentRequestViewController: BaseViewController {
             }
             .store(in: &cancellables)
 
-        // 무한 스크롤
         collectionView.reachedBottomPublisher
             .sink { [weak self] in
                 self?.input.send(.loadMore)
@@ -156,7 +154,18 @@ final class SentRequestViewController: BaseViewController {
     // MARK: - Actions
 
     private func closeButtonDidTap(at index: Int) {
-        input.send(.closeTapped(index: index))
+        let popup = ConfirmPopupViewController(
+            title: "요청을 취소하시겠습니까?",
+            message: "요청 취소 시 24시간 후 재요청할 수 있습니다",
+            cancelTitle: "아니요",
+            confirmTitle: "취소하기"
+        )
+
+        popup.onConfirmTapped = { [weak self] in
+            self?.input.send(.closeTapped(index: index))
+        }
+
+        present(popup, animated: true)
     }
 
     func refresh() {
