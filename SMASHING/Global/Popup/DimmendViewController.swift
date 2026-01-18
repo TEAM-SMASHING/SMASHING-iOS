@@ -7,6 +7,9 @@
 
 import UIKit
 
+import SnapKit
+import Then
+
 class DimmedViewController: UIViewController {
     
     //MARK: -Properties
@@ -34,7 +37,9 @@ class DimmedViewController: UIViewController {
         dimmedView.backgroundColor = .black
         dimmedView.alpha = 0
         presentingViewController.view.addSubview(dimmedView)
-        dimmedView.fillSuperview()
+        dimmedView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
         UIView.animate(withDuration: 0.3) {
             self.dimmedView.alpha = 0.25
         }
