@@ -58,7 +58,6 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.text = "와구와구"
         $0.setPretendard(.textSmM)
         $0.textColor = .Text.muted
-        $0.textColor = .Text.muted
         $0.textAlignment = .center
     }
     

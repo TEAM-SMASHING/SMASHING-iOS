@@ -26,12 +26,9 @@ final class HomeViewController: BaseViewController {
     private var recentMatching: [MatchingConfirmedGameDTO] = []
     private var recommendedUsers: [RecommendedUserDTO] = []
     private var rankings: [RankingUserDTO] = []
-    
-    private var myUserId: String {
-        return KeychainService.get(key: Environment.userIdKey) ?? ""
+    private var myNickname: String {
+        return KeychainService.get(key: Environment.nicknameKey) ?? ""
     }
-    
-    private var myNickname: String = "zhangjike" // TODO: 유저 정보에서 가져오기
     
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
@@ -147,9 +144,7 @@ extension HomeViewController: UICollectionViewDataSource {
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MatchingSectionHeader.reuseIdentifier, for: indexPath) as? MatchingSectionHeader else {
                 return UICollectionReusableView()
             }
-            var myNickname: String {
-                return KeychainService.get(key: Environment.nicknameKey) ?? ""
-            }
+
             header.configure(title: "\(myNickname)님,", subTitle: "곧 다가오는 매칭이 있어요")
             return header
         case .recommendedUser:

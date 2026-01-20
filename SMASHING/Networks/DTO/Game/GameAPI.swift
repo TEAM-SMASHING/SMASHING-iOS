@@ -50,6 +50,8 @@ extension GameAPI: BaseTargetType {
         switch self {
         case .submissionResult(_, let request):
             return .requestJSONEncodable(request)
+        case .resubmission(_, let request):
+            return .requestJSONEncodable(request)
         default:
             return .requestPlain
         }

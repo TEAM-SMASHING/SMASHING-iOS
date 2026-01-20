@@ -13,17 +13,17 @@ import SnapKit
 
 final class ReviewCreateViewController: BaseViewController {
     
-    private let gameSerive: GameServiceProtocol
+    private let gameService: GameServiceProtocol
     
     private let gameData: MatchingConfirmedGameDTO
     private let matchResultData: MatchResultData
     private let myUserId: String
     
-    init(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String, gameSerivce: GameServiceProtocol) {
+    init(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String, gameService: GameServiceProtocol) {
         self.gameData = gameData
         self.matchResultData = matchResultData
         self.myUserId = myUserId
-        self.gameSerive = gameSerivce
+        self.gameService = gameService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -81,7 +81,7 @@ final class ReviewCreateViewController: BaseViewController {
         
         print("reviewRequestDTO\(reviewRequestDTO)")
         print("requestDTO\(requestDTO)")
-        gameSerive.submitResult(gameId: gameData.gameID, request: requestDTO)
+        gameService.submitResult(gameId: gameData.gameID, request: requestDTO)
             .sink { [weak self] completion in
                 guard let self else { return }
                 if case .failure(let error) = completion {
