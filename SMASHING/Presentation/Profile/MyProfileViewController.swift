@@ -145,8 +145,10 @@ final class MyProfileViewController: BaseViewController {
                 
                 if !isEmpty {
                     mainView.reviewCard.reviewCollectionView.reloadData()
-                    self.mainView.reviewCard.updateCollectionViewHeight()
-                    self.view.layoutIfNeeded()
+                    DispatchQueue.main.async {
+                        self.mainView.reviewCard.updateCollectionViewHeight(with: response)
+                        self.view.layoutIfNeeded()
+                    }
                 }
             }
             .store(in: &cancellables)

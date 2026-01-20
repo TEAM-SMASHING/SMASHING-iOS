@@ -58,7 +58,7 @@ final class TierCard: BaseUIView {
     private let lastLPLabel = UILabel().then {
         $0.font = .pretendard(.textMdSb)
         $0.textColor = .Text.primary
-        $0.text = "100"
+        $0.text = ""
     }
     
     private let lpLeft = UILabel().then {
@@ -76,7 +76,7 @@ final class TierCard: BaseUIView {
     private let totalLPLabel = UILabel().then {
         $0.font = .pretendard(.textMdSb)
         $0.textColor = .Text.primary
-        $0.text = "500"
+        $0.text = ""
     }
     
     private lazy var tierDetailButton = BlueCTAButton(label: "티어 설명").then {
@@ -164,7 +164,7 @@ final class TierCard: BaseUIView {
         lastLPLabel.text = String(max - current)
         totalLPLabel.text = String(max)
         progressBar.progress = Float(current - min) / Float(max - min)
-        tierMark.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
+        tierBadge.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
     }
     
     // MARK: - Actions

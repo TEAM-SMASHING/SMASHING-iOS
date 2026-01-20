@@ -99,13 +99,14 @@ final class ReviewCard: BaseUIView {
         noReviewLabel.snp.makeConstraints {
             $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
             $0.centerX.equalToSuperview()
-            // $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(16)
         }
         
         reviewCollectionView.snp.makeConstraints {
-            $0.top.equalTo(satisfactionStackView.snp.bottom)
+            $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(16)
+            $0.height.equalTo(0)
         }
     }
     
@@ -130,16 +131,43 @@ final class ReviewCard: BaseUIView {
                 $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
                 $0.horizontalEdges.equalToSuperview().inset(16)
                 $0.bottom.equalToSuperview().inset(16)
+                $0.height.equalTo(0)
             }
         }
     }
     
-    func updateCollectionViewHeight() {
-        reviewCollectionView.layoutIfNeeded()
-        let height = reviewCollectionView.collectionViewLayout.collectionViewContentSize.height
+    // ReviewCard.swift
+
+    // 높이 계산을 위한 임시 가상 셀
+    private let sizingCell = ReviewCollectionViewCell()
+
+    func updateCollectionViewHeight(with data: [RecentReviewResult]) {
+        let itemCount = data.count >= 3 ? 3 : data.count
+        var totalHeight: CGFloat = 0
+        let width = reviewCollectionView.frame.width
         
+        // 1. 실제 데이터를 바탕으로 각 셀의 높이를 직접 계산
+        for i in 0..<itemCount {
+            sizingCell.configure(data[i])
+            
+            // 너비는 고정하고 높이는 가장 압축된 크기를 계산하도록 요청
+            let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
+            let estimatedSize = sizingCell.contentView.systemLayoutSizeFitting(
+                targetSize,
+                withHorizontalFittingPriority: .required, // 너비는 반드시 맞춤
+                verticalFittingPriority: .fittingSizeLevel // 높이는 내용에 따라 조절
+            )
+            totalHeight += estimatedSize.height
+        }
+        
+        // 2. 셀 사이의 간격 추가
+        if let layout = reviewCollectionView.collectionViewLayout as? UICollectionViewFlowLayout, itemCount > 1 {
+            totalHeight += layout.minimumLineSpacing * CGFloat(itemCount - 1)
+        }
+        
+        // 3. 컬렉션 뷰 높이 업데이트
         reviewCollectionView.snp.updateConstraints {
-            $0.height.equalTo(height)
+            $0.height.equalTo(totalHeight)
         }
     }
     
