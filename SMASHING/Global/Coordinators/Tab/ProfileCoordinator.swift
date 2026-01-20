@@ -57,9 +57,8 @@ final class ProfileCoordinator: Coordinator {
     }
     
     func TierExplanation() {
-        let tierViewController = TierExplanationViewController()
+        let tierViewController = TierExplanationViewController(sports: .badminton, oreTier: .bronze)
         tierViewController.dismissAction = { [weak self] in
-            // 모달로 띄워진 뷰 컨트롤러를 닫습니다.
             self?.navigationController.dismiss(animated: true)
         }
         navigationController.present(tierViewController, animated: true)

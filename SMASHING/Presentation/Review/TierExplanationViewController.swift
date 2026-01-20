@@ -11,18 +11,14 @@ import SnapKit
 import Then
 
 final class TierExplanationViewController: BaseViewController {
-    
+
     var dismissAction: (() -> Void)?
-    
+    private var sports: Sports
+    private var oreTier: OreTier
     private let mainView = TierExplanationView()
-    
-    private var sports: Sports = .tableTennis
-    private var oreTier: OreTier = .bronze
-    
+        
     override func loadView() {
         view = mainView
-        
-        mainView.configure(oreTier: oreTier, sports: sports)
         mainView.tierCollectionView.delegate = self
         mainView.tierCollectionView.dataSource = self
         mainView.tierExplanationCollectionView.delegate = self
@@ -33,6 +29,17 @@ final class TierExplanationViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    init(sports: Sports, oreTier: OreTier) {
+        self.sports = sports
+        self.oreTier = oreTier
+        super.init(nibName: nil, bundle: nil)
+        mainView.configure(oreTier: oreTier, sports: sports)
+    }
+
+    @MainActor required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupDismissAction() {
