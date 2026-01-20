@@ -168,7 +168,6 @@ final class ReceiveRequestViewModel: ReceiveRequestViewModelProtocol {
                     guard let self else { return }
                     self.nextCursor = response.nextCursor
                     self.hasNext = response.hasNext
-
                     var currentList = self.requestListSubject.value
                     currentList.append(contentsOf: response.results)
                     self.requestListSubject.send(currentList)
