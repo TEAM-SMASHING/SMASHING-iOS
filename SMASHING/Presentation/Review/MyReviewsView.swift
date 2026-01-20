@@ -14,7 +14,11 @@ final class MyReviewsView: BaseUIView {
     
     // MARK: - Properties
     
-    var backAction: (() -> Void)?
+    var backAction: (() -> Void)? {
+        didSet {
+            navigationBar.setLeftButton(action: backAction ?? {})
+        }
+    }
     
     // MARK: - UI Components
     
@@ -156,5 +160,9 @@ final class MyReviewsView: BaseUIView {
         onTimeCountChip.setNum(num: summary.tagCounts.onTime)
         fairPlayCountChip.setNum(num: summary.tagCounts.fairPlay)
         fastResponseCountChip.setNum(num: summary.tagCounts.fastResponse)
+    }
+    
+    @objc private func backButtonTapped() {
+        backAction?()
     }
 }

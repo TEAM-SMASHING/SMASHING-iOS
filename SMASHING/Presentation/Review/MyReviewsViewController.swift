@@ -22,6 +22,7 @@ final class MyReviewsViewModel: MyReviewsViewModelProtocol {
     
     enum Input {
         case viewDidLoad
+        case viewWillAppear
         case reachedBottom
         case backButtonDidTap
     }
@@ -34,10 +35,15 @@ final class MyReviewsViewModel: MyReviewsViewModelProtocol {
     }
     
     let output = Output()
+    var cancellables: Set<AnyCancellable> = []
+    
     let service: UserReviewServiceProtocol
     
-    var cancellables: Set<AnyCancellable> = []
+    private var nextCursor: String?
+    private var hasNext: Bool = true
     var reviews = [RecentReviewResult]()
+    
+    private var isFetching = false
     
     init(service: UserReviewServiceProtocol) {
         self.service = service
@@ -49,20 +55,54 @@ final class MyReviewsViewModel: MyReviewsViewModelProtocol {
                 guard let self = self else { return }
                 switch event {
                 case .viewDidLoad:
-                    service.fetchMyReviewSummary()
-                        .receive(on: DispatchQueue.main)
-                        .sink(receiveCompletion: { _ in }, receiveValue: { response in
-                            self.output.reviewSummaryFetched.send(response)
-                        })
-                        .store(in: &cancellables)
+                    fetchSummary()
+                    fetchRecentReviews(isFirstPage: true)
+                case .viewWillAppear:
+                    self.fetchSummary()
+                case .reachedBottom:
+                    self.fetchRecentReviews(isFirstPage: false)
                 case .backButtonDidTap:
-                    output.navBack.send()
-                default:
-                    break
+                    self.output.navBack.send()
                 }
             }
             .store(in: &cancellables)
         return output
+    }
+    
+    private func fetchSummary() {
+        self.service.fetchMyReviewSummary()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] response in
+                self?.output.reviewSummaryFetched.send(response)
+            })
+            .store(in: &self.cancellables)
+    }
+    
+    private func fetchRecentReviews(isFirstPage: Bool) {
+        guard !isFetching && (isFirstPage || hasNext) else { return }
+        
+        isFetching = true
+        let cursor = isFirstPage ? nil : nextCursor
+        
+        self.service.fetchMyRecentReviews(size: 10, cursor: cursor)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] _ in
+                self?.isFetching = false
+            }, receiveValue: { [weak self] response in
+                guard let self = self else { return }
+                
+                if isFirstPage {
+                    self.reviews = response.results
+                } else {
+                    self.reviews.append(contentsOf: response.results)
+                }
+                self.nextCursor = response.nextCursor
+                self.hasNext = response.hasNext
+                
+                self.output.dataFetched.send()
+                self.isFetching = false
+            })
+            .store(in: &self.cancellables)
     }
 }
 
@@ -70,6 +110,7 @@ final class MyReviewsViewController: BaseViewController, UICollectionViewDelegat
     
     // MARK: - Properties
     
+    var backAction: (() -> Void)?
     private let myReviewsView = MyReviewsView()
     private let viewModel: any MyReviewsViewModelProtocol
     private let inputSubject = PassthroughSubject<MyReviewsViewModel.Input, Never>()
@@ -101,16 +142,36 @@ final class MyReviewsViewController: BaseViewController, UICollectionViewDelegat
     
     private func bind() {
         let output = viewModel.transform(input: inputSubject.eraseToAnyPublisher())
+        
+        output.dataFetched
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.myReviewsView.collectionView.reloadData()
+            }
+            .store(in: &cancellables)
+            
         output.reviewSummaryFetched
             .receive(on: DispatchQueue.main)
             .sink { [weak self] summary in
                 self?.myReviewsView.configure(summary: summary)
             }
             .store(in: &cancellables)
-            
+        
+        myReviewsView.collectionView.reachedBottomPublisher
+            .sink { [weak self] _ in
+                self?.inputSubject.send(.reachedBottom)
+            }
+            .store(in: &cancellables)
+        
         myReviewsView.backAction = { [weak self] in
             self?.inputSubject.send(.backButtonDidTap)
         }
+        
+        output.navBack
+            .sink { [weak self] in
+                self?.backAction?()
+            }
+            .store(in: &cancellables)
     }
 }
 

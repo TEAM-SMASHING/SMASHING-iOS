@@ -18,8 +18,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        showMyReviewFlow()
-        // showLoginFlow()
+        showLoginFlow()
     }
     
     private func showMyReviewFlow() {

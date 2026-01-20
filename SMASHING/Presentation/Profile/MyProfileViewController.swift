@@ -90,7 +90,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
                 case .tierExplanationTapped:
                     output.navToTierExplanation.send()
                 case .seeAllReviewsTapped:
-                    break
+                    output.navToSeeAllReviews.send()
                 }
             }
             .store(in: &cancellables)
@@ -128,6 +128,7 @@ final class MyProfileViewController: BaseViewController {
         inputSubject.send(.viewDidLoad)
         mainView.reviewCard.reviewCollectionView.delegate = self
         mainView.reviewCard.reviewCollectionView.dataSource = self
+        mainView.reviewCard.seeAllAction = { self.inputSubject.send(.seeAllReviewsTapped) }
         bind()
     }
     

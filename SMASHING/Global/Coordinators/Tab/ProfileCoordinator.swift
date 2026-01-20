@@ -38,7 +38,7 @@ final class ProfileCoordinator: Coordinator {
         
         
         viewModel.output.navToSeeAllReviews.sink { [weak self] in
-            
+            self?.showAllReviews()
         }
         .store(in: &cancellables)
         
@@ -53,7 +53,9 @@ final class ProfileCoordinator: Coordinator {
     }
     
     func showAllReviews() {
-        
+        let myReviewCoordinator = MyReviewCoordinator(navigationController: navigationController)
+        childCoordinators.append(myReviewCoordinator)
+        myReviewCoordinator.start()
     }
     
     func TierExplanation() {
