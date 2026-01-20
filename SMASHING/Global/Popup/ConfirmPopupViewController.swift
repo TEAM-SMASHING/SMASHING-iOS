@@ -55,6 +55,11 @@ final class ConfirmPopupViewController: DimmedViewController {
     }
 
     // MARK: - Properties
+    
+    private lazy var tapGesture = UITapGestureRecognizer(
+        target: self,
+        action: #selector(handleBackgroundTap)
+    )
 
     var onCancelTapped: (() -> Void)?
     var onConfirmTapped: (() -> Void)?
@@ -79,6 +84,7 @@ final class ConfirmPopupViewController: DimmedViewController {
         super.init()
         setUI()
         setLayout()
+        view.addGestureRecognizer(tapGesture)
     }
 
     required init?(coder: NSCoder) {
@@ -87,7 +93,7 @@ final class ConfirmPopupViewController: DimmedViewController {
 
     // MARK: - Setup Methods
 
-    private func setUI() {
+    override func setUI() {
         view.addSubview(containerView)
         containerView.addSubviews(titleLabel, messageLabel, buttonStackView)
         buttonStackView.addArrangedSubviews(cancelButton, confirmButton)
@@ -97,7 +103,7 @@ final class ConfirmPopupViewController: DimmedViewController {
         confirmButton.setTitle(confirmTitle, for: .normal)
     }
 
-    private func setLayout() {
+    override func setLayout() {
         containerView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.horizontalEdges.greaterThanOrEqualToSuperview().inset(27.3)
@@ -134,5 +140,9 @@ final class ConfirmPopupViewController: DimmedViewController {
         dismiss(animated: true) { [weak self] in
             self?.onConfirmTapped?()
         }
+    }
+    
+    @objc private func handleBackgroundTap() {
+        dismiss(animated: true)
     }
 }
