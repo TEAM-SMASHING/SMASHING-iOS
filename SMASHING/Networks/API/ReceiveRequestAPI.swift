@@ -12,6 +12,8 @@ import Alamofire
 
 enum ReceiveRequestAPI {
     case getReceivedRequestList(snapshotAt: String?, cursor: String?, size: Int?)
+    case acceptRequest(matchingId: String)
+    case rejectRequest(matchingID: String)
 }
 
 extension ReceiveRequestAPI: BaseTargetType {
@@ -20,6 +22,10 @@ extension ReceiveRequestAPI: BaseTargetType {
         switch self {
         case .getReceivedRequestList:
             return "api/v1/users/me/matchings/received"
+        case .acceptRequest(let matchingId):
+            return "api/v1/matchings/\(matchingId)/accept"
+        case .rejectRequest(let matchingId):
+            return "api/v1/matchings/\(matchingId)/reject"
         }
     }
 
@@ -27,6 +33,10 @@ extension ReceiveRequestAPI: BaseTargetType {
         switch self {
         case .getReceivedRequestList:
             return .get
+        case .acceptRequest:
+            return .post
+        case .rejectRequest:
+            return .post
         }
     }
 
@@ -38,6 +48,10 @@ extension ReceiveRequestAPI: BaseTargetType {
             if let cursor = cursor { parameters["cursor"] = cursor }
             if let size = size { parameters["size"] = size }
             return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
+        case .acceptRequest:
+            return .requestPlain
+        case .rejectRequest:
+            return .requestPlain
         }
     }
 

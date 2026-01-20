@@ -2,12 +2,12 @@
 //  MatchingConfirmedDTO.swift
 //  SMASHING
 //
-//  Created by Claude on 1/17/26.
+//  Created by JIN on 1/17/26.
 //
 
 import Foundation
 
-// MARK: - CursorResponse 
+// MARK: - CursorResponse
 
 struct MatchingConfirmedCursorResponseDTO: Codable {
     let snapshotAt: String
@@ -40,7 +40,7 @@ struct OpponentSummaryDTO: Codable {
     let userID: String
     let nickname: String
     let openchatUrl: String?
-    let gender: String
+    let gender: Gender
     let tierCode: String?
 
     enum CodingKeys: String, CodingKey {
