@@ -11,9 +11,13 @@ import Then
 import SnapKit
 
 final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
+    
+    var onWriteResultButtonTapped: (() -> Void)?
+    
     private let containerView = UIView().then {
         $0.backgroundColor = .Background.surface
         $0.layer.cornerRadius = 8
+        $0.isUserInteractionEnabled = true
     }
     
     private let leftProfileStackView = UIStackView().then {
@@ -64,6 +68,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.setTitleColor(.Text.muted, for: .normal)
         $0.backgroundColor = .Button.backgroundPrimaryActive
         $0.layer.cornerRadius = 8
+        $0.addTarget(self, action: #selector(writeResultButtonDidTap), for: .touchUpInside)
     }
     
     override func setUI() {
@@ -111,7 +116,41 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
     }
     
-    func configure(with matching: MatchingConfirmedGameDTO) {
+    func configure(with matching: MatchingConfirmedGameDTO, myNickname: String) {
+        myNickName.text = myNickname
         rivalNickName.text = matching.opponent.nickname
+        
+        let resultStatus = matching.resultStatus
+        // 버튼 활성화 여부
+        let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
+
+        writeResultButton.setTitle(resultStatus.buttonTitle, for: .normal)
+        writeResultButton.isEnabled = canSubmit
+        
+        updateButtonStyle(for: resultStatus, canSubmit: canSubmit)
     }
+    
+    private func updateButtonStyle(for status: GameResultStatus, canSubmit: Bool) {
+        
+        switch status {
+                case .pendingResult:
+                    writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
+            writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
+                case .resultRejected:
+            writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
+            writeResultButton.setTitleColor(.Button.textRejected, for: .normal)
+                case .waitingConfirmation:
+            writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
+                    writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+                case .canceled:
+                    writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
+                    writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+                }
+    }
+    
+    @objc
+       private func writeResultButtonDidTap() {
+           print("🔴 writeResultButtonDidTap 호출됨")
+           onWriteResultButtonTapped?()
+       }
 }

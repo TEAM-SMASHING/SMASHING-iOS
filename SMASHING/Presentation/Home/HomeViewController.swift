@@ -27,6 +27,12 @@ final class HomeViewController: BaseViewController {
     private var recommendedUsers: [RecommendedUserDTO] = []
     private var rankings: [RankingUserDTO] = []
     
+    private var myUserId: String {
+        return KeychainService.get(key: Environment.userIdKey) ?? ""
+    }
+    
+    private var myNickname: String = "zhangjike" // TODO: 유저 정보에서 가져오기
+    
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -108,7 +114,10 @@ extension HomeViewController: UICollectionViewDataSource {
         case .matching:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.reuseIdentifier, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
             let matching = recentMatching[indexPath.item]
-            cell.configure(with: matching)
+            cell.configure(with: matching, myNickname: myNickname)
+            cell.onWriteResultButtonTapped = { [weak self] in
+                self?.input.send(.matchingResultCreateButtonTapped(matching))
+            }
             return cell
             
         case .recommendedUser:
