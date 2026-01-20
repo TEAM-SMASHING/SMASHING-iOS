@@ -21,6 +21,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
     enum Input {
         case viewDidLoad
         case viewWillAppear
+        case sportsCellTapped(Sports?)
         case navToAddSports
         case navToTierExplanation
         case navToSeeAllReviews
@@ -30,6 +31,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
         let myProfileFetched = PassthroughSubject<MyProfileListResponse, Never>()
         let myReviewSummaryFetched = PassthroughSubject<ReviewSummaryResponse, Never>()
         let myRecentReviewListFetched = PassthroughSubject<[RecentReviewResult], Never>()
+        let navigateToAddSports = PassthroughSubject<Void, Never>()
     }
 
     let output = Output()
@@ -76,6 +78,14 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
                             output.myReviewSummaryFetched.send(response)
                         }
                         .store(in: &cancellables)
+                case .sportsCellTapped(let sport):
+                    if let sport = sport {
+                        // TODO: 해당 종목의 프로필로 데이터 전환 로직 (updateActiveProfile 등 호출 가능)
+                        print("\(sport.displayName) 프로필 전환")
+                    } else {
+                        // nil이면 종목 추가 화면으로 이동
+                        output.navigateToAddSports.send()
+                    }
                 case .navToAddSports:
                     break
                 case .navToTierExplanation:
@@ -126,12 +136,20 @@ final class MyProfileViewController: BaseViewController {
     
     private func bind() {
         let output = viewModel.transform(input: inputSubject.eraseToAnyPublisher())
+        
+        mainView.tierCard.onSportsAction = { [weak self] sport in
+            self?.inputSubject.send(.sportsCellTapped(sport))
+        }
+        
         output
             .myProfileFetched
             .receive(on: DispatchQueue.main)
             .sink { [weak self] response in
                 guard let self else { return }
                 mainView.configure(profile: response)
+                // TierCard의 CollectionView 데이터 갱신
+                // TODO: Response에서 전체 종목 리스트를 추출하여 전달해야 함
+                // 예: self.mainView.tierCard.reloadSports(with: response.allProfiles.map { $0.sport })
             }
             .store(in: &cancellables)
         

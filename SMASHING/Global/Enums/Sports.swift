@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum Sports: String, Codable {
+enum Sports: String, Codable, CaseIterable {
     case tableTennis = "TT"
     case tennis = "TN"
     case badminton = "BM"
