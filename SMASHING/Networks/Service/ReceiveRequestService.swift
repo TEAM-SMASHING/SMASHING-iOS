@@ -11,11 +11,17 @@ import Combine
 // MARK: - Protocol
 
 protocol ReceiveRequestServiceProtocol {
+    
     func getReceivedRequestList(
         snapshotAt: String?,
         cursor: String?,
         size: Int?
     ) -> AnyPublisher<ReceiveRequestCursorResponseDTO, NetworkError>
+
+    func acceptRequest(matchingId: String) -> AnyPublisher<Void, NetworkError>
+    
+    func rejectRequest(matchingId: String) -> AnyPublisher<Void, NetworkError>
+
 }
 
 // MARK: - Service
@@ -29,11 +35,7 @@ final class ReceiveRequestService: ReceiveRequestServiceProtocol {
     ) -> AnyPublisher<ReceiveRequestCursorResponseDTO, NetworkError> {
         return NetworkProvider<ReceiveRequestAPI>
             .requestPublisher(
-                .getReceivedRequestList(
-                    snapshotAt: snapshotAt,
-                    cursor: cursor,
-                    size: size
-                ),
+                .getReceivedRequestList(snapshotAt: snapshotAt, cursor: cursor, size: size),
                 type: ReceiveRequestCursorResponseDTO.self
             )
             .map { response in
@@ -41,6 +43,27 @@ final class ReceiveRequestService: ReceiveRequestServiceProtocol {
             }
             .eraseToAnyPublisher()
     }
+
+    func acceptRequest(matchingId: String) -> AnyPublisher<Void, NetworkError> {
+        return NetworkProvider<ReceiveRequestAPI>
+            .requestPublisher(
+                .acceptRequest(matchingId: matchingId),
+                type: EmptyResponse.self
+            )
+            .map { _ in }
+            .eraseToAnyPublisher()
+    }
+    
+    func rejectRequest(matchingId: String) -> AnyPublisher<Void, NetworkError> {
+        return NetworkProvider<ReceiveRequestAPI>
+            .requestPublisher(
+                .rejectRequest(matchingID: matchingId),
+                type: EmptyResponse.self
+            )
+            .map { _ in }
+            .eraseToAnyPublisher()
+    }
+    
 }
 
 // MARK: - Mock Service
@@ -60,7 +83,7 @@ final class MockReceiveRequestService: ReceiveRequestServiceProtocol {
                 requester: RequesterSummaryDTO(
                     userID: "0KGHK8KM7TNX6",
                     nickname: "공공",
-                    gender: "FEMALE",
+                    gender: Gender.male,
                     reviewCount: 2,
                     tierCode: "BR2",
                     wins: 2,
@@ -74,7 +97,7 @@ final class MockReceiveRequestService: ReceiveRequestServiceProtocol {
                 requester: RequesterSummaryDTO(
                     userID: "0KGHK8KM7TNX6",
                     nickname: "테니스왕",
-                    gender: "MALE",
+                    gender: Gender.female,
                     reviewCount: 5,
                     tierCode: "SV1",
                     wins: 10,
@@ -91,6 +114,20 @@ final class MockReceiveRequestService: ReceiveRequestServiceProtocol {
         )
 
         return Just(response)
+            .setFailureType(to: NetworkError.self)
+            .eraseToAnyPublisher()
+    }
+    
+    func acceptRequest(matchingId: String) -> AnyPublisher<Void, NetworkError> {
+        return Just(())
+            .delay(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .setFailureType(to: NetworkError.self)
+            .eraseToAnyPublisher()
+    }
+    
+    func rejectRequest(matchingId: String) -> AnyPublisher<Void, NetworkError> {
+        return Just(())
+            .delay(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .setFailureType(to: NetworkError.self)
             .eraseToAnyPublisher()
     }

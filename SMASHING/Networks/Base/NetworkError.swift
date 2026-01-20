@@ -9,6 +9,7 @@ import Foundation
 
 public enum NetworkError: Error {
     case decoding
+    case badRequest
     case unauthorized
     case forbidden
     case notFound

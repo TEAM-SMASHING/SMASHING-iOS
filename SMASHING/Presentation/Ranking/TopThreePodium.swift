@@ -161,23 +161,23 @@ final class TopThreePodium: BaseUIView {
     // MARK: - Public Methods
     
     func configure(
-        first: (nickname: String, profileImage: UIImage?, rankImage: UIImage?, tierImage: UIImage?, lp: Int),
-        second: (nickname: String, profileImage: UIImage?, rankImage: UIImage?, tierImage: UIImage?, lp: Int),
-        third: (nickname: String, profileImage: UIImage?, rankImage: UIImage?, tierImage: UIImage?, lp: Int)
+        first: (nickname: String, profileImage: UIImage?, tierImage: UIImage?, lp: Int),
+        second: (nickname: String, profileImage: UIImage?, tierImage: UIImage?, lp: Int),
+        third: (nickname: String, profileImage: UIImage?, tierImage: UIImage?, lp: Int)
     ) {
         // 1등
         firstNicknameLabel.text = first.nickname
         firstProfileImageView.image = first.profileImage
-        firstCard.configure(rankImage: first.rankImage, tierImage: first.tierImage, lp: first.lp)
+        firstCard.configure(rankImage: .icRank1, tierImage: first.tierImage, lp: first.lp)
         
         // 2등
         secondNicknameLabel.text = second.nickname
         secondProfileImageView.image = second.profileImage
-        secondCard.configure(rankImage: second.rankImage, tierImage: second.tierImage, lp: second.lp)
+        secondCard.configure(rankImage: .icRank2, tierImage: second.tierImage, lp: second.lp)
         
         // 3등
         thirdNicknameLabel.text = third.nickname
         thirdProfileImageView.image = third.profileImage
-        thirdCard.configure(rankImage: third.rankImage, tierImage: third.tierImage, lp: third.lp)
+        thirdCard.configure(rankImage: .icRank3, tierImage: third.tierImage, lp: third.lp)
     }
 }

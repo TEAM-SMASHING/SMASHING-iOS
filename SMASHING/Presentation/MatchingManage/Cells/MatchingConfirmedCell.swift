@@ -80,15 +80,19 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
     
     private let writeResult = UIButton().then {
-        $0.setTitle("결과 작성하기", for: .normal)
-        $0.setTitleColor(.Text.emphasis, for: .normal)
-        $0.backgroundColor = .Button.backgroundPrimaryActive
         $0.titleLabel?.font = .pretendard(.textSmM)
         $0.layer.cornerRadius = 4
     }
+    
+    private lazy var closeButton = UIButton().then {
+        $0.setImage(.icCloseSm, for: .normal)
+        $0.tintColor = .Text.tertiary
+        $0.addTarget(self, action: #selector(closeButtonDidTap), for: .touchUpInside)
+    }
 
     // MARK: - Properties
-
+    
+    var onCloseTapped: (() -> Void)?
     var onSkipTapped: (() -> Void)?
     var onAcceptTapped: (() -> Void)?
 
@@ -99,7 +103,8 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
         containerView.addSubviews(
             profileStackView,
             kakaoLinkStackView,
-            writeResult
+            writeResult,
+            closeButton
         )
         nicknameStackView.addArrangedSubviews(
             nicknameLabel,
@@ -120,6 +125,11 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     override func setLayout() {
         containerView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        
+        closeButton.snp.makeConstraints {
+            $0.top.trailing.equalToSuperview().inset(15.5)
+            $0.size.equalTo(20)
         }
         
         profileStackView.snp.makeConstraints {
@@ -162,39 +172,62 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
 
     }
-
+    
     // MARK: - Actions
 
-    @objc private func skipButtonDidTap() {
-        self.onSkipTapped?()
-    }
-
-    @objc private func acceptButtonDidTap() {
-        self.onAcceptTapped?()
+    @objc private func closeButtonDidTap() {
+        self.onCloseTapped?()
     }
 
     // MARK: - Configuration
 
-    func configure(
-        nickname: String,
-        gender: String,
-        tierCode: String,
-        wins: Int,
-        losses: Int,
-        reviews: Int) {
-        self.nicknameLabel.text = nickname
-        self.genderIconImageView.image = gender == "MALE" ? .icManSm : .icWomanSm
-        self.configureTierBadge(tierCode: tierCode)
+    func configure(with game: MatchingConfirmedGameDTO) {
+        let opponent = game.opponent
+        self.nicknameLabel.text = opponent.nickname
+        self.genderIconImageView.image = opponent.gender.imageSm
+        self.configureTierBadge(tierCode: opponent.tierCode)
+        self.updateWriteResultButton(resultState: game.resultStatus)
     }
-    
-    private func configureTierBadge(tierCode: String) {
-        guard let tier = Tier.from(tierCode: tierCode) else {
+
+    private func updateWriteResultButton(resultState: GameResultStatus) {
+        switch resultState {
+        case .resultConfirmed:
+            self.writeResult.setTitle("결과 확인하기", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundConfirmed
+            self.writeResult.setTitleColor(.Text.emphasis, for: .normal)
+            self.writeResult.isEnabled = true
+        case .pendingResult:
+            self.writeResult.setTitle("결과 작성하기", for: .normal)
+            self.writeResult.setTitleColor(.Text.emphasis, for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundPrimaryActive
+            self.writeResult.isEnabled = true
+        case .resultRejected:
+            self.writeResult.setTitle("결과가 반려되었어요!", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundRejected
+            self.writeResult.setTitleColor(.Button.textRejected, for: .normal)
+            self.writeResult.isEnabled = false
+        case .canceled:
+            self.writeResult.setTitle("매칭 취소 대기중 ", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
+            self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+            self.writeResult.isEnabled = false
+        case .waitingConfirmation:
+            self.writeResult.setTitle("결과 확인 대기중", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
+            self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+            self.writeResult.isEnabled = false
+            
+        }
+    }
+
+    private func configureTierBadge(tierCode: String?) {
+        guard let tierCode = tierCode, let tier = Tier.from(tierCode: tierCode) else {
             self.tierBadgeLabel.text = "Unranked"
             self.tierBadgeLabel.backgroundColor = .Background.canvasReverse
             self.tierBadgeLabel.textColor = .Text.primary
             return
         }
-        
+
         self.tierBadgeLabel.text = tier.displayName
         self.tierBadgeLabel.backgroundColor = tier.backgroundColor
         self.tierBadgeLabel.textColor = tier.textColor

@@ -81,4 +81,9 @@ final class myRankingScoreView: BaseUIView {
             $0.size.equalTo(30)
         }
     }
+    
+    func configure(with myRank: MyRankingDTO) {
+        nameLabel.text = myRank.nickname
+        tierLabel.text = myRank.tierWithLpText
+    }
 }

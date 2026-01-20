@@ -2,7 +2,7 @@
 //  MatchingConfirmedAPI.swift
 //  SMASHING
 //
-//  Created by Claude on 1/17/26.
+//  Created by JIN on 1/17/26.
 //
 
 import Foundation
@@ -12,6 +12,7 @@ import Alamofire
 
 enum MatchingConfirmedAPI {
     case getConfirmedGameList(snapshotAt: String?, cursor: String?, size: Int?, order: String?)
+    case cancelGame(gameId: String)
 }
 
 extension MatchingConfirmedAPI: BaseTargetType {
@@ -20,6 +21,8 @@ extension MatchingConfirmedAPI: BaseTargetType {
         switch self {
         case .getConfirmedGameList:
             return "api/v1/users/me/games/pending-results"
+        case .cancelGame(let gameId):
+            return "api/v1/games/\(gameId)"
         }
     }
 
@@ -27,6 +30,8 @@ extension MatchingConfirmedAPI: BaseTargetType {
         switch self {
         case .getConfirmedGameList:
             return .get
+        case .cancelGame:
+            return .put
         }
     }
 
@@ -39,6 +44,8 @@ extension MatchingConfirmedAPI: BaseTargetType {
             if let size = size { parameters["size"] = size }
             if let order = order { parameters["order"] = order }
             return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
+        case .cancelGame:
+            return .requestPlain
         }
     }
 

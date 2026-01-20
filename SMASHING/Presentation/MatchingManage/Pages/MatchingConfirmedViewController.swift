@@ -7,76 +7,178 @@
 
 import UIKit
 
+import Combine
 import SnapKit
 import Then
 
 final class MatchingConfirmedViewController: BaseViewController {
 
-    //MARK: -UIComponents
+    // MARK: - Properties
 
-    private lazy var collectionview : UICollectionView = {
+    private let viewModel: MatchingConfirmedViewModel
+    private let input = PassthroughSubject<MatchingConfirmedViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
+
+    private var gameList: [MatchingConfirmedGameDTO] = []
+
+    // MARK: - UI Components
+
+    private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 12
         layout.minimumInteritemSpacing = 11
         layout.sectionInset = UIEdgeInsets(top: 12, left: 16, bottom: 16, right: 16)
 
-        let collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionview.backgroundColor = .black
-        collectionview.delegate = self
-        collectionview.dataSource = self
-        collectionview.showsVerticalScrollIndicator = false
-        collectionview.register(MatchingConfirmedCell.self, forCellWithReuseIdentifier: MatchingConfirmedCell.reuseIdentifier)
-        return collectionview
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.register(MatchingConfirmedCell.self, forCellWithReuseIdentifier: MatchingConfirmedCell.reuseIdentifier)
+        return collectionView
     }()
 
-    //MARK: - Properties
+    private let emptyLabel = UILabel().then {
+        $0.text = "확정된 매칭이 없습니다"
+        $0.font = .pretendard(.textMdM)
+        $0.textColor = .Text.tertiary
+        $0.textAlignment = .center
+        $0.isHidden = true
+    }
 
-    private var matches: [TempRequesterInfo] = []
+    private let loadingIndicator = UIActivityIndicatorView(style: .medium).then {
+        $0.hidesWhenStopped = true
+        $0.color = .Text.secondary
+    }
+
+    // MARK: - Initialize
+
+    init(viewModel: MatchingConfirmedViewModel = MatchingConfirmedViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadMockData()
+        bind()
+        input.send(.viewDidLoad)
+        _ = KeychainService.add(key:Environment.accessTokenKey , value: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwUDZWVksyRk1HNEZYIiwidHlwZSI6IkFDQ0VTU19UT0tFTiIsInJvbGVzIjpbXSwiaWF0IjoxNzY4NjU5ODE1LCJleHAiOjEyMDk3NzY4NjU5ODE1fQ.9Hao_dtvvKs-1D2Rdy7C6RGcREFQMo2JXqapTOajNoc")
     }
 
-    //MARK: - Setup Methods
+    // MARK: - Setup Methods
 
     override func setUI() {
         view.backgroundColor = UIColor(resource: .Background.canvas)
-        view.addSubviews(collectionview)
+        view.addSubviews(collectionView, emptyLabel, loadingIndicator)
     }
 
     override func setLayout() {
-        super.setLayout()
-        collectionview.snp.makeConstraints {
+        collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-    }
 
-    //MARK: - private Methods
+        emptyLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
 
-    private func getTierName(tier: Int) -> String {
-        switch tier {
-        case 1:
-            return "Iron I"
-        case 2:
-            return "Bronze I"
-        case 3:
-            return "Silver I"
-        case 4:
-            return "Gold I"
-        case 5:
-            return "Platinum I"
-        case 6:
-            return "Diamond I"
-        case 7:
-            return "Challenger"
-        default:
-            return "Unranked"
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
 
+    // MARK: - Bind
+
+    private func bind() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+
+        output.gameList
+            .combineLatest(output.isLoading)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] games, isLoading in
+                guard let self else { return }
+                self.gameList = games
+                self.collectionView.reloadData()
+                self.emptyLabel.isHidden = isLoading || !games.isEmpty
+            }
+            .store(in: &cancellables)
+
+        output.isLoading
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
+                guard let self else { return }
+                if isLoading {
+                    self.loadingIndicator.startAnimating()
+                } else {
+                    self.loadingIndicator.stopAnimating()
+                }
+            }
+            .store(in: &cancellables)
+
+        output.isLoadingMore
+            .receive(on: DispatchQueue.main)
+            .sink { _ in }
+            .store(in: &cancellables)
+
+        output.errorMessage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                self?.showErrorToast(message: message)
+            }
+            .store(in: &cancellables)
+
+        output.itemRemoved
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.emptyLabel.isHidden = !self.gameList.isEmpty
+            }
+            .store(in: &cancellables)
+
+        collectionView.reachedBottomPublisher
+            .sink { [weak self] in
+                self?.input.send(.loadMore)
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - Actions
+
+    func refresh() {
+        input.send(.refresh)
+    }
+
+    private func closeButtonDidTap(at index: Int) {
+        let popup = ConfirmPopupViewController(
+            title: "정말 매칭을 취소하시겠어요?",
+            message: "매칭 상대도 동의해야 취소가 완료돼요.",
+            cancelTitle: "아니요",
+            confirmTitle: "취소하기"
+        )
+
+        popup.onConfirmTapped = { [weak self] in
+            self?.input.send(.closeTapped(index: index))
+        }
+
+        present(popup, animated: true)
+    }
+
+    // MARK: - Helper Methods
+
+    private func showErrorToast(message: String) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
 }
+
+// MARK: - UICollectionViewDataSource
 
 extension MatchingConfirmedViewController: UICollectionViewDataSource {
 
@@ -84,29 +186,27 @@ extension MatchingConfirmedViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return self.matches.count
+        return self.gameList.count
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-       guard let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: MatchingConfirmedCell.reuseIdentifier,
             for: indexPath
-       ) as? MatchingConfirmedCell else {
-           return UICollectionViewCell()
-       }
+        ) as? MatchingConfirmedCell else {
+            return UICollectionViewCell()
+        }
 
-        let match = self.matches[indexPath.row]
-        cell.configure(
-            nickname: match.nickname,
-            gender: match.gender,
-            tierCode: match.tierCode,
-            wins: match.wins,
-            losses: match.losses,
-            reviews: match.reviewCount
-        )
+        let game = self.gameList[indexPath.row]
+        cell.configure(with: game)
+
+        cell.onCloseTapped = { [weak self] in
+            self?.closeButtonDidTap(at: indexPath.item)
+        }
+
         return cell
     }
 }
@@ -124,52 +224,4 @@ extension MatchingConfirmedViewController: UICollectionViewDelegateFlowLayout {
         let height: CGFloat = 222
         return CGSize(width: width, height: height)
     }
-}
-
-//MARK: - Data
-
-extension MatchingConfirmedViewController {
-
-    private func loadMockData() {
-//        self.matches = [
-//            TempRequesterInfo(
-//                userId: "0USER000111227",
-//                nickname: "도윤",
-//                gender: "MALE",
-//                tierId: 6,
-//                wins: 89,
-//                losses: 34,
-//                reviewCount: 25
-//            ),
-//            TempRequesterInfo(
-//                userId: "0USER000111228",
-//                nickname: "수아",
-//                gender: "FEMALE",
-//                tierId: 5,
-//                wins: 67,
-//                losses: 28,
-//                reviewCount: 18
-//            ),
-//            TempRequesterInfo(
-//                userId: "0USER000111229",
-//                nickname: "예준",
-//                gender: "MALE",
-//                tierId: 7,
-//                wins: 120,
-//                losses: 40,
-//                reviewCount: 35
-//            ),
-//            TempRequesterInfo(
-//                userId: "0USER000111230",
-//                nickname: "시우",
-//                gender: "MALE",
-//                tierId: 4,
-//                wins: 45,
-//                losses: 22,
-//                reviewCount: 12
-//            )
-//        ]
-        self.collectionview.reloadData()
-    }
-
 }
