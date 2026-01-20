@@ -113,11 +113,3 @@ final class ReviewCreateViewController: BaseViewController {
            popup.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 }
-
-// MARK: - ReviewData
-
-struct ReviewData {
-    let rating: ReviewScore
-    let content: String?
-    let tags: [ReviewTag]
-}

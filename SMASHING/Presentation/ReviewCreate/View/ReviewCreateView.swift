@@ -12,8 +12,6 @@ import Then
 
 final class ReviewCreateView: BaseUIView {
     
-    private var selectedSatisfaction: ReviewScore?
-    
     // MARK: - Callbacks
     var onSatisfactionSelected: ((ReviewScore) -> Void)?
     var onRapidReviewTagsChanged: (([ReviewTag]) -> Void)?
@@ -217,8 +215,6 @@ final class ReviewCreateView: BaseUIView {
     //MARK: - Public Methods
     
     func updateSatisfaction(_ level: ReviewScore) {
-        selectedSatisfaction = level
-        
         //하나만 선택하기 위해
         [badButton, goodButton, greatButton].forEach {
             $0.setSelected(false)
