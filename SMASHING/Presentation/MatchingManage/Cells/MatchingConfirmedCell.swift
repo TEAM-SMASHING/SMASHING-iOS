@@ -187,20 +187,34 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     func configure(with game: MatchingConfirmedGameDTO) {
         let opponent = game.opponent
         self.nicknameLabel.text = opponent.nickname
-        self.genderIconImageView.image = opponent.gender == "MALE" ? .icManSm : .icWomanSm
+        self.genderIconImageView.image = opponent.gender.imageSm
         self.configureTierBadge(tierCode: opponent.tierCode)
-        self.updateWriteResultButton(isLocked: game.isSubmitLocked)
+        self.updateWriteResultButton(resultState: game.resultStatus)
     }
 
-    private func updateWriteResultButton(isLocked: Bool) {
-        if isLocked {
-            self.writeResult.setTitle("결과 작성 대기중", for: .normal)
-            self.writeResult.backgroundColor = .Button.textPrimaryDisabled
+    private func updateWriteResultButton(resultState: GameResultStatus) {
+        switch resultState {
+        case .pendingResult:
+            self.writeResult.setTitle("결과 확인 대기중", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
+            self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
             self.writeResult.isEnabled = false
-        } else {
-            self.writeResult.setTitle("결과 작성하기", for: .normal)
-            self.writeResult.backgroundColor = .Button.backgroundPrimaryActive
-            self.writeResult.isEnabled = true
+        case .resultRejected:
+            self.writeResult.setTitle("결과가 반려되었어요!", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundRejected
+            self.writeResult.setTitleColor(.Button.textRejected, for: .normal)
+            self.writeResult.isEnabled = false
+        case .canceled:
+            self.writeResult.setTitle("매칭 취소 대기중 ", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
+            self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+            self.writeResult.isEnabled = false
+        case .waitingConfirmation:
+            self.writeResult.setTitle("결과 확인하기", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundConfirmed
+            self.writeResult.setTitleColor(.Text.emphasis, for: .normal)
+            self.writeResult.isEnabled = false
+            
         }
     }
 
