@@ -34,7 +34,7 @@ class DimmedViewController: UIViewController {
         super.viewWillAppear(animated)
         guard let presentingViewController else { return }
         
-        dimmedView.backgroundColor = .black
+        dimmedView.backgroundColor = .Background.dimmed
         dimmedView.alpha = 0
         presentingViewController.view.addSubview(dimmedView)
         dimmedView.snp.makeConstraints {
