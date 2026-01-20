@@ -98,9 +98,9 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     
     // MARK: - Data Binding
     
-    func configure(_ review :TempReview) {
-        nicknameLabel.text = review.nickname
-        dateLabel.text = review.date
+    func configure(_ review :RecentReviewResult) {
+        nicknameLabel.text = review.opponentNickname
+        dateLabel.text = review.createdAt
         contentLabel.text = review.content
     }
 }

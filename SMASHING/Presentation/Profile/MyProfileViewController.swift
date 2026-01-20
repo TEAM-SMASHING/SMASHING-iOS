@@ -63,6 +63,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
                         .sink { _ in
                         } receiveValue: { [weak self] response in
                             guard let self else { return }
+                            self.reviewPreviews = response.results
                             output.myRecentReviewListFetched.send(response.results)
                         }
                         .store(in: &cancellables)
@@ -139,7 +140,14 @@ final class MyProfileViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] response in
                 guard let self else { return }
+                let isEmpty = response.isEmpty
+                mainView.reviewCard.updateEmptyState(isEmpty: isEmpty)
                 
+                if !isEmpty {
+                    mainView.reviewCard.reviewCollectionView.reloadData()
+                    self.mainView.reviewCard.updateCollectionViewHeight()
+                    self.view.layoutIfNeeded()
+                }
             }
             .store(in: &cancellables)
         
@@ -148,7 +156,7 @@ final class MyProfileViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] response in
                 guard let self else { return }
-                
+                mainView.configure(summury: response)
             }
             .store(in: &cancellables)
     }
@@ -156,7 +164,7 @@ final class MyProfileViewController: BaseViewController {
 
 extension MyProfileViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return TempReview.mockReviews.count > 3 ? 3 : TempReview.mockReviews.count
+        return viewModel.reviewPreviews.count > 3 ? 3 : viewModel.reviewPreviews.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -165,14 +173,13 @@ extension MyProfileViewController: UICollectionViewDelegate, UICollectionViewDat
             for: indexPath
         ) as? ReviewCollectionViewCell else { return UICollectionViewCell() }
         
-        let data = TempReview.mockReviews[indexPath.item]
+        let data = viewModel.reviewPreviews[indexPath.item]
         
         cell.configure(data)
-        
         cell.contentView.snp.remakeConstraints {
             $0.width.equalTo(collectionView.frame.width)
         }
-        
+
         return cell
     }
 }

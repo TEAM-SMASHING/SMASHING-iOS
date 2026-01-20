@@ -49,24 +49,27 @@ final class MyReviewsViewController: BaseViewController, UICollectionViewDelegat
 
 extension MyReviewsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return TempReview.mockReviews.count
+        // return viewModel.reviewPreviews.count
+        return 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ReviewCollectionViewCell.reuseIdentifier,
-            for: indexPath
-        ) as? ReviewCollectionViewCell else { return UICollectionViewCell() }
+//        guard let cell = collectionView.dequeueReusableCell(
+//            withReuseIdentifier: ReviewCollectionViewCell.reuseIdentifier,
+//            for: indexPath
+//        ) as? ReviewCollectionViewCell else { return UICollectionViewCell() }
+//        
+//        let data = viewModel.reviewPreviews[indexPath.item]
+//        
+//        cell.configure(data)
+//        
+//        cell.contentView.snp.remakeConstraints {
+//            $0.width.equalTo(collectionView.frame.width)
+//        }
+//        
+//        return cell
         
-        let data = TempReview.mockReviews[indexPath.item]
-        
-        cell.configure(data)
-        
-        cell.contentView.snp.makeConstraints {
-            $0.width.equalTo(collectionView.frame.width)
-        }
-        
-        return cell
+        return UICollectionViewCell()
     }
 }
 

@@ -114,6 +114,34 @@ final class ReviewCard: BaseUIView {
         goodSportsChip.setNum(review.ratingCounts.good)
         badSportsChip.setNum(review.ratingCounts.bad)
     }
+
+    func updateEmptyState(isEmpty: Bool) {
+        noReviewLabel.isHidden = !isEmpty
+        reviewCollectionView.isHidden = isEmpty
+        
+        if isEmpty {
+            noReviewLabel.snp.remakeConstraints {
+                $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
+                $0.centerX.equalToSuperview()
+                $0.bottom.equalToSuperview().inset(24)
+            }
+        } else {
+            reviewCollectionView.snp.remakeConstraints {
+                $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
+                $0.horizontalEdges.equalToSuperview().inset(16)
+                $0.bottom.equalToSuperview().inset(16)
+            }
+        }
+    }
+    
+    func updateCollectionViewHeight() {
+        reviewCollectionView.layoutIfNeeded()
+        let height = reviewCollectionView.collectionViewLayout.collectionViewContentSize.height
+        
+        reviewCollectionView.snp.updateConstraints {
+            $0.height.equalTo(height)
+        }
+    }
     
     // MARK: - Actions
     

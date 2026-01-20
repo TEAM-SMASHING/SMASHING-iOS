@@ -84,6 +84,9 @@ final class MyProfileView: BaseUIView {
         profileCard.configure(profile: profile)
         tierCard.configure(profile: profile)
         winRateCard.configure(profile: profile)
-        
+    }
+    
+    func configure(summury: ReviewSummaryResponse) {
+        reviewCard.configure(review: summury)
     }
 }
