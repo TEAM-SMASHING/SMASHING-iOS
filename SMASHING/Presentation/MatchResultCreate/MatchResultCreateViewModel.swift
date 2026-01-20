@@ -19,7 +19,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         case winnerDropDownTapped
         case myOptionSelected
         case rivalOptionSelected
-        case scoreChanged(myScore: Int, OpponentScroe: Int)
+        case scoreChanged(myScore: Int, opponentScore: Int)
         case nextButtonTapped
     }
     

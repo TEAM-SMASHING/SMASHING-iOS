@@ -72,6 +72,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         case .viewDidLoad:
             fetchHomeData()
         case .matchingResultCreateButtonTapped(let gameData):
+
             output.navToMatchResultCreate.send(gameData)
         case .matchingSeeAllTapped:
             output.navToMatchingManageTab.send()
