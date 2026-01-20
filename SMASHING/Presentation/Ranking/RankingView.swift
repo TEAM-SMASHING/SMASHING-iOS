@@ -49,7 +49,7 @@ final class RankingView: BaseUIView {
         return collectionView
     }()
     
-    private let myRankingScore = myRankingScoreView()
+    let myRankingScore = myRankingScoreView()
     
     // MARK: - Setup Methods
     

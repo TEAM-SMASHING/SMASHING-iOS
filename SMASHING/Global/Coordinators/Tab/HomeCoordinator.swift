@@ -63,9 +63,8 @@ final class HomeCoordinator: Coordinator {
     
     private func showRanking() {
         let regionService = RegionService()
-        //                let viewModel = RankingViewModel(regionService: regionService)
-        //                let rankingVC = RankingViewController(viewModel: viewModel)
-        let rankingVC = RankingViewController()
+        let viewModel = RankingViewModel(regionService: regionService)
+        let rankingVC = RankingViewController(viewModel: viewModel)
         navigationController.pushViewController(rankingVC, animated: true)
     }
 }
