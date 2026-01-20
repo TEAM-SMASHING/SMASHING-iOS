@@ -16,6 +16,8 @@ final class MatchResultCreateView: BaseUIView {
     private var isDropDownExpanded: Bool = false
     private var selectedWinner: String?
     
+    var onScoreChanged: ((Int, Int) -> Void)?
+    
     private let navigationBar = CustomNavigationBar(title: "결과 작성")
     
     private let titleLabel = UILabel().then {
@@ -108,12 +110,12 @@ final class MatchResultCreateView: BaseUIView {
         
         myScoreTextField.onDone = { [weak self] in
             self?.updateScoreToMatchResultCard()
-            self?.validateWinnerAndScore()
+            self?.notifyScoreChanged()
         }
         
         rivalScoreTextField.onDone = { [weak self] in
             self?.updateScoreToMatchResultCard()
-            self?.validateWinnerAndScore()
+            self?.notifyScoreChanged()
         }
         
         nextButton.isEnabled = false
@@ -231,7 +233,12 @@ final class MatchResultCreateView: BaseUIView {
             toggleDropDown()
         }
         updateWinnerUI()
-        validateWinnerAndScore()
+    }
+    
+    private func notifyScoreChanged() {
+        let myScore = getMyScore()
+        let opponentScore = getOpponentScore()
+        onScoreChanged?(myScore, opponentScore)
     }
     
     private func updateScoreToMatchResultCard() {
@@ -261,18 +268,22 @@ final class MatchResultCreateView: BaseUIView {
         matchResultCard.updateWinnerCrown(isMyWin: isMyWin)
     }
     
-    private func validateWinnerAndScore() {
-        guard let selectedWinner = selectedWinner else {
-            nextButton.isEnabled = false
-            return
-        }
-        
-        let myScore = matchResultCard.getMyScore()
-        let rivalScore = matchResultCard.getRivalScore()
-        
-        let isMyWin = (selectedWinner == myOptionButton.titleLabel?.text)
-        let isScoreValid = isMyWin ? (myScore > rivalScore) : (rivalScore > myScore)
-        
-        nextButton.isEnabled = isScoreValid
+    // MARK: - Configure
+    func configure(myNickname: String, opponentNickname: String) {
+        myOptionButton.setTitle(myNickname, for: .normal)
+        rivalOptionButton.setTitle(opponentNickname, for: .normal)
+        matchResultCard.configure(myName: myNickname, myImage: UIImage(systemName: "circle.fill"), rivalName: opponentNickname, rivalImage: UIImage(systemName: "circle.fill"))
+    }
+    
+    func getSelectedWinner() -> String? {
+        return selectedWinner
+    }
+    
+    func getMyScore() -> Int {
+        return matchResultCard.getMyScore()
+    }
+    
+    func getOpponentScore() -> Int {
+        return matchResultCard.getRivalScore()
     }
 }
