@@ -122,7 +122,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         let resultStatus = matching.resultStatus
         // 버튼 활성화 여부
         let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
-
+        
         writeResultButton.setTitle(resultStatus.buttonTitle, for: .normal)
         writeResultButton.isEnabled = canSubmit
         
@@ -132,24 +132,27 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private func updateButtonStyle(for status: GameResultStatus, canSubmit: Bool) {
         
         switch status {
-                case .pendingResult:
-                    writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
+        case .pendingResult:
+            writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
             writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
-                case .resultRejected:
+        case .resultRejected:
             writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
             writeResultButton.setTitleColor(.Button.textRejected, for: .normal)
-                case .waitingConfirmation:
+        case .waitingConfirmation:
             writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
-                    writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
-                case .canceled:
-                    writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
-                    writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
-                }
+            writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+        case .canceled:
+            writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
+            writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+        case .resultConfirmed:
+            writeResultButton.backgroundColor = .Button.backgroundConfirmed
+            writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
+        }
     }
     
     @objc
-       private func writeResultButtonDidTap() {
-           print("🔴 writeResultButtonDidTap 호출됨")
-           onWriteResultButtonTapped?()
-       }
+    private func writeResultButtonDidTap() {
+        print("🔴 writeResultButtonDidTap 호출됨")
+        onWriteResultButtonTapped?()
+    }
 }
