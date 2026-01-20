@@ -18,7 +18,14 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        showLoginFlow()
+        showMyReviewFlow()
+        // showLoginFlow()
+    }
+    
+    private func showMyReviewFlow() {
+        let reviewCoordinator = MyReviewCoordinator(navigationController: navigationController)
+        childCoordinators.append(reviewCoordinator)
+        reviewCoordinator.start()
     }
     
     private func showLoginFlow() {
