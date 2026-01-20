@@ -12,6 +12,8 @@ import Then
 
 final class RapidReviewChip: UILabel {
     
+    var onSelectionChanged: (() -> Void)?
+    
     let review: ReviewTag
     
     private var textInsets = UIEdgeInsets.zero
@@ -69,10 +71,11 @@ final class RapidReviewChip: UILabel {
         )
     }
     
-    // MARK: Button Method
+    // MARK: Actions
+    
     @objc
     private func chipTapped() {
         isSelected.toggle()
+        onSelectionChanged?()
     }
-    
 }

@@ -12,6 +12,10 @@ import Then
 
 final class RapidReviewChipContainer: BaseUIView {
     
+    var onSelectionChanged: (([ReviewTag]) -> Void)?
+    
+    //MARK: - Properties
+    
     private let horizontalSpacing: CGFloat = 8
     private let verticalSpacing: CGFloat = 8
     private var chips: [RapidReviewChip] = []
@@ -22,6 +26,10 @@ final class RapidReviewChipContainer: BaseUIView {
         
         reviews.forEach { review in
             let chip = RapidReviewChip(review: review)
+            chip.onSelectionChanged = { [weak self] in
+                            guard let self else { return }
+                            self.onSelectionChanged?(self.getSelectedReviews())
+                        }
             chips.append(chip)
             addSubviews(chip)
         }

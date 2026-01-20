@@ -130,7 +130,7 @@ final class MatchResultCreateViewController: BaseViewController {
     }
     
     private func navigateToReviewCreate(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String) {
-        let vc = ReviewCreateViewController(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId, gameService: GameService())
+        let vc = ReviewCreateViewController(viewModel: ReviewCreateViewModel(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId))
         navigationController?.pushViewController(vc, animated: true)
     }
     
