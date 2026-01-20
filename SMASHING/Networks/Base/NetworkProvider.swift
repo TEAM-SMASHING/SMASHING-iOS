@@ -47,4 +47,31 @@ final class NetworkProvider<API: TargetType> {
             }
         }.eraseToAnyPublisher()
     }
+    
+    static func kakaoAddressRequestPublisher<T: Decodable>(
+        _ target: API,
+        type: T.Type
+    ) -> AnyPublisher<T, NetworkError> {
+        let provider = MoyaProvider<API>(plugins: [NetworkLogger()])
+        
+        return Future<T, NetworkError> { promise in
+            provider.request(target) { result in
+                switch result {
+                case .success(let response):
+                    if (200...299).contains(response.statusCode) {
+                        do {
+                            let decodedResponse = try JSONDecoder().decode(T.self, from: response.data)
+                            promise(.success(decodedResponse))
+                        } catch {
+                            promise(.failure(.decoding))
+                        }
+                    } else {
+                        
+                    }
+                case .failure:
+                    promise(.failure(.networkFail))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
 }

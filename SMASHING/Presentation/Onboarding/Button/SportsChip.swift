@@ -14,7 +14,7 @@ final class SportsChip: BaseUIView {
     
     // MARK: - Properties
     
-    private let sport: Sports
+    private let sports: Sports
     
     var isSelected: Bool = false {
         didSet { updateStyle() }
@@ -39,8 +39,8 @@ final class SportsChip: BaseUIView {
 
     // MARK: - Init
     
-    init(sport: Sports) {
-        self.sport = sport
+    init(sports: Sports) {
+        self.sports = sports
         super.init(frame: .zero)
         setupAttributes()
     }
@@ -52,7 +52,7 @@ final class SportsChip: BaseUIView {
     private func setupAttributes() {
         self.layer.cornerRadius = 20
         self.layer.borderWidth = 1
-        self.label.text = sport.rawValue
+        self.label.text = sports.displayName
         updateStyle()
     }
 
@@ -79,13 +79,19 @@ final class SportsChip: BaseUIView {
         if isSelected {
             self.backgroundColor = .Background.selected
             self.layer.borderColor = UIColor.clear.cgColor
-            self.imageView.image = sport.image.tinted(with: .Text.primaryReverse)
+            self.imageView.image = sports.image.tinted(with: .Text.primaryReverse)
             self.label.textColor = .Text.primaryReverse
         } else {
             self.backgroundColor = .clear
             self.layer.borderColor = UIColor.Border.secondary.cgColor
-            self.imageView.image = sport.image
+            self.imageView.image = sports.image
             self.label.textColor = .Text.primary
         }
+    }
+    
+    // MARK: - Public Methods
+    
+    func getSports() -> Sports {
+        return sports
     }
 }

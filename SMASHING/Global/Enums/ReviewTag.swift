@@ -5,7 +5,7 @@
 //  Created by 이승준 on 1/13/26.
 //
 
-enum ReviewTag: String, Codable {
+enum ReviewTag: String, Codable, CaseIterable {
     case goodManner = "GOOD_MANNER"
     case onTime = "ON_TIME"
     case fairPlay = "FAIR_PLAY"

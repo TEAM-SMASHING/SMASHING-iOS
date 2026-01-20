@@ -130,4 +130,18 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.horizontalEdges.equalTo(containerView).inset(19.5)
         }
     }
+    
+    func configure(with user: RecommendedUserDTO) {
+        nickName.text = user.nickname
+        
+        tierImage.image = Tier.from(tierCode: user.tierCode)?.image
+        
+        if  user.gender == "FEMALE" {
+            genderImageView.image  = .icWomanSm
+        } else {
+            genderImageView.image = .icManSm
+        }
+        winLoseLabel.text = "\(user.wins)승 \(user.losses)패"
+        reviewCountLabel.text = String(user.reviews)
+    }
 }

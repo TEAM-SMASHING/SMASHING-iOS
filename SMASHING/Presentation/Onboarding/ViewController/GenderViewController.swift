@@ -5,6 +5,7 @@
 //  Created by 이승준 on 1/9/26.
 //
 
+import Combine
 import UIKit
 
 import SnapKit
@@ -16,11 +17,37 @@ final class GenderViewController: BaseViewController {
     
     private let genderView = GenderView()
     
+    private var viewModel: any OnboardingViewModelProtocol
+    private var cancellables: Set<AnyCancellable> = []
+    private let input: PassthroughSubject<OnboardingViewModel.Input, Never>
+    
+    // MARK: - Init
+    
+    init(viewModel: any OnboardingViewModelProtocol,
+         input: PassthroughSubject<OnboardingViewModel.Input, Never>) {
+        self.viewModel = viewModel
+        self.input = input
+        super.init(nibName: nil, bundle: nil)
+        guard let gender = viewModel.store.gender else { return }
+        genderView.handleSelection(gender: gender)
+    }
+    
+    @MainActor required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
-        super.viewDidLoad()
         view = genderView
+        bind()
+    }
+    
+    private func bind() {
+        genderView.action = { [weak self] gender in
+            guard let self else { return }
+            input.send(.genderTapped(gender))
+        }
     }
     
     // MARK: - Setup Methods

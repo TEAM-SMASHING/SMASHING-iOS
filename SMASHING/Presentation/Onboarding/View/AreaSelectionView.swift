@@ -16,7 +16,7 @@ final class AreaSelectionView: BaseUIView {
     
     private let placeholderText = "주소를 검색해주세요"
     
-    private var action: (() -> Void)?
+    var action: (() -> Void)?
     
     // MARK: - UI Components
     
@@ -25,7 +25,7 @@ final class AreaSelectionView: BaseUIView {
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.Text.disabled.cgColor
-        $0.addTarget(self, action: #selector(didTapAddressButton), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(addressButtonDidTap), for: .touchUpInside)
     }
     
     private let addressLabel = UILabel().then {
@@ -58,7 +58,7 @@ final class AreaSelectionView: BaseUIView {
     
     // MARK: - Actions
     
-    @objc private func didTapAddressButton() {
+    @objc private func addressButtonDidTap() {
         action?()
     }
     
@@ -72,9 +72,5 @@ final class AreaSelectionView: BaseUIView {
             addressLabel.text = placeholderText
             addressLabel.textColor = .systemGray2
         }
-    }
-    
-    func configure(action: @escaping () -> Void) {
-        self.action = action
     }
 }

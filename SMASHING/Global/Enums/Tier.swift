@@ -137,7 +137,45 @@ extension Tier {
             .challenger
         ]
     }
+    
+    var image: UIImage {
+        switch self {
+        case .iron:
+                .tierIronStage
+        case .bronze3:
+                .tierBronzeStage3
+        case .bronze2:
+                .tierBronzeStage2
+        case .bronze1:
+                .tierBronzeStage1
+        case .silver3:
+                .tierSilverStage3
+        case .silver2:
+                .tierSilverStage2
+        case .silver1:
+                .tierSilverStage1
+        case .gold3:
+                .tierGoldStage3
+        case .gold2:
+                .tierGoldStage2
+        case .gold1:
+                .tierGoldStage1
+        case .platinum3:
+                .tierPlatinumStage3
+        case .platinum2:
+                .tierPlatinumStage2
+        case .platinum1:
+                .tierPlatinumStage1
+        case .diamond3:
+                .tierDiamondStage3
+        case .diamond2:
+                .tierDiamondStage2
+        case .diamond1:
+                .tierDiamondStage1
+        case .challenger:
+                .tierChallengerStage
+        }
+    }
 }
-
 
 

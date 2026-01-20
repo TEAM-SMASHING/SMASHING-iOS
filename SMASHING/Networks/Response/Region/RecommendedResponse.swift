@@ -1,0 +1,22 @@
+//
+//  RecommendedUserResponse.swift
+//  SMASHING
+//
+//  Created by 홍준범 on 1/17/26.
+//
+
+import Foundation
+
+struct RecommendedUserResponseDTO: Decodable {
+    let recommendedUsers: [RecommendedUserDTO]
+}
+
+struct RecommendedUserDTO: Decodable {
+    let userId: String
+    let nickname: String
+    let tierCode: String
+    let wins: Int
+    let losses: Int
+    let reviews: Int
+    let gender: String
+}

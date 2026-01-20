@@ -1,0 +1,45 @@
+//
+//  RankingResponse.swift
+//  SMASHING
+//
+//  Created by 홍준범 on 1/17/26.
+//
+
+import Foundation
+
+struct RankingResponseDTO: Decodable {
+    let topUsers: [RankingUserDTO]
+    let user: MyRankingDTO?
+}
+
+struct RankingUserDTO: Decodable {
+    let rank: Int
+    let userId: String
+    let nickname: String
+    let tierCode: String
+    let lp: Int
+    
+    var tier: Tier? {
+        return Tier.from(tierCode: tierCode)
+    }
+    
+    var tierWithLpText: String {
+        let tierName = tier?.displayName ?? "UNKNOWN"
+        return "\(tierName) \(lp)P"
+    }
+}
+
+struct MyRankingDTO: Decodable {
+    let nickname: String
+    let tierCode: String
+    let lp: Int
+    
+    var tier: Tier? {
+        return Tier.from(tierCode: tierCode)
+    }
+    
+    var tierWithLpText: String {
+        let tierName = tier?.displayName ?? "UNKNOWN"
+        return "\(tierName) \(lp)P"
+    }
+}
