@@ -7,7 +7,7 @@
 
 import Foundation
 
-// MARK: - CursorResponse (페이지네이션 응답)
+// MARK: - CursorResponse 
 
 struct SentRequestCursorResponseDTO: Codable {
     let snapshotAt: String
@@ -35,7 +35,7 @@ struct SentRequestResultDTO: Codable {
 struct SentRequestReceiverDTO: Codable {
     let userID: String
     let nickname: String
-    let gender: String
+    let gender: Gender
     let reviewCount: Int
     let tierCode: String
     let wins: Int

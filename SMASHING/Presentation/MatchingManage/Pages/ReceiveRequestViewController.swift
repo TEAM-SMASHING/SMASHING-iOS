@@ -15,7 +15,7 @@ final class ReceiveRequestViewController: BaseViewController {
 
     // MARK: - Properties
 
-    private let viewModel: ReceiveRequestViewModel
+    private let viewModel: any ReceiveRequestViewModelProtocol
     private let input = PassthroughSubject<ReceiveRequestViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
 
@@ -99,13 +99,12 @@ final class ReceiveRequestViewController: BaseViewController {
         let output = viewModel.transform(input: input.eraseToAnyPublisher())
 
         output.requestList
-            .combineLatest(output.isLoading)
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] requests, isLoading in
+            .sink { [weak self] requests in
                 guard let self else { return }
                 self.requestList = requests
                 self.collectionView.reloadData()
-                self.emptyLabel.isHidden = isLoading || !requests.isEmpty
+                self.emptyLabel.isHidden = !requests.isEmpty
             }
             .store(in: &cancellables)
 
@@ -123,9 +122,7 @@ final class ReceiveRequestViewController: BaseViewController {
 
         output.isLoadingMore
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isLoadingMore in
-                // 필요시 하단 로딩 인디케이터 표시
-            }
+            .sink { _ in }
             .store(in: &cancellables)
 
         output.errorMessage
@@ -135,17 +132,6 @@ final class ReceiveRequestViewController: BaseViewController {
             }
             .store(in: &cancellables)
 
-        output.itemRemoved
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                guard let self else { return }
-                // reloadData is already called in requestList binding
-                // Just update emptyLabel here
-                self.emptyLabel.isHidden = !self.requestList.isEmpty
-            }
-            .store(in: &cancellables)
-
-        // 무한 스크롤
         collectionView.reachedBottomPublisher
             .sink { [weak self] in
                 self?.input.send(.loadMore)

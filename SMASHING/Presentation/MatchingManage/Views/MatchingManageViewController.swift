@@ -7,6 +7,7 @@
 
 import UIKit
 
+import Combine
 import SnapKit
 import Then
 
@@ -16,6 +17,7 @@ final class MatchingManageViewController: BaseViewController {
 
     private var currentTabIndex: MatchingManageHeaderView.Tab = .received
     private var categories: [UIViewController] = []
+    private var cancellables = Set<AnyCancellable>()
 
     //MARK: - UI Components
 
@@ -50,10 +52,28 @@ final class MatchingManageViewController: BaseViewController {
     }
     
     private func setupCategories() {
-        let receivedVC = ReceiveRequestViewController()
+        let receiveViewModel = ReceiveRequestViewModel()
+        let receivedVC = ReceiveRequestViewController(viewModel: receiveViewModel)
         let sentVC = SentRequestViewController(viewModel: SentRequestViewModel())
         let confirmedVC = MatchingConfirmedViewController()
         self.categories = [receivedVC, sentVC, confirmedVC]
+
+        receiveViewModel.requestAccepted
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.moveToConfirmedTab()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func moveToConfirmedTab() {
+        let confirmedTab = MatchingManageHeaderView.Tab.confirmed
+        moveToPage(tab: confirmedTab)
+        matchingManageView.headerView.updateSelectedTab(confirmedTab)
+        if let confirmedVC = categories[confirmedTab.rawValue]
+            as? MatchingConfirmedViewController {
+            confirmedVC.refresh()
+        }
     }
     
     private func setupInitialPage() {

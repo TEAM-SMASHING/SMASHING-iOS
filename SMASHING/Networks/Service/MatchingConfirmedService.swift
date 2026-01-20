@@ -79,13 +79,13 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
             results: [
                 MatchingConfirmedGameDTO(
                     gameID: "0P4G1GZ5AF0XG",
-                    resultStatus: "RESULT_REJECTED",
+                    resultStatus: GameResultStatus.resultRejected,
                     createdAt: "2026-01-17T10:00:00+09:00",
                     opponent: OpponentSummaryDTO(
                         userID: "0USER000111227",
                         nickname: "도윤",
                         openchatUrl: "https://open.kakao.com/o/example1",
-                        gender: "MALE",
+                        gender: .male,
                         tierCode: "PT1"
                     ),
                     submitAvailableAt: "2026-01-17T11:00:00+09:00",
@@ -94,13 +94,13 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
                 ),
                 MatchingConfirmedGameDTO(
                     gameID: "0P3M3MGSH4MZG",
-                    resultStatus: "WAITING_CONFIRMATION",
+                    resultStatus: GameResultStatus.waitingConfirmation,
                     createdAt: "2026-01-17T09:30:00+09:00",
                     opponent: OpponentSummaryDTO(
                         userID: "0USER000111228",
                         nickname: "수아",
                         openchatUrl: "https://open.kakao.com/o/example2",
-                        gender: "FEMALE",
+                        gender: .female,
                         tierCode: "DM1"
                     ),
                     submitAvailableAt: "2026-01-17T10:30:00+09:00",
@@ -109,13 +109,13 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
                 ),
                 MatchingConfirmedGameDTO(
                     gameID: "0P2K2KFSG3LYF",
-                    resultStatus: "PENDING_RESULT",
+                    resultStatus: GameResultStatus.pendingResult,
                     createdAt: "2026-01-17T09:00:00+09:00",
                     opponent: OpponentSummaryDTO(
                         userID: "0USER000111229",
                         nickname: "예준",
                         openchatUrl: nil,
-                        gender: "MALE",
+                        gender: .male,
                         tierCode: "CH"
                     ),
                     submitAvailableAt: "2026-01-17T10:00:00+09:00",

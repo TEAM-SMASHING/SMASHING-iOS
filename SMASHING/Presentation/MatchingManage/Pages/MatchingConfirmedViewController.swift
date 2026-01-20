@@ -123,9 +123,7 @@ final class MatchingConfirmedViewController: BaseViewController {
 
         output.isLoadingMore
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isLoadingMore in
-                // 필요시 하단 로딩 인디케이터 표시
-            }
+            .sink { _ in }
             .store(in: &cancellables)
 
         output.errorMessage

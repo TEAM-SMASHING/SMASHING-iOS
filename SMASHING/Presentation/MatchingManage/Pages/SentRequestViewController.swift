@@ -123,8 +123,7 @@ final class SentRequestViewController: BaseViewController {
 
         output.isLoadingMore
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isLoadingMore in
-            }
+            .sink { _ in }
             .store(in: &cancellables)
 
         output.errorMessage
@@ -138,8 +137,6 @@ final class SentRequestViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self else { return }
-                // reloadData is already called in requestList binding
-                // Just update emptyLabel here
                 self.emptyLabel.isHidden = !self.requestList.isEmpty
             }
             .store(in: &cancellables)

@@ -74,7 +74,7 @@ final class MockSentRequestService: SentRequestServiceProtocol {
                     receiver: SentRequestReceiverDTO(
                         userID: "0USER000111225",
                         nickname: "나는다섯글자인간임ㅅㄱ",
-                        gender: "MALE",
+                        gender: Gender.female,
                         reviewCount: 8,
                         tierCode: "GO1",
                         wins: 30,
@@ -88,7 +88,7 @@ final class MockSentRequestService: SentRequestServiceProtocol {
                     receiver: SentRequestReceiverDTO(
                         userID: "0USER000111226",
                         nickname: "하은",
-                        gender: "FEMALE",
+                        gender: Gender.female,
                         reviewCount: 4,
                         tierCode: "SV2",
                         wins: 15,
@@ -102,7 +102,7 @@ final class MockSentRequestService: SentRequestServiceProtocol {
                     receiver: SentRequestReceiverDTO(
                         userID: "0USER000111227",
                         nickname: "스매싱왕",
-                        gender: "MALE",
+                        gender: Gender.female,
                         reviewCount: 15,
                         tierCode: "DM1",
                         wins: 50,
