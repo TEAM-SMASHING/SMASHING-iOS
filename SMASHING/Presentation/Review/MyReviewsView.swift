@@ -14,7 +14,11 @@ final class MyReviewsView: BaseUIView {
     
     // MARK: - Properties
     
-    private var backAction: (() -> Void)?
+    var backAction: (() -> Void)? {
+        didSet {
+            navigationBar.setLeftButton(action: backAction ?? {})
+        }
+    }
     
     // MARK: - UI Components
     
@@ -32,17 +36,42 @@ final class MyReviewsView: BaseUIView {
         $0.alignment = .leading
     }
     
+    private let bestReviewChip = SatisfictionChip(review: .best, num: 0)
+    private let goodReviewChip = SatisfictionChip(review: .good, num: 0)
+    private let badReviewChip = SatisfictionChip(review: .bad, num: 0)
+    
     private let quickReviewLabel = UILabel().then {
         $0.text = "빠른 후기"
         $0.font = .pretendard(.textMdSb)
         $0.textColor = .Text.primary
     }
     
-    private let quickReviewStackView = UIStackView().then {
+    private let firstReviewStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
         $0.alignment = .leading
-        $0.backgroundColor = .gray
+    }
+    
+    private let secondReviewStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.alignment = .leading
+    }
+    
+    private let goodMannerCountChip = ReviewCountChip().then {
+        $0.configure(with: .goodManner, count: 0)
+    }
+    
+    private let onTimeCountChip = ReviewCountChip().then {
+        $0.configure(with: .onTime, count: 0)
+    }
+    
+    private let fairPlayCountChip = ReviewCountChip().then {
+        $0.configure(with: .fairPlay, count: 0)
+    }
+    
+    private let fastResponseCountChip = ReviewCountChip().then {
+        $0.configure(with: .fastResponse, count: 0)
     }
     
     private let allReviewLabel = UILabel().then {
@@ -67,13 +96,14 @@ final class MyReviewsView: BaseUIView {
     
     override func setUI() {
         addSubviews(navigationBar, satisfactionLabel, satisfactionStackView,
-                    quickReviewLabel, quickReviewStackView,
-                    allReviewLabel, collectionView)
+                            quickReviewLabel, firstReviewStackView, secondReviewStackView,
+                            allReviewLabel, collectionView)
+                
+        firstReviewStackView.addArrangedSubviews(goodMannerCountChip, onTimeCountChip)
+        secondReviewStackView.addArrangedSubviews(fairPlayCountChip, fastResponseCountChip)
         
-        [ReviewScore.best, .good, .bad].forEach { review in
-            let chip = SatisfictionChip(review: review, num: Int.random(in: 0...150))
-            satisfactionStackView.addArrangedSubview(chip)
-        }
+        satisfactionStackView.addArrangedSubviews(bestReviewChip, goodReviewChip, badReviewChip)
+        
     }
     
     override func setLayout() {
@@ -97,15 +127,21 @@ final class MyReviewsView: BaseUIView {
             $0.top.equalTo(satisfactionStackView.snp.bottom).offset(32)
         }
         
-        quickReviewStackView.snp.makeConstraints {
-            $0.top.equalTo(quickReviewLabel.snp.bottom).offset(8)
+        firstReviewStackView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
-            $0.height.equalTo(88)
+            $0.top.equalTo(quickReviewLabel.snp.bottom).offset(8)
+            $0.height.equalTo(40)
+        }
+        
+        secondReviewStackView.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(16)
+            $0.top.equalTo(firstReviewStackView.snp.bottom).offset(8)
+            $0.height.equalTo(40)
         }
         
         allReviewLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
-            $0.top.equalTo(quickReviewStackView.snp.bottom).offset(32)
+            $0.top.equalTo(secondReviewStackView.snp.bottom).offset(32)
         }
         
         collectionView.snp.makeConstraints {
@@ -113,5 +149,20 @@ final class MyReviewsView: BaseUIView {
             $0.top.equalTo(allReviewLabel.snp.bottom).offset(8)
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
+    }
+    
+    func configure(summary: ReviewSummaryResponse) {
+        bestReviewChip.setNum(summary.ratingCounts.best)
+        goodReviewChip.setNum(summary.ratingCounts.good)
+        badReviewChip.setNum(summary.ratingCounts.bad)
+        
+        goodMannerCountChip.setNum(num: summary.tagCounts.goodManner)
+        onTimeCountChip.setNum(num: summary.tagCounts.onTime)
+        fairPlayCountChip.setNum(num: summary.tagCounts.fairPlay)
+        fastResponseCountChip.setNum(num: summary.tagCounts.fastResponse)
+    }
+    
+    @objc private func backButtonTapped() {
+        backAction?()
     }
 }

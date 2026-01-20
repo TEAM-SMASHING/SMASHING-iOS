@@ -49,6 +49,10 @@ final class ReviewCard: BaseUIView {
         $0.textColor = .Text.primary
     }
     
+    private let bestSportsChip = SatisfictionChip(review: .best, num: 0)
+    private let goodSportsChip = SatisfictionChip(review: .good, num: 0)
+    private let badSportsChip = SatisfictionChip(review: .bad, num: 0)
+    
     lazy var reviewCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -69,10 +73,7 @@ final class ReviewCard: BaseUIView {
         
         containerView.addSubviews(titleLabel, seeAllButton, satisfactionStackView, noReviewLabel, reviewCollectionView)
         
-        satisfactionStackView.addArrangedSubviews(
-            SatisfictionChip(review: .best, num: Int.random(in: 0...150)),
-            SatisfictionChip(review: .good,num: Int.random(in: 0...150)),
-            SatisfictionChip(review: .bad, num: Int.random(in: 0...150)))
+        satisfactionStackView.addArrangedSubviews(bestSportsChip, goodSportsChip, badSportsChip)
     }
     
     override func setLayout() {
@@ -98,16 +99,71 @@ final class ReviewCard: BaseUIView {
         noReviewLabel.snp.makeConstraints {
             $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
             $0.centerX.equalToSuperview()
-            // $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(16)
         }
         
         reviewCollectionView.snp.makeConstraints {
-            $0.top.equalTo(satisfactionStackView.snp.bottom)
+            $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(16)
+            $0.height.equalTo(0)
         }
     }
+    
+    func configure(review: ReviewSummaryResponse) {
+        bestSportsChip.setNum(review.ratingCounts.best)
+        goodSportsChip.setNum(review.ratingCounts.good)
+        badSportsChip.setNum(review.ratingCounts.bad)
+    }
+
+    func updateEmptyState(isEmpty: Bool) {
+        noReviewLabel.isHidden = !isEmpty
+        reviewCollectionView.isHidden = isEmpty
         
+        if isEmpty {
+            noReviewLabel.snp.remakeConstraints {
+                $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
+                $0.centerX.equalToSuperview()
+                $0.bottom.equalToSuperview().inset(24)
+            }
+        } else {
+            reviewCollectionView.snp.remakeConstraints {
+                $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
+                $0.horizontalEdges.equalToSuperview().inset(16)
+                $0.bottom.equalToSuperview().inset(16)
+                $0.height.equalTo(0)
+            }
+        }
+    }
+    
+    private let sizingCell = ReviewCollectionViewCell()
+
+    func updateCollectionViewHeight(with data: [RecentReviewResult]) {
+        let itemCount = data.count >= 3 ? 3 : data.count
+        var totalHeight: CGFloat = 0
+        let width = reviewCollectionView.frame.width
+        
+        for i in 0..<itemCount {
+            sizingCell.configure(data[i])
+            
+            let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
+            let estimatedSize = sizingCell.contentView.systemLayoutSizeFitting(
+                targetSize,
+                withHorizontalFittingPriority: .required,
+                verticalFittingPriority: .fittingSizeLevel
+            )
+            totalHeight += estimatedSize.height
+        }
+        
+        if let layout = reviewCollectionView.collectionViewLayout as? UICollectionViewFlowLayout, itemCount > 1 {
+            totalHeight += layout.minimumLineSpacing * CGFloat(itemCount - 1)
+        }
+        
+        reviewCollectionView.snp.updateConstraints {
+            $0.height.equalTo(totalHeight)
+        }
+    }
+    
     // MARK: - Actions
     
     @objc private func seeAllButtonTapped() {
