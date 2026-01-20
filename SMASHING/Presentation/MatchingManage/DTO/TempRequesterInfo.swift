@@ -11,7 +11,7 @@ struct TempRequesterInfo {
     let userId: String
     let nickname: String
     let gender: String
-    let tierId: Int
+    let tierCode: String
     let wins: Int
     let losses: Int
     let reviewCount: Int

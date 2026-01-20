@@ -101,7 +101,7 @@ extension ReceiveRequestViewController: UICollectionViewDataSource {
         cell.configure(
             nickname: match.nickname,
             gender: match.gender,
-            tierId: match.tierId,
+            tierCode: match.tierCode,
             wins: match.wins,
             losses: match.losses,
             reviews: match.reviewCount
@@ -130,35 +130,35 @@ extension ReceiveRequestViewController: UICollectionViewDelegateFlowLayout {
 extension ReceiveRequestViewController {
 
     private func loadMockData() {
-        self.matches = [
-            TempRequesterInfo(
-                userId: "0USER000111222",
-                nickname: "윤서",
-                gender: "FEMALE",
-                tierId: 3,
-                wins: 12,
-                losses: 7,
-                reviewCount: 5
-            ),
-            TempRequesterInfo(
-                userId: "0USER000111223",
-                nickname: "민준",
-                gender: "MALE",
-                tierId: 5,
-                wins: 45,
-                losses: 12,
-                reviewCount: 15
-            ),
-            TempRequesterInfo(
-                userId: "0USER000111224",
-                nickname: "지우",
-                gender: "FEMALE",
-                tierId: 2,
-                wins: 8,
-                losses: 10,
-                reviewCount: 3
-            )
-        ]
+//        self.matches = [
+//            TempRequesterInfo(
+//                userId: "0USER000111222",
+//                nickname: "윤서",
+//                gender: "FEMALE",
+//                tierId: 3,
+//                wins: 12,
+//                losses: 7,
+//                reviewCount: 5
+//            ),
+//            TempRequesterInfo(
+//                userId: "0USER000111223",
+//                nickname: "민준",
+//                gender: "MALE",
+//                tierId: 5,
+//                wins: 45,
+//                losses: 12,
+//                reviewCount: 15
+//            ),
+//            TempRequesterInfo(
+//                userId: "0USER000111224",
+//                nickname: "지우",
+//                gender: "FEMALE",
+//                tierId: 2,
+//                wins: 8,
+//                losses: 10,
+//                reviewCount: 3
+//            )
+//        ]
         self.collectionview.reloadData()
     }
 

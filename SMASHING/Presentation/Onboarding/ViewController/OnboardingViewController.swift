@@ -5,13 +5,14 @@
 //  Created by 이승준 on 1/7/26.
 //
 
+import Combine
 import UIKit
 
 import SnapKit
 import Then
 
 enum OnboardingType: Int, CaseIterable {
-    case nickname, gender, chat, sports, tier, area
+    case nickname, gender, chat, sports, tier, address
     
     var mainTitle: String {
         switch self {
@@ -25,7 +26,7 @@ enum OnboardingType: Int, CaseIterable {
             "주 스포츠 1개를 선택해주세요"
         case .tier:
             "실력을 설정해주세요"
-        case .area:
+        case .address:
             "활동 지역을 설정해주세요"
         }
     }
@@ -42,48 +43,68 @@ enum OnboardingType: Int, CaseIterable {
             "회원가입 이후 스포츠 종목을 더 추가할 수 있어요"
         case .tier:
             "구력을 통해 임시 티어가 결정돼요!"
-        case .area:
+        case .address:
             "서울 소재 주소만 입력가능해요"
         }
     }
 }
 
-class OnboardingViewController: BaseViewController {
+final class OnboardingViewController: BaseViewController {
     
     // MARK: - Properties
     
+    var backAction: (() -> Void)?
+
+    // MARK: - Properties
+
     private let containerView = OnboardingContainerView()
     private var currentStep: OnboardingType = .nickname
-    
-    // private var viewModel: OnboardingViewModel
-    
+
+    private var viewModel: any OnboardingViewModelProtocol
+    private var input = PassthroughSubject<OnboardingViewModel.Input, Never>()
+    private var cancellables: Set<AnyCancellable> = []
+
     // MARK: - Life Cycle
-    
-//    init(viewModel: OnboardingViewModel) {
-//        self.viewModel = viewModel
-//        super.init(nibName: nil, bundle: nil)
-//    }
-    
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
-    override func loadView() {
-        self.view = containerView
+
+    init(viewModel: any OnboardingViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
     }
-    
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
-        super.viewDidLoad()
+        self.view = containerView
         setupActions()
         showStep(.nickname)
+        bind()
     }
-    
+
     private func setupActions() {
         containerView.navigationBar.setLeftButton { [weak self] in
-            self?.backButtonTapped()
+            guard let self else { return }
+            input.send(.hitBack(currentStep))
+            backButtonTapped()
         }
         
-        containerView.nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+        containerView.nextAction = { [weak self] in
+            guard let self else { return }
+            input.send(.hitNext(currentStep))
+            nextButtonTapped()
+        }
+    }
+
+    private func bind() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+        
+        output.buttonEnabled
+            .sink { [weak self] bool in
+                guard let self else { return }
+                containerView.nextButton.isEnabled = bool
+            }
+            .store(in: &cancellables)
     }
     
     // MARK: - Actions
@@ -108,7 +129,7 @@ class OnboardingViewController: BaseViewController {
             currentStep = nextStep
             showStep(currentStep)
         } else {
-            self.navigationController?.popViewController(animated: true)
+            backAction?()
         }
     }
     
@@ -142,143 +163,29 @@ class OnboardingViewController: BaseViewController {
     
     private func makeChildViewController(for step: OnboardingType) -> UIViewController {
         switch step {
-        case .nickname: return NicknameViewController()
-        case .gender:   return GenderViewController()
-        case .chat:     return OpenChatCheckViewController()
-        case .sports:   return SportsSelectionViewController()
-        case .tier:     return TierSelectionViewController()
-        case .area:     return AreaSelectionViewController()
+        case .nickname: return NicknameViewController(viewModel: viewModel, input: input)
+        case .gender:   return GenderViewController(viewModel: viewModel, input: input)
+        case .chat:     return OpenChatCheckViewController(viewModel: viewModel, input: input)
+        case .sports:   return SportsSelectionViewController(viewModel: viewModel, input: input)
+        case .tier:     return ExperienceSelectionViewController(viewModel: viewModel, input: input)
+        case .address:  return AreaSelectionViewController(viewModel: viewModel, input: input)
         }
     }
     
     private func finishOnboarding() {
         print("온보딩 프로세스 완료")
     }
-}
-
-import Combine
-
-protocol OnboardingViewModelProtocol: AnyObject {
-    associatedtype Input
-    associatedtype Output
     
-    var store: OnboardingObject{get}
-    
-    func transform(input: AnyPublisher<Input, Never>) -> Output
-}
-
-final class OnboardingViewModel: OnboardingViewModelProtocol {
-    
-    private var cancellables = Set<AnyCancellable>()
-    
-    var store = OnboardingObject()
-    
-    enum Input {
-        case hitNext // buttonEnabled.send(false) -> 만약 데이터 있으면 : buttonEnabled.send(true)
-        case hitBack
-        
-        case complete
-        
-        case nicknameTyped(String) // N/10, 중복확인 버튼 활성화
-        case checkNicknameDuplication(String) // 이 String이 true면, 저장하기
-        
-        case genderTapped(Gender) // 저장하기
-        case kakaoOpenChatLinkTyped(String) // 버튼 비활성화!! & Debouncing -> 결과에 따라
-        case sportsTapped(Sports) // 저장하기
-        case tierTapped(Tier) // 저장하기
-        case areaTapped // 뷰 띄우기
+    func updateSelectedAddress(_ address: String) {
+        self.input.send(.addressSelected(address))
+        if currentStep == .address {
+            updateAddressUI(address)
+        }
     }
-
-    struct Output {
-        let buttonEnabled = CurrentValueSubject<Bool, Never>(false)
-        
-        let currentStep = CurrentValueSubject<OnboardingType, Never>(.nickname)
-        // 처음 / 진행 / 마지막 나누어서 각각 동작이 달라질 수 있다.
-        
-        let dismissOnboarding: PassthroughSubject<Void, Never> = .init()
-        // 마지막이어서 가입 API 호출
-        
-        let checkNicknameDuplicationEnabled: PassthroughSubject<Bool, Never> = .init()
-        // 1 글자라도 있으면
-        
-        let nicknameDuplicationResult: PassthroughSubject<Bool, Never> = .init()
-        //
-        
-        let checkKakaoOpenChatLinkEnabled: PassthroughSubject<Bool, Never> = .init()
-        // 가능하면 저장하기
-        
-        let showMapSearchViewController: PassthroughSubject<Void, Never> = .init()
-        // Coordinator Pattern 쓰면 되는거 아님?
-    }
-
-    let output = Output()
     
-    func transform(input: AnyPublisher<Input, Never>) -> Output {
-
-        input
-            .compactMap { input -> String? in
-                guard case let .kakaoOpenChatLinkTyped(keyword) = input else { return nil }
-                return keyword
-            }
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .removeDuplicates()
-            .sink { [weak self] keyword in
-                guard let self = self else { return }
-                // 카카오 오픈채팅 유효성 검사 API 연동
-            }
-            .store(in: &cancellables)
-
-        input
-            .sink { [weak self] input in
-                guard let self = self else { return }
-                switch input {
-                case .hitNext:
-                    // 다음 페이지 개산해서 반환
-                    // ViewModel을 주입하고 store를 확인한다.
-                    // store의 값으로 뷰를 그린다.
-                    // 값이 있으면, buttonEnabled.send(true)
-                    // 값이 없으면, buttonEnabled.send(false)
-                    return
-                case .hitBack:
-                    if output.currentStep.value == .nickname {
-                        output.dismissOnboarding.send()
-                    } else {
-                        // 이전 페이지 계산해서 알려주기
-                    }
-                case .complete:
-                    // API 호출
-                    // 결과에 따라, switch -> main
-                    return
-                case .nicknameTyped(let string):
-                    // 중복확인 버튼 활성화
-                    output.checkNicknameDuplicationEnabled.send(!string.isEmpty)
-                case .checkNicknameDuplication(let string):
-                    // API 호출
-                    return
-                case .genderTapped(let gender):
-                    store.gender = gender
-                    output.buttonEnabled.send(true)
-                case .sportsTapped(let sports):
-                    store.sports = sports
-                    output.buttonEnabled.send(true)
-                case .tierTapped(let tier):
-                    store.tier = tier
-                    output.buttonEnabled.send(true)
-                case .areaTapped:
-                    return
-                default :
-                    return
-                }
-            }
-            .store(in: &cancellables)
-        return output
+    private func updateAddressUI(_ address: String) {
+        if let areaVC = children.first(where: { $0 is AreaSelectionViewController }) as? AreaSelectionViewController {
+            (areaVC.view as? AreaSelectionView)?.updateAddress(address: address)
+        }
     }
-}
-
-final class OnboardingObject {
-    var nickname: String = ""
-    var gender: Gender? = nil
-    var kakaoOpenChatLink: String? = nil
-    var sports: Sports? = nil
-    var tier: Tier? = nil
 }

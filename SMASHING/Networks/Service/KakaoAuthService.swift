@@ -13,7 +13,7 @@ import KakaoSDKAuth
 
 enum KakaoLoginResult {
     case needSignUp(authId: String)
-    case success(accessToken: String, refreshToken: String, authId: String)
+    case success(accessToken: String, refreshToken: String, authId: String, nickname: String)
 }
 
 protocol KakaoAuthServiceProtocol {
@@ -69,13 +69,19 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
                     guard data.accessToken == nil, data.refreshToken == nil, data.userId == nil else {
                         throw NetworkError.decoding
                     }
-                    return .needSignUp(authId: data.userId!)
+                    _ = KeychainService.add(key: Environment.kakaoId, value: data.kakaoId)
+                    return .needSignUp(authId: data.kakaoId)
                 } else if response.statusCode == 200 {
                     guard let accessToken = data.accessToken,
                           let refreshToken = data.refreshToken else {
                         throw NetworkError.decoding
                     }
-                    return .success(accessToken: accessToken, refreshToken: refreshToken, authId: data.userId ?? "")
+                    return .success(
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                        authId: data.userId ?? "",
+                        nickname: data.nickname
+                    )
                 } else {
                     throw NetworkError.networkFail
                 }

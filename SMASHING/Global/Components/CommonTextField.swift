@@ -156,7 +156,7 @@ final class CommonTextField: UITextField {
         if let message = message {
             self.layer.borderColor = defaultBorderColor.cgColor
             messageLabel.text = message
-            messageLabel.textColor = .Text.emphasis
+            messageLabel.textColor = .Text.muted
             iconView.image = .icCheck
             messageStackView.isHidden = false
         } else {

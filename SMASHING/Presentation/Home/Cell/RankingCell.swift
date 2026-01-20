@@ -100,9 +100,32 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
     }
     
-    func configureAllRankingView(with ranker: RankingUserDTO) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        rankLabel.isHidden = false
         tierImageView.isHidden = true
-        rankLabel.text = ranker.rank.description
+    }
+    
+    func configure(with ranker: RankingUserDTO) {
+        
+        switch ranker.rank {
+        case 1:
+            rankLabel.isHidden = true
+            tierImageView.isHidden = false
+            tierImageView.image = .icGold
+        case 2:
+            rankLabel.isHidden = true
+            tierImageView.isHidden = false
+            tierImageView.image = .icSliver
+        case 3:
+            rankLabel.isHidden = true
+            tierImageView.isHidden = false
+            tierImageView.image = .icBronze
+        default:
+            rankLabel.isHidden = false
+            tierImageView.isHidden = true
+            rankLabel.text = ranker.rank.description
+        }
         nameLabel.text = ranker.nickname
         tierLabel.text = ranker.tierWithLpText
     }

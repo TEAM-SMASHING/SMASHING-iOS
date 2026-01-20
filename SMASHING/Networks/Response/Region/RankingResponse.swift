@@ -16,11 +16,11 @@ struct RankingUserDTO: Decodable {
     let rank: Int
     let userId: String
     let nickname: String
-    let tierId: Int64
+    let tierCode: String
     let lp: Int
     
     var tier: Tier? {
-        return Tier.from(tierId: Int(tierId))
+        return Tier.from(tierCode: tierCode)
     }
     
     var tierWithLpText: String {
@@ -31,11 +31,11 @@ struct RankingUserDTO: Decodable {
 
 struct MyRankingDTO: Decodable {
     let nickname: String
-    let tierId: Int64
+    let tierCode: String
     let lp: Int
     
     var tier: Tier? {
-        return Tier.from(tierId: Int(tierId))
+        return Tier.from(tierCode: tierCode)
     }
     
     var tierWithLpText: String {
@@ -43,5 +43,3 @@ struct MyRankingDTO: Decodable {
         return "\(tierName) \(lp)P"
     }
 }
-
-

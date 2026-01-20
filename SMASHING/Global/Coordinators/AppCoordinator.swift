@@ -21,11 +21,9 @@ final class AppCoordinator: Coordinator {
         showLoginFlow()
     }
     
-    // 로그인 플로우 시작
     private func showLoginFlow() {
         let loginCoordinator = LoginCoordinator(navigationController: navigationController)
         
-        // 클로저를 통해 다음 단계 연결
         loginCoordinator.finishWithOnboarding = { [weak self] in
             self?.removeChildCoordinator(loginCoordinator)
             self?.showOnboardingFlow()
@@ -45,6 +43,18 @@ final class AppCoordinator: Coordinator {
         let onboardingCoordinator = OnboardingCoordinator(navigationController: navigationController)
         childCoordinators.append(onboardingCoordinator)
         onboardingCoordinator.start()
+        
+        onboardingCoordinator.confirmAction = { [weak self] in
+            guard let self else { return }
+            showTabBarFlow()
+        }
+    }
+    
+    private func showAddressFlow() {
+        navigationController.viewControllers.removeAll()
+        let addressCoordinator = AddressCoordinator(navigationController: navigationController)
+        childCoordinators.append(addressCoordinator)
+        addressCoordinator.start()
     }
     
     private func showTabBarFlow() {

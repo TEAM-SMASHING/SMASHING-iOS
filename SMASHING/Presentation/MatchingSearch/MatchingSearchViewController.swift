@@ -121,7 +121,7 @@ extension MatchingSearchViewController: UICollectionViewDataSource {
         cell.configure(
             nickname: match.nickname,
             gender: match.gender,
-            tierId: match.tierId,
+            tierCode: match.tierCode,
             wins: match.wins,
             losses: match.losses,
             reviews: match.reviewCount
@@ -150,116 +150,116 @@ extension MatchingSearchViewController: UICollectionViewDelegateFlowLayout {
 extension MatchingSearchViewController {
 
     private func loadMockData() {
-        self.matches = [
-            MatchingSearchMockData(
-                userId: "0USER000111222",
-                nickname: "윤서",
-                gender: "FEMALE",
-                tierId: 3,
-                wins: 12,
-                losses: 7,
-                reviewCount: 5
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111223",
-                nickname: "민준",
-                gender: "MALE",
-                tierId: 5,
-                wins: 45,
-                losses: 12,
-                reviewCount: 15
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111224",
-                nickname: "지우",
-                gender: "FEMALE",
-                tierId: 2,
-                wins: 8,
-                losses: 10,
-                reviewCount: 3
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111225",
-                nickname: "서준",
-                gender: "MALE",
-                tierId: 10,
-                wins: 78,
-                losses: 34,
-                reviewCount: 22
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111226",
-                nickname: "하은",
-                gender: "FEMALE",
-                tierId: 7,
-                wins: 56,
-                losses: 28,
-                reviewCount: 18
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111227",
-                nickname: "도윤",
-                gender: "MALE",
-                tierId: 16,
-                wins: 120,
-                losses: 45,
-                reviewCount: 35
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111228",
-                nickname: "수아",
-                gender: "FEMALE",
-                tierId: 1,
-                wins: 5,
-                losses: 15,
-                reviewCount: 2
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111229",
-                nickname: "예준",
-                gender: "MALE",
-                tierId: 17,
-                wins: 156,
-                losses: 52,
-                reviewCount: 48
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111230",
-                nickname: "시우",
-                gender: "MALE",
-                tierId: 4,
-                wins: 23,
-                losses: 18,
-                reviewCount: 8
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111231",
-                nickname: "아린",
-                gender: "FEMALE",
-                tierId: 13,
-                wins: 89,
-                losses: 41,
-                reviewCount: 28
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111232",
-                nickname: "준우",
-                gender: "MALE",
-                tierId: 8,
-                wins: 67,
-                losses: 30,
-                reviewCount: 19
-            ),
-            MatchingSearchMockData(
-                userId: "0USER000111233",
-                nickname: "채원",
-                gender: "FEMALE",
-                tierId: 11,
-                wins: 72,
-                losses: 38,
-                reviewCount: 24
-            )
-        ]
+//        self.matches = [
+//            MatchingSearchMockData(
+//                userId: "0USER000111222",
+//                nickname: "윤서",
+//                gender: "FEMALE",
+//                tierCode: ,
+//                wins: 12,
+//                losses: 7,
+//                reviewCount: 5
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111223",
+//                nickname: "민준",
+//                gender: "MALE",
+//                tierCode: 5,
+//                wins: 45,
+//                losses: 12,
+//                reviewCount: 15
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111224",
+//                nickname: "지우",
+//                gender: "FEMALE",
+//                tierCode: 2,
+//                wins: 8,
+//                losses: 10,
+//                reviewCount: 3
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111225",
+//                nickname: "서준",
+//                gender: "MALE",
+//                tierCode: 10,
+//                wins: 78,
+//                losses: 34,
+//                reviewCount: 22
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111226",
+//                nickname: "하은",
+//                gender: "FEMALE",
+//                tierCode: 7,
+//                wins: 56,
+//                losses: 28,
+//                reviewCount: 18
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111227",
+//                nickname: "도윤",
+//                gender: "MALE",
+//                tierCode: 16,
+//                wins: 120,
+//                losses: 45,
+//                reviewCount: 35
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111228",
+//                nickname: "수아",
+//                gender: "FEMALE",
+//                tierCode: 1,
+//                wins: 5,
+//                losses: 15,
+//                reviewCount: 2
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111229",
+//                nickname: "예준",
+//                gender: "MALE",
+//                tierCode: 17,
+//                wins: 156,
+//                losses: 52,
+//                reviewCount: 48
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111230",
+//                nickname: "시우",
+//                gender: "MALE",
+//                tierCode: 4,
+//                wins: 23,
+//                losses: 18,
+//                reviewCount: 8
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111231",
+//                nickname: "아린",
+//                gender: "FEMALE",
+//                tierCode: 13,
+//                wins: 89,
+//                losses: 41,
+//                reviewCount: 28
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111232",
+//                nickname: "준우",
+//                gender: "MALE",
+//                tierCode: 8,
+//                wins: 67,
+//                losses: 30,
+//                reviewCount: 19
+//            ),
+//            MatchingSearchMockData(
+//                userId: "0USER000111233",
+//                nickname: "채원",
+//                gender: "FEMALE",
+//                tierCode: 11,
+//                wins: 72,
+//                losses: 38,
+//                reviewCount: 24
+//            )
+//        ]
         self.matchingSearchView.collectionView.reloadData()
     }
 
@@ -271,7 +271,7 @@ struct MatchingSearchMockData {
     let userId: String
     let nickname: String
     let gender: String
-    let tierId: Int
+    let tierCode: String
     let wins: Int
     let losses: Int
     let reviewCount: Int
