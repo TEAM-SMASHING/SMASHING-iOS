@@ -13,7 +13,7 @@ import Then
 import Combine
 
 protocol MyProfileViewModelProtocol: InputOutputProtocol where Input == MyProfileViewModel.Input, Output == MyProfileViewModel.Output{
-    
+    var reviewPreviews: [RecentReviewResult] { get }
 }
 
 final class MyProfileViewModel: MyProfileViewModelProtocol {
@@ -28,15 +28,19 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
 
     struct Output {
         let myProfileFetched = PassthroughSubject<MyProfileListResponse, Never>()
-        let myTierFetched = PassthroughSubject<MyProfileTierResponse, Never>()
+        let myReviewSummaryFetched = PassthroughSubject<ReviewSummaryResponse, Never>()
+        let myRecentReviewListFetched = PassthroughSubject<[RecentReviewResult], Never>()
     }
 
     let output = Output()
+    var reviewPreviews: [RecentReviewResult] = []
     private var userProfileService: UserProfileService
+    private var userReviewService: UserReviewServiceProtocol
     private var cancellables: Set<AnyCancellable> = []
     
-    init(userProfileService: UserProfileService) {
+    init(userProfileService: UserProfileService, userReviewService: UserReviewServiceProtocol) {
         self.userProfileService = userProfileService
+        self.userReviewService = userReviewService
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> Output {
@@ -47,21 +51,28 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
                 case .viewDidLoad, .viewWillAppear:
                     userProfileService.fetchMyProfiles()
                         .receive(on: DispatchQueue.main)
-                        .sink { completion in
-                            print(completion)
+                        .sink { _ in
                         } receiveValue: { [weak self] response in
                             guard let self else { return }
                             output.myProfileFetched.send(response)
                         }
                         .store(in: &cancellables)
                     
-                    userProfileService.fetchMyProfileTier()
+                    userReviewService.fetchMyRecentReviews(size: 3, cursor: nil)
                         .receive(on: DispatchQueue.main)
-                        .sink { completion in
-                            print(completion)
+                        .sink { _ in
                         } receiveValue: { [weak self] response in
                             guard let self else { return }
-                            output.myTierFetched.send(response)
+                            output.myRecentReviewListFetched.send(response.results)
+                        }
+                        .store(in: &cancellables)
+                    
+                    userReviewService.fetchMyReviewSummary()
+                        .receive(on: DispatchQueue.main)
+                        .sink { _ in
+                        } receiveValue: { [weak self] response in
+                            guard let self else { return }
+                            output.myReviewSummaryFetched.send(response)
                         }
                         .store(in: &cancellables)
                 case .navToAddSports:
@@ -124,11 +135,20 @@ final class MyProfileViewController: BaseViewController {
             .store(in: &cancellables)
         
         output
-            .myTierFetched
+            .myRecentReviewListFetched
             .receive(on: DispatchQueue.main)
             .sink { [weak self] response in
                 guard let self else { return }
-                mainView.configure(tier: response)
+                
+            }
+            .store(in: &cancellables)
+        
+        output
+            .myReviewSummaryFetched
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] response in
+                guard let self else { return }
+                
             }
             .store(in: &cancellables)
     }

@@ -21,12 +21,9 @@ final class ProfileCard: BaseUIView {
     func configure(profile: MyProfileListResponse) {
         titleLabel.text = profile.nickname
         genderIcon.image = profile.gender.imageSm
-    }
-    
-    func configure(tierProfile: MyProfileTierResponse) {
-        tierIcon.image = Tier.from(tierCode: tierProfile.activeProfile.tierCode)?.image
-        winLoseRecordLabel.text = "\(tierProfile.activeProfile.wins)" + "승 " + "\(tierProfile.activeProfile.losses)" + "패"
-        reviewCountsLabel.text = "\(tierProfile.activeProfile.reviews ?? 0)"
+        tierIcon.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
+        winLoseRecordLabel.text = "\(profile.activeProfile.wins)" + "승 " + "\(profile.activeProfile.losses)" + "패"
+        reviewCountsLabel.text = "\(profile.activeProfile.reviews ?? 0)"
     }
     
     private let containerView = UIView().then {

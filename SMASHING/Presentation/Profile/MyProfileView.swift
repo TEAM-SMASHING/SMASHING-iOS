@@ -82,9 +82,8 @@ final class MyProfileView: BaseUIView {
     
     func configure(profile: MyProfileListResponse) {
         profileCard.configure(profile: profile)
-    }
-    
-    func configure(tier: MyProfileTierResponse) {
-        profileCard.configure(tierProfile: tier)
+        tierCard.configure(profile: profile)
+        winRateCard.configure(profile: profile)
+        
     }
 }

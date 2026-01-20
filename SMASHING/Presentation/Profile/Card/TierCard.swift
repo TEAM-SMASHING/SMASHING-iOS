@@ -153,6 +153,20 @@ final class TierCard: BaseUIView {
         }
     }
     
+    func configure(profile: MyProfileListResponse) {
+        profile.allProfiles.forEach { profile in
+            
+        }
+        
+        let max = profile.activeProfile.maxLp + 1
+        let min = profile.activeProfile.minLp
+        let current = profile.activeProfile.lp
+        lastLPLabel.text = String(max - current)
+        totalLPLabel.text = String(max)
+        progressBar.progress = Float(current - min) / Float(max - min)
+        tierMark.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
+    }
+    
     // MARK: - Actions
     
     @objc private func detailTapped() {

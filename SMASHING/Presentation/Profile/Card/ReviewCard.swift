@@ -49,6 +49,10 @@ final class ReviewCard: BaseUIView {
         $0.textColor = .Text.primary
     }
     
+    private let bestSportsChip = SatisfictionChip(review: .best, num: 0)
+    private let goodSportsChip = SatisfictionChip(review: .good, num: 0)
+    private let badSportsChip = SatisfictionChip(review: .bad, num: 0)
+    
     lazy var reviewCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -69,10 +73,7 @@ final class ReviewCard: BaseUIView {
         
         containerView.addSubviews(titleLabel, seeAllButton, satisfactionStackView, noReviewLabel, reviewCollectionView)
         
-        satisfactionStackView.addArrangedSubviews(
-            SatisfictionChip(review: .best, num: Int.random(in: 0...150)),
-            SatisfictionChip(review: .good,num: Int.random(in: 0...150)),
-            SatisfictionChip(review: .bad, num: Int.random(in: 0...150)))
+        satisfactionStackView.addArrangedSubviews(bestSportsChip, goodSportsChip, badSportsChip)
     }
     
     override func setLayout() {
@@ -107,7 +108,13 @@ final class ReviewCard: BaseUIView {
             $0.bottom.equalToSuperview().inset(16)
         }
     }
-        
+    
+    func configure(review: ReviewSummaryResponse) {
+        bestSportsChip.setNum(review.ratingCounts.best)
+        goodSportsChip.setNum(review.ratingCounts.good)
+        badSportsChip.setNum(review.ratingCounts.bad)
+    }
+    
     // MARK: - Actions
     
     @objc private func seeAllButtonTapped() {

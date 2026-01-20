@@ -38,12 +38,8 @@ final class SatisfictionChip: BaseUIView {
     
     init(review: ReviewScore, num: Int) {
         self.review = review
-        if num > 99 {
-            self.label.text = "99+"
-        } else {
-            self.label.text = "\(num)"
-        }
         super.init(frame: .zero)
+        setNum(num)
         backgroundColor = .Background.overlay
         setupAttributes()
     }
@@ -71,6 +67,14 @@ final class SatisfictionChip: BaseUIView {
         
         imageView.snp.makeConstraints {
             $0.size.equalTo(24)
+        }
+    }
+    
+    func setNum(_ num: Int) {
+        if num > 99 {
+            self.label.text = "99+"
+        } else {
+            self.label.text = "\(num)"
         }
     }
 }

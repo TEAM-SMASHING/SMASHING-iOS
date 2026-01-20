@@ -10,11 +10,8 @@ import Combine
 
 final class ReviewTestViewController: UIViewController {
     
-    private let reviewService: UserReviewServiceType = UserReviewService()
+    private let reviewService: UserReviewServiceProtocol = UserReviewService()
     private var cancellables = Set<AnyCancellable>()
-    
-    // 이전에 사용하셨던 테스트용 토큰을 그대로 사용합니다.
-    let accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwUDc1VjFSU0QyUkpSIiwidHlwZSI6IkFDQ0VTU19UT0tFTiIsInJvbGVzIjpbXSwiaWF0IjoxNzY4NzQ3NTk5LCJleHAiOjEyMDk3NzY4NzQ3NTk5fQ.ZKxXZ0eVGIXWb11S5OZnHt0UA9A0JyNtcyHXn4-W6vc"
     
     // MARK: - UI Components
     private let stackView: UIStackView = {
