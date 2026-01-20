@@ -13,7 +13,7 @@ import KakaoSDKAuth
 
 enum KakaoLoginResult {
     case needSignUp(authId: String)
-    case success(accessToken: String, refreshToken: String, authId: String)
+    case success(accessToken: String, refreshToken: String, authId: String, nickname: String)
 }
 
 protocol KakaoAuthServiceProtocol {
@@ -76,7 +76,12 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
                           let refreshToken = data.refreshToken else {
                         throw NetworkError.decoding
                     }
-                    return .success(accessToken: accessToken, refreshToken: refreshToken, authId: data.userId ?? "")
+                    return .success(
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                        authId: data.userId ?? "",
+                        nickname: data.nickname
+                    )
                 } else {
                     throw NetworkError.networkFail
                 }
