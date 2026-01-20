@@ -10,16 +10,9 @@ import UIKit
 import SnapKit
 import Then
 
-enum RapidReview: String, CaseIterable {
-    case timePromise = "시간 약속을 잘 지켜요"
-    case goodManner = "경기 매너가 좋아요"
-    case winloseAcknowledge = "승패를 깔끔하게 인정해요"
-    case rapidResponse = "응답이 빨라요"
-}
-
 final class RapidReviewChip: UILabel {
     
-    let review: RapidReview
+    let review: ReviewTag
     
     private var textInsets = UIEdgeInsets.zero
     
@@ -27,7 +20,7 @@ final class RapidReviewChip: UILabel {
         didSet { updateStyle() }
     }
     
-    init(review: RapidReview) {
+    init(review: ReviewTag) {
         self.review = review
         super.init(frame: .zero)
         setUI()
@@ -38,7 +31,7 @@ final class RapidReviewChip: UILabel {
     }
     
     private func setUI() {
-        self.text = review.rawValue
+        self.text = review.displayText
         self.font = .pretendard(.textSmR)
         self.textAlignment = .center
         

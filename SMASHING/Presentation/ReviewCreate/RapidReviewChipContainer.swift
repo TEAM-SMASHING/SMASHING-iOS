@@ -16,7 +16,7 @@ final class RapidReviewChipContainer: BaseUIView {
     private let verticalSpacing: CGFloat = 8
     private var chips: [RapidReviewChip] = []
     
-    func configure(reviews: [RapidReview]) {
+    func configure(reviews: [ReviewTag]) {
         chips.forEach { $0.removeFromSuperview() }
         chips.removeAll()
         
@@ -97,7 +97,7 @@ final class RapidReviewChipContainer: BaseUIView {
         return currentY + maxHeightInRow
     }
     
-    func getSelectedReviews() -> [RapidReview] {
+    func getSelectedReviews() -> [ReviewTag] {
         return chips.filter { $0.isSelected }.map { $0.review }
     }
     
