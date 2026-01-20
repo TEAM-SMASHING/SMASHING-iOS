@@ -233,6 +233,7 @@ final class MatchResultCreateView: BaseUIView {
             toggleDropDown()
         }
         updateWinnerUI()
+        notifyScoreChanged()
     }
     
     private func notifyScoreChanged() {

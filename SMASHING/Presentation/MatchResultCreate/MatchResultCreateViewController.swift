@@ -37,6 +37,7 @@ final class MatchResultCreateViewController: BaseViewController {
         setAddTarget()
         bind()
         view.backgroundColor = .Background.canvas
+        input.send(.viewDidLoad)
     }
     
     override func loadView() {
@@ -48,6 +49,10 @@ final class MatchResultCreateViewController: BaseViewController {
         mainView.nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
         mainView.myOptionButton.addTarget(self, action: #selector(didTapMyOptionButton), for: .touchUpInside)
         mainView.rivalOptionButton.addTarget(self, action: #selector(didTapRivalOptionButton), for: .touchUpInside)
+        
+        mainView.onScoreChanged = { [weak self] myScore, opponentScore in
+            self?.input.send(.scoreChanged(myScore: myScore, opponentScore: opponentScore))
+        }
     }
     
     private func bind() {
@@ -125,7 +130,6 @@ final class MatchResultCreateViewController: BaseViewController {
     }
     
     private func navigateToReviewCreate(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String) {
-        print("나야 매치 데이터\(matchResultData)")
         let vc = ReviewCreateViewController(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId, gameSerivce: GameService())
         navigationController?.pushViewController(vc, animated: true)
     }
