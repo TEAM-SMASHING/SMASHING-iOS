@@ -14,7 +14,12 @@ final class TierExplanationView: BaseUIView {
     
     // MARK: - Properties
     
-    var dismissAction: (() -> Void)?
+    var dismissAction: (() -> Void)? {
+        didSet {
+            // 외부(VC)에서 dismissAction이 주입되면 navigationBar의 버튼 액션을 즉시 업데이트합니다.
+            navigationBar.setRightButton(image: UIImage.icCloseLg, action: dismissAction ?? {})
+        }
+    }
     
     // MARK: - UI Components
     
@@ -223,7 +228,10 @@ final class TierChipCell : BaseUICollectionViewCell, ReuseIdentifiable {
 
 final class TierExplanationViewController: BaseViewController {
     
+    var dismissAction: (() -> Void)?
+    
     private let mainView = TierExplanationView()
+    
     private var sports: Sports = .tableTennis
     private var oreTier: OreTier = .bronze
     
@@ -235,6 +243,18 @@ final class TierExplanationViewController: BaseViewController {
         mainView.tierCollectionView.dataSource = self
         mainView.tierExplanationCollectionView.delegate = self
         mainView.tierExplanationCollectionView.dataSource = self
+        
+        setupDismissAction()
+    }
+        
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+
+    private func setupDismissAction() {
+        if let action = dismissAction {
+            mainView.dismissAction = action
+        }
     }
 }
 

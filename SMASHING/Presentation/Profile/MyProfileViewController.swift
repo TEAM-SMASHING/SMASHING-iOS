@@ -5,12 +5,11 @@
 //  Created by 이승준 on 1/15/26.
 //
 
+import Combine
 import UIKit
 
 import SnapKit
 import Then
-
-import Combine
 
 protocol MyProfileViewModelProtocol: InputOutputProtocol where Input == MyProfileViewModel.Input, Output == MyProfileViewModel.Output{
     var reviewPreviews: [RecentReviewResult] { get }
@@ -22,9 +21,9 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
         case viewDidLoad
         case viewWillAppear
         case sportsCellTapped(Sports?)
-        case navToAddSports
-        case navToTierExplanation
-        case navToSeeAllReviews
+        case addSportsTapped
+        case tierExplanationTapped
+        case seeAllReviewsTapped
     }
 
     struct Output {
@@ -32,6 +31,8 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
         let myReviewSummaryFetched = PassthroughSubject<ReviewSummaryResponse, Never>()
         let myRecentReviewListFetched = PassthroughSubject<[RecentReviewResult], Never>()
         let navigateToAddSports = PassthroughSubject<Void, Never>()
+        let navToTierExplanation = PassthroughSubject<Void, Never>()
+        let navToSeeAllReviews = PassthroughSubject<Void, Never>()
     }
 
     let output = Output()
@@ -81,16 +82,14 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
                 case .sportsCellTapped(let sport):
                     if let sport = sport {
                         // TODO: 해당 종목의 프로필로 데이터 전환 로직 (updateActiveProfile 등 호출 가능)
-                        print("\(sport.displayName) 프로필 전환")
                     } else {
-                        // nil이면 종목 추가 화면으로 이동
                         output.navigateToAddSports.send()
                     }
-                case .navToAddSports:
+                case .addSportsTapped:
                     break
-                case .navToTierExplanation:
-                    break
-                case .navToSeeAllReviews:
+                case .tierExplanationTapped:
+                    output.navToTierExplanation.send()
+                case .seeAllReviewsTapped:
                     break
                 }
             }
@@ -103,7 +102,9 @@ final class MyProfileViewController: BaseViewController {
     
     // MARK: - Properties
     
-    private let mainView = MyProfileView()
+    private lazy var mainView = MyProfileView().then {
+        $0.tierCard.tierDetailAction = { self.inputSubject.send(.tierExplanationTapped) }
+    }
     private let viewModel: any MyProfileViewModelProtocol
     private let inputSubject = PassthroughSubject<MyProfileViewModel.Input, Never>()
     
@@ -139,6 +140,10 @@ final class MyProfileViewController: BaseViewController {
         
         mainView.tierCard.onSportsAction = { [weak self] sport in
             self?.inputSubject.send(.sportsCellTapped(sport))
+        }
+        
+        mainView.tierCard.tierDetailAction = { [weak self] in
+            self?.inputSubject.send(.tierExplanationTapped)
         }
         
         output
