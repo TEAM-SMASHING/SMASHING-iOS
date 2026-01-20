@@ -147,7 +147,10 @@ extension HomeViewController: UICollectionViewDataSource {
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MatchingSectionHeader.reuseIdentifier, for: indexPath) as? MatchingSectionHeader else {
                 return UICollectionReusableView()
             }
-            header.configure(title: "동현님,", subTitle: "곧 다가오는 매칭이 있어요")
+            var myNickname: String {
+                return KeychainService.get(key: Environment.nicknameKey) ?? ""
+            }
+            header.configure(title: "\(myNickname)님,", subTitle: "곧 다가오는 매칭이 있어요")
             return header
         case .recommendedUser:
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.reuseIdentifier, for: indexPath) as? CommonSectionHeader else {
