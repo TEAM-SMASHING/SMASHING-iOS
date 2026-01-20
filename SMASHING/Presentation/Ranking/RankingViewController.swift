@@ -159,7 +159,7 @@ extension RankingViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         let ranker = rankings[indexPath.item]
-        cell.configureAllRankingView(with: ranker)
+        cell.configure(with: ranker)
         return cell
     }
 }
