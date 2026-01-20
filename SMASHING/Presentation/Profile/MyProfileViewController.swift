@@ -10,18 +10,127 @@ import UIKit
 import SnapKit
 import Then
 
-final class MyProfileViewController: UIViewController {
+import Combine
+
+protocol MyProfileViewModelProtocol: InputOutputProtocol where Input == MyProfileViewModel.Input, Output == MyProfileViewModel.Output{
+    
+}
+
+final class MyProfileViewModel: MyProfileViewModelProtocol {
+    
+    enum Input {
+        case viewDidLoad
+        case viewWillAppear
+        case navToAddSports
+        case navToTierExplanation
+        case navToSeeAllReviews
+    }
+
+    struct Output {
+        let myProfileFetched = PassthroughSubject<MyProfileListResponse, Never>()
+        let myTierFetched = PassthroughSubject<MyProfileTierResponse, Never>()
+    }
+
+    let output = Output()
+    private var userProfileService: UserProfileService
+    private var cancellables: Set<AnyCancellable> = []
+    
+    init(userProfileService: UserProfileService) {
+        self.userProfileService = userProfileService
+    }
+    
+    func transform(input: AnyPublisher<Input, Never>) -> Output {
+        input
+            .sink { [weak self] input in
+                guard let self else { return }
+                switch input {
+                case .viewDidLoad, .viewWillAppear:
+                    userProfileService.fetchMyProfiles()
+                        .receive(on: DispatchQueue.main)
+                        .sink { completion in
+                            print(completion)
+                        } receiveValue: { [weak self] response in
+                            guard let self else { return }
+                            output.myProfileFetched.send(response)
+                        }
+                        .store(in: &cancellables)
+                    
+                    userProfileService.fetchMyProfileTier()
+                        .receive(on: DispatchQueue.main)
+                        .sink { completion in
+                            print(completion)
+                        } receiveValue: { [weak self] response in
+                            guard let self else { return }
+                            output.myTierFetched.send(response)
+                        }
+                        .store(in: &cancellables)
+                case .navToAddSports:
+                    break
+                case .navToTierExplanation:
+                    break
+                case .navToSeeAllReviews:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+        return output
+    }
+}
+
+final class MyProfileViewController: BaseViewController {
     
     // MARK: - Properties
     
     private let mainView = MyProfileView()
+    private let viewModel: any MyProfileViewModelProtocol
+    private let inputSubject = PassthroughSubject<MyProfileViewModel.Input, Never>()
+    
+    private var cancellables: Set<AnyCancellable> = []
+    
+    // MARK: - Init
+    
+    init(viewModel: any MyProfileViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         view = mainView
+        inputSubject.send(.viewDidLoad)
         mainView.reviewCard.reviewCollectionView.delegate = self
         mainView.reviewCard.reviewCollectionView.dataSource = self
+        bind()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        inputSubject.send(.viewWillAppear)
+    }
+    
+    private func bind() {
+        let output = viewModel.transform(input: inputSubject.eraseToAnyPublisher())
+        output
+            .myProfileFetched
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] response in
+                guard let self else { return }
+                mainView.configure(profile: response)
+            }
+            .store(in: &cancellables)
+        
+        output
+            .myTierFetched
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] response in
+                guard let self else { return }
+                mainView.configure(tier: response)
+            }
+            .store(in: &cancellables)
     }
 }
 

@@ -18,6 +18,9 @@ final class ProfileCoordinator: Coordinator {
     }
 
     func start() {
-        navigationController.pushViewController(ProfileViewController(), animated: true)
+        let service = UserProfileService()
+        let viewModel = MyProfileViewModel(userProfileService: service)
+        navigationController
+            .pushViewController(MyProfileViewController(viewModel: viewModel), animated: true)
     }
 }

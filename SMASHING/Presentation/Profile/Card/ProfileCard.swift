@@ -18,6 +18,17 @@ final class ProfileCard: BaseUIView {
     
     // MARK: - UI Componetns
     
+    func configure(profile: MyProfileListResponse) {
+        titleLabel.text = profile.nickname
+        genderIcon.image = profile.gender.imageSm
+    }
+    
+    func configure(tierProfile: MyProfileTierResponse) {
+        tierIcon.image = Tier.from(tierCode: tierProfile.activeProfile.tierCode)?.image
+        winLoseRecordLabel.text = "\(tierProfile.activeProfile.wins)" + "승 " + "\(tierProfile.activeProfile.losses)" + "패"
+        reviewCountsLabel.text = "\(tierProfile.activeProfile.reviews ?? 0)"
+    }
+    
     private let containerView = UIView().then {
         $0.backgroundColor = .Background.surface
         $0.layer.cornerRadius = 8
@@ -31,7 +42,7 @@ final class ProfileCard: BaseUIView {
     }
     
     private let titleLabel = UILabel().then {
-        $0.text = "하나둘셋넷다여칠팔구"
+        $0.text = ""
         $0.font = .pretendard(.subtitleLgSb)
         $0.textColor = .Text.primary
     }
@@ -60,13 +71,13 @@ final class ProfileCard: BaseUIView {
     }
     
     private let winLoseRecordLabel = UILabel().then {
-        $0.text = "0승 0패"
+        $0.text = ""
         $0.font = .pretendard(.textMdSb)
         $0.textColor = .Text.secondary
     }
     
     private let reviewCountsLabel = UILabel().then {
-        $0.text = "32"
+        $0.text = ""
         $0.font = .pretendard(.textMdSb)
         $0.textColor = .Text.secondary
     }

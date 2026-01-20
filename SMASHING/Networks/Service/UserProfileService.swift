@@ -9,8 +9,8 @@ import Combine
 import Foundation
 
 protocol UserProfileServiceType {
-    func fetchMyProfileTier() -> AnyPublisher<ProfileTierResponse, NetworkError>
-    func fetchMyProfiles() -> AnyPublisher<ProfileListResponse, NetworkError>
+    func fetchMyProfileTier() -> AnyPublisher<MyProfileTierResponse, NetworkError>
+    func fetchMyProfiles() -> AnyPublisher<MyProfileListResponse, NetworkError>
     func createProfile(sport: Sports, experience: ExperienceRange) -> AnyPublisher<Void, NetworkError>
     func updateActiveProfile(profileId: String) -> AnyPublisher<Void, NetworkError>
     func fetchOtherUserProfile(userId: String, sport: Sports) -> AnyPublisher<OtherUserProfileResponse, NetworkError>
@@ -18,16 +18,16 @@ protocol UserProfileServiceType {
 }
 
 final class UserProfileService: UserProfileServiceType {
-    func fetchMyProfileTier() -> AnyPublisher<ProfileTierResponse, NetworkError> {
-        return NetworkProvider<ProfileUserTarget>.requestPublisher(.getMyProfileTier, type: ProfileTierResponse.self)
+    func fetchMyProfileTier() -> AnyPublisher<MyProfileTierResponse, NetworkError> {
+        return NetworkProvider<ProfileUserTarget>.requestPublisher(.getMyProfileTier, type: MyProfileTierResponse.self)
             .map { response in
                 return response.data
             }
             .eraseToAnyPublisher()
     }
     
-    func fetchMyProfiles() -> AnyPublisher<ProfileListResponse, NetworkError> {
-        return NetworkProvider<ProfileUserTarget>.requestPublisher(.getMyProfiles, type: ProfileListResponse.self)
+    func fetchMyProfiles() -> AnyPublisher<MyProfileListResponse, NetworkError> {
+        return NetworkProvider<ProfileUserTarget>.requestPublisher(.getMyProfiles, type: MyProfileListResponse.self)
             .map { response in
                 return response.data
             }
@@ -59,8 +59,8 @@ final class UserProfileService: UserProfileServiceType {
     }
     
     func updateRegion(region: String) -> AnyPublisher<Void, NetworkError> {
-            return NetworkProvider<ProfileUserTarget>.requestPublisher(.updateRegion(region: region), type: EmptyDataDTO.self)
-                .map { _ in () }
-                .eraseToAnyPublisher()
-        }
+        return NetworkProvider<ProfileUserTarget>.requestPublisher(.updateRegion(region: region), type: EmptyDataDTO.self)
+            .map { _ in () }
+            .eraseToAnyPublisher()
+    }
 }

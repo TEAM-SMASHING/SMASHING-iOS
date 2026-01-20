@@ -79,4 +79,12 @@ final class MyProfileView: BaseUIView {
             $0.bottom.equalToSuperview().inset(20)
         }
     }
+    
+    func configure(profile: MyProfileListResponse) {
+        profileCard.configure(profile: profile)
+    }
+    
+    func configure(tier: MyProfileTierResponse) {
+        profileCard.configure(tierProfile: tier)
+    }
 }
