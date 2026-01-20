@@ -72,6 +72,11 @@ final class ReceiveRequestViewController: BaseViewController {
         input.send(.viewDidLoad)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        input.send(.refresh)
+    }
+
     // MARK: - Setup Methods
 
     override func setUI() {
