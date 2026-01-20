@@ -20,7 +20,7 @@ struct MatchingConfirmedCursorResponseDTO: Codable {
 
 struct MatchingConfirmedGameDTO: Codable {
     let gameID: String
-    let resultStatus: String
+    let resultStatus: GameResultStatus
     let createdAt: String
     let opponent: OpponentSummaryDTO
     let submitAvailableAt: String
