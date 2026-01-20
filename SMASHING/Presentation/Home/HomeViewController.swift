@@ -47,6 +47,11 @@ final class HomeViewController: BaseViewController {
         input.send(.viewDidLoad)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        input.send(.viewWillAppear)
+    }
+    
     private func setCollectionView() {
         homeView.delegate = self
         homeView.dataSource = self

@@ -22,6 +22,7 @@ final class HomeViewModel: HomeViewModelProtocol {
     enum Input {
         //Life Cycle
         case viewDidLoad
+        case viewWillAppear
         
         //매칭 섹션
         case matchingResultCreateButtonTapped(MatchingConfirmedGameDTO)
@@ -71,8 +72,9 @@ final class HomeViewModel: HomeViewModelProtocol {
         switch input {
         case .viewDidLoad:
             fetchHomeData()
+        case .viewWillAppear:
+            fetchHomeData()
         case .matchingResultCreateButtonTapped(let gameData):
-
             output.navToMatchResultCreate.send(gameData)
         case .matchingSeeAllTapped:
             output.navToMatchingManageTab.send()
