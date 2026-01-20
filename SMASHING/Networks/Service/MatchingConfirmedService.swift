@@ -2,7 +2,7 @@
 //  MatchingConfirmedService.swift
 //  SMASHING
 //
-//  Created by Claude on 1/17/26.
+//  Created by JIN on 1/17/26.
 //
 
 import Foundation
