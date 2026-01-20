@@ -26,9 +26,7 @@ final class ProfileCoordinator: Coordinator {
         let profileService = UserProfileService()
         let reviewService = UserReviewService()
         let viewModel = MyProfileViewModel(userProfileService: profileService, userReviewService: reviewService)
-        let viewController = MyProfileViewController(viewModel: viewModel).then {
-            $0.navigationController?.isNavigationBarHidden = true
-        }
+        let viewController = MyProfileViewController(viewModel: viewModel)
         navigationController.pushViewController(viewController, animated: true)
         
         viewModel.output.navigateToAddSports.sink { [weak self] in

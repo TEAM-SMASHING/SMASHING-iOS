@@ -14,13 +14,12 @@ final class MyProfileView: BaseUIView {
     
     // MARK: - UI Components
     
-    private let scrollView = UIScrollView()
-    private let contentView = UIView()
-    
     private let navigationBar = CustomNavigationBar(title: "프로필").then {
         $0.setLeftButtonHidden(true)
     }
     
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
     private let profileCard = ProfileCard()
     
     let tierCard = TierCard().then {

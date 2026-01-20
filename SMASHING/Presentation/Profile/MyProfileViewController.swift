@@ -133,6 +133,7 @@ final class MyProfileViewController: BaseViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         inputSubject.send(.viewWillAppear)
     }
     
