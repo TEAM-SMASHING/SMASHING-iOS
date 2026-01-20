@@ -55,8 +55,6 @@ final class ConfirmPopupViewController: DimmedViewController {
     }
 
     // MARK: - Properties
-    
-    private lazy var tapGesture = UIGestureRecognizer(target: self, action: #selector(handleBackgroundTap))
 
     var onCancelTapped: (() -> Void)?
     var onConfirmTapped: (() -> Void)?
@@ -93,7 +91,6 @@ final class ConfirmPopupViewController: DimmedViewController {
         view.addSubview(containerView)
         containerView.addSubviews(titleLabel, messageLabel, buttonStackView)
         buttonStackView.addArrangedSubviews(cancelButton, confirmButton)
-
         titleLabel.text = popupTitle
         messageLabel.text = popupMessage
         cancelButton.setTitle(cancelTitle, for: .normal)
@@ -103,24 +100,25 @@ final class ConfirmPopupViewController: DimmedViewController {
     private func setLayout() {
         containerView.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.horizontalEdges.greaterThanOrEqualToSuperview().inset(27.3)
+            $0.height.equalTo(153)
         }
 
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
-            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         messageLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom)
-            $0.horizontalEdges.equalToSuperview().inset(36.5)
+            $0.horizontalEdges.equalToSuperview().inset(42)
         }
 
         buttonStackView.snp.makeConstraints {
-            $0.top.equalTo(messageLabel.snp.bottom).offset(24)
-            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.top.equalTo(messageLabel.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().offset(-24)
-            $0.height.equalTo(48)
+            $0.height.equalTo(40)
         }
     }
 
@@ -137,9 +135,4 @@ final class ConfirmPopupViewController: DimmedViewController {
             self?.onConfirmTapped?()
         }
     }
-                                                      
-    @objc private func handleBackgroundTap() {
-       dismiss(animated: true)
-    }
-   
 }
