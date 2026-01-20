@@ -26,6 +26,9 @@ final class HomeViewController: BaseViewController {
     private var recentMatching: [MatchingConfirmedGameDTO] = []
     private var recommendedUsers: [RecommendedUserDTO] = []
     private var rankings: [RankingUserDTO] = []
+    private var myNickname: String {
+        return KeychainService.get(key: Environment.nicknameKey) ?? ""
+    }
     
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
@@ -108,7 +111,10 @@ extension HomeViewController: UICollectionViewDataSource {
         case .matching:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.reuseIdentifier, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
             let matching = recentMatching[indexPath.item]
-            cell.configure(with: matching)
+            cell.configure(with: matching, myNickname: myNickname)
+            cell.onWriteResultButtonTapped = { [weak self] in
+                self?.input.send(.matchingResultCreateButtonTapped(matching))
+            }
             return cell
             
         case .recommendedUser:
@@ -138,7 +144,8 @@ extension HomeViewController: UICollectionViewDataSource {
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MatchingSectionHeader.reuseIdentifier, for: indexPath) as? MatchingSectionHeader else {
                 return UICollectionReusableView()
             }
-            header.configure(title: "동현님,", subTitle: "곧 다가오는 매칭이 있어요")
+
+            header.configure(title: "\(myNickname)님,", subTitle: "곧 다가오는 매칭이 있어요")
             return header
         case .recommendedUser:
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.reuseIdentifier, for: indexPath) as? CommonSectionHeader else {

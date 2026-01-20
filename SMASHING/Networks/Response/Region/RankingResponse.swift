@@ -43,5 +43,3 @@ struct MyRankingDTO: Decodable {
         return "\(tierName) \(lp)P"
     }
 }
-
-

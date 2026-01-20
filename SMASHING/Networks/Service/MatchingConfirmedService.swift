@@ -61,7 +61,7 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
             results: [
                 MatchingConfirmedGameDTO(
                     gameID: "0P4G1GZ5AF0XG",
-                    resultStatus: "RESULT_REJECTED",
+                    resultStatus: GameResultStatus(rawValue: "RESULT_REJECTED") ?? .canceled,
                     createdAt: "2026-01-17T10:00:00+09:00",
                     opponent: OpponentSummaryDTO(
                         userID: "0USER000111227",
@@ -76,7 +76,7 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
                 ),
                 MatchingConfirmedGameDTO(
                     gameID: "0P3M3MGSH4MZG",
-                    resultStatus: "WAITING_CONFIRMATION",
+                    resultStatus: GameResultStatus(rawValue: "WAITING_CONFIRMATION") ?? .pendingResult,
                     createdAt: "2026-01-17T09:30:00+09:00",
                     opponent: OpponentSummaryDTO(
                         userID: "0USER000111228",
@@ -91,7 +91,7 @@ final class MockMatchingConfirmedService: MatchingConfirmedServiceProtocol {
                 ),
                 MatchingConfirmedGameDTO(
                     gameID: "0P2K2KFSG3LYF",
-                    resultStatus: "PENDING_RESULT",
+                    resultStatus: GameResultStatus(rawValue: "PENDING_RESULT") ?? .pendingResult,
                     createdAt: "2026-01-17T09:00:00+09:00",
                     opponent: OpponentSummaryDTO(
                         userID: "0USER000111229",
