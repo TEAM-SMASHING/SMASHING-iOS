@@ -176,4 +176,23 @@ extension Tier {
             .tierChallengerStage
         }
     }
+    
+    var badge: UIImage {
+        switch self {
+        case .iron:
+            return .tierIron
+        case .bronze1, .bronze2, .bronze3:
+            return .tierBronze
+        case .silver1, .silver2, .silver3:
+            return .tierSliver
+        case .gold1, .gold2, .gold3:
+            return .tierGold
+        case .platinum1, .platinum3, .platinum2:
+            return .tierPlatium
+        case .diamond1, .diamond2, .diamond3:
+            return .tierDiamond
+        case .challenger:
+            return .tierChallenger
+        }
+    }
 }

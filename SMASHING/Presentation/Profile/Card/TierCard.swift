@@ -35,7 +35,6 @@ final class TierCard: BaseUIView {
     
     private let tierImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.backgroundColor = .Background.overlay
     }
     
     private let tierMark = UIImageView().then {
@@ -165,6 +164,7 @@ final class TierCard: BaseUIView {
         totalLPLabel.text = String(max)
         progressBar.progress = Float(current - min) / Float(max - min)
         tierBadge.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
+        tierImage.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.badge
     }
     
     // MARK: - Actions
