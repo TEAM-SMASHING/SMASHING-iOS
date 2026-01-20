@@ -8,13 +8,13 @@
 import Foundation
 import Combine
 
-protocol OnboardingUserServiceProtocol {
+protocol UserOnboardingServiceProtocol {
     func checkNicknameAvailability(nickname: String) -> AnyPublisher<Bool, NetworkError>
     func validateOpenchatUrl(url: String) -> AnyPublisher<Bool, NetworkError>
     func signup(request: SignupRequestDTO) -> AnyPublisher<SignupDataDTO, NetworkError>
 }
 
-final class OnboardingUserService: OnboardingUserServiceProtocol {
+final class UserOnboardingService: UserOnboardingServiceProtocol {
     func checkNicknameAvailability(nickname: String) -> AnyPublisher<Bool, NetworkError> {
         return NetworkProvider<OnboardingUserAPI>
             .requestPublisher(.checkNicknameAvailability(nickname: nickname), type: NicknameAvailabilityDTO.self)
