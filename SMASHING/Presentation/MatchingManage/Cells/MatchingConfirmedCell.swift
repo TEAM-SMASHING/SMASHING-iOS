@@ -80,9 +80,6 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
     
     private let writeResult = UIButton().then {
-        $0.setTitle("결과 작성하기", for: .normal)
-        $0.setTitleColor(.Text.emphasis, for: .normal)
-        $0.backgroundColor = .Button.backgroundPrimaryActive
         $0.titleLabel?.font = .pretendard(.textSmM)
         $0.layer.cornerRadius = 4
     }
@@ -194,11 +191,16 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
 
     private func updateWriteResultButton(resultState: GameResultStatus) {
         switch resultState {
+        case .resultConfirmed:
+            self.writeResult.setTitle("결과 확인하기", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundConfirmed
+            self.writeResult.setTitleColor(.Text.emphasis, for: .normal)
+            self.writeResult.isEnabled = true
         case .pendingResult:
-            self.writeResult.setTitle("결과 확인 대기중", for: .normal)
-            self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
-            self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
-            self.writeResult.isEnabled = false
+            self.writeResult.setTitle("결과 작성하기", for: .normal)
+            self.writeResult.setTitleColor(.Text.emphasis, for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundPrimaryActive
+            self.writeResult.isEnabled = true
         case .resultRejected:
             self.writeResult.setTitle("결과가 반려되었어요!", for: .normal)
             self.writeResult.backgroundColor = .Button.backgroundRejected
@@ -210,9 +212,9 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
             self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
             self.writeResult.isEnabled = false
         case .waitingConfirmation:
-            self.writeResult.setTitle("결과 확인하기", for: .normal)
-            self.writeResult.backgroundColor = .Button.backgroundConfirmed
-            self.writeResult.setTitleColor(.Text.emphasis, for: .normal)
+            self.writeResult.setTitle("결과 확인 대기중", for: .normal)
+            self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
+            self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
             self.writeResult.isEnabled = false
             
         }
