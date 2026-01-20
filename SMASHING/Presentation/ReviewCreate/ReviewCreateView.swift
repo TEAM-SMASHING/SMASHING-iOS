@@ -74,7 +74,7 @@ final class ReviewCreateView: BaseUIView {
     
     private let reviewTextView = ReviewTextView()
     
-    private let submitButton = CTAButton(label: "완료")
+    let submitButton = CTAButton(label: "완료")
     
     override func setUI() {
         satisfactionContainer.addSubviews(leftLine, rightLine, badButton, goodButton, greatButton)
@@ -90,7 +90,7 @@ final class ReviewCreateView: BaseUIView {
                     reviewTextView,
                     submitButton)
         
-        rapidReviewChipContainer.configure(reviews: RapidReview.allCases)
+        rapidReviewChipContainer.configure(reviews: ReviewTag.allCases)
     }
     
     @objc
@@ -207,5 +207,22 @@ final class ReviewCreateView: BaseUIView {
         case .best:
             greatButton.setSelected(true)
         }
+    }
+    
+    func configure(opponentNickname: String) {
+        titleLabel.text = "\(opponentNickname)님과의 경기는 어떠셨나요?"
+    }
+    
+    
+    // MARK: - Getters
+    func getReviewData() -> ReviewData? {
+        guard let rating = selectedSatisfaction else {
+            return nil
+        }
+        
+        let content = reviewTextView.text.isEmpty ? nil : reviewTextView.text
+        let tags = rapidReviewChipContainer.getSelectedReviews()
+        
+        return ReviewData(rating: rating, content: content, tags: tags)
     }
 }
