@@ -12,6 +12,8 @@ import Then
 
 final class ReviewTextView: BaseUIView {
     
+    var onTextChanged: ((String) -> Void)?
+    
     private let maxCharacterCount: Int = 100
     var text: String {
         return textView.text
@@ -85,6 +87,7 @@ extension ReviewTextView: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         updatePlaceholderVisibility()
         updateCharacterCount()
+        onTextChanged?(textView.text)
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {

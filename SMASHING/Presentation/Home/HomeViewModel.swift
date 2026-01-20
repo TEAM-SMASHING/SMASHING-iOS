@@ -22,9 +22,10 @@ final class HomeViewModel: HomeViewModelProtocol {
     enum Input {
         //Life Cycle
         case viewDidLoad
+        case viewWillAppear
         
         //매칭 섹션
-        case matchingResultCreateButtonTapped
+        case matchingResultCreateButtonTapped(MatchingConfirmedGameDTO)
         case matchingSeeAllTapped
         
         //추천 유저 섹션
@@ -44,7 +45,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         let isLoading = PassthroughSubject<Bool, Never>()
         let error = PassthroughSubject<Error, Never>()
         
-        let navToMatchResultCreate = PassthroughSubject<Int, Never>()
+        let navToMatchResultCreate = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
         let navToMatchingManageTab = PassthroughSubject<Void, Never>()
         let navToSelectedUserProfile = PassthroughSubject<Int, Never>()
         let navToRanking = PassthroughSubject<Void, Never>()
@@ -71,8 +72,10 @@ final class HomeViewModel: HomeViewModelProtocol {
         switch input {
         case .viewDidLoad:
             fetchHomeData()
-        case .matchingResultCreateButtonTapped:
-            break
+        case .viewWillAppear:
+            fetchHomeData()
+        case .matchingResultCreateButtonTapped(let gameData):
+            output.navToMatchResultCreate.send(gameData)
         case .matchingSeeAllTapped:
             output.navToMatchingManageTab.send()
         case .recommendedUserTapped:

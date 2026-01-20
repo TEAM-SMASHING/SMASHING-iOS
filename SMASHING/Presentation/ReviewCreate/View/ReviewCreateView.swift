@@ -12,7 +12,12 @@ import Then
 
 final class ReviewCreateView: BaseUIView {
     
-    private var selectedSatisfaction: ReviewScore?
+    // MARK: - Callbacks
+    var onSatisfactionSelected: ((ReviewScore) -> Void)?
+    var onRapidReviewTagsChanged: (([ReviewTag]) -> Void)?
+    var onReviewContentChanged: ((String?) -> Void)?
+    
+    // MARK: - UI Components
     
     private let navigationBar = CustomNavigationBar(title: "결과 작성")
     
@@ -57,7 +62,7 @@ final class ReviewCreateView: BaseUIView {
     private lazy var greatButton = SatisfactionButton(title: "최고예요").then {
         $0.circleButton.addTarget(self, action: #selector(greatButtonDidTap), for: .touchUpInside)
     }
-
+    
     private let rapidReviewSelectionLabel = UILabel().then {
         $0.text = "빠른 후기를 선택해주세요"
         $0.setPretendard(.textMdM)
@@ -74,7 +79,9 @@ final class ReviewCreateView: BaseUIView {
     
     private let reviewTextView = ReviewTextView()
     
-    private let submitButton = CTAButton(label: "완료")
+    let submitButton = CTAButton(label: "완료")
+    
+    // MARK: - Setup Methods
     
     override func setUI() {
         satisfactionContainer.addSubviews(leftLine, rightLine, badButton, goodButton, greatButton)
@@ -90,22 +97,16 @@ final class ReviewCreateView: BaseUIView {
                     reviewTextView,
                     submitButton)
         
-        rapidReviewChipContainer.configure(reviews: RapidReview.allCases)
-    }
-    
-    @objc
-    private func badButtonDidTap() {
-        updateSatisfaction(.bad)
-    }
-    
-    @objc
-    private func goodButtonDidTap() {
-        updateSatisfaction(.good)
-    }
-    
-    @objc
-    private func greatButtonDidTap() {
-        updateSatisfaction(.best)
+        rapidReviewChipContainer.configure(reviews: ReviewTag.allCases)
+        
+        rapidReviewChipContainer.onSelectionChanged = { [weak self] tags in
+            self?.onRapidReviewTagsChanged?(tags)
+        }
+        
+        reviewTextView.onTextChanged = { [weak self] text in
+            let content = text.isEmpty ? nil : text
+            self?.onReviewContentChanged?(content)
+        }
     }
     
     override func setLayout() {
@@ -191,9 +192,29 @@ final class ReviewCreateView: BaseUIView {
         }
     }
     
+    //MARK: - Actions
+    
+    @objc
+    private func badButtonDidTap() {
+        updateSatisfaction(.bad)
+        onSatisfactionSelected?(.bad)
+    }
+    
+    @objc
+    private func goodButtonDidTap() {
+        updateSatisfaction(.good)
+        onSatisfactionSelected?(.good)
+    }
+    
+    @objc
+    private func greatButtonDidTap() {
+        updateSatisfaction(.best)
+        onSatisfactionSelected?(.best)
+    }
+    
+    //MARK: - Public Methods
+    
     func updateSatisfaction(_ level: ReviewScore) {
-        selectedSatisfaction = level
-        
         //하나만 선택하기 위해
         [badButton, goodButton, greatButton].forEach {
             $0.setSelected(false)
@@ -207,5 +228,9 @@ final class ReviewCreateView: BaseUIView {
         case .best:
             greatButton.setSelected(true)
         }
+    }
+    
+    func configure(opponentNickname: String) {
+        titleLabel.text = "\(opponentNickname)님과의 경기는 어떠셨나요?"
     }
 }
