@@ -58,7 +58,7 @@ final class ReviewCreateViewController: BaseViewController {
             }
             .store(in: &cancellables)
         
-        output.navigateToHome
+        output.navToHome
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.navigationController?.popToRootViewController(animated: true)

@@ -25,7 +25,7 @@ final class ReviewCreateViewModel: ReviewCreateViewModelProtocol {
     struct Output {
         let opponentNickname = PassthroughSubject<String, Never>()
         let isSubmitButtonEnabled = PassthroughSubject<Bool, Never>()
-        let navigateToHome = PassthroughSubject<Void, Never>()
+        let navToHome = PassthroughSubject<Void, Never>()
         let isLoading = PassthroughSubject<Bool, Never>()
         let error = PassthroughSubject<NetworkError, Never>()
     }
@@ -128,7 +128,7 @@ final class ReviewCreateViewModel: ReviewCreateViewModelProtocol {
             } receiveValue: { [weak self] response in
                 guard let self else { return }
                 print("제출 성공 - reviewId: \(response.reviewId ?? "없음")")
-                self.output.navigateToHome.send()
+                self.output.navToHome.send()
             }
             .store(in: &cancellables)
     }
