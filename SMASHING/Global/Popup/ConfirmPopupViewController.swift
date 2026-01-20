@@ -106,8 +106,8 @@ final class ConfirmPopupViewController: DimmedViewController {
     override func setLayout() {
         containerView.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.horizontalEdges.greaterThanOrEqualToSuperview().inset(27.3)
             $0.height.equalTo(153)
+            $0.width.greaterThanOrEqualTo(305)
         }
 
         titleLabel.snp.makeConstraints {

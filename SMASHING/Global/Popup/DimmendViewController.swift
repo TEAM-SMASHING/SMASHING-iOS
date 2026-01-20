@@ -29,11 +29,14 @@ class DimmedViewController: BaseViewController {
     }
 
     // MARK: - LifeCycle
+    
+    override func viewDidLoad() {
+        dimmedView.backgroundColor = .Background.dimmed
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         guard let presentingViewController else { return }
-        dimmedView.backgroundColor = .Background.dimmed
         dimmedView.isUserInteractionEnabled = true
         presentingViewController.view.addSubview(dimmedView)
         dimmedView.snp.makeConstraints { $0.edges.equalToSuperview() }
