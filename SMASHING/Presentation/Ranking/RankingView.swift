@@ -13,11 +13,15 @@ import Then
 
 final class RankingView: BaseUIView {
     
+    var onBackTapped: (() -> Void)?
+    
     // MARK: - UI Components
     
     private let rankingEmptyView = RankingEmptyView()
     
-    let navigationBar = CustomNavigationBar(title: "전체 랭킹")
+    lazy var navigationBar = CustomNavigationBar(title: "전체 랭킹",
+                                                 leftAction: { [weak self] in
+        self?.onBackTapped?()})
     
     let topThreePodium = TopThreePodium()
     

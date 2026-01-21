@@ -51,6 +51,10 @@ final class RankingViewController: BaseViewController {
         view.backgroundColor = .Background.canvas
         setCollectionView()
         
+        mainView.onBackTapped = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        
         bind()
         input.send(.viewDidLoad)
     }
