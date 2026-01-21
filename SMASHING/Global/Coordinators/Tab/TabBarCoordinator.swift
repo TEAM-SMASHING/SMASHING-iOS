@@ -11,6 +11,10 @@ final class TabBarCoordinator: Coordinator {
     
     var childCoordinators: [Coordinator]
     var navigationController: UINavigationController
+    
+    var controllers: [UIViewController] = []
+    let factory = DefaultTabBarFlowFactory()
+    let tabBarController = MainTabBarController()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -18,11 +22,27 @@ final class TabBarCoordinator: Coordinator {
     }
 
     func start() {
-        var controllers: [UIViewController] = []
-        let factory = DefaultTabBarFlowFactory()
-
         MainTabBarController.Tab.allCases.forEach { tab in
             let (coordinator, navController) = factory.makeTabFlow(for: tab)
+            
+            if let homeCoordinator = coordinator as? HomeCoordinator {
+                homeCoordinator.navAction = { [weak self] nav in
+                    print("hello there")
+                    guard let self else { return }
+                    switch nav {
+                    case .navConfirmedMatchManage:
+                        tabBarController.selectedIndex = 2
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self.goToMatchManage(index: 0)
+                        }
+                    case .navRequestedMatchManage:
+                        tabBarController.selectedIndex = 2
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self.goToMatchManage(index: 2)
+                        }
+                    }
+                }
+            }
             
             MainTabBarController.setupTabBarItem(for: navController, with: tab)
             
@@ -31,11 +51,24 @@ final class TabBarCoordinator: Coordinator {
             
             coordinator.start()
         }
-
-        let tabBarController = MainTabBarController()
+        
         tabBarController.viewControllers = controllers
         
         navigationController.setNavigationBarHidden(true, animated: false)
         navigationController.pushViewController(tabBarController, animated: false)
+    }
+    
+    func goToMatchManage(index: Int) {
+        guard let navVC = tabBarController.viewControllers?[2] as? UINavigationController,
+              let matchingManageVC = navVC.viewControllers.first as? MatchingManageViewController else {
+            return
+        }
+        if index == 0 {
+            print("MM : 0")
+            matchingManageVC.moveToPage(tab: .received)
+        } else if index == 2 {
+            print("MM : 2")
+            matchingManageVC.moveToPage(tab: .confirmed)
+        }
     }
 }
