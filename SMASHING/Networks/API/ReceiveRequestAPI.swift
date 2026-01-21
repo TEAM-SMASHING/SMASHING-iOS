@@ -5,10 +5,8 @@
 //  Created by JIN on 1/18/26.
 //
 
-import Foundation
-
-import Moya
 import Alamofire
+import Moya
 
 enum ReceiveRequestAPI {
     case getReceivedRequestList(snapshotAt: String?, cursor: String?, size: Int?)

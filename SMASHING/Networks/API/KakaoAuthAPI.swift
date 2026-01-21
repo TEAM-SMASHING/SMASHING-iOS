@@ -5,10 +5,8 @@
 //  Created by 홍준범 on 1/6/26.
 //
 
-import Foundation
-
-import Moya
 import Alamofire
+import Moya
 
 enum KakaoAuthAPI {
     case login(accessToken: String)

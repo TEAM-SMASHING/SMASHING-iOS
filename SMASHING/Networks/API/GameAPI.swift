@@ -5,10 +5,8 @@
 //  Created by 홍준범 on 1/18/26.
 //
 
-import Foundation
-
-import Moya
 import Alamofire
+import Moya
 
 enum GameAPI {
     case submissionResult(gameId: String, request: GameFirstSubmissionRequestDTO)

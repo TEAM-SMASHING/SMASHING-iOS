@@ -5,30 +5,8 @@
 //  Created by 이승준 on 1/17/26.
 //
 
-import Foundation
-
 import Alamofire
 import Moya
-
-// MARK: - Signup Request
-
-struct SignupRequestDTO: Encodable {
-    let kakaoId: String
-    let nickname: String
-    let gender: String
-    let openChatUrl: String
-    let sportCode: String
-    let experienceRange: String
-    let region: String
-}
-
-// MARK: - Signup Response Data
-
-struct SignupDataDTO: Decodable {
-    let accessToken: String
-    let refreshToken: String
-    let userId: String
-}
 
 enum OnboardingUserAPI {
     case checkNicknameAvailability(nickname: String)

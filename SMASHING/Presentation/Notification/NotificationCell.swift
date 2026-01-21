@@ -90,9 +90,3 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
         backgroundColor = notification.isNew ? .clear : .Background.surface
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    NotificationViewController()
-}
