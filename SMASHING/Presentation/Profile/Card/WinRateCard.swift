@@ -121,4 +121,14 @@ final class WinRateCard: BaseUIView {
             $0.centerX.equalTo(containerView.snp.right).multipliedBy(2.0/3.0)
         }
     }
+    
+    func configure(profile: MyProfileListResponse) {
+        let total = profile.activeProfile.wins + profile.activeProfile.losses
+        let rate = total == 0 ? 0.0 : Float(profile.activeProfile.wins) / (Float(total))
+        let roundedRate = (rate * 1000).rounded() / 10
+        
+        winCountLabel.text = profile.activeProfile.wins.description
+        loseCountLabel.text = profile.activeProfile.losses.description
+        ratePercentageLabel.text = roundedRate.description + "%"
+    }
 }

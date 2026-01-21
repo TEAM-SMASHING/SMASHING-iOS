@@ -38,7 +38,7 @@ extension SearchUserTarget: BaseTargetType {
             )
         }
     }
-
+    
     var headers: [String : String]? {
         guard let accessToken = KeychainService.get(key: Environment.accessTokenKey) else {
             return ["Content-Type": "application/json"]

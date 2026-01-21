@@ -30,23 +30,24 @@ final class UserProfileViewController: UIViewController {
 
 extension UserProfileViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return TempReview.mockReviews.count > 3 ? 3 : TempReview.mockReviews.count
+        return 0 // viewModel.reviewPreviews.count > 3 ? 3 : viewModel.reviewPreviews.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ReviewCollectionViewCell.reuseIdentifier,
-            for: indexPath
-        ) as? ReviewCollectionViewCell else { return UICollectionViewCell() }
-        
-        let data = TempReview.mockReviews[indexPath.item]
-        
-        cell.configure(data)
-        
-        cell.contentView.snp.makeConstraints {
-            $0.width.equalTo(collectionView.frame.width)
-        }
-        
-        return cell
+//        guard let cell = collectionView.dequeueReusableCell(
+//            withReuseIdentifier: ReviewCollectionViewCell.reuseIdentifier,
+//            for: indexPath
+//        ) as? ReviewCollectionViewCell else { return UICollectionViewCell() }
+//        
+//        let data = viewModel.reviewPreviews[indexPath.item]
+//        
+//        cell.configure(data)
+//        
+//        cell.contentView.snp.remakeConstraints {
+//            $0.width.equalTo(collectionView.frame.width)
+//        }
+//
+//        return cell
+        return UICollectionViewCell()
     }
 }

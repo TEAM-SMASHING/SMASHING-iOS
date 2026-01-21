@@ -65,4 +65,15 @@ extension ProfileUserTarget: BaseTargetType {
             return .requestJSONEncodable(request)
         }
     }
+    
+    var headers: [String : String]? {
+        guard let accessToken = KeychainService.get(key: Environment.accessTokenKey) else {
+            return ["Content-Type": "application/json"]
+        }
+
+        return [
+            "Content-Type": "application/json",
+            "Authorization": "Bearer \(accessToken)"
+        ]
+    }
 }

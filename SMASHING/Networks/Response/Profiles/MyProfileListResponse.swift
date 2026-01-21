@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ProfileListResponse: Decodable {
+struct MyProfileListResponse: Decodable {
     let nickname: String
     let gender: Gender
     let activeProfile: ActiveProfile

@@ -98,9 +98,16 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     
     // MARK: - Data Binding
     
-    func configure(_ review :TempReview) {
-        nicknameLabel.text = review.nickname
-        dateLabel.text = review.date
+    func configure(_ review :RecentReviewResult) {
+        nicknameLabel.text = review.opponentNickname
+        dateLabel.text = review.createdAt.toDateFromISO8601?.toRelativeString()
         contentLabel.text = review.content
+        
+        if let date = review.createdAt.toDateFromISO8601 {
+            print("1. 파싱 성공: \(date)")
+            print("2. 상대 시간: \(date.toRelativeString())")
+        } else {
+            print("1. 파싱 실패: 문자열 형식을 다시 확인하세요.")
+        }
     }
 }

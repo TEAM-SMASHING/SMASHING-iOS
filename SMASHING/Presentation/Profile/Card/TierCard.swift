@@ -14,11 +14,10 @@ final class TierCard: BaseUIView {
     
     // MARK: - Properties
     
-    private var tierDetailAction: (() -> Void)?
-    
-    private var addAction: (() -> Void)?
-    
-    private var sportsSelectedAction: ((Sports) -> Void)?
+    var addAction: (() -> Void)?
+    var tierDetailAction: (() -> Void)?
+    var onSportsAction: ((Sports?) -> Void)?
+    var selectedSports: [Sports] = [.badminton, .tableTennis, .tennis]
     
     // MARK: - UI Components
     
@@ -28,14 +27,27 @@ final class TierCard: BaseUIView {
         $0.clipsToBounds = true
     }
     
-    private let sportsStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 7
+    private lazy var sportsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
+        $0.scrollDirection = .horizontal
+        $0.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        $0.minimumInteritemSpacing = 7
+    }).then {
+        $0.register(SportsButtonCell.self, forCellWithReuseIdentifier: SportsButtonCell.reuseIdentifier)
+        $0.dataSource = self
+        $0.delegate = self
+        $0.backgroundColor = .clear
+        $0.showsHorizontalScrollIndicator = false
+    }
+    
+    private lazy var plusButton = UIButton().then {
+        $0.setImage(.icPlus, for: .normal)
+        $0.backgroundColor = .Background.overlay
+        $0.layer.cornerRadius = 20
+        $0.addTarget(self, action: #selector(plusTapped), for: .touchUpInside)
     }
     
     private let tierImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.backgroundColor = .Background.overlay
     }
     
     private let tierMark = UIImageView().then {
@@ -58,7 +70,7 @@ final class TierCard: BaseUIView {
     private let lastLPLabel = UILabel().then {
         $0.font = .pretendard(.textMdSb)
         $0.textColor = .Text.primary
-        $0.text = "100"
+        $0.text = ""
     }
     
     private let lpLeft = UILabel().then {
@@ -76,7 +88,7 @@ final class TierCard: BaseUIView {
     private let totalLPLabel = UILabel().then {
         $0.font = .pretendard(.textMdSb)
         $0.textColor = .Text.primary
-        $0.text = "500"
+        $0.text = ""
     }
     
     private lazy var tierDetailButton = BlueCTAButton(label: "티어 설명").then {
@@ -85,15 +97,8 @@ final class TierCard: BaseUIView {
     
     override func setUI() {
         addSubview(containerView)
-        
-        containerView.addSubviews(sportsStackView, tierImage, tierMark, progressBar, tierBadge,
-                                  lastLPLabel, lpLeft, lpLabel, totalLPLabel)
-        
-        sportsStackView.addArrangedSubviews(
-            SportsButtonChip(sports: .badminton, selected: true),
-            SportsButtonChip(sports: .tableTennis),
-            SportsButtonChip(sports: nil)
-        )
+        containerView.addSubviews(sportsCollectionView, tierImage, tierMark,
+                                  progressBar, tierBadge, lastLPLabel, lpLeft, lpLabel, totalLPLabel)
     }
     
     override func setLayout() {
@@ -101,13 +106,21 @@ final class TierCard: BaseUIView {
             $0.edges.equalToSuperview()
         }
         
-        sportsStackView.snp.makeConstraints {
-            $0.leading.top.equalToSuperview().inset(16)
+        sportsCollectionView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(16)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(44)
         }
         
         tierImage.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(sportsStackView.snp.bottom).offset(20)
+            $0.top.equalTo(sportsCollectionView.snp.bottom).offset(20)
+            $0.size.equalTo(100)
+        }
+        
+        tierImage.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(sportsCollectionView.snp.bottom).offset(20)
             $0.size.equalTo(100)
         }
         
@@ -153,9 +166,72 @@ final class TierCard: BaseUIView {
         }
     }
     
+    func configure(profile: MyProfileListResponse) {
+        let max = profile.activeProfile.maxLp + 1
+        let min = profile.activeProfile.minLp
+        let current = profile.activeProfile.lp
+        lastLPLabel.text = String(max - current)
+        totalLPLabel.text = String(max)
+        progressBar.progress = Float(current - min) / Float(max - min)
+        tierBadge.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
+        tierImage.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.badge
+        
+        // 추가: 활성화된 종목을 리스트의 가장 앞으로 보내거나
+        // 서버에서 받은 전체 프로필 리스트를 reloadSports에 전달
+        // self.reloadSports(with: profile.profiles.map { $0.sportCode })
+    }
+    
+    private func updatePlusButtonVisibility() {
+        let allSports = Sports.allCases
+        let isAllSelected = allSports.allSatisfy { selectedSports.contains($0) }
+        
+        plusButton.isHidden = isAllSelected
+        
+        sportsCollectionView.snp.updateConstraints {
+            $0.trailing.equalTo(plusButton.snp.leading).offset(isAllSelected ? 48 : -8)
+        }
+    }
+    
+    func reloadSports(with sports: [Sports]) {
+        self.selectedSports = sports
+        self.sportsCollectionView.reloadData()
+    }
+    
     // MARK: - Actions
     
     @objc private func detailTapped() {
         tierDetailAction?()
+    }
+    
+    @objc private func plusTapped() {
+        addAction?()
+    }
+}
+
+extension TierCard: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        let allSportsCount = Sports.allCases.count
+        let currentCount = selectedSports.count
+        
+        return currentCount < allSportsCount ? currentCount + 1 : currentCount
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SportsButtonCell.reuseIdentifier, for: indexPath) as? SportsButtonCell else {
+            return UICollectionViewCell()
+        }
+        
+        if indexPath.item < selectedSports.count {
+            let sport = selectedSports[indexPath.item]
+            cell.configure(with: sport, isSelected: indexPath.item == 0)
+        } else {
+            cell.configure(with: nil, isSelected: false)
+        }
+        
+        cell.sportsAction = { [weak self] sports in
+            self?.onSportsAction?(sports)
+        }
+        
+        return cell
     }
 }
