@@ -8,25 +8,24 @@
 
 import UIKit
 
-enum Tier: Codable, Equatable {
-    case iron
-    case bronze3
-    case bronze2
-    case bronze1
-    case silver3
-    case silver2
-    case silver1
-    case gold3
-    case gold2
-    case gold1
-    case platinum3
-    case platinum2
-    case platinum1
-    case diamond3
-    case diamond2
-    case diamond1
-    case challenger
-    
+enum Tier: String, Codable, Equatable {
+    case iron = "IR"
+    case bronze3 = "BR3"
+    case bronze2 = "BR2"
+    case bronze1 = "BR1"
+    case silver3 = "SV3"
+    case silver2 = "SV2"
+    case silver1 = "SV1"
+    case gold3 = "GO3"
+    case gold2 = "GO2"
+    case gold1 = "GO1"
+    case platinum3 = "PT3"
+    case platinum2 = "PT2"
+    case platinum1 = "PT1"
+    case diamond3 = "DM3"
+    case diamond2 = "DM2"
+    case diamond1 = "DM1"
+    case challenger = "CH"
 }
 
 extension Tier {
@@ -103,29 +102,22 @@ extension Tier {
         }
     }
     
-    static func from(tierCode: String) -> Tier? {
-        switch tierCode {
-        case "IR": return .iron
-        case "BR3": return .bronze3
-        case "BR2": return .bronze2
-        case "BR1": return .bronze1
-        case "SV3": return .silver3
-        case "SV2": return .silver2
-        case "SV1": return .silver1
-        case "GO3": return .gold3
-        case "GO2": return .gold2
-        case "GO1": return .gold1
-        case "PT3": return .platinum3
-        case "PT2": return .platinum2
-        case "PT1": return .platinum1
-        case "DM3": return .diamond3
-        case "DM2": return .diamond2
-        case "DM1": return .diamond1
-        case "CH": return .challenger
-        default: return nil
+    var groupCode: String {
+        switch self {
+        case .iron: return "IRON"
+        case .bronze3, .bronze2, .bronze1: return "BRONZE"
+        case .silver3, .silver2, .silver1: return "SILVER"
+        case .gold3, .gold2, .gold1: return "GOLD"
+        case .platinum3, .platinum2, .platinum1: return "PLATINUM"
+        case .diamond3, .diamond2, .diamond1: return "DIAMOND"
+        case .challenger: return "CHALLENGER"
         }
     }
-    
+
+    static func from(tierCode: String) -> Tier? {
+        Tier(rawValue: tierCode)
+    }
+
     static var filterTiers: [Tier] {
         return [
             .iron,

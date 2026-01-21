@@ -18,6 +18,16 @@ final class MatchingSearchCoordinator: Coordinator {
     }
 
     func start() {
-        navigationController.pushViewController(MatchingSearchViewController(), animated: true)
+        let viewModel = MatchingSearchViewModel(service: MatchingSearchService())
+        let matchingSearchVC = MatchingSearchViewController(viewModel: viewModel)
+        matchingSearchVC.onSearchTapped = { [weak self] in
+            self?.showSearchResult()
+        }
+        navigationController.pushViewController(matchingSearchVC, animated: true)
+    }
+
+    private func showSearchResult() {
+        let searchVC = SearchResultViewController()
+        navigationController.pushViewController(searchVC, animated: true)
     }
 }
