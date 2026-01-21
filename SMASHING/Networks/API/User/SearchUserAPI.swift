@@ -32,11 +32,21 @@ extension SearchUserTarget: BaseTargetType {
     var task: Task {
         switch self {
         case .searchUser(let nickname):
-            // 쿼리 파라미터 ?nickname=ze 형태로 전달합니다.
             return .requestParameters(
                 parameters: ["nickname": nickname],
                 encoding: URLEncoding.queryString
             )
         }
+    }
+
+    var headers: [String : String]? {
+        guard let accessToken = KeychainService.get(key: Environment.accessTokenKey) else {
+            return ["Content-Type": "application/json"]
+        }
+
+        return [
+            "Content-Type": "application/json",
+            "Authorization": "Bearer \(accessToken)"
+        ]
     }
 }

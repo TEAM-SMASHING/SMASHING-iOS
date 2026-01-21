@@ -14,13 +14,10 @@ final class SearchResultView: BaseUIView {
 
     // MARK: - UI Components
 
-    private let backButtonContainer = UIView().then {
-        $0.backgroundColor = .clear
-    }
-
-    private let backButtonIcon = UIImageView().then {
-        $0.image = UIImage(resource: .icArrowLeft)
-        $0.contentMode = .scaleAspectFit
+    private lazy var navigationBar = CustomNavigationBar(title: "").then {
+        $0.setLeftButton { [weak self] in
+            self?.onBackButtonTapped?()
+        }
     }
 
     let searchTextField = SearchTextField().then {
@@ -33,7 +30,7 @@ final class SearchResultView: BaseUIView {
         $0.backgroundColor = .Background.canvas
         $0.separatorStyle = .none
         $0.register(
-            UITableViewCell.self,
+            SearchResultCell.self,
             forCellReuseIdentifier: SearchResultCell.reuseIdentifier
         )
     }
@@ -46,46 +43,25 @@ final class SearchResultView: BaseUIView {
 
     override func setUI() {
         backgroundColor = .Background.canvas
-        addSubviews(backButtonContainer, searchTextField, tableView)
-        backButtonContainer.addSubview(backButtonIcon)
+        addSubviews(navigationBar, searchTextField, tableView)
     }
 
     override func setLayout() {
-        backButtonContainer.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(8)
-            $0.leading.equalToSuperview().offset(16)
-            $0.size.equalTo(24)
-        }
-
-        backButtonIcon.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.size.equalTo(24)
+        navigationBar.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
         }
 
         searchTextField.snp.makeConstraints {
-            $0.centerY.equalTo(backButtonContainer)
-            $0.leading.equalTo(backButtonContainer.snp.trailing).offset(8)
+            $0.centerY.equalTo(navigationBar)
+            $0.leading.equalTo(navigationBar.snp.leading).offset(50)
             $0.trailing.equalToSuperview().inset(16)
         }
 
         tableView.snp.makeConstraints {
-            $0.top.equalTo(searchTextField.snp.bottom).offset(10)
+            $0.top.equalTo(navigationBar.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-    }
-
-    override func setGesture() {
-        let tapGesture = UITapGestureRecognizer(
-            target: self,
-            action: #selector(backButtonDidTap)
-        )
-        backButtonContainer.addGestureRecognizer(tapGesture)
-    }
-
-    // MARK: - Actions
-
-    @objc private func backButtonDidTap() {
-        onBackButtonTapped?()
     }
 
 }
