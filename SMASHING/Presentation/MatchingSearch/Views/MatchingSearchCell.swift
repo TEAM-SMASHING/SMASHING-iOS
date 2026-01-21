@@ -148,14 +148,14 @@ final class MatchingSearchCell: BaseUICollectionViewCell, ReuseIdentifiable {
 
     func configure(
         nickname: String,
-        gender: String,
+        gender: Gender,
         tierCode: String,
         wins: Int,
         losses: Int,
         reviews: Int
     ) {
         self.nicknameLabel.text = nickname
-        self.genderIconImageView.image = gender == "MALE" ? .icManSm : .icWomanSm
+        self.genderIconImageView.image = gender.imageSm
         self.recordValueLabel.text = "\(wins)승 \(losses)패"
         self.reviewValueLabel.text = "\(reviews)"
         self.configureTierBadge(tierCode: tierCode)
