@@ -27,3 +27,18 @@ struct ReviewRequestDTO: Encodable {
     let content: String?
     let tags: [String]?
 }
+
+// MARK: - 확정 API용 DTO
+
+/// 결과 확정 - 리뷰 필수
+struct GameConfirmRequestDTO: Encodable {
+    let review: ReviewRequestDTO
+}
+
+// MARK: - 반려 API용 DTO
+
+/// 결과 반려 - 사유 필수
+struct GameRejectRequestDTO: Encodable {
+    let reason: String
+}
+

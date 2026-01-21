@@ -7,7 +7,7 @@
 
 import Foundation
 
-// MARK: - CursorResponse 
+// MARK: - CursorResponse
 
 struct MatchingConfirmedCursorResponseDTO: Codable {
     let snapshotAt: String
@@ -23,14 +23,17 @@ struct MatchingConfirmedGameDTO: Codable {
     let resultStatus: GameResultStatus
     let createdAt: String
     let opponent: OpponentSummaryDTO
-    let submitAvailableAt: String
-    let remainingSeconds: Int
+//    let submitAvailableAt: String
+//    let remainingSeconds: Int
     let isSubmitLocked: Bool
-
+    let latestSubmissionId: String?
+    let latestSubmitterId: String?
+    let latestAttemptNo: Int?
+    
     enum CodingKeys: String, CodingKey {
         case gameID = "gameId"
         case resultStatus, createdAt, opponent
-        case submitAvailableAt, remainingSeconds, isSubmitLocked
+        case latestSubmissionId, latestSubmitterId, isSubmitLocked, latestAttemptNo
     }
 }
 
@@ -42,7 +45,7 @@ struct OpponentSummaryDTO: Codable {
     let openchatUrl: String?
     let gender: String
     let tierCode: String?
-
+    
     enum CodingKeys: String, CodingKey {
         case userID = "userId"
         case nickname, openchatUrl, gender
