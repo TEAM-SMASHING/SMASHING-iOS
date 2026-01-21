@@ -5,19 +5,17 @@
 //  Created by 이승준 on 1/19/26.
 //
 
-import Foundation
-
 import Alamofire
 import Moya
 
-enum ReviewUserTarget {
+enum ReviewUserAPI {
     case getMyReviewSummary
     case getMyRecentReviews(size: Int, cursor: String?)
     case getOtherUserRecentReviews(userId: String, sport: Sports, size: Int, cursor: String?)
     case getOtherUserReviewSummary(userId: String, sport: Sports)
 }
 
-extension ReviewUserTarget: BaseTargetType {
+extension ReviewUserAPI: BaseTargetType {
     var path: String {
         switch self {
         case .getMyReviewSummary:

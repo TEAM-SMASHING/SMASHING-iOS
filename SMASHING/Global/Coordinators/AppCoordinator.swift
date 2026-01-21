@@ -37,7 +37,7 @@ final class AppCoordinator: Coordinator {
         
         loginCoordinator.finishWithTabBar = { [weak self] in
             self?.removeChildCoordinator(loginCoordinator)
-            self?.showTabBarFlow()
+            self?.showNotificationFlow()
         }
         
         childCoordinators.append(loginCoordinator)
@@ -72,5 +72,11 @@ final class AppCoordinator: Coordinator {
     
     private func removeChildCoordinator(_ coordinator: Coordinator) {
         childCoordinators = childCoordinators.filter { $0 !== coordinator }
+    }
+    
+    private func showNotificationFlow() {
+        let notificationCoordinator = NotificationCoordinator(navigationController: navigationController)
+        childCoordinators.append(notificationCoordinator)
+        notificationCoordinator.start()
     }
 }

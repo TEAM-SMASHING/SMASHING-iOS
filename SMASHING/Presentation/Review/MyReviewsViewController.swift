@@ -60,6 +60,7 @@ final class MyReviewsViewModel: MyReviewsViewModelProtocol {
                 case .viewWillAppear:
                     self.fetchSummary()
                 case .reachedBottom:
+                    // ToDo: - 분기 처리
                     self.fetchRecentReviews(isFirstPage: false)
                 case .backButtonDidTap:
                     self.output.navBack.send()

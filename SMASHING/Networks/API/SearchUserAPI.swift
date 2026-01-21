@@ -5,16 +5,14 @@
 //  Created by 이승준 on 1/19/26.
 //
 
-import Foundation
+import Alamofire
 import Moya
 
-import Alamofire
-
-enum SearchUserTarget {
+enum SearchUserAPI {
     case searchUser(nickname: String)
 }
 
-extension SearchUserTarget: BaseTargetType {
+extension SearchUserAPI: BaseTargetType {
     var path: String {
         switch self {
         case .searchUser:
