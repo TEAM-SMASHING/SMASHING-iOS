@@ -8,14 +8,17 @@
 import Foundation
 import Combine
 
-// MARK: - Protocol
+   // MARK: - Protocol
 
 protocol SearchResultViewModelProtocol {
     var searchResults: [UserSummary] { get }
-    func transform(input: AnyPublisher<SearchResultViewModel.Input, Never>) -> SearchResultViewModel.Output
+    func transform(
+        input: AnyPublisher<SearchResultViewModel.Input, Never>
+    )
+    -> SearchResultViewModel.Output
 }
 
-// MARK: - ViewModel
+    // MARK: - ViewModel
 
 final class SearchResultViewModel: SearchResultViewModelProtocol {
 
@@ -43,7 +46,7 @@ final class SearchResultViewModel: SearchResultViewModelProtocol {
     private(set) var searchResults: [UserSummary] = []
     let navigationEvent = NavigationEvent()
 
-    private let userSearchService: UserSearchServiceType
+    private let service: UserSearchServiceType
     private var cancellables = Set<AnyCancellable>()
     private var isFetching = false
 
@@ -54,7 +57,7 @@ final class SearchResultViewModel: SearchResultViewModelProtocol {
     // MARK: - Initialize
 
     init(userSearchService: UserSearchServiceType = UserSearchService()) {
-        self.userSearchService = userSearchService
+        self.service = userSearchService
     }
 
     // MARK: - Transform
@@ -93,22 +96,22 @@ final class SearchResultViewModel: SearchResultViewModelProtocol {
 
         isFetching = true
         isLoadingSubject.send(true)
-
-        userSearchService.searchUser(nickname: query)
+        
+        service.searchUser(nickname: query)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
                     guard let self else { return }
                     self.isFetching = false
                     self.isLoadingSubject.send(false)
-
+                    
                     if case .failure(let error) = completion {
                         self.errorMessageSubject.send(error.localizedDescription)
                     }
                 },
                 receiveValue: { [weak self] users in
                     guard let self else { return }
-                    self.searchResults = users
+                    self.searchResults = Array(users.prefix(5))
                     self.dataFetchedSubject.send()
                 }
             )
