@@ -27,6 +27,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     private let myImage = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 32
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
     }
@@ -50,6 +52,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     private let rivalImage = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 32
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
     }
@@ -61,7 +65,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.textAlignment = .center
     }
     
-    private let writeResultButton = UIButton().then {
+    lazy var writeResultButton = UIButton().then {
         $0.setTitle("결과 작성하기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textMdM)
         $0.setTitleColor(.Text.muted, for: .normal)
@@ -116,6 +120,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
     
     func configure(with matching: MatchingConfirmedGameDTO, myNickname: String, myUserId: String) {
+        myImage.image = UIImage.defaultProfileImage(name: myNickname)
+        rivalImage.image = UIImage.defaultProfileImage(name: matching.opponent.nickname)
         myNickName.text = myNickname
         rivalNickName.text = matching.opponent.nickname
         

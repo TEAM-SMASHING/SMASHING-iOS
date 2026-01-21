@@ -28,7 +28,7 @@ final class EmptyMatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
            $0.text = "아직 확정된 매칭이 없어요.\n지금 바로 매칭을 신청해보세요!"
        }
     
-    private let goToMatchingSearchButton = UIButton().then {
+    lazy var goToMatchingSearchButton = UIButton().then {
         $0.setTitle("매칭 탐색하러 가기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textMdM)
         $0.setTitleColor(.Button.backgroundSecondaryActive, for: .normal)
