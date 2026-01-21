@@ -37,8 +37,11 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
     private var userProfileService: UserProfileService
     private var userReviewService: UserReviewServiceProtocol
     private var cancellables: Set<AnyCancellable> = []
-    
-    init(userProfileService: UserProfileService, userReviewService: UserReviewServiceProtocol) {
+
+    init(
+        userProfileService: UserProfileService,
+        userReviewService: UserReviewServiceProtocol,
+    ) {
         self.userProfileService = userProfileService
         self.userReviewService = userReviewService
     }
@@ -54,6 +57,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
                         .sink { _ in
                         } receiveValue: { [weak self] response in
                             guard let self else { return }
+                            self.storeSportsCode(from: response)
                             output.myProfileFetched.send(response)
                         }
                         .store(in: &cancellables)
@@ -92,5 +96,11 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
             }
             .store(in: &cancellables)
         return output
+    }
+
+    private func storeSportsCode(from response: MyProfileListResponse) {
+        guard let userId = KeychainService.get(key: Environment.userIdKey), !userId.isEmpty else { return }
+        let key = "\(Environment.sportsCodeKeyPrefix).\(userId)"
+        _ = KeychainService.add(key: key, value: response.activeProfile.sportCode.rawValue)
     }
 }
