@@ -33,7 +33,7 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     private let contentLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
         $0.textColor = .white
-        $0.numberOfLines = 0 // 100자까지 모두 보이도록 설정
+        $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
     
@@ -96,18 +96,9 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
         }
     }
     
-    // MARK: - Data Binding
-    
     func configure(_ review :RecentReviewResult) {
         nicknameLabel.text = review.opponentNickname
         dateLabel.text = review.createdAt.toDateFromISO8601?.toRelativeString()
         contentLabel.text = review.content
-        
-        if let date = review.createdAt.toDateFromISO8601 {
-            print("1. 파싱 성공: \(date)")
-            print("2. 상대 시간: \(date.toRelativeString())")
-        } else {
-            print("1. 파싱 실패: 문자열 형식을 다시 확인하세요.")
-        }
     }
 }
