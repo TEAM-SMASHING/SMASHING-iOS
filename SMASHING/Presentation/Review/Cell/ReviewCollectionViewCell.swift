@@ -45,8 +45,8 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupHierarchy()
-        setupConstraints()
+        setUI()
+        setLayouts()
     }
     
     required init?(coder: NSCoder) {
@@ -55,7 +55,7 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     
     // MARK: - UI Setup
     
-    private func setupHierarchy() {
+    private func setUI() {
         contentView.addSubviews(
             profileImageView,
             nicknameLabel,
@@ -65,7 +65,7 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
         )
     }
     
-    private func setupConstraints() {
+    private func setLayouts() {
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(16)
             $0.size.equalTo(40)
@@ -97,6 +97,7 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     }
     
     func configure(_ review :RecentReviewResult) {
+        profileImageView.image = UIImage.defaultProfileImage(name: review.opponentNickname)
         nicknameLabel.text = review.opponentNickname
         dateLabel.text = review.createdAt.toDateFromISO8601?.toRelativeString()
         contentLabel.text = review.content
