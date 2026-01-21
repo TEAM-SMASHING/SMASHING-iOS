@@ -26,3 +26,12 @@ struct NotificationSummaryResponseDTO: Codable {
     let receiverProfileId: String
     let receiverSportId: Int
 }
+
+struct NotificationBaseResponseDTO: Codable {
+    let status: String
+    let statusCode: Int
+    let message: String?
+    let errorCode: String?
+    let errorName: String?
+    let timestamp: String
+}

@@ -14,7 +14,7 @@ protocol KakaoAddressServiceProtocol {
 final class KakaoAddressService: KakaoAddressServiceProtocol {
     func searchAddress(query: String) -> AnyPublisher<KakaoAddressResponseDTO, NetworkError> {
         return NetworkProvider<KakaoAddressAPI>
-            .kakaoAddressRequestPublisher(.searchAddress(query: query),
+            .plainRequestPublisher(.searchAddress(query: query),
                                           type: KakaoAddressResponseDTO.self)
             .eraseToAnyPublisher()
     }
