@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ProfileTierResponse: Decodable {
+struct MyProfileTierResponse: Decodable {
     let region: String
     let nickname: String
     let activeProfile: ActiveProfile

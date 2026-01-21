@@ -27,13 +27,13 @@ final class AddressCoordinator: Coordinator {
         let viewModel = AddressSearchViewModel(addressService: service)
         let viewController = AddressSearchViewController(viewModel: viewModel)
         
-        viewModel.navigationEvent.backTapped.sink { [weak self] in
+        viewModel.output.navBackTapped.sink { [weak self] in
             guard let self else { return }
             self.navigationController.popViewController(animated: true)
         }
         .store(in: &cancellables)
         
-        viewModel.navigationEvent.addressSelected.sink { [weak self] address in
+        viewModel.output.navAddressSelected.sink { [weak self] address in
             guard let self else { return }
             backAction?(address)
         }

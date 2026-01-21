@@ -20,7 +20,7 @@ final class LoginView: BaseUIView {
     
     private let logoImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = .smashingBanner
+        $0.image = .smashingSlogun
     }
     
     private let buttonStack = UIStackView().then {
@@ -43,9 +43,10 @@ final class LoginView: BaseUIView {
     
     override func setLayout() {
         logoImageView.snp.makeConstraints {
-            $0.center.equalToSuperview()
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-50)
             $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(80)
+            $0.height.equalTo(112)
         }
         
         buttonStack.snp.makeConstraints {
@@ -56,6 +57,7 @@ final class LoginView: BaseUIView {
         kakaoLoginButton.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(50)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(122)
         }
     }
 

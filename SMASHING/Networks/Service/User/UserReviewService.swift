@@ -10,14 +10,14 @@ import Foundation
 import Combine
 import Foundation
 
-protocol UserReviewServiceType {
+protocol UserReviewServiceProtocol {
     func fetchMyReviewSummary() -> AnyPublisher<ReviewSummaryResponse, NetworkError>
     func fetchMyRecentReviews(size: Int, cursor: String?) -> AnyPublisher<RecentReviewResponse, NetworkError>
     func fetchOtherUserRecentReviews(userId: String, sport: Sports, size: Int, cursor: String?) -> AnyPublisher<RecentReviewResponse, NetworkError>
     func fetchOtherUserReviewSummary(userId: String, sport: Sports) -> AnyPublisher<ReviewSummaryResponse, NetworkError>
 }
 
-final class UserReviewService: UserReviewServiceType {
+final class UserReviewService: UserReviewServiceProtocol {
     func fetchMyReviewSummary() -> AnyPublisher<ReviewSummaryResponse, NetworkError> {
         return NetworkProvider<ReviewUserTarget>
             .requestPublisher(.getMyReviewSummary, type: ReviewSummaryResponse.self)

@@ -14,13 +14,12 @@ final class MyProfileView: BaseUIView {
     
     // MARK: - UI Components
     
-    private let scrollView = UIScrollView()
-    private let contentView = UIView()
-    
     private let navigationBar = CustomNavigationBar(title: "프로필").then {
         $0.setLeftButtonHidden(true)
     }
     
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
     private let profileCard = ProfileCard()
     
     let tierCard = TierCard().then {
@@ -78,5 +77,15 @@ final class MyProfileView: BaseUIView {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(20)
         }
+    }
+    
+    func configure(profile: MyProfileListResponse) {
+        profileCard.configure(profile: profile)
+        tierCard.configure(profile: profile)
+        winRateCard.configure(profile: profile)
+    }
+    
+    func configure(summury: ReviewSummaryResponse) {
+        reviewCard.configure(review: summury)
     }
 }

@@ -122,7 +122,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         let resultStatus = matching.resultStatus
         // 버튼 활성화 여부
         let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
-
+        
         writeResultButton.setTitle(resultStatus.buttonTitle, for: .normal)
         writeResultButton.isEnabled = canSubmit
         
@@ -151,8 +151,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
     
     @objc
-       private func writeResultButtonDidTap() {
-           print("🔴 writeResultButtonDidTap 호출됨")
-           onWriteResultButtonTapped?()
-       }
+    private func writeResultButtonDidTap() {
+        print("🔴 writeResultButtonDidTap 호출됨")
+        onWriteResultButtonTapped?()
+    }
 }

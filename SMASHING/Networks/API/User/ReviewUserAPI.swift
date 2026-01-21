@@ -61,9 +61,13 @@ extension ReviewUserTarget: BaseTargetType {
     }
     
     var headers: [String : String]? {
+        guard let accessToken = KeychainService.get(key: Environment.accessTokenKey) else {
+            return ["Content-Type": "application/json"]
+        }
+
         return [
             "Content-Type": "application/json",
-            "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwUDc1VjFSU0QyUkpSIiwidHlwZSI6IkFDQ0VTU19UT0tFTiIsInJvbGVzIjpbXSwiaWF0IjoxNzY4NzY3NzUzLCJleHAiOjEyMDk3NzY4NzY3NzUzfQ.IVEVsz0pOPYB2Lr0gNphh2IwxNZnQpLluWL1n3melug"
+            "Authorization": "Bearer \(accessToken)"
         ]
     }
 }
