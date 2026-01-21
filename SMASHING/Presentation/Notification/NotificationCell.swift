@@ -56,7 +56,7 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
         
         timeLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
             $0.top.equalToSuperview().inset(12)
         }
         
@@ -69,13 +69,17 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(typeLabel.snp.bottom).offset(4)
             $0.leading.equalTo(typeLabel)
-            $0.trailing.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(12)
         }
     }
     
     func configure(notification: NotificationSummaryResponseDTO) {
-        typeLabel.text = notification.type.displayText
+        if notification.type == .reviewReceived {
+            typeLabel.text =  notification.type.displayText
+        } else {
+            typeLabel.text =  notification.receiverSportId.displayName + " " + notification.type.displayText
+        }
         timeLabel.text = notification.createdAt.toDateFromISO8601?.toRelativeString()
         contentLabel.text = notification.content
         backgroundColor = notification.isRead ? .clear : .Background.surface

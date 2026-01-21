@@ -24,7 +24,7 @@ struct NotificationSummaryResponseDTO: Codable {
     let createdAt: String
     let senderNickname: String
     let receiverProfileId: String
-    let receiverSportId: Int
+    let receiverSportId: Sports
 }
 
 struct NotificationBaseResponseDTO: Codable {

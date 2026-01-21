@@ -57,7 +57,6 @@ final class ReceiveRequestViewController: BaseViewController {
     init(viewModel: ReceiveRequestViewModel = ReceiveRequestViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        _ = KeychainService.add(key:Environment.accessTokenKey , value: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwUDZWVksyRk1HNEZYIiwidHlwZSI6IkFDQ0VTU19UT0tFTiIsInJvbGVzIjpbXSwiaWF0IjoxNzY4NjU5ODE1LCJleHAiOjEyMDk3NzY4NjU5ODE1fQ.9Hao_dtvvKs-1D2Rdy7C6RGcREFQMo2JXqapTOajNoc")
     }
 
     required init?(coder: NSCoder) {
