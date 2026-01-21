@@ -260,5 +260,5 @@ final class MatchResultConfirmView: BaseUIView {
         winnerValueLabel.text = winnerNickname
         myScoreLabel.text = "\(myScore)"
         opponentScoreLabel.text = "\(opponentScore)"
-    }    
+    }
 }
