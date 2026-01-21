@@ -50,7 +50,7 @@ final class ChangeAddressView: BaseUIView {
     }
     
     private let addressLabel = UILabel().then {
-        $0.text = "주소를 검색해주세요"
+        $0.text = "도로명 주소를 검색해주세요"
         $0.textColor = .Text.disabled
         $0.font = .systemFont(ofSize: 16)
         $0.isUserInteractionEnabled = false
