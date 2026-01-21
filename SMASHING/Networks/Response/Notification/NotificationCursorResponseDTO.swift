@@ -16,11 +16,11 @@ struct NotificationCursorResponseDTO: Codable {
 
 struct NotificationSummaryResponseDTO: Codable {
     let notificationId: String
-    let type: String
+    let type: NotificationType
     let title: String
     let content: String
     let linkUrl: String
-    let isRead: Bool
+    var isRead: Bool
     let createdAt: String
     let senderNickname: String
     let receiverProfileId: String

@@ -8,12 +8,12 @@
 import Alamofire
 import Moya
 
-enum NotificationTarget {
+enum NotificationAPI {
     case getNotifications(size: Int, cursor: String?, snapshotAt: String?)
     case readNotification(notificationId: String)
 }
 
-extension NotificationTarget: BaseTargetType {
+extension NotificationAPI: BaseTargetType {
     var path: String {
         switch self {
         case .getNotifications:
