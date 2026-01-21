@@ -32,15 +32,18 @@ final class NotificationCoordinator: Coordinator {
         navigationController.pushViewController(viewController, animated: false)
         
         viewModel.output.navConfirmedMatchManage.sink { [weak self] in
-            print("navConfirmedMatchManage")
             self?.action?(.navConfirmedMatchManage)
             self?.navigationController.popViewController(animated: true)
         }
         .store(in: &cancellables)
         
         viewModel.output.navRequestedMatchManage.sink { [weak self] in
-            print("navRequestedMatchManage")
             self?.action?(.navRequestedMatchManage)
+            self?.navigationController.popViewController(animated: true)
+        }
+        .store(in: &cancellables)
+        
+        viewModel.output.navPop.sink { [weak self] in
             self?.navigationController.popViewController(animated: true)
         }
         .store(in: &cancellables)

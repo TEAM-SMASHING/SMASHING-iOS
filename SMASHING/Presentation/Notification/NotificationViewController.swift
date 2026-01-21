@@ -22,6 +22,7 @@ final class NotificationViewModel: NotificationViewModelProtocol {
         case viewDidLoad
         case reachedBottom
         case cellRead(index: Int)
+        case backTapped
     }
     
     struct Output {
@@ -30,6 +31,7 @@ final class NotificationViewModel: NotificationViewModelProtocol {
         let navReview = PassthroughSubject<Void, Never>()
         let navRequestedMatchManage = PassthroughSubject<Void, Never>()
         let navConfirmedMatchManage = PassthroughSubject<Void, Never>()
+        let navPop = PassthroughSubject<Void, Never>()
     }
     
     private let service: NotificationServiceProtocol
@@ -62,9 +64,11 @@ final class NotificationViewModel: NotificationViewModelProtocol {
                         output.navReview.send()
                     case .matchingRequested:
                         output.navRequestedMatchManage.send()
-                    default :
+                    default:
                         output.navConfirmedMatchManage.send()
                     }
+                case .backTapped:
+                    output.navPop.send()
                 }
             }
             .store(in: &cancellables)
@@ -172,6 +176,10 @@ final class NotificationViewController: BaseViewController {
                 inputSubject.send(.reachedBottom)
             }
             .store(in: &cancellables)
+        
+        mainView.backAction = { [weak self] in
+            self?.inputSubject.send(.backTapped)
+        }
     }
 }
 

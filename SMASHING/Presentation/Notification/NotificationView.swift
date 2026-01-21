@@ -49,7 +49,7 @@ final class NotificationView: BaseUIView {
         
         notificationCollection.snp.makeConstraints {
             $0.top.equalTo(navigationBar.snp.bottom)
-            $0.horizontalEdges.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(8)
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
     }

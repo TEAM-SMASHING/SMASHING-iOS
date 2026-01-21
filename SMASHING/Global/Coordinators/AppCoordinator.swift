@@ -37,7 +37,7 @@ final class AppCoordinator: Coordinator {
         
         loginCoordinator.finishWithTabBar = { [weak self] in
             self?.removeChildCoordinator(loginCoordinator)
-            self?.showTabBarFlow()
+            self?.showNotificationFlow()
         }
         
         childCoordinators.append(loginCoordinator)
