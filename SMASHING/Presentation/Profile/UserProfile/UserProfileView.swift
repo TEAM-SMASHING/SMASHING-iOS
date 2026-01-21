@@ -22,15 +22,20 @@ final class UserProfileView: BaseUIView {
     
     var skipAction: (() -> Void)?
     var acceptAction: (() -> Void)?
+    var backAction: (() -> Void)?
+    var challengeAction: (() -> Void)? {
+        didSet { profileCard.challengeAction = challengeAction }
+    }
     
     // MARK: - UI Components
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    private let navigationBar = CustomNavigationBar(title: "프로필").then {
-        $0.setLeftButtonHidden(true)
-    }
+    private lazy var navigationBar = CustomNavigationBar(
+        title: "프로필", leftAction: { [weak self] in
+        self?.backAction?()
+    })
     
     private let profileCard = ProfileCard().then {
         $0.addChallengeButton()
@@ -83,7 +88,7 @@ final class UserProfileView: BaseUIView {
         profileCard.snp.makeConstraints {
             $0.top.equalToSuperview().offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(223)
+            $0.height.equalTo(222)
         }
         
         tierCard.snp.makeConstraints {
@@ -116,6 +121,13 @@ final class UserProfileView: BaseUIView {
             profileCard.changeButtonState(isEnabled: false)
             showBottomButtons(isShown: false)
         }
+    }
+
+    func configure(with profile: OtherUserProfileResponse, mode: UserProfileView.Mode) {
+        profileCard.configure(profile: profile)
+        tierCard.configure(profile: profile)
+        winRateCard.configure(profile: profile)
+        configure(mode: mode)
     }
     
     private func showBottomButtons(isShown: Bool) {
