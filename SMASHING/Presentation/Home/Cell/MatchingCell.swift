@@ -27,6 +27,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     private let myImage = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 32
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
     }
@@ -50,6 +52,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     private let rivalImage = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 32
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
     }
@@ -61,7 +65,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.textAlignment = .center
     }
     
-    private let writeResultButton = UIButton().then {
+    lazy var writeResultButton = UIButton().then {
         $0.setTitle("결과 작성하기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textMdM)
         $0.setTitleColor(.Text.muted, for: .normal)
@@ -115,21 +119,29 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
     }
     
-    func configure(with matching: MatchingConfirmedGameDTO, myNickname: String) {
+    func configure(with matching: MatchingConfirmedGameDTO, myNickname: String, myUserId: String) {
+        myImage.image = UIImage.defaultProfileImage(name: myNickname)
+        rivalImage.image = UIImage.defaultProfileImage(name: matching.opponent.nickname)
         myNickName.text = myNickname
         rivalNickName.text = matching.opponent.nickname
         
         let resultStatus = matching.resultStatus
-        // 버튼 활성화 여부
-        let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
+        let isMySubmission = matching.latestSubmitterId == myUserId
         
-        writeResultButton.setTitle(resultStatus.buttonTitle, for: .normal)
-        writeResultButton.isEnabled = canSubmit
+        // WAITING_CONFIRMATION 상태에서 상대방이 제출했으면 확인 가능
+        let canConfirm = resultStatus.canConfirm(isMySubmission: isMySubmission)
+        let canSubmit = resultStatus.canSubmit(isMySubmission: isMySubmission) && !matching.isSubmitLocked
+//        let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
         
-        updateButtonStyle(for: resultStatus, canSubmit: canSubmit)
+        let buttonTitle = resultStatus.buttonTitle(isMySubmission: isMySubmission)
+        
+        writeResultButton.setTitle(buttonTitle, for: .normal)
+        writeResultButton.isEnabled = canSubmit || canConfirm
+        
+        updateButtonStyle(for: resultStatus, isMySubmission: isMySubmission ,canSubmit: canSubmit, canConfirm: canConfirm)
     }
     
-    private func updateButtonStyle(for status: GameResultStatus, canSubmit: Bool) {
+    private func updateButtonStyle(for status: GameResultStatus, isMySubmission: Bool, canSubmit: Bool, canConfirm: Bool) {
         
         switch status {
         case .pendingResult:
@@ -139,14 +151,20 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
             writeResultButton.setTitleColor(.Button.textRejected, for: .normal)
         case .waitingConfirmation:
-            writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
-            writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+            if canConfirm {
+                // 상대방이 제출 → 내가 확인해야 함
+                writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
+                writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
+            } else {
+                writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
+                writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+            }
+            
         case .canceled:
             writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
             writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
         case .resultConfirmed:
-            writeResultButton.backgroundColor = .Button.backgroundConfirmed
-            writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
+            break
         }
     }
     

@@ -31,8 +31,11 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
+        $0.clipsToBounds = true
         $0.contentMode = .scaleAspectFill
         $0.tintColor = .white
+        $0.layer.cornerRadius = 20
+
     }
     
     private let nameAndTierStackView = UIStackView().then {
@@ -104,6 +107,7 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         super.prepareForReuse()
         rankLabel.isHidden = false
         tierImageView.isHidden = true
+        profileImageView.image = nil
     }
     
     func configure(with ranker: RankingUserDTO) {
@@ -126,6 +130,7 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             tierImageView.isHidden = true
             rankLabel.text = ranker.rank.description
         }
+        profileImageView.image = UIImage.defaultProfileImage(name: ranker.nickname)
         nameLabel.text = ranker.nickname
         tierLabel.text = ranker.tierWithLpText
     }

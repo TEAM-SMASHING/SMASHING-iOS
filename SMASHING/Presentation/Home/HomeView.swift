@@ -44,6 +44,7 @@ final class HomeView: UICollectionView {
         self.cellRegister(MatchingCell.self)
         self.cellRegister(RecomendedUserCell.self)
         self.cellRegister(RankingCell.self)
+        self.cellRegister(EmptyMatchingCell.self)
         
         register(
             MatchingSectionHeader.self,

@@ -30,6 +30,10 @@ final class HomeViewController: BaseViewController {
         return KeychainService.get(key: Environment.nicknameKey) ?? ""
     }
     
+    private var myUserId: String {
+        return KeychainService.get(key: Environment.userIdKey) ?? ""
+    }
+    
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -83,6 +87,24 @@ final class HomeViewController: BaseViewController {
                 self?.homeView.reloadSections(IndexSet(integer: HomeViewLayout.ranking.rawValue))
             }
             .store(in: &cancellables)
+        
+        output.navToMatchResultConfirm
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] gameData in
+                self?.navigateToMatchResultConfirm(gameData: gameData)
+            }
+            .store(in: &cancellables)
+    }
+    private func navigateToMatchResultConfirm(gameData: MatchingConfirmedGameDTO) {
+        guard let submissionId = gameData.latestSubmissionId else { return }
+        let viewModel = MatchResultConfirmViewModel(
+            gameData: gameData,
+            submissionId: submissionId,
+            myUserId: myUserId
+        )
+        let vc = MatchResultConfirmViewController(viewModel: viewModel)
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -98,7 +120,7 @@ extension HomeViewController: UICollectionViewDataSource {
         case .navigationBar:
             return 1
         case .matching:
-            return recentMatching.isEmpty ? 0 : 1
+            return 1
         case .recommendedUser:
             return recommendedUsers.count
         case .ranking:
@@ -114,13 +136,31 @@ extension HomeViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNavigationBarCell.reuseIdentifier, for: indexPath) as? HomeNavigationBarCell else { return UICollectionViewCell() }
             return cell
         case .matching:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.reuseIdentifier, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
-            let matching = recentMatching[indexPath.item]
-            cell.configure(with: matching, myNickname: myNickname)
-            cell.onWriteResultButtonTapped = { [weak self] in
-                self?.input.send(.matchingResultCreateButtonTapped(matching))
+            if recentMatching.isEmpty {
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyMatchingCell.reuseIdentifier, for: indexPath) as? EmptyMatchingCell else { return UICollectionViewCell() }
+                cell.onExploreButtonTapped = { [weak self] in
+//                           self?.input.send(.matchingSeeAllTapped) // “매칭 탐색” 이동 트리거
+                    print("매칭 탐색하러가기")
+                       }
+                       return cell
+            } else {
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.reuseIdentifier, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
+                let matching = recentMatching[indexPath.item]
+                cell.configure(with: matching, myNickname: myNickname, myUserId: myUserId)
+                cell.onWriteResultButtonTapped = { [weak self] in
+                    guard let self else { return }
+                    let isMySubmission = matching.latestSubmitterId == self.myUserId
+                    let canConfirm = matching.resultStatus.canConfirm(isMySubmission: isMySubmission)
+                    if canConfirm {
+                        // 상대방이 제출한 결과 확인 플로우
+                        self.input.send(.matchingResultConfirmButtonTapped(matching))
+                    } else {
+                        // 결과 작성 플로우
+                        self.input.send(.matchingResultCreateButtonTapped(matching))
+                    }
+                }
+                return cell
             }
-            return cell
             
         case .recommendedUser:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecomendedUserCell.reuseIdentifier, for: indexPath) as? RecomendedUserCell else { return UICollectionViewCell() }
@@ -149,14 +189,14 @@ extension HomeViewController: UICollectionViewDataSource {
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: MatchingSectionHeader.reuseIdentifier, for: indexPath) as? MatchingSectionHeader else {
                 return UICollectionReusableView()
             }
-
+            
             header.configure(title: "\(myNickname)님,", subTitle: "곧 다가오는 매칭이 있어요")
             return header
         case .recommendedUser:
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.reuseIdentifier, for: indexPath) as? CommonSectionHeader else {
                 return UICollectionReusableView()
             }
-            header.configure(title: "주변 추천 유저", showInfoButton: true)
+            header.configure(title: "\(myNickname)님을 위한 추천", showInfoButton: true)
             header.onInfoButtonTapped = { [weak self ] in
                 self?.showRecommendedUserInfo()
             }
@@ -178,9 +218,9 @@ extension HomeViewController: UICollectionViewDataSource {
 
 extension HomeViewController: UICollectionViewDelegate {
     // 추후 프로필 이동 기능 구현 예정
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//
-//    }
+    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    //
+    //    }
 }
 
 // MARK: Header Button
