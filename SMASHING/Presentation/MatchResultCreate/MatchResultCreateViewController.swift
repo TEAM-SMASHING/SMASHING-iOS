@@ -87,6 +87,13 @@ final class MatchResultCreateViewController: BaseViewController {
             }
             .store(in: &cancellables)
         
+        output.prefillData
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] prefill in
+                self?.mainView.applyPrefillData(myScore: prefill.myScore, opponentScore: prefill.opponentScore)
+            }
+            .store(in: &cancellables)
+        
         output.isNextButtonEnabled
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isEnabled in

@@ -276,6 +276,13 @@ final class MatchResultCreateView: BaseUIView {
         matchResultCard.configure(myName: myNickname, myImage: UIImage(systemName: "circle.fill"), rivalName: opponentNickname, rivalImage: UIImage(systemName: "circle.fill"))
     }
     
+    func applyPrefillData(myScore: Int, opponentScore: Int) {
+        myScoreTextField.text = String(myScore)
+               rivalScoreTextField.text = String(opponentScore)
+               updateScoreToMatchResultCard()
+               notifyScoreChanged()
+    }
+    
     func getSelectedWinner() -> String? {
         return selectedWinner
     }
