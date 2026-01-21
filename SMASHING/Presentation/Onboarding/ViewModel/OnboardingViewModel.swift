@@ -184,7 +184,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                 case .addressTapped:
                     output.navAddressPushEvent.send()
                 case .addressSelected(let address):
-                    store.address = address
+                    store.address = address.replacingOccurrences(of: "서울 ", with: "")
                     output.buttonEnabled.send(true)
                 default :
                     break

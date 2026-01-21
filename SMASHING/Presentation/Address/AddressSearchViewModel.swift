@@ -62,7 +62,7 @@ final class AddressSearchViewModel: AddressSearchViewModelProtocol {
                 case .reachedBottom:
                     self?.handleLoadNextPage()
                 case .addressSelected(let address):
-                    self?.output.navAddressSelected.send(address.replacingOccurrences(of: "서울 ", with: ""))
+                    self?.output.navAddressSelected.send(address)
                 case .backTapped:
                     self?.output.navBackTapped.send()
                 case .searchAddress:
