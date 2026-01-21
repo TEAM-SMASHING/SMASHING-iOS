@@ -115,41 +115,53 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
     }
     
-    func configure(with matching: MatchingConfirmedGameDTO, myNickname: String) {
+    func configure(with matching: MatchingConfirmedGameDTO, myNickname: String, myUserId: String) {
         myNickName.text = myNickname
         rivalNickName.text = matching.opponent.nickname
         
         let resultStatus = matching.resultStatus
-        // 버튼 활성화 여부
-        let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
-
-        writeResultButton.setTitle(resultStatus.buttonTitle, for: .normal)
-        writeResultButton.isEnabled = canSubmit
+        let isMySubmission = matching.latestSubmitterId == myUserId
         
-        updateButtonStyle(for: resultStatus, canSubmit: canSubmit)
+        // WAITING_CONFIRMATION 상태에서 상대방이 제출했으면 확인 가능
+        let canConfirm = resultStatus.canConfirm(isMySubmission: isMySubmission)
+        let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
+        
+        let buttonTitle = resultStatus.buttonTitle(isMySubmission: isMySubmission)
+        
+        writeResultButton.setTitle(buttonTitle, for: .normal)
+        writeResultButton.isEnabled = canSubmit || canConfirm
+        
+        updateButtonStyle(for: resultStatus, isMySubmission: isMySubmission ,canSubmit: canSubmit, canConfirm: canConfirm)
     }
     
-    private func updateButtonStyle(for status: GameResultStatus, canSubmit: Bool) {
+    private func updateButtonStyle(for status: GameResultStatus, isMySubmission: Bool, canSubmit: Bool, canConfirm: Bool) {
         
         switch status {
-                case .pendingResult:
-                    writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
+        case .pendingResult:
+            writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
             writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
-                case .resultRejected:
+        case .resultRejected:
             writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
             writeResultButton.setTitleColor(.Button.textRejected, for: .normal)
-                case .waitingConfirmation:
+        case .waitingConfirmation:
+            if canConfirm {
+                // 상대방이 제출 → 내가 확인해야 함
+                writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
+                writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
+            } else {
+                writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
+                writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+            }
+            
+        case .canceled:
             writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
-                    writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
-                case .canceled:
-                    writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
-                    writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
-                }
+            writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+        }
     }
     
     @objc
-       private func writeResultButtonDidTap() {
-           print("🔴 writeResultButtonDidTap 호출됨")
-           onWriteResultButtonTapped?()
-       }
+    private func writeResultButtonDidTap() {
+        print("🔴 writeResultButtonDidTap 호출됨")
+        onWriteResultButtonTapped?()
+    }
 }

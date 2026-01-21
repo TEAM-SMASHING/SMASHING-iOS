@@ -128,11 +128,18 @@ final class MatchResultCreateViewController: BaseViewController {
     private func didTapNextButton() {
         input.send(.nextButtonTapped)
     }
+//    
+//    private func navigateToReviewCreate(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String) {
+//        let vc = ReviewCreateViewController(viewModel: ReviewCreateViewModel(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId))
+//        navigationController?.pushViewController(vc, animated: true)
+//    }
     
     private func navigateToReviewCreate(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String) {
-        let vc = ReviewCreateViewController(viewModel: ReviewCreateViewModel(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId))
-        navigationController?.pushViewController(vc, animated: true)
-    }
+            let flowType = ReviewFlowType.submission(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId)
+            let vc = ReviewCreateViewController(viewModel: ReviewCreateViewModel(flowType: flowType))
+        print("게임데이터\(gameData), 매치result\(matchResultData), myuserid\(myUserId)")
+            navigationController?.pushViewController(vc, animated: true)
+        }
     
     private func handleResubmission(_ matchResultData: MatchResultData) {
            // TODO: Resubmission API 호출 구현

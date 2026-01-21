@@ -30,6 +30,10 @@ final class HomeViewController: BaseViewController {
         return KeychainService.get(key: Environment.nicknameKey) ?? ""
     }
     
+    private var myUserId: String {
+        return KeychainService.get(key: Environment.userIdKey) ?? ""
+    }
+    
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -83,7 +87,25 @@ final class HomeViewController: BaseViewController {
                 self?.homeView.reloadSections(IndexSet(integer: HomeViewLayout.ranking.rawValue))
             }
             .store(in: &cancellables)
+        
+        output.navToMatchResultConfirm
+                   .receive(on: DispatchQueue.main)
+                   .sink { [weak self] gameData in
+                       self?.navigateToMatchResultConfirm(gameData: gameData)
+                   }
+                   .store(in: &cancellables)
     }
+    private func navigateToMatchResultConfirm(gameData: MatchingConfirmedGameDTO) {
+           guard let submissionId = gameData.latestSubmissionId else { return }
+           let viewModel = MatchResultConfirmViewModel(
+               gameData: gameData,
+               submissionId: submissionId,
+               myUserId: myUserId
+           )
+           let vc = MatchResultConfirmViewController(viewModel: viewModel)
+        vc.hidesBottomBarWhenPushed = true
+           navigationController?.pushViewController(vc, animated: true)
+       }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
@@ -116,9 +138,18 @@ extension HomeViewController: UICollectionViewDataSource {
         case .matching:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.reuseIdentifier, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
             let matching = recentMatching[indexPath.item]
-            cell.configure(with: matching, myNickname: myNickname)
+            cell.configure(with: matching, myNickname: myNickname, myUserId: myUserId)
             cell.onWriteResultButtonTapped = { [weak self] in
-                self?.input.send(.matchingResultCreateButtonTapped(matching))
+                guard let self else { return }
+                let isMySubmission = matching.latestSubmitterId == self.myUserId
+                               let canConfirm = matching.resultStatus.canConfirm(isMySubmission: isMySubmission)
+                if canConfirm {
+                    // 상대방이 제출한 결과 확인 플로우
+                                       self.input.send(.matchingResultConfirmButtonTapped(matching))
+                } else {
+                    // 결과 작성 플로우
+                    self.input.send(.matchingResultCreateButtonTapped(matching))
+                }
             }
             return cell
             
