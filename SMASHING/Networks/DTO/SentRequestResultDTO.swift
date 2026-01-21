@@ -35,7 +35,7 @@ struct SentRequestResultDTO: Codable {
 struct SentRequestReceiverDTO: Codable {
     let userID: String
     let nickname: String
-    let gender: String
+    let gender: Gender
     let reviewCount: Int
     let tierCode: String
     let wins: Int

@@ -141,41 +141,58 @@ extension Tier {
     var image: UIImage {
         switch self {
         case .iron:
-                .tierIronStage
+            .tierIronStage
         case .bronze3:
-                .tierBronzeStage3
+            .tierBronzeStage3
         case .bronze2:
-                .tierBronzeStage2
+            .tierBronzeStage2
         case .bronze1:
-                .tierBronzeStage1
+            .tierBronzeStage1
         case .silver3:
-                .tierSilverStage3
+            .tierSilverStage3
         case .silver2:
-                .tierSilverStage2
+            .tierSilverStage2
         case .silver1:
-                .tierSilverStage1
+            .tierSilverStage1
         case .gold3:
-                .tierGoldStage3
+            .tierGoldStage3
         case .gold2:
-                .tierGoldStage2
+            .tierGoldStage2
         case .gold1:
-                .tierGoldStage1
+            .tierGoldStage1
         case .platinum3:
-                .tierPlatinumStage3
+            .tierPlatinumStage3
         case .platinum2:
-                .tierPlatinumStage2
+            .tierPlatinumStage2
         case .platinum1:
-                .tierPlatinumStage1
+            .tierPlatinumStage1
         case .diamond3:
-                .tierDiamondStage3
+            .tierDiamondStage3
         case .diamond2:
-                .tierDiamondStage2
+            .tierDiamondStage2
         case .diamond1:
-                .tierDiamondStage1
+            .tierDiamondStage1
         case .challenger:
-                .tierChallengerStage
+            .tierChallengerStage
+        }
+    }
+    
+    var badge: UIImage {
+        switch self {
+        case .iron:
+            return .tierIron
+        case .bronze1, .bronze2, .bronze3:
+            return .tierBronze
+        case .silver1, .silver2, .silver3:
+            return .tierSliver
+        case .gold1, .gold2, .gold3:
+            return .tierGold
+        case .platinum1, .platinum3, .platinum2:
+            return .tierPlatium
+        case .diamond1, .diamond2, .diamond3:
+            return .tierDiamond
+        case .challenger:
+            return .tierChallenger
         }
     }
 }
-
-

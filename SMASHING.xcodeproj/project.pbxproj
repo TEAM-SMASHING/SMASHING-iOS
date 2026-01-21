@@ -249,6 +249,8 @@
 		};
 		630B28912F00C45B00C88397 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 630B287D2F00C45A00C88397 /* SMASHING */;
+			baseConfigurationReferenceRelativePath = Global/Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -313,6 +315,8 @@
 		};
 		630B28922F00C45B00C88397 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 630B287D2F00C45A00C88397 /* SMASHING */;
+			baseConfigurationReferenceRelativePath = Global/Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

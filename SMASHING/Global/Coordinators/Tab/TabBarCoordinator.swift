@@ -39,4 +39,3 @@ final class TabBarCoordinator: Coordinator {
         navigationController.pushViewController(tabBarController, animated: false)
     }
 }
-

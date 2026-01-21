@@ -7,83 +7,172 @@
 
 import UIKit
 
+import Combine
 import SnapKit
 import Then
 
 final class ReceiveRequestViewController: BaseViewController {
 
-    //MARK: -UIComponents
+    // MARK: - Properties
 
-    private lazy var collectionview : UICollectionView = {
+    private let viewModel: any ReceiveRequestViewModelProtocol
+    private let input = PassthroughSubject<ReceiveRequestViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
+
+    private var requestList: [ReceiveRequestResultDTO] = []
+
+    // MARK: - UI Components
+
+    private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 12
         layout.minimumInteritemSpacing = 11
         layout.sectionInset = UIEdgeInsets(top: 12, left: 16, bottom: 16, right: 16)
 
-        let collectionview = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionview.backgroundColor = .black
-        collectionview.delegate = self
-        collectionview.dataSource = self
-        collectionview.showsVerticalScrollIndicator = false
-        collectionview.register(ReceiveRequestCell.self, forCellWithReuseIdentifier: ReceiveRequestCell.reuseIdentifier)
-        return collectionview
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.register(ReceiveRequestCell.self, forCellWithReuseIdentifier: ReceiveRequestCell.reuseIdentifier)
+        return collectionView
     }()
 
-    //MARK: - Properties
+    private let emptyLabel = UILabel().then {
+        $0.text = "받은 요청이 없습니다"
+        $0.font = .pretendard(.textMdM)
+        $0.textColor = .Text.tertiary
+        $0.textAlignment = .center
+        $0.isHidden = true
+    }
 
-    private var matches: [TempRequesterInfo] = []
+    private let loadingIndicator = UIActivityIndicatorView(style: .medium).then {
+        $0.hidesWhenStopped = true
+        $0.color = .Text.secondary
+    }
+
+    // MARK: - Initialize
+
+    init(viewModel: ReceiveRequestViewModel = ReceiveRequestViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        _ = KeychainService.add(key:Environment.accessTokenKey , value: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwUDZWVksyRk1HNEZYIiwidHlwZSI6IkFDQ0VTU19UT0tFTiIsInJvbGVzIjpbXSwiaWF0IjoxNzY4NjU5ODE1LCJleHAiOjEyMDk3NzY4NjU5ODE1fQ.9Hao_dtvvKs-1D2Rdy7C6RGcREFQMo2JXqapTOajNoc")
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadMockData()
+        bind()
+        input.send(.viewDidLoad)
     }
-    
-    //MARK: - Setup Methods
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        input.send(.refresh)
+    }
+
+    // MARK: - Setup Methods
 
     override func setUI() {
         view.backgroundColor = UIColor(resource: .Background.canvas)
-        view.addSubviews(collectionview)
+        view.addSubviews(collectionView, emptyLabel, loadingIndicator)
     }
 
     override func setLayout() {
-        super.setLayout()
-        collectionview.snp.makeConstraints {
+        collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-    }
 
-    //MARK: - private Methods
+        emptyLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
 
-    private func getTierName(tier: Int) -> String {
-        switch tier {
-        case 1:
-            return "Iron I"
-        case 2:
-            return "Bronze I"
-        case 3:
-            return "Silver I"
-        case 4:
-            return "Gold I"
-        case 5:
-            return "Platinum I"
-        case 6:
-            return "Diamond I"
-        case 7:
-            return "Challenger"
-        default:
-            return "Unranked"
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
 
+    // MARK: - Bind
+
+    private func bind() {
+        let output = viewModel.transform(input: input.eraseToAnyPublisher())
+
+        output.requestList
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] requests in
+                guard let self else { return }
+                self.requestList = requests
+                self.collectionView.reloadData()
+                self.emptyLabel.isHidden = !requests.isEmpty
+            }
+            .store(in: &cancellables)
+
+        output.isLoading
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
+                guard let self else { return }
+                if isLoading {
+                    self.loadingIndicator.startAnimating()
+                } else {
+                    self.loadingIndicator.stopAnimating()
+                }
+            }
+            .store(in: &cancellables)
+
+        output.isLoadingMore
+            .receive(on: DispatchQueue.main)
+            .sink { _ in }
+            .store(in: &cancellables)
+
+        output.errorMessage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                self?.showErrorToast(message: message)
+            }
+            .store(in: &cancellables)
+
+        collectionView.reachedBottomPublisher
+            .sink { [weak self] in
+                self?.input.send(.loadMore)
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - Actions
+
+    private func skipButtonDidTap(at index: Int) {
+        input.send(.skipTapped(index: index))
+    }
+
+    private func acceptButtonDidTap(at index: Int) {
+        input.send(.acceptTapped(index: index))
+    }
+
+    func refresh() {
+        input.send(.refresh)
+    }
+
+    // MARK: - Helper Methods
+
+    private func showErrorToast(message: String) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
 }
+
+// MARK: - UICollectionViewDataSource
 
 extension ReceiveRequestViewController: UICollectionViewDataSource {
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int) -> Int {
-        return self.matches.count
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.requestList.count
     }
 
     func collectionView(
@@ -97,15 +186,17 @@ extension ReceiveRequestViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
-        let match = self.matches[indexPath.row]
-        cell.configure(
-            nickname: match.nickname,
-            gender: match.gender,
-            tierCode: match.tierCode,
-            wins: match.wins,
-            losses: match.losses,
-            reviews: match.reviewCount
-        )
+        let request = self.requestList[indexPath.row]
+        cell.configure(with: request.requester)
+
+        cell.onSkipTapped = { [weak self] in
+            self?.skipButtonDidTap(at: indexPath.item)
+        }
+
+        cell.onAcceptTapped = { [weak self] in
+            self?.acceptButtonDidTap(at: indexPath.item)
+        }
+
         return cell
     }
 }
@@ -123,43 +214,4 @@ extension ReceiveRequestViewController: UICollectionViewDelegateFlowLayout {
         let height: CGFloat = 224
         return CGSize(width: width, height: height)
     }
-}
-
-//MARK: - Data
-
-extension ReceiveRequestViewController {
-
-    private func loadMockData() {
-//        self.matches = [
-//            TempRequesterInfo(
-//                userId: "0USER000111222",
-//                nickname: "윤서",
-//                gender: "FEMALE",
-//                tierId: 3,
-//                wins: 12,
-//                losses: 7,
-//                reviewCount: 5
-//            ),
-//            TempRequesterInfo(
-//                userId: "0USER000111223",
-//                nickname: "민준",
-//                gender: "MALE",
-//                tierId: 5,
-//                wins: 45,
-//                losses: 12,
-//                reviewCount: 15
-//            ),
-//            TempRequesterInfo(
-//                userId: "0USER000111224",
-//                nickname: "지우",
-//                gender: "FEMALE",
-//                tierId: 2,
-//                wins: 8,
-//                losses: 10,
-//                reviewCount: 3
-//            )
-//        ]
-        self.collectionview.reloadData()
-    }
-
 }

@@ -31,6 +31,7 @@ final class NetworkProvider<API: TargetType> {
                             print("Decoding Error: \(error)")
                             promise(.failure(.decoding))
                         }
+                    case 400: promise(.failure(.badRequest))
                     case 401: promise(.failure(.unauthorized))
                     case 403: promise(.failure(.forbidden))
                     case 404: promise(.failure(.notFound))

@@ -164,19 +164,12 @@ final class SentRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
 
     // MARK: - Configuration
 
-    func configure(
-        nickname: String,
-        gender: String,
-        tierCode: String,
-        wins: Int,
-        losses: Int,
-        reviews: Int
-    ) {
-        self.nicknameLabel.text = nickname
-        self.genderIconImageView.image = gender == "MALE" ? .icManSm : .icWomanSm
-        self.recordValueLabel.text = "\(wins)승 \(losses)패"
-        self.reviewValueLabel.text = "\(reviews)"
-        self.configureTierBadge(tierCode: tierCode)
+    func configure(with receiver: SentRequestReceiverDTO) {
+        self.nicknameLabel.text = receiver.nickname
+        self.genderIconImageView.image = receiver.gender.imageSm
+        self.recordValueLabel.text = "\(receiver.wins)승 \(receiver.losses)패"
+        self.reviewValueLabel.text = "\(receiver.reviewCount)"
+        self.configureTierBadge(tierCode: receiver.tierCode)
     }
 
     private func configureTierBadge(tierCode: String) {
@@ -186,7 +179,7 @@ final class SentRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
             self.tierBadgeLabel.textColor = .Text.primary
             return
         }
-        
+
         self.tierBadgeLabel.text = tier.displayName
         self.tierBadgeLabel.backgroundColor = tier.backgroundColor
         self.tierBadgeLabel.textColor = tier.textColor
