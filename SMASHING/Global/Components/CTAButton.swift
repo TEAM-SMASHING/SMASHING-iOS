@@ -34,7 +34,7 @@ final class CTAButton: UIButton {
     
     private func setAttributes(label: String) {
         self.setTitle(label, for: .normal)
-        self.titleLabel?.font = .pretendard(.subtitleLgSb)
+        self.titleLabel?.font = .pretendard(.textMdSb)
         
         self.clipsToBounds = true
         self.layer.cornerRadius = 8
