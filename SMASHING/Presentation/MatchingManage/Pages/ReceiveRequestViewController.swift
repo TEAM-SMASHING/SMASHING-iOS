@@ -18,7 +18,6 @@ final class ReceiveRequestViewController: BaseViewController {
     private let viewModel: any ReceiveRequestViewModelProtocol
     private let input = PassthroughSubject<ReceiveRequestViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
-
     private var requestList: [ReceiveRequestResultDTO] = []
 
     // MARK: - UI Components
