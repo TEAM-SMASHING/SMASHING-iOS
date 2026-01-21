@@ -80,8 +80,8 @@ final class WinRateCard: BaseUIView {
         $0.textColor = .Text.secondary
     }
     
-    private let divider1 = UIView().then { $0.backgroundColor = .darkGray }
-    private let divider2 = UIView().then { $0.backgroundColor = .darkGray }
+    private let divider1 = UIView().then { $0.backgroundColor = .Border.primary }
+    private let divider2 = UIView().then { $0.backgroundColor = .Border.primary }
     
     // MARK: - Setup
     
@@ -126,9 +126,19 @@ final class WinRateCard: BaseUIView {
         let total = profile.activeProfile.wins + profile.activeProfile.losses
         let rate = total == 0 ? 0.0 : Float(profile.activeProfile.wins) / (Float(total))
         let roundedRate = (rate * 1000).rounded() / 10
-        
+
         winCountLabel.text = profile.activeProfile.wins.description
         loseCountLabel.text = profile.activeProfile.losses.description
+        ratePercentageLabel.text = roundedRate.description + "%"
+    }
+
+    func configure(profile: OtherUserProfileResponse) {
+        let total = profile.selectedProfile.wins + profile.selectedProfile.losses
+        let rate = total == 0 ? 0.0 : Float(profile.selectedProfile.wins) / (Float(total))
+        let roundedRate = (rate * 1000).rounded() / 10
+
+        winCountLabel.text = profile.selectedProfile.wins.description
+        loseCountLabel.text = profile.selectedProfile.losses.description
         ratePercentageLabel.text = roundedRate.description + "%"
     }
 }
