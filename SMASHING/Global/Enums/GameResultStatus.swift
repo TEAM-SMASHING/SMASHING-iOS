@@ -38,4 +38,19 @@ enum GameResultStatus: String, Codable {
             return "매칭 취소 대기 중"
         }
     }
+    
+    /// WAITING_CONFIRMATION 상태에서 내가 제출자인지에 따라 버튼 타이틀 결정
+    func buttonTitle(isMySubmission: Bool) -> String {
+        switch self {
+        case .waitingConfirmation:
+            return isMySubmission ? "결과 확인 대기 중" : "경기 결과 확인하기"
+        default:
+            return buttonTitle
+        }
+    }
+    
+    /// WAITING_CONFIRMATION 상태에서 상대방이 제출했으면 확인 가능
+    func canConfirm(isMySubmission: Bool) -> Bool {
+        return self == .waitingConfirmation && !isMySubmission
+    }
 }
