@@ -49,7 +49,6 @@ final class RankingViewController: BaseViewController {
         super.viewDidLoad()
         setDummyData()
         view.backgroundColor = .Background.canvas
-        _ = KeychainService.add(key: Environment.accessTokenKey, value: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwUDZLRjZURFBUQ0ZSIiwidHlwZSI6IkFDQ0VTU19UT0tFTiIsInJvbGVzIjpbXSwiaWF0IjoxNzY4NTg5Mzg0LCJleHAiOjEyMDk3NzY4NTg5Mzg0fQ.VwumDSiP-4x5VoW-39UOj83Zc-XBsHJVdrngA5hmpl0")
         setCollectionView()
         
         bind()
