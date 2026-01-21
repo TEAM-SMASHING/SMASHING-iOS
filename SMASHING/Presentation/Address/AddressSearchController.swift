@@ -92,6 +92,6 @@ extension AddressSearchViewController: UICollectionViewDataSource, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        inputSubject.send(.addressSelected(viewModel.searchResults[indexPath.item].replacingOccurrences(of: "서울 ", with: "")))
+        inputSubject.send(.addressSelected(viewModel.searchResults[indexPath.item]))
     }
 }
