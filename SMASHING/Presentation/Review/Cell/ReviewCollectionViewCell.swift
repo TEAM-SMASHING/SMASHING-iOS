@@ -22,17 +22,17 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     
     private let nicknameLabel = UILabel().then {
         $0.font = .pretendard(.textSmSb)
-        $0.textColor = .white
+        $0.textColor = .Text.primary
     }
     
     private let dateLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
-        $0.textColor = .systemGray2
+        $0.textColor = .Text.secondary
     }
     
     private let contentLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
-        $0.textColor = .white
+        $0.textColor = .Text.primary
         $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
@@ -68,8 +68,8 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     private func setupConstraints() {
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(16)
-            $0.leading.equalToSuperview()
             $0.size.equalTo(40)
+            $0.leading.equalToSuperview()
         }
         
         nicknameLabel.snp.makeConstraints {

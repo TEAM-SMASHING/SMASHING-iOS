@@ -23,8 +23,7 @@ extension Coordinator {
         if let transition = transition {
             navigationController.viewControllers.last?.view.layer.add(transition, forKey: nil)
         }
-        navigationController.viewControllers.last?
-            .present(NotificationViewController(), animated: true)
+        // navigationController.viewControllers.last?.present(NotificationViewController(), animated: true)
     }
     
     func presentToast(notificationType: NotificationType) {
