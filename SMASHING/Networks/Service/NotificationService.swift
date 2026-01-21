@@ -15,14 +15,14 @@ protocol NotificationServiceProtocol {
 
 final class NotificationService: NotificationServiceProtocol {
     func fetchNotifications(size: Int, cursor: String?, snapshotAt: String?) -> AnyPublisher<GenericResponse<NotificationCursorResponseDTO>, NetworkError> {
-        return NetworkProvider<NotificationTarget>.requestPublisher(
+        return NetworkProvider<NotificationAPI>.requestPublisher(
             .getNotifications(size: size, cursor: cursor, snapshotAt: snapshotAt),
             type: NotificationCursorResponseDTO.self
         )
     }
 
     func markAsRead(notificationId: String) -> AnyPublisher<NotificationBaseResponseDTO, NetworkError> {
-        return NetworkProvider<NotificationTarget>.plainRequestPublisher(
+        return NetworkProvider<NotificationAPI>.plainRequestPublisher(
             .readNotification(notificationId: notificationId),
             type: NotificationBaseResponseDTO.self
         )
