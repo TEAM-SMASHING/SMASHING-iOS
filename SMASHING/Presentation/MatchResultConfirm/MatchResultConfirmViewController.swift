@@ -63,11 +63,11 @@ final class MatchResultConfirmViewController: BaseViewController {
             .store(in: &cancellables)
         
         output.navToReviewCreate
-                    .receive(on: DispatchQueue.main)
-                    .sink { [weak self] gameId, submissionId, opponentNickname in
-                        self?.navigateToReviewCreate(gameId: gameId, submissionId: submissionId, opponentNickname: opponentNickname)
-                    }
-                    .store(in: &cancellables)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] gameId, submissionId, opponentNickname in
+                self?.navigateToReviewCreate(gameId: gameId, submissionId: submissionId, opponentNickname: opponentNickname)
+            }
+            .store(in: &cancellables)
         
         output.showRejectAlert
             .receive(on: DispatchQueue.main)
@@ -85,42 +85,42 @@ final class MatchResultConfirmViewController: BaseViewController {
     }
     
     @objc
-        private func confirmButtonDidTap() {
-            input.send(.confirmButtonTapped)
-        }
-
-        @objc
-        private func rejectButtonDidTap() {
-            input.send(.rejectButtonTapped)
-        }
+    private func confirmButtonDidTap() {
+        input.send(.confirmButtonTapped)
+    }
+    
+    @objc
+    private func rejectButtonDidTap() {
+        input.send(.rejectButtonTapped)
+    }
     
     private func navigateToReviewCreate(gameId: String, submissionId: String, opponentNickname: String) {
-           let flowType = ReviewFlowType.confirmation(
-               gameId: gameId,
-               submissionId: submissionId,
-               opponentNickname: opponentNickname
-           )
-           let vc = ReviewCreateViewController(
-               viewModel: ReviewCreateViewModel(flowType: flowType)
-           )
-           navigationController?.pushViewController(vc, animated: true)
-       }
+        let flowType = ReviewFlowType.confirmation(
+            gameId: gameId,
+            submissionId: submissionId,
+            opponentNickname: opponentNickname
+        )
+        let vc = ReviewCreateViewController(
+            viewModel: ReviewCreateViewModel(flowType: flowType)
+        )
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
     private func showRejectReasonBottomSheet() {
-           let bottomSheetVC = RejectReasonBottomSheetViewController()
-           bottomSheetVC.onReasonSelected = { [weak self] reason in
-               self?.viewModel.rejectResult(reason: reason)
-               print("바텀 시트 reason\(reason)")
-           }
-
-           if let sheet = bottomSheetVC.sheetPresentationController {
-               let customDetent = UISheetPresentationController.Detent.custom { _ in
-                   return 340
-               }
-               sheet.detents = [customDetent]
-               sheet.prefersGrabberVisible = true
-           }
-
-           present(bottomSheetVC, animated: true)
-       }
+        let bottomSheetVC = RejectReasonBottomSheetViewController()
+        bottomSheetVC.onReasonSelected = { [weak self] reason in
+            self?.viewModel.rejectResult(reason: reason)
+            print("바텀 시트 reason\(reason)")
+        }
+        
+        if let sheet = bottomSheetVC.sheetPresentationController {
+            let customDetent = UISheetPresentationController.Detent.custom { _ in
+                return 340
+            }
+            sheet.detents = [customDetent]
+            sheet.prefersGrabberVisible = true
+        }
+        
+        present(bottomSheetVC, animated: true)
+    }
 }
