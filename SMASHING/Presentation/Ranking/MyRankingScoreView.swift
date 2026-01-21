@@ -17,6 +17,8 @@ final class myRankingScoreView: BaseUIView {
     
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 20
         $0.contentMode = .scaleAspectFill
         $0.tintColor = .white
     }
@@ -48,7 +50,10 @@ final class myRankingScoreView: BaseUIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .Background.overlay
+        backgroundColor = .Background.surface
+        layer.cornerRadius = 8
+        layer.borderColor = UIColor.Border.tertiary.cgColor
+        layer.borderWidth = 1
     }
     
     required init?(coder: NSCoder) {
@@ -83,6 +88,7 @@ final class myRankingScoreView: BaseUIView {
     }
     
     func configure(with myRank: MyRankingDTO) {
+        profileImageView.image = UIImage.defaultProfileImage(name: myRank.nickname)
         nameLabel.text = myRank.nickname
         tierLabel.text = myRank.tierWithLpText
     }

@@ -14,7 +14,7 @@ struct KakaoLoginDataDTO: Decodable {
     let refreshToken: String?
     let kakaoId: String
     let userId: String?
-    let nickname: String
+    let nickname: String?
     let isCompletedSignUp: Bool
 }
 

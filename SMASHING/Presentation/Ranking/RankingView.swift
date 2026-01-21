@@ -13,11 +13,15 @@ import Then
 
 final class RankingView: BaseUIView {
     
+    var onBackTapped: (() -> Void)?
+    
     // MARK: - UI Components
     
     private let rankingEmptyView = RankingEmptyView()
     
-    let navigationBar = CustomNavigationBar(title: "전체 랭킹")
+    lazy var navigationBar = CustomNavigationBar(title: "전체 랭킹",
+                                                 leftAction: { [weak self] in
+        self?.onBackTapped?()})
     
     let topThreePodium = TopThreePodium()
     
@@ -90,8 +94,8 @@ final class RankingView: BaseUIView {
         collectionViewContainer.snp.makeConstraints {
             $0.top.equalTo(topThreePodium.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(myRankingScore.snp.top)
-            //            $0.bottom.equalToSuperview()
+//            $0.bottom.equalTo(myRankingScore.snp.top)
+                        $0.bottom.equalToSuperview()
         }
         
         rankingCollectionView.snp.makeConstraints {
@@ -103,9 +107,9 @@ final class RankingView: BaseUIView {
         }
         
         myRankingScore.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview()
-            $0.height.equalTo(88)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(5)
+            $0.height.equalTo(62)
         }
     }
     
