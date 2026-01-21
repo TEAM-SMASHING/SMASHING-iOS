@@ -124,7 +124,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         
         // WAITING_CONFIRMATION 상태에서 상대방이 제출했으면 확인 가능
         let canConfirm = resultStatus.canConfirm(isMySubmission: isMySubmission)
-        let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
+        let canSubmit = resultStatus.canSubmit(isMySubmission: isMySubmission) && !matching.isSubmitLocked
+//        let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
         
         let buttonTitle = resultStatus.buttonTitle(isMySubmission: isMySubmission)
         
@@ -156,6 +157,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         case .canceled:
             writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
             writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
+        case .resultConfirmed:
+            break
         }
     }
     

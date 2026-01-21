@@ -48,7 +48,10 @@ final class myRankingScoreView: BaseUIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .Background.overlay
+        backgroundColor = .Background.surface
+        layer.cornerRadius = 8
+        layer.borderColor = UIColor.Border.tertiary.cgColor
+        layer.borderWidth = 1
     }
     
     required init?(coder: NSCoder) {
