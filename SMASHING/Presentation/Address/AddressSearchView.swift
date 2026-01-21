@@ -44,7 +44,7 @@ final class AddressSearchView: BaseUIView {
     override func setLayout() {
         backButtton.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(16)
-            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(10)
             $0.size.equalTo(24)
         }
         
