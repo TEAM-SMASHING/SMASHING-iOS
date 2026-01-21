@@ -23,6 +23,17 @@ enum GameResultStatus: String, Codable {
         }
     }
     
+    func canSubmit(isMySubmission: Bool) -> Bool {
+        switch self {
+        case .pendingResult:
+            return true
+        case .resultRejected:
+            return !isMySubmission
+        case .waitingConfirmation, .canceled, .resultConfirmed:
+            return false
+        }
+    }
+    
     var isFirstSubmission: Bool {
         return self == .pendingResult
     }
@@ -47,6 +58,8 @@ enum GameResultStatus: String, Codable {
         switch self {
         case .waitingConfirmation:
             return isMySubmission ? "결과 확인 대기 중" : "경기 결과 확인하기"
+        case .resultRejected:
+            return isMySubmission ? "결과 확인 대기 중" : "결과가 반려되었어요!"
         default:
             return buttonTitle
         }
