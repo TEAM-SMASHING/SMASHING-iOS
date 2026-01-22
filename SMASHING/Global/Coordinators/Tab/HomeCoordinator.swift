@@ -19,7 +19,6 @@ final class HomeCoordinator: Coordinator {
     private var cancellables = Set<AnyCancellable>()
     
     var navAction: ((NotificationAction) -> Void)?
-    
     // TODO: 유저 정보 API 연동 후 수정
     private var myUserId: String {
         return KeychainService.get(key: Environment.userIdKey) ?? ""
@@ -98,6 +97,18 @@ final class HomeCoordinator: Coordinator {
         navigationController.pushViewController(rankingVC, animated: true)
     }
     
+
+    private func showNotificationFlow() {
+        let notificationCoordinator = NotificationCoordinator(navigationController: navigationController)
+        self.childCoordinators.append(notificationCoordinator)
+        notificationCoordinator.start()
+        
+        notificationCoordinator.action = { [weak self] nav in
+            self?.navigationController.popViewController(animated: true)
+            self?.navAction?(nav)
+        }
+    }
+
     private func showUserProfile(userId: String) {
         let viewModel = UserProfileViewModel(userId: userId, sport: currentUserSport())
         let userProfileVC = UserProfileViewController(viewModel: viewModel)

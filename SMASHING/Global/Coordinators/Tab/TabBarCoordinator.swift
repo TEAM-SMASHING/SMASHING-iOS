@@ -5,6 +5,7 @@
 //  Created by 이승준 on 1/12/26.
 //
 
+import Combine
 import UIKit
 
 final class TabBarCoordinator: Coordinator {
@@ -15,10 +16,18 @@ final class TabBarCoordinator: Coordinator {
     var controllers: [UIViewController] = []
     let factory = DefaultTabBarFlowFactory()
     let tabBarController = MainTabBarController()
+    
+    private var cancellables = Set<AnyCancellable>()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.childCoordinators = []
+        SSEService.shared.start()
+        SSEService.shared.eventPublisher
+            .sink { [weak self] payload in
+                self?.handleNotification(type: payload)
+            }
+            .store(in: &cancellables)
     }
 
     func start() {
@@ -34,16 +43,14 @@ final class TabBarCoordinator: Coordinator {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             self.goToMatchManage(index: 0)
                         }
-                        print("100")
                     case .navRequestedMatchManage:
                         tabBarController.selectedIndex = 2
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             self.goToMatchManage(index: 2)
                         }
-                        print("200")
+
                     case .navSearchUser:
                         tabBarController.selectedIndex = 1
-                        print("300")
                     }
                 }
             }
@@ -73,6 +80,34 @@ final class TabBarCoordinator: Coordinator {
             matchingManageVC.moveToPage(tab: .confirmed)
         }
     }
-
     
+    private func handleNotification(type: SseEventType) {
+        switch type {
+        case .matchingReceived, .matchingAcceptNotificationCreated:
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                guard let tabBar = self.navigationController.viewControllers.last as? UITabBarController else { return }
+                if let selectedNav = tabBar.selectedViewController as? UINavigationController,
+                   let topVC = selectedNav.topViewController as? ToastDisplayable {
+                    topVC.showToast(type: type)
+                } else if let topVC = tabBar.selectedViewController as? ToastDisplayable {
+                    topVC.showToast(type: type)
+                }
+            }
+        case .systemConnected:
+            print("SSE 연결 성공!")
+        case .matchingRequestNotificationCreated:
+            print("매칭 요청 알림 생성")
+        case .matchingUpdated:
+            print("매칭 업데이트")
+        case .gameUpdated:
+            print("게임 정보 업데이트")
+        case .gameResultSubmittedNotificationCreated:
+            print("게임 결과 제출 알림 생성")
+        case .gameResultRejectedNotificationCreated:
+            print("게임 결과 반려 알림 생성")
+        case .reviewReceivedNotificationCreated:
+            print("리뷰가 받아들여짐")
+        }
+    }
 }

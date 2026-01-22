@@ -36,6 +36,9 @@ final class HomeViewModel: HomeViewModelProtocol {
         //랭킹 섹션
         case rankingUserTapped(userId: String)
         case rankingSeeAllTapped
+        
+        // 알림 아이콘 탭
+        case notificationTapped
     }
     
     struct Output {
@@ -52,6 +55,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         let navToMatchingManageTab = PassthroughSubject<Void, Never>()
         let navToSelectedUserProfile = PassthroughSubject<String, Never>()
         let navToRanking = PassthroughSubject<Void, Never>()
+        let navToNotification = PassthroughSubject<Void, Never>()
         let navToSearchUser = PassthroughSubject<Void, Never>()
     }
     private var cancellables = Set<AnyCancellable>()
@@ -92,7 +96,8 @@ final class HomeViewModel: HomeViewModelProtocol {
             output.navToSelectedUserProfile.send(userId)
         case .rankingSeeAllTapped:
             output.navToRanking.send()
-
+        case .notificationTapped:
+            output.navToNotification.send()
         }
     }
     

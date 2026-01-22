@@ -73,4 +73,10 @@ final class AppCoordinator: Coordinator {
     private func removeChildCoordinator(_ coordinator: Coordinator) {
         childCoordinators = childCoordinators.filter { $0 !== coordinator }
     }
+    
+    private func showNotificationFlow() {
+        let notificationCoordinator = NotificationCoordinator(navigationController: navigationController)
+        childCoordinators.append(notificationCoordinator)
+        notificationCoordinator.start()
+    }
 }

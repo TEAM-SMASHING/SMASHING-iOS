@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import Then
 
-class BaseViewController: UIViewController {
+class BaseViewController: UIViewController, ToastDisplayable {
     
     // MARK: - Lifecycle
     
@@ -33,5 +34,17 @@ class BaseViewController: UIViewController {
     
     func setUI() {}
     func setLayout() {}
+    
+    func showToast(type: SseEventType) {
+        let toast = ToastMessage()
+        if let navView = self.navigationController?.view {
+            navView.addSubview(toast)
+            navView.bringSubviewToFront(toast)
+        } else {
+            self.view.addSubview(toast)
+        }
+        toast.configure(title: type.displayText)
+        toast.show()
+    }
 }
 

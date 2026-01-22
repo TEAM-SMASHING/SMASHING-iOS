@@ -99,48 +99,28 @@ final class MatchingManageViewController: BaseViewController {
     }
     
     func moveToPage(tab: MatchingManageHeaderView.Tab) {
-            print("move to page : \(tab)")
-                
-            self.matchingManageView.headerView.updateSelectedTab(tab)
-            
-            guard let currentVC = self.pageViewController.viewControllers?.first,
-                  let currentIndex = self.categories.firstIndex(of: currentVC),
-                  currentIndex != tab.rawValue else { return }
-            
-            let targetVC = self.categories[tab.rawValue]
-            let direction: UIPageViewController.NavigationDirection = currentIndex < tab.rawValue ? .forward : .reverse
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                self?.pageViewController.setViewControllers(
-                    [targetVC],
-                    direction: direction,
-                    animated: true,
-                    completion: { finished in
-                        if finished {
-                            self?.currentTabIndex = tab
-                        }
+        self.matchingManageView.headerView.updateSelectedTab(tab)
+        
+        guard let currentVC = self.pageViewController.viewControllers?.first,
+              let currentIndex = self.categories.firstIndex(of: currentVC),
+              currentIndex != tab.rawValue else { return }
+        
+        let targetVC = self.categories[tab.rawValue]
+        let direction: UIPageViewController.NavigationDirection = currentIndex < tab.rawValue ? .forward : .reverse
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.pageViewController.setViewControllers(
+                [targetVC],
+                direction: direction,
+                animated: true,
+                completion: { finished in
+                    if finished {
+                        self?.currentTabIndex = tab
                     }
-                )
-            }
+                }
+            )
         }
-    
-//    private func moveToPage(tab: MatchingManageHeaderView.Tab) {
-//        guard let currentVC = self.pageViewController.viewControllers?.first,
-//              let currentIndex = self.categories.firstIndex(of: currentVC),
-//              currentIndex != tab.rawValue else { return }
-//        
-//        let targetVC = self.categories[tab.rawValue]
-//        let direction: UIPageViewController.NavigationDirection = currentIndex < tab.rawValue ? .forward : .reverse
-//        
-//        self.pageViewController.setViewControllers(
-//            [targetVC],
-//            direction: direction,
-//            animated: true,
-//            completion: { [weak self] _ in
-//                self?.currentTabIndex = tab
-//            }
-//        )
-//    }
+    }
     
     override func setLayout() {
         matchingManageView.snp.makeConstraints {

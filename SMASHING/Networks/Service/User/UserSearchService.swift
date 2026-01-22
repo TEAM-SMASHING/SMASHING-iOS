@@ -14,10 +14,9 @@ protocol UserSearchServiceType {
 
 final class UserSearchService: UserSearchServiceType {
     func searchUser(nickname: String) -> AnyPublisher<[UserSummary], NetworkError> {
-        return NetworkProvider<SearchUserTarget>
+        return NetworkProvider<SearchUserAPI>
             .requestPublisher(.searchUser(nickname: nickname), type: UserSearchResponse.self)
             .map { response in
-                // GenericResponse<UserSearchResponse>에서 유저 배열만 반환
                 return response.data.users
             }
             .eraseToAnyPublisher()

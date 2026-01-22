@@ -7,8 +7,6 @@
 
 import Foundation
 
-// MARK: - Login Response
-
 struct KakaoLoginDataDTO: Decodable {
     let accessToken: String?
     let refreshToken: String?
@@ -17,8 +15,6 @@ struct KakaoLoginDataDTO: Decodable {
     let nickname: String?
     let isCompletedSignUp: Bool
 }
-
-// MARK: - Error Response
 
 struct KakaoAuthErrorDTO: Decodable {
     let status: String
