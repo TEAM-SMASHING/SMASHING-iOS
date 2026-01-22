@@ -8,45 +8,83 @@
 import Foundation
 import Combine
 
-enum SseEventType: String, Codable {
+enum SseEventType: Codable {
     // 연결 관련
-    case systemConnected = "system.connected"
+    case systemConnected
     
     // 매칭 관련
-    case matchingReceived = "matching.received"
-    case matchingUpdated = "matching.updated"
-    case matchingRequestNotificationCreated = "matching.request.notification.created"
-    case matchingAcceptNotificationCreated = "matching.accept.notification.created"
+    case matchingReceived(SSEMatchingReceivedPayload)
+    case matchingUpdated
+    case matchingRequestNotificationCreated
+    case matchingAcceptNotificationCreated
     
     // 게임 관련
-    case gameUpdated = "game.updated"
-    case gameResultSubmittedNotificationCreated = "game.result.submitted.notification.created"
-    case gameResultRejectedNotificationCreated = "game.result.rejected.notification.created"
+    case gameUpdated
+    case gameResultSubmittedNotificationCreated
+    case gameResultRejectedNotificationCreated
     
     // 리뷰 관련
-    case reviewReceivedNotificationCreated = "review.received.notification.created"
+    case reviewReceivedNotificationCreated
+    
+    var apiText: String {
+        switch self {
+        case .systemConnected: return "system.connected"
+        case .matchingReceived: return "matching.received"
+        case .matchingUpdated: return "matching.updated"
+        case .matchingRequestNotificationCreated: return "matching.request.notification.created"
+        case .matchingAcceptNotificationCreated: return "matching.accept.notification.created"
+        case .gameUpdated: return "game.updated"
+        case .gameResultSubmittedNotificationCreated: return "game.result.submitted.notification.created"
+        case .gameResultRejectedNotificationCreated: return "game.result.rejected.notification.created"
+        case .reviewReceivedNotificationCreated: return "review.received.notification.created"
+        }
+    }
+    
+    var displayText: String {
+        switch self {
+        case .matchingReceived:
+            return "누군가가 매칭을 신청했어요! 받은 요청 탭에서 확인해주세요."
+        case .matchingAcceptNotificationCreated:
+            return "누군가가 매칭을 수락했어요! 매칭 확정 탭에서 확인해주세요."
+        default:
+            return ""
+        }
+    }
 }
 
-/// SSE를 통해 전달받는 공통 데이터 포맷
-struct SSEEventPayload: Decodable {
-    let type: SseEventType
-    // 추가적인 데이터 필드가 있다면 여기에 정의하거나,
-    // 상세 데이터는 JSONSerialization으로 처리할 수 있습니다.
+struct SSEMatchingReceivedPayload: Codable {
+    let type: String
+    let matchingId: String
+    let sportId: Int64
+    let receiverProfileId: String
+    let requester: SSERequesterSummary
+}
+
+struct SSERequesterSummary: Codable {
+    let userId: String
+    let nickname: String
+    let gender: String
+    let tierCode: String
+    let wins: Int
+    let losses: Int
+    let reviewCount: Int64
 }
 
 final class SSEService: NSObject {
     private var session: URLSession?
     private var eventSourceTask: URLSessionDataTask?
     
-    private let eventSubject = PassthroughSubject<SSEEventPayload, Never>()
+    private var buffer = Data()
     
-    var eventPublisher: AnyPublisher<SSEEventPayload, Never> {
+    private let eventSubject = PassthroughSubject<SseEventType, Never>()
+    
+    var eventPublisher: AnyPublisher<SseEventType, Never> {
         return eventSubject.eraseToAnyPublisher()
     }
     
     func connect(accessToken: String) {
         // 1. URL 설정 (BaseTargetType의 baseURL 패턴 활용)
-        guard let url = URL(string: Environment.baseURL + "/sse/connect") else { return }
+        guard let url = URL(string: Environment.baseURL + "/api/v1/sse/subscribe") else { return }
         
         var request = URLRequest(url: url)
         request.timeoutInterval = Double.infinity // 연결 유지
@@ -73,6 +111,7 @@ final class SSEService: NSObject {
     func disconnect() {
         eventSourceTask?.cancel()
         session?.invalidateAndCancel()
+        buffer.removeAll()
         print("🛑 [SSE] Connection Disconnected")
     }
 }
@@ -98,16 +137,26 @@ extension SSEService: URLSessionDataDelegate {
     }
     
     private func handleDecodedEvent(eventName: String, data: Data) {
+        let decoder = JSONDecoder()
+        
         do {
-            let payload = try JSONDecoder().decode(SSEEventPayload.self, from: data)
-            if eventName == payload.type.rawValue {
-                print("✅ [SSE] Received Event: \(eventName)")
-                eventSubject.send(payload)
-            } else {
-                print("⚠️ [SSE] Event name mismatch: \(eventName) vs \(payload.type.rawValue)")
+            switch eventName {
+            case "system.connected":
+                print("✅ [SSE] System Connected")
+                eventSubject.send(.systemConnected)
+                
+            case "matching.received":
+                let payload = try decoder.decode(SSEMatchingReceivedPayload.self, from: data)
+                print("✅ [SSE] Matching Received: \(payload.matchingId)")
+                eventSubject.send(.matchingReceived(payload))
+                
+            case "matching.updated":
+                eventSubject.send(.matchingUpdated)
+            default:
+                print("⚠️ [SSE] Unhandled Event: \(eventName)")
             }
         } catch {
-            print("❌ [SSE] Decoding Error: \(error)")
+            print("❌ [SSE] Decoding Error for \(eventName): \(error)")
         }
     }
     

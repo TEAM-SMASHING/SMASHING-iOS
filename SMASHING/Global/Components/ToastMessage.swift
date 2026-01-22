@@ -51,12 +51,17 @@ final class ToastMessage: BaseUIView {
         self.snp.makeConstraints {
             $0.height.equalTo(49)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(150)
+            $0.bottom.equalToSuperview().inset(100)
         }
         dissmissToastMessage()
     }
     
+    func configure(title: String) {
+        self.messageLabel.text = title
+    }
+    
     func configure(title: String , action: (() -> Void)? = nil) {
+        self.messageLabel.text = title
         self.action = action
     }
     

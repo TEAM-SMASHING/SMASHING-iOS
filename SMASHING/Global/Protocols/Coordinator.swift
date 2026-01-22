@@ -14,15 +14,3 @@ protocol Coordinator: AnyObject {
     var navigationController: UINavigationController { get set }
     func start()
 }
-
-extension Coordinator {
-    func presentToast(notificationType: NotificationType) {
-        guard let displayableVC = navigationController.visibleViewController as? ToastDisplayable else {
-            return
-        }
-        
-        displayableVC.showToast(type: notificationType) { [weak self] in
-            
-        }
-    }
-}

@@ -193,6 +193,7 @@ extension ReceiveRequestViewController: UICollectionViewDataSource {
 
         cell.onAcceptTapped = { [weak self] in
             self?.acceptButtonDidTap(at: indexPath.item)
+            self?.showToast(type: .matchingAcceptNotificationCreated)
         }
 
         return cell

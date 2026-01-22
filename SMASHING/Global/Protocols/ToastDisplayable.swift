@@ -8,18 +8,19 @@
 import UIKit
 
 protocol ToastDisplayable: AnyObject {
-    func showToast(type: NotificationType, completion: @escaping () -> Void)
+    func showToast(type: SseEventType)
 }
-
-extension ToastDisplayable where Self: UIViewController {
-    func showToast(type: NotificationType) {
-        let toast = ToastMessage()
-        self.view.addSubview(toast)
-        
-        toast.configure(title: type.displayText) {
-            toast.removeFromSuperview()
-        }
-        
-        toast.show()
-    }
-}
+//
+//extension ToastDisplayable where Self: UIViewController {
+//    func showToast(type: SseEventType) {
+//        let toast = ToastMessage()
+//        self.view.addSubview(toast)
+//        self.view.bringSubviewToFront(toast)
+//        
+//        toast.configure(title: type.rawValue) {
+//            toast.removeFromSuperview()
+//        }
+//        
+//        toast.show()
+//    }
+//}

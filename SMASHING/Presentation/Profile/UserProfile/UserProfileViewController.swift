@@ -11,7 +11,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class UserProfileViewController: UIViewController {
+final class UserProfileViewController: BaseViewController {
     
     // MARK: - Properties
     

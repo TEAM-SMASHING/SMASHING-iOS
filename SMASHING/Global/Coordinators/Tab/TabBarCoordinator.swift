@@ -26,10 +26,9 @@ final class TabBarCoordinator: Coordinator {
         
         sseService.eventPublisher
             .sink { [weak self] payload in
-                self?.handleNotification(payload)
+                self?.handleNotification(type: payload)
             }
             .store(in: &cancellables)
-        
         startListening()
     }
 
@@ -85,14 +84,33 @@ final class TabBarCoordinator: Coordinator {
         sseService.connect(accessToken: KeychainService.get(key: Environment.accessTokenKey)!)
     }
     
-    private func handleNotification(_ payload: SSEEventPayload) {
-        switch payload.type {
-        case .matchingReceived:
-            print("매칭 요청이 왔어요!")
+    private func handleNotification(type: SseEventType) {
+        switch type {
+        case .matchingReceived, .matchingAcceptNotificationCreated:
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                guard let tabBar = self.navigationController.viewControllers.last as? UITabBarController else { return }
+                if let selectedNav = tabBar.selectedViewController as? UINavigationController,
+                   let topVC = selectedNav.topViewController as? ToastDisplayable {
+                    topVC.showToast(type: type)
+                } else if let topVC = tabBar.selectedViewController as? ToastDisplayable {
+                    topVC.showToast(type: type)
+                }
+            }
         case .systemConnected:
             print("SSE 연결 성공!")
-        default:
-            break
+        case .matchingRequestNotificationCreated:
+            print("매칭 요청 알림 생성")
+        case .matchingUpdated:
+            print("매칭 업데이트")
+        case .gameUpdated:
+            print("게임 정보 업데이트")
+        case .gameResultSubmittedNotificationCreated:
+            print("게임 결과 제출 알림 생성")
+        case .gameResultRejectedNotificationCreated:
+            print("게임 결과 반려 알림 생성")
+        case .reviewReceivedNotificationCreated:
+            print("리뷰가 받아들여짐")
         }
     }
 }
