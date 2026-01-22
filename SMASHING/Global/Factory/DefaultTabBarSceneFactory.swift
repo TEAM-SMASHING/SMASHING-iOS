@@ -19,7 +19,14 @@ final class DefaultTabBarFlowFactory: TabBarFlowFactory {
             return (HomeCoordinator(navigationController: navController), navController)
         case .matchingSearch:
             let navController = UINavigationController()
-            return (MatchingSearchCoordinator(navigationController: navController), navController)
+            let userSportsProvider = KeychainUserSportProvider()
+            return (
+                MatchingSearchCoordinator(
+                    navigationController: navController,
+                    userSportProvider: userSportsProvider
+                ),
+                navController
+            )
         case .matchingManage:
             let navController = UINavigationController()
             return (MatchingManageCoordinator(navigationController: navController), navController)
