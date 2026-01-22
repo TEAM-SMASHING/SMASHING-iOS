@@ -28,7 +28,7 @@ final class TierChipCell : BaseUICollectionViewCell, ReuseIdentifiable {
     // MARK: - Setup Methods
     
     override func setUI() {
-        layer.borderColor = UIColor.Text.secondary.cgColor
+        layer.borderColor = UIColor.Border.secondary.cgColor
         layer.borderWidth = 1
         layer.cornerRadius = 20
         clipsToBounds = true
