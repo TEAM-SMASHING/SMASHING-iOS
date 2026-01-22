@@ -5,6 +5,7 @@
 //  Created by 이승준 on 1/12/26.
 //
 
+import Combine
 import UIKit
 
 final class TabBarCoordinator: Coordinator {
@@ -15,10 +16,21 @@ final class TabBarCoordinator: Coordinator {
     var controllers: [UIViewController] = []
     let factory = DefaultTabBarFlowFactory()
     let tabBarController = MainTabBarController()
+    
+    private var cancellables = Set<AnyCancellable>()
+    private let sseService = SSEService()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.childCoordinators = []
+        
+        sseService.eventPublisher
+            .sink { [weak self] payload in
+                self?.handleNotification(payload)
+            }
+            .store(in: &cancellables)
+        
+        startListening()
     }
 
     func start() {
@@ -27,7 +39,6 @@ final class TabBarCoordinator: Coordinator {
             
             if let homeCoordinator = coordinator as? HomeCoordinator {
                 homeCoordinator.navAction = { [weak self] nav in
-                    print("hello there")
                     guard let self else { return }
                     switch nav {
                     case .navConfirmedMatchManage:
@@ -64,11 +75,24 @@ final class TabBarCoordinator: Coordinator {
             return
         }
         if index == 0 {
-            print("MM : 0")
             matchingManageVC.moveToPage(tab: .received)
         } else if index == 2 {
-            print("MM : 2")
             matchingManageVC.moveToPage(tab: .confirmed)
+        }
+    }
+    
+    func startListening() {
+        sseService.connect(accessToken: KeychainService.get(key: Environment.accessTokenKey)!)
+    }
+    
+    private func handleNotification(_ payload: SSEEventPayload) {
+        switch payload.type {
+        case .matchingReceived:
+            print("매칭 요청이 왔어요!")
+        case .systemConnected:
+            print("SSE 연결 성공!")
+        default:
+            break
         }
     }
 }
