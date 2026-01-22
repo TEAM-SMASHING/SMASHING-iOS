@@ -101,8 +101,13 @@ final class RankingViewController: BaseViewController {
                 self?.updateMyRanking()
             }
             .store(in: &cancellables)
-        //        output.navigateToUserProfile
-        //        output.navigateBack
+        
+        output.navigateToUserProfile
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] userId in
+                self?.showUserProfile(userId: userId)
+            }
+            .store(in: &cancellables)
     }
     
     private func setCollectionView() {
@@ -148,6 +153,27 @@ final class RankingViewController: BaseViewController {
         guard let myRanking = self.myRanking else { return }
         mainView.myRankingScore.configure(with: myRanking)
     }
+    
+    private func showUserProfile(userId: String) {
+            let viewModel = UserProfileViewModel(userId: userId, sport: currentUserSport())
+            let userProfileVC = UserProfileViewController(viewModel: viewModel)
+            navigationController?.pushViewController(userProfileVC, animated: true)
+        }
+        
+        private func currentUserSport() -> Sports {
+            guard let userId = KeychainService.get(key: Environment.userIdKey), !userId.isEmpty else {
+                return .badminton
+            }
+
+            let key = "\(Environment.sportsCodeKeyPrefix).\(userId)"
+            let rawValue = KeychainService.get(key: key)
+            guard let rawValue,
+                  let sport = Sports(rawValue: rawValue) else {
+                return .badminton
+            }
+
+            return sport
+        }
 }
 
 // MARK: - Extensions

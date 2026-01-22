@@ -95,6 +95,7 @@ final class HomeViewController: BaseViewController {
             }
             .store(in: &cancellables)
     }
+    
     private func navigateToMatchResultConfirm(gameData: MatchingConfirmedGameDTO) {
         guard let submissionId = gameData.latestSubmissionId else { return }
         let viewModel = MatchResultConfirmViewModel(
@@ -139,10 +140,10 @@ extension HomeViewController: UICollectionViewDataSource {
             if recentMatching.isEmpty {
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyMatchingCell.reuseIdentifier, for: indexPath) as? EmptyMatchingCell else { return UICollectionViewCell() }
                 cell.onExploreButtonTapped = { [weak self] in
-//                           self?.input.send(.matchingSeeAllTapped) // “매칭 탐색” 이동 트리거
+                    //                           self?.input.send(.matchingSeeAllTapped) // “매칭 탐색” 이동 트리거
                     print("매칭 탐색하러가기")
-                       }
-                       return cell
+                }
+                return cell
             } else {
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.reuseIdentifier, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
                 let matching = recentMatching[indexPath.item]
@@ -217,10 +218,20 @@ extension HomeViewController: UICollectionViewDataSource {
 }
 
 extension HomeViewController: UICollectionViewDelegate {
-    // 추후 프로필 이동 기능 구현 예정
-    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    //
-    //    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let sectionType = HomeViewLayout(rawValue: indexPath.section) else { return }
+        switch sectionType {
+        case .recommendedUser:
+            let user = recommendedUsers[indexPath.row]
+            input.send(.recommendedUserTapped(userId: user.userId))
+        case .ranking:
+            let ranker = rankings[indexPath.row]
+            input.send(.rankingUserTapped(userId: ranker.userId))
+        default:
+            break
+        }
+    }
 }
 
 // MARK: Header Button

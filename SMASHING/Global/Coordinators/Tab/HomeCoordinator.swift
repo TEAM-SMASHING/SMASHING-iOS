@@ -48,8 +48,16 @@ final class HomeCoordinator: Coordinator {
             .store(in: &cancellables)
         
         output.navToRanking
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.showRanking()
+            }
+            .store(in: &cancellables)
+        
+        output.navToSelectedUserProfile
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] userId in
+                self?.showUserProfile(userId: userId)
             }
             .store(in: &cancellables)
     }
@@ -68,4 +76,25 @@ final class HomeCoordinator: Coordinator {
         rankingVC.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(rankingVC, animated: true)
     }
+    
+    private func showUserProfile(userId: String) {
+            let viewModel = UserProfileViewModel(userId: userId, sport: currentUserSport())
+            let userProfileVC = UserProfileViewController(viewModel: viewModel)
+            navigationController.pushViewController(userProfileVC, animated: true)
+        }
+        
+        private func currentUserSport() -> Sports {
+            guard let userId = KeychainService.get(key: Environment.userIdKey), !userId.isEmpty else {
+                return .badminton
+            }
+
+            let key = "\(Environment.sportsCodeKeyPrefix).\(userId)"
+            let rawValue = KeychainService.get(key: key)
+            guard let rawValue,
+                  let sport = Sports(rawValue: rawValue) else {
+                return .badminton
+            }
+
+            return sport
+        }
 }
