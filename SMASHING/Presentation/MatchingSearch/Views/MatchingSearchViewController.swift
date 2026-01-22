@@ -41,6 +41,7 @@ final class MatchingSearchViewController: BaseViewController {
     // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         input.send(.refresh)
     }
 

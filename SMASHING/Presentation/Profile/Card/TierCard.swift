@@ -178,12 +178,9 @@ final class TierCard: BaseUIView {
         // 추가: 활성화된 종목을 리스트의 가장 앞으로 보내거나
         // 서버에서 받은 전체 프로필 리스트를 reloadSports에 전달
         // self.reloadSports(with: profile.profiles.map { $0.sportCode })
-        let sortedSports = profile.allProfiles
-            .sorted { (lhs, rhs) in
-                (lhs.isCurrentlySelected ? 0 : 1) < (rhs.isCurrentlySelected ? 0 : 1)
-            }
-            .map(\.sportCode)
-        reloadSports(with: sortedSports)
+        let sports = profile.allProfiles.compactMap(\.sportCode)
+        print("\(sports)")
+        reloadSports(with: sports)
     }
 
     func configure(profile: OtherUserProfileResponse) {
@@ -197,12 +194,9 @@ final class TierCard: BaseUIView {
         tierBadge.image = Tier.from(tierCode: profile.selectedProfile.tierCode)?.image
         tierImage.image = Tier.from(tierCode: profile.selectedProfile.tierCode)?.badge
 
-        let sortedSports = profile.allProfiles
-            .sorted { (lhs, rhs) in
-                (lhs.isCurrentlySelected ? 0 : 1) < (rhs.isCurrentlySelected ? 0 : 1)
-            }
-            .map(\.sportCode)
-        reloadSports(with: sortedSports)
+        let sports = profile.allProfiles.compactMap(\.sportCode)
+        print("\(sports)")
+        reloadSports(with: sports)
     }
     
     private func updatePlusButtonVisibility() {
