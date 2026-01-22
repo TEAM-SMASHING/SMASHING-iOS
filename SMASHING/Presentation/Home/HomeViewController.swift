@@ -140,7 +140,7 @@ extension HomeViewController: UICollectionViewDataSource {
             if recentMatching.isEmpty {
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyMatchingCell.reuseIdentifier, for: indexPath) as? EmptyMatchingCell else { return UICollectionViewCell() }
                 cell.onExploreButtonTapped = { [weak self] in
-                    //                           self?.input.send(.matchingSeeAllTapped) // “매칭 탐색” 이동 트리거
+                    self?.input.send(.emptyButtonTapped)
                     print("매칭 탐색하러가기")
                 }
                 return cell
@@ -192,6 +192,9 @@ extension HomeViewController: UICollectionViewDataSource {
             }
             
             header.configure(title: "\(myNickname)님,", subTitle: "곧 다가오는 매칭이 있어요")
+            header.onMoreButtonTapped = { [weak self] in
+                self?.input.send(.matchingSeeAllTapped)
+            }
             return header
         case .recommendedUser:
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.reuseIdentifier, for: indexPath) as? CommonSectionHeader else {
