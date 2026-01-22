@@ -1,23 +1,34 @@
 //
-//  HomeNavigationBar.swift
+//  HomeDropDownView.swift
 //  SMASHING
 //
-//  Created by 홍준범 on 1/14/26.
+//  Created by JIN on 1/23/26.
 //
 
 import UIKit
 
-import Then
 import SnapKit
+import Then
 
-final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
+final class HomeDropDownView: BaseUIView {
+
+    // MARK: - Properties
+    
     var onRegionButtonTapped: (() -> Void)?
     var onSportsAndTierTapped: (() -> Void)?
+    var onSportsCellTapped: ((Sports?) -> Void)?
+
+    // MARK: - UI Components
     
-    private let regionStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 4
+    private let tierCard = TierCard(usesContainerView: false).then {
+        $0.showsAddButton = false
+        $0.backgroundColor = .Background.surface
     }
+
+    private let winRateCard = WinRateCard(usesContainerView: false)
+        .then {
+            $0.backgroundColor = .Background.surface
+        }
     
     private let pinImageView = UIImageView().then {
         $0.image = .icLocation
@@ -62,17 +73,28 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.contentMode = .scaleAspectFit
     }
     
-    override func setUI() {
-        regionStackView.addArrangedSubviews(pinImageView, regionLabel, chevronImageView)
+    private let regionStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+    }
         
-        sportsAndTierStackView.addArrangedSubviews(sportsImage, tierLabel)
-        
-        addSubviews(regionStackView, sportsAndTierStackView, bellImage)
-        
-        let tap = UITapGestureRecognizer(target: self, action: #selector(regionTapped))
-        regionStackView.isUserInteractionEnabled = true
-        regionStackView.addGestureRecognizer(tap)
+    // MARK: - Setup Methods
 
+    override func setUI() {
+        backgroundColor = .Background.surface
+        setCornerRadius(16, maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner])
+        addSubviews(regionStackView, sportsAndTierStackView, bellImage, tierCard, winRateCard)
+        
+        regionStackView.addArrangedSubviews(pinImageView, regionLabel, chevronImageView)
+        sportsAndTierStackView.addArrangedSubviews(sportsImage, tierLabel)
+        tierCard.onSportsAction = { [weak self] sport in
+            self?.onSportsCellTapped?(sport)
+        }
+        
+        let regionTap = UITapGestureRecognizer(target: self, action: #selector(regionTapped))
+        regionStackView.isUserInteractionEnabled = true
+        regionStackView.addGestureRecognizer(regionTap)
+        
         let sportsTap = UITapGestureRecognizer(target: self, action: #selector(sportsAndTierTapped))
         sportsAndTierStackView.isUserInteractionEnabled = true
         sportsAndTierStackView.addGestureRecognizer(sportsTap)
@@ -80,8 +102,8 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     override func setLayout() {
         regionStackView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview()
+            $0.top.equalToSuperview().offset(16)
+            $0.leading.equalToSuperview().inset(16)
         }
         
         pinImageView.snp.makeConstraints {
@@ -93,32 +115,45 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
         
         bellImage.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview()
+            $0.centerY.equalTo(regionStackView)
+            $0.trailing.equalToSuperview().inset(16)
             $0.size.equalTo(24)
         }
         
         sportsAndTierStackView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
+            $0.centerY.equalTo(regionStackView)
             $0.trailing.equalTo(bellImage.snp.leading).offset(-12)
         }
         
         sportsImage.snp.makeConstraints {
             $0.size.equalTo(24)
         }
+
+        tierCard.snp.makeConstraints {
+            $0.top.equalTo(regionStackView.snp.bottom).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(264)
+        }
+        
+        winRateCard.snp.makeConstraints {
+            $0.top.equalTo(tierCard.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(20)
+        }
     }
     
-    func configure(region: String) {
-        regionLabel.text = region
+    func configure(profile: MyProfileListResponse) {
+        tierCard.configure(profile: profile)
+        winRateCard.configure(profile: profile)
     }
     
-    @objc
-    private func regionTapped() {
+    // MARK: - Actions
+    
+    @objc private func regionTapped() {
         onRegionButtonTapped?()
     }
-
-    @objc
-    private func sportsAndTierTapped() {
+    
+    @objc private func sportsAndTierTapped() {
         onSportsAndTierTapped?()
     }
 }

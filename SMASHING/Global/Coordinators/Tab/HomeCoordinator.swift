@@ -38,7 +38,11 @@ final class HomeCoordinator: Coordinator {
         let regionService = RegionService()
         let matchingConfirmedService = MatchingConfirmedService()
         let viewModel = HomeViewModel(regionService: regionService, matchingConfirmedService: matchingConfirmedService)
-        let homeVC = HomeViewController(viewModel: viewModel)
+        let myProfileViewModel = MyProfileViewModel(
+            userProfileService: UserProfileService(),
+            userReviewService: UserReviewService()
+        )
+        let homeVC = HomeViewController(viewModel: viewModel, myProfileViewModel: myProfileViewModel)
         
         bindNavigationEvents(output: viewModel.output)
         navigationController.pushViewController(homeVC, animated: true)

@@ -25,6 +25,8 @@ final class TierCard: BaseUIView {
     
     // MARK: - UI Components
     
+    private let usesContainerView: Bool
+
     private let containerView = UIView().then {
         $0.backgroundColor = .Background.surface
         $0.layer.cornerRadius = 8
@@ -99,44 +101,67 @@ final class TierCard: BaseUIView {
         $0.addTarget(self, action: #selector(detailTapped), for: .touchUpInside)
     }
     
+    init(usesContainerView: Bool = true) {
+        self.usesContainerView = usesContainerView
+        super.init(frame: .zero)
+    }
+
+    override init(frame: CGRect) {
+        self.usesContainerView = true
+        super.init(frame: frame)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func setUI() {
-        addSubview(containerView)
-        containerView.addSubviews(sportsCollectionView, tierImage, tierMark,
-                                  progressBar, tierBadge, lastLPLabel, lpLeft, lpLabel, totalLPLabel)
+        if usesContainerView {
+            addSubview(containerView)
+            containerView.addSubviews(sportsCollectionView, tierImage, tierMark,
+                                      progressBar, tierBadge, lastLPLabel, lpLeft, lpLabel, totalLPLabel)
+        } else {
+            addSubviews(sportsCollectionView, tierImage, tierMark,
+                        progressBar, tierBadge, lastLPLabel, lpLeft, lpLabel, totalLPLabel)
+        }
     }
     
     override func setLayout() {
-        containerView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+        if usesContainerView {
+            containerView.snp.makeConstraints {
+                $0.edges.equalToSuperview()
+            }
         }
+
+        let parentView = usesContainerView ? containerView : self
         
         sportsCollectionView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(16)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(parentView).inset(16)
+            $0.leading.trailing.equalTo(parentView).inset(16)
             $0.height.equalTo(44)
         }
         
         tierImage.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
+            $0.centerX.equalTo(parentView)
             $0.top.equalTo(sportsCollectionView.snp.bottom).offset(20)
             $0.size.equalTo(100)
         }
         
         progressBar.snp.makeConstraints {
             $0.top.equalTo(tierImage.snp.bottom).offset(32)
-            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalTo(parentView).inset(16)
             $0.height.equalTo(8)
         }
         
         tierBadge.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalTo(parentView).inset(16)
             $0.bottom.equalTo(progressBar.snp.top).inset(-8)
             $0.height.equalTo(24)
             $0.width.equalTo(67)
         }
         
         lastLPLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(16)
+            $0.leading.equalTo(parentView).inset(16)
             $0.top.equalTo(progressBar.snp.bottom).offset(8)
         }
         
@@ -146,7 +171,7 @@ final class TierCard: BaseUIView {
         }
         
         totalLPLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalTo(parentView).inset(16)
             $0.centerY.equalTo(lastLPLabel)
         }
         
@@ -157,10 +182,11 @@ final class TierCard: BaseUIView {
     }
     
     func addTierDetailButton() {
-        containerView.addSubview(tierDetailButton)
+        let parentView = usesContainerView ? containerView : self
+        parentView.addSubview(tierDetailButton)
         tierDetailButton.snp.makeConstraints {
             $0.top.equalTo(lpLabel.snp.bottom).offset(20)
-            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalTo(parentView).inset(16)
         }
     }
     

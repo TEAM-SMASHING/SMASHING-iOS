@@ -14,6 +14,10 @@ import SnapKit
 final class HomeViewController: BaseViewController {
     
     private let homeView = HomeView()
+    private var dropDownView: HomeDropDownView?
+    private var dropDownTopConstraint: Constraint?
+    private var isDropDownVisible = false
+    private var dropDownBackgroundView: UIView?
     
     override func loadView() {
         view = homeView
@@ -22,6 +26,9 @@ final class HomeViewController: BaseViewController {
     private let viewModel: HomeViewModel
     private let input = PassthroughSubject<HomeViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
+    private let myProfileViewModel: any MyProfileViewModelProtocol
+    private let myProfileInput = PassthroughSubject<MyProfileViewModel.Input, Never>()
+    private var latestMyProfile: MyProfileListResponse?
     
     private var recentMatching: [MatchingConfirmedGameDTO] = []
     private var recommendedUsers: [RecommendedUserDTO] = []
@@ -42,8 +49,9 @@ final class HomeViewController: BaseViewController {
         return KeychainService.get(key: Environment.sportsCodeKeyPrefix) ?? ""
     }
     
-    init(viewModel: HomeViewModel) {
+    init(viewModel: HomeViewModel, myProfileViewModel: any MyProfileViewModelProtocol) {
         self.viewModel = viewModel
+        self.myProfileViewModel = myProfileViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -57,11 +65,13 @@ final class HomeViewController: BaseViewController {
         view.backgroundColor = .Background.canvas
         bind()
         input.send(.viewDidLoad)
+        myProfileInput.send(.viewDidLoad)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         input.send(.viewWillAppear)
+        myProfileInput.send(.viewWillAppear)
         homeView.reloadSections(IndexSet(integer: HomeViewLayout.navigationBar.rawValue))
     }
     
@@ -102,6 +112,15 @@ final class HomeViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] gameData in
                 self?.navigateToMatchResultConfirm(gameData: gameData)
+            }
+            .store(in: &cancellables)
+
+        let myProfileOutput = myProfileViewModel.transform(input: myProfileInput.eraseToAnyPublisher())
+        myProfileOutput.myProfileFetched
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] response in
+                self?.latestMyProfile = response
+                self?.dropDownView?.configure(profile: response)
             }
             .store(in: &cancellables)
     }
@@ -148,6 +167,9 @@ extension HomeViewController: UICollectionViewDataSource {
             cell.configure(region: myRegion)
             cell.onRegionButtonTapped = { [weak self] in
                 self?.input.send(.regionTapped)
+            }
+            cell.onSportsAndTierTapped = { [weak self] in
+                self?.toggleDropDown()
             }
             return cell
         case .matching:
@@ -240,6 +262,88 @@ extension HomeViewController: UICollectionViewDataSource {
         default:
             return UICollectionReusableView()
         }
+    }
+}
+
+// MARK: - DropDown
+
+private extension HomeViewController {
+    func toggleDropDown() {
+        if isDropDownVisible {
+            hideDropDown()
+        } else {
+            showDropDown()
+        }
+    }
+
+    func showDropDown() {
+        if dropDownView == nil {
+            let backgroundView = UIView()
+            backgroundView.backgroundColor = .Background.dimmed
+            backgroundView.alpha = 0
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dropDownBackgroundTapped))
+            backgroundView.addGestureRecognizer(tapGesture)
+            view.addSubview(backgroundView)
+            backgroundView.snp.makeConstraints {
+                $0.edges.equalToSuperview()
+            }
+            dropDownBackgroundView = backgroundView
+
+            let dropDown = HomeDropDownView()
+            dropDown.onRegionButtonTapped = { [weak self] in
+                self?.input.send(.regionTapped)
+            }
+            dropDown.onSportsCellTapped = { [weak self] sport in
+                self?.myProfileInput.send(.sportsCellTapped(sport))
+            }
+            dropDown.onSportsAndTierTapped = { [weak self] in
+                self?.hideDropDown()
+            }
+            view.addSubview(dropDown)
+            dropDown.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.width.equalTo(373)
+                $0.bottom.equalToSuperview()
+                dropDownTopConstraint = $0.top.equalToSuperview().offset(-view.bounds.height).constraint
+            }
+            dropDownView = dropDown
+
+            UIView.animate(withDuration: 0.2) {
+                backgroundView.alpha = 1
+            }
+        }
+        if let profile = latestMyProfile {
+            dropDownView?.configure(profile: profile)
+        }
+
+        view.layoutIfNeeded()
+        dropDownTopConstraint?.update(offset: 0)
+        UIView.animate(withDuration: 0.25, animations: { [weak self] in
+            self?.view.layoutIfNeeded()
+        }, completion: { [weak self] _ in
+            self?.isDropDownVisible = true
+        })
+    }
+
+    func hideDropDown() {
+        guard let dropDownView else { return }
+        dropDownTopConstraint?.update(offset: -view.bounds.height)
+        UIView.animate(withDuration: 0.2, animations: { [weak self] in
+            self?.view.layoutIfNeeded()
+            self?.dropDownBackgroundView?.alpha = 0
+        }, completion: { [weak self] _ in
+            self?.isDropDownVisible = false
+            dropDownView.removeFromSuperview()
+            self?.dropDownView = nil
+            self?.dropDownBackgroundView?.removeFromSuperview()
+            self?.dropDownBackgroundView = nil
+        })
+    }
+}
+
+@objc private extension HomeViewController {
+    func dropDownBackgroundTapped() {
+        hideDropDown()
     }
 }
 
