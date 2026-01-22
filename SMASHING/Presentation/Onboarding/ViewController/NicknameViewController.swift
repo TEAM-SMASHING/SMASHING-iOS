@@ -60,14 +60,25 @@ final class NicknameViewController: BaseViewController {
         viewModel.output
             .checkNicknameDuplicationEnabled
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isAvailable in
+            .sink { [weak self] state in
                 guard let self else { return }
-                if isAvailable {
+                switch state {
+                case .alreadyExist:
+                    nicknameView.nicknameTextField.setError(message: "이미 존재하는 닉네임입니다")
+                case .empty:
+                    viewModel.store.nickname = nicknameView.nicknameTextField.text ?? ""
+                case .available:
                     nicknameView.nicknameTextField.setMessage(message: "사용 가능한 닉네임입니다")
                     viewModel.store.nickname = nicknameView.nicknameTextField.text ?? ""
-                } else {
-                    nicknameView.nicknameTextField.setError(message: "이미 존재하는 닉네임입니다")
+                case .plain:
+                    nicknameView.nicknameTextField.resetToDefault()
                 }
+//                if true {
+//                    nicknameView.nicknameTextField.setMessage(message: "사용 가능한 닉네임입니다")
+//                    viewModel.store.nickname = nicknameView.nicknameTextField.text ?? ""
+//                } else {
+//                    nicknameView.nicknameTextField.setError(message: "이미 존재하는 닉네임입니다")
+//                }
             }
             .store(in: &cancellables)
     }

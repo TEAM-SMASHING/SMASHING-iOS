@@ -15,7 +15,10 @@ protocol OnboardingViewModelProtocol: InputOutputProtocol where Input == Onboard
 }
 
 enum NicknameState {
-    case empty, available, alreadyExist
+    case empty          // plain
+    case available      // API true
+    case alreadyExist   // API false
+    case plain          // 보통, 'ㄱ', 'ㅣ' 자음 모음만 입력되어 있는 경우 -> 호출을 안한다. + plain
 }
 
 final class OnboardingViewModel: OnboardingViewModelProtocol {
@@ -43,7 +46,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
         let buttonEnabled = CurrentValueSubject<Bool, Never>(false)
         let currentStep = CurrentValueSubject<OnboardingType, Never>(.nickname)
         let dismissOnboarding: PassthroughSubject<Void, Never> = .init()
-        let checkNicknameDuplicationEnabled: PassthroughSubject<Bool, Never> = .init()
+        let checkNicknameDuplicationEnabled: PassthroughSubject<NicknameState, Never> = .init()
         let nicknameDuplicationResult: PassthroughSubject<Bool, Never> = .init()
         let checkKakaoOpenChatLinkEnabled: PassthroughSubject<Bool, Never> = .init()
         let showMapSearchViewController: PassthroughSubject<Void, Never> = .init()
@@ -63,21 +66,35 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
             }
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .removeDuplicates()
-            .flatMap { [weak self] text -> AnyPublisher<Bool, Never> in
-                guard let self = self, !text.isEmpty else {
-                    return Just(false).eraseToAnyPublisher()
+            .flatMap { [weak self] text -> AnyPublisher<NicknameState, Never> in
+                guard let self = self else {
+                    return Just(.empty).eraseToAnyPublisher()
                 }
+                
+                if text.isEmpty {
+                    return Just(.empty).eraseToAnyPublisher()
+                }
+                
+                let regex = "^[a-zA-Z0-9가-힣]*$"
+                let isValidPattern = text.range(of: regex, options: .regularExpression) != nil
+                
+                if !isValidPattern {
+                    return Just(.plain).eraseToAnyPublisher()
+                }
+                
                 return self.onboardingUserService.checkNicknameAvailability(nickname: text)
-                    .replaceError(with: false)
+                    .map { isAvailable -> NicknameState in
+                        return isAvailable ? .available : .alreadyExist
+                    }
+                    .replaceError(with: .plain)
                     .eraseToAnyPublisher()
             }
-            .receive(on: RunLoop.main)
-            .sink { [weak self] isAvailable in
-                guard let self = self else { return }
-                output.buttonEnabled.send(isAvailable)
-                output.checkNicknameDuplicationEnabled.send(isAvailable)
-            }
+            .sink(receiveValue: { state in
+                self.output.checkNicknameDuplicationEnabled.send(state)
+                self.output.buttonEnabled.send(state == .available)
+            })
             .store(in: &cancellables)
+        
         
         input
             .compactMap { input -> String? in
