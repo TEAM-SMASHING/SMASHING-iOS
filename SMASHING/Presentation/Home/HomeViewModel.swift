@@ -24,6 +24,8 @@ final class HomeViewModel: HomeViewModelProtocol {
         case viewDidLoad
         case viewWillAppear
         
+        case regionTapped
+        
         //매칭 섹션
         case matchingResultCreateButtonTapped(MatchingConfirmedGameDTO)
         case matchingResultConfirmButtonTapped(MatchingConfirmedGameDTO)
@@ -50,6 +52,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         let isLoading = PassthroughSubject<Bool, Never>()
         let error = PassthroughSubject<Error, Never>()
         
+        let navToRegionSelection = PassthroughSubject<Void, Never>()
         let navToMatchResultCreate = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
         let navToMatchResultConfirm = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
         let navToMatchingManageTab = PassthroughSubject<Void, Never>()
@@ -82,6 +85,8 @@ final class HomeViewModel: HomeViewModelProtocol {
             fetchHomeData()
         case .viewWillAppear:
             fetchHomeData()
+        case .regionTapped:
+            output.navToRegionSelection.send()
         case .emptyButtonTapped:
             output.navToSearchUser.send()
         case .matchingResultCreateButtonTapped(let gameData):
