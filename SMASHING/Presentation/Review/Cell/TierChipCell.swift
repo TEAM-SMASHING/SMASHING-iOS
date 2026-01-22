@@ -30,7 +30,7 @@ final class TierChipCell : BaseUICollectionViewCell, ReuseIdentifiable {
     // MARK: - Setup Methods
     
     override func setUI() {
-        layer.borderColor = UIColor.Border.secondary.cgColor
+        layer.borderColor = UIColor.Border.primary.cgColor
         layer.borderWidth = 1
         layer.cornerRadius = 20
         clipsToBounds = true
@@ -54,7 +54,7 @@ final class TierChipCell : BaseUICollectionViewCell, ReuseIdentifiable {
     
     func deselected() {
         backgroundColor = .Background.canvas
-        layer.borderColor = UIColor.Text.primary.cgColor
+        layer.borderColor = UIColor.Border.primary.cgColor
         label.textColor = .Text.primary
     }
     

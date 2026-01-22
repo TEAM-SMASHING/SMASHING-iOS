@@ -14,6 +14,10 @@ protocol OnboardingViewModelProtocol: InputOutputProtocol where Input == Onboard
     var output: Output {get}
 }
 
+enum NicknameState {
+    case empty, available, alreadyExist
+}
+
 final class OnboardingViewModel: OnboardingViewModelProtocol {
     
     private var cancellables = Set<AnyCancellable>()

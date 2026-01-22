@@ -153,7 +153,6 @@ final class TierExplanationView: BaseUIView {
     func configure(oreTier: OreTier, sports: Sports) {
         tierLabel.text = oreTier.rawValue
         topPercentLabel.text = "상위 " + String(oreTier.percentage(sports: sports)) + "%"
-        // actualTierLabel.text = oreTier.actualTier(sports: sports)
         if oreTier.actualTier(sports: sports).isEmpty {
             actualTierLabel.isHidden = true
         } else {
