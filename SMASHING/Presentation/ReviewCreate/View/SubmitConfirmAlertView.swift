@@ -125,4 +125,9 @@ final class SubmitConfirmAlertView: UIView {
         onCancel?()
         removeFromSuperview()
     }
+    
+    func configure(title: String, subtitle: String) {
+        titleLabel.text = title
+        subtitleLabel.text = subtitle
+    }
 }
