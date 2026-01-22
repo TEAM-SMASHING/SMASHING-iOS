@@ -14,17 +14,17 @@ enum SseEventType: Codable {
     
     // 매칭 관련
     case matchingReceived(SSEMatchingReceivedPayload)
-    case matchingUpdated
-    case matchingRequestNotificationCreated
-    case matchingAcceptNotificationCreated
+    case matchingUpdated(SSEMatchingUpdatedPayload)
+    case matchingRequestNotificationCreated(SSEMatchingRequestNotificationCreatedPayload)
+    case matchingAcceptNotificationCreated(SSEMatchingAcceptNotificationCreatedPayload)
     
     // 게임 관련
-    case gameUpdated
-    case gameResultSubmittedNotificationCreated
-    case gameResultRejectedNotificationCreated
+    case gameUpdated(SSEGameUpdatedPayload)
+    case gameResultSubmittedNotificationCreated(SSEGameResultSubmittedNotificationCreatedPayload)
+    case gameResultRejectedNotificationCreated(SSEGameResultSubmittedNotificationCreatedPayload)
     
     // 리뷰 관련
-    case reviewReceivedNotificationCreated
+    case reviewReceivedNotificationCreated(SSEReviewReceivedNotificationCreatedPayload)
     
     var apiText: String {
         switch self {
@@ -52,68 +52,30 @@ enum SseEventType: Codable {
     }
 }
 
-struct SSEMatchingReceivedPayload: Codable {
-    let type: String
-    let matchingId: String
-    let sportId: Int64
-    let receiverProfileId: String
-    let requester: SSERequesterSummary
-}
-
-struct SSERequesterSummary: Codable {
-    let userId: String
-    let nickname: String
-    let gender: String
-    let tierCode: String
-    let wins: Int
-    let losses: Int
-    let reviewCount: Int64
-}
-
-struct SSEMatchingAcceptNotificationCreatedPayload: Codable {
-    let type: String
-    let notificationId: String
-    let notificationType: String
-    let notificationCreatedAt: String
-    let matchingId: String
-    let sportId: Int64
-    let receiverProfileId: String
-    let acceptor: SSEAcceptorSummary
-}
-
-struct SSEAcceptorSummary: Codable {
-    let userId: String
-    let nickname: String
-    let tierCode: String
-}
-
 final class SSEService: NSObject {
     private var session: URLSession?
     private var eventSourceTask: URLSessionDataTask?
     
     private var buffer = Data()
     
-    let eventSubject = PassthroughSubject<SseEventType, Never>()
+    private let eventSubject = PassthroughSubject<SseEventType, Never>()
     
     var eventPublisher: AnyPublisher<SseEventType, Never> {
         return eventSubject.eraseToAnyPublisher()
     }
     
     func connect(accessToken: String) {
-        // 1. URL 설정 (BaseTargetType의 baseURL 패턴 활용)
         guard let url = URL(string: Environment.baseURL + "/api/v1/sse/subscribe") else { return }
         
         var request = URLRequest(url: url)
-        request.timeoutInterval = Double.infinity // 연결 유지
+        request.timeoutInterval = Double.infinity
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         
-        // 2. 헤더 설정 (명세 준수)
         request.setValue("text/event-stream", forHTTPHeaderField: "Content-Type")
         request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
         request.setValue("keep-alive", forHTTPHeaderField: "Connection")
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         
-        // 3. Session 구성 및 Delegate 설정
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = Double.infinity
         configuration.timeoutIntervalForResource = Double.infinity
@@ -155,25 +117,50 @@ extension SSEService: URLSessionDataDelegate {
     
     private func handleDecodedEvent(eventName: String, data: Data) {
         let decoder = JSONDecoder()
-        
         do {
             switch eventName {
             case "system.connected":
                 print("✅ [SSE] System Connected")
                 eventSubject.send(.systemConnected)
-                
+
             case "matching.received":
                 let payload = try decoder.decode(SSEMatchingReceivedPayload.self, from: data)
                 print("✅ [SSE] Matching Received: \(payload.matchingId)")
                 eventSubject.send(.matchingReceived(payload))
+            
+            case "matching.updated":
+                let payload = try decoder.decode(SSEMatchingUpdatedPayload.self, from: data)
+                print("✅ [SSE] Matching Updated: \(payload.matchingId)")
+                eventSubject.send(.matchingUpdated(payload))
+                
+            case "matching.request.notification.created":
+                let payload = try decoder.decode(SSEMatchingRequestNotificationCreatedPayload.self, from: data)
+                print("✅ [SSE] Matching Request Notification Created: \(payload.matchingId)")
+                eventSubject.send(.matchingRequestNotificationCreated(payload))
                 
             case "matching.accept.notification.created":
                 let payload = try decoder.decode(SSEMatchingAcceptNotificationCreatedPayload.self, from: data)
-                print("✅ [SSE] Matching Received: \(payload.matchingId)")
-                eventSubject.send(.matchingAcceptNotificationCreated)
+                print("✅ [SSE] Matching Accept Notification Created: \(payload.matchingId)")
+                eventSubject.send(.matchingAcceptNotificationCreated(payload))
                 
-            case "matching.updated":
-                eventSubject.send(.matchingUpdated)
+            case "game.updated":
+                let payload = try decoder.decode(SSEGameUpdatedPayload.self, from: data)
+                print("✅ [SSE] Game Updated: \(payload.gameId)")
+                eventSubject.send(.gameUpdated(payload))
+            
+            case "game.result.submitted.notification.created":
+                let payload = try decoder.decode(SSEGameResultSubmittedNotificationCreatedPayload.self, from: data)
+                print("✅ [SSE] Game Result Submitted Notification Created: \(payload.gameId)")
+                eventSubject.send(.gameResultSubmittedNotificationCreated(payload))
+            
+            case "review.received.notification.created":
+                let payload = try decoder.decode(
+                    SSEReviewReceivedNotificationCreatedPayload.self,
+                    from: data
+                )
+                print("✅ [SSE] Review Received Notification Created: \(payload.gameId)")
+                eventSubject.send(.reviewReceivedNotificationCreated(payload))
+                
             default:
                 print("⚠️ [SSE] Unhandled Event: \(eventName)")
             }
