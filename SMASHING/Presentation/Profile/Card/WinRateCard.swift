@@ -14,6 +14,8 @@ final class WinRateCard: BaseUIView {
     
     // MARK: - UI Components
     
+    private let usesContainerView: Bool
+
     private let containerView = UIView().then {
         $0.backgroundColor = .Background.surface
         $0.layer.cornerRadius = 8
@@ -85,40 +87,66 @@ final class WinRateCard: BaseUIView {
     
     // MARK: - Setup
     
+    init(usesContainerView: Bool = true) {
+        self.usesContainerView = usesContainerView
+        super.init(frame: .zero)
+    }
+
+    override init(frame: CGRect) {
+        self.usesContainerView = true
+        super.init(frame: frame)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func setUI() {
-        addSubview(containerView)
-        containerView.addSubview(mainStackView)
+        if usesContainerView {
+            addSubview(containerView)
+            containerView.addSubview(mainStackView)
+        } else {
+            addSubview(mainStackView)
+        }
         
         winStack.addArrangedSubviews(winCountLabel, winTitleLabel)
         loseStack.addArrangedSubviews(loseCountLabel, loseTitleLabel)
         rateStack.addArrangedSubviews(ratePercentageLabel, rateTitleLabel)
         
         mainStackView.addArrangedSubviews(winStack, loseStack, rateStack)
-        containerView.addSubviews(divider1, divider2)
+        if usesContainerView {
+            containerView.addSubviews(divider1, divider2)
+        } else {
+            addSubviews(divider1, divider2)
+        }
     }
     
     override func setLayout() {
-        containerView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.height.equalTo(78)
+        if usesContainerView {
+            containerView.snp.makeConstraints {
+                $0.edges.equalToSuperview()
+                $0.height.equalTo(78)
+            }
         }
         
+        let parentView = usesContainerView ? containerView : self
+        
         mainStackView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(parentView)
         }
         
         divider1.snp.makeConstraints {
             $0.width.equalTo(1)
             $0.height.equalTo(54)
-            $0.centerY.equalToSuperview()
-            $0.centerX.equalTo(containerView.snp.right).multipliedBy(1.0/3.0)
+            $0.centerY.equalTo(parentView)
+            $0.centerX.equalTo(parentView.snp.right).multipliedBy(1.0/3.0)
         }
         
         divider2.snp.makeConstraints {
             $0.width.equalTo(1)
             $0.height.equalTo(54)
-            $0.centerY.equalToSuperview()
-            $0.centerX.equalTo(containerView.snp.right).multipliedBy(2.0/3.0)
+            $0.centerY.equalTo(parentView)
+            $0.centerX.equalTo(parentView.snp.right).multipliedBy(2.0/3.0)
         }
     }
     
