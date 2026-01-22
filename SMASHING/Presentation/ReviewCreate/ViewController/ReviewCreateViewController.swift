@@ -139,40 +139,4 @@ final class ReviewCreateViewController: BaseViewController {
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
-    
-    
-}
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    let opponent = OpponentSummaryDTO(
-        userID: "USER_001",
-        nickname: "차차",
-        openchatUrl: nil,
-        gender: .female,
-        tierCode: "SV2"
-    )
-    let game = MatchingConfirmedGameDTO(
-        gameID: "GAME_001",
-        resultStatus: .pendingResult,
-        createdAt: "2026-01-22T07:02:37+09:00",
-        opponent: opponent,
-        isSubmitLocked: false,
-        latestSubmissionId: nil,
-        latestSubmitterId: nil,
-        latestAttemptNo: nil
-    )
-    let matchResult = MatchResultData(
-        winnerUserId: "USER_ME",
-        loserUserId: "USER_001",
-        scoreWinner: 21,
-        scoreLoser: 18
-    )
-    let flowType = ReviewFlowType.submission(
-        gameData: game,
-        matchResultData: matchResult,
-        myUserId: "USER_ME"
-    )
-    return ReviewCreateViewController(viewModel: ReviewCreateViewModel(flowType: flowType))
 }
