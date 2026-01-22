@@ -84,7 +84,7 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
                         accessToken: accessToken,
                         refreshToken: refreshToken,
                         authId: data.userId ?? "",
-                        nickname: nickname
+                        nickname:nickname
                     )
                 } else {
                     throw NetworkError.networkFail

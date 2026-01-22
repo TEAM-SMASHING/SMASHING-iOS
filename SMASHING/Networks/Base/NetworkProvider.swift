@@ -48,7 +48,7 @@ final class NetworkProvider<API: TargetType> {
         }.eraseToAnyPublisher()
     }
     
-    static func kakaoAddressRequestPublisher<T: Decodable>(
+    static func plainRequestPublisher<T: Decodable>(
         _ target: API,
         type: T.Type
     ) -> AnyPublisher<T, NetworkError> {

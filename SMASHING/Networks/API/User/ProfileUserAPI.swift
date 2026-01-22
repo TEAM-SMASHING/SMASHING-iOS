@@ -5,12 +5,10 @@
 //  Created by 이승준 on 1/19/26.
 //
 
-import Foundation
-
 import Alamofire
 import Moya
 
-enum ProfileUserTarget {
+enum ProfileUserAPI {
     case getMyProfileTier
     case getMyProfiles
     case createProfile(request: CreateProfileRequest)
@@ -19,7 +17,7 @@ enum ProfileUserTarget {
     case updateRegion(region: String)
 }
 
-extension ProfileUserTarget: BaseTargetType {
+extension ProfileUserAPI: BaseTargetType {
     var path: String {
         switch self {
         case .getMyProfileTier:

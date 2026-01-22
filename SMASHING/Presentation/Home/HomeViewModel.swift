@@ -24,17 +24,23 @@ final class HomeViewModel: HomeViewModelProtocol {
         case viewDidLoad
         case viewWillAppear
         
+        case regionTapped
+        
         //매칭 섹션
         case matchingResultCreateButtonTapped(MatchingConfirmedGameDTO)
         case matchingResultConfirmButtonTapped(MatchingConfirmedGameDTO)
         case matchingSeeAllTapped
+        case emptyButtonTapped
         
         //추천 유저 섹션
-        case recommendedUserTapped
+        case recommendedUserTapped(userId: String)
         
         //랭킹 섹션
-        case rankingUserTapped
+        case rankingUserTapped(userId: String)
         case rankingSeeAllTapped
+        
+        // 알림 아이콘 탭
+        case notificationTapped
     }
     
     struct Output {
@@ -46,11 +52,14 @@ final class HomeViewModel: HomeViewModelProtocol {
         let isLoading = PassthroughSubject<Bool, Never>()
         let error = PassthroughSubject<Error, Never>()
         
+        let navToRegionSelection = PassthroughSubject<Void, Never>()
         let navToMatchResultCreate = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
         let navToMatchResultConfirm = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
         let navToMatchingManageTab = PassthroughSubject<Void, Never>()
-        let navToSelectedUserProfile = PassthroughSubject<Int, Never>()
+        let navToSelectedUserProfile = PassthroughSubject<String, Never>()
         let navToRanking = PassthroughSubject<Void, Never>()
+        let navToNotification = PassthroughSubject<Void, Never>()
+        let navToSearchUser = PassthroughSubject<Void, Never>()
     }
     private var cancellables = Set<AnyCancellable>()
     
@@ -76,19 +85,24 @@ final class HomeViewModel: HomeViewModelProtocol {
             fetchHomeData()
         case .viewWillAppear:
             fetchHomeData()
+        case .regionTapped:
+            output.navToRegionSelection.send()
+        case .emptyButtonTapped:
+            output.navToSearchUser.send()
         case .matchingResultCreateButtonTapped(let gameData):
             output.navToMatchResultCreate.send(gameData)
         case .matchingResultConfirmButtonTapped(let gameData):
             output.navToMatchResultConfirm.send(gameData)
         case .matchingSeeAllTapped:
             output.navToMatchingManageTab.send()
-        case .recommendedUserTapped:
-            break
-        case .rankingUserTapped:
-            break
+        case .recommendedUserTapped(let userId):
+            output.navToSelectedUserProfile.send(userId)
+        case .rankingUserTapped(let userId):
+            output.navToSelectedUserProfile.send(userId)
         case .rankingSeeAllTapped:
             output.navToRanking.send()
-
+        case .notificationTapped:
+            output.navToNotification.send()
         }
     }
     

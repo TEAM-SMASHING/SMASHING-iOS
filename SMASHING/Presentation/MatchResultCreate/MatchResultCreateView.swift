@@ -16,9 +16,12 @@ final class MatchResultCreateView: BaseUIView {
     private var isDropDownExpanded: Bool = false
     private var selectedWinner: String?
     
+    var onBackTapped: (() -> Void)?
     var onScoreChanged: ((Int, Int) -> Void)?
     
-    private let navigationBar = CustomNavigationBar(title: "결과 작성")
+    lazy var navigationBar = CustomNavigationBar(title: "결과 작성",
+                                                 leftAction: { [weak self] in
+        self?.onBackTapped?()})
     
     private let titleLabel = UILabel().then {
         $0.text = "경기 결과를 작성해주세요"
@@ -274,6 +277,13 @@ final class MatchResultCreateView: BaseUIView {
         myOptionButton.setTitle(myNickname, for: .normal)
         rivalOptionButton.setTitle(opponentNickname, for: .normal)
         matchResultCard.configure(myName: myNickname, myImage: UIImage(systemName: "circle.fill"), rivalName: opponentNickname, rivalImage: UIImage(systemName: "circle.fill"))
+    }
+    
+    func applyPrefillData(myScore: Int, opponentScore: Int) {
+        myScoreTextField.text = String(myScore)
+        rivalScoreTextField.text = String(opponentScore)
+        updateScoreToMatchResultCard()
+        notifyScoreChanged()
     }
     
     func getSelectedWinner() -> String? {

@@ -27,7 +27,7 @@ final class NotificationView: BaseUIView {
         let layout = UICollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.minimumLineSpacing = 0
-        
+
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.backgroundColor = .clear
         collection.register(NotificationCell.self, forCellWithReuseIdentifier: NotificationCell.reuseIdentifier)
@@ -49,14 +49,8 @@ final class NotificationView: BaseUIView {
         
         notificationCollection.snp.makeConstraints {
             $0.top.equalTo(navigationBar.snp.bottom)
-            $0.horizontalEdges.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(8)
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
-}
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    NotificationViewController()
 }

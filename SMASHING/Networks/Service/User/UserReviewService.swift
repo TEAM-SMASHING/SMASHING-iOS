@@ -19,28 +19,28 @@ protocol UserReviewServiceProtocol {
 
 final class UserReviewService: UserReviewServiceProtocol {
     func fetchMyReviewSummary() -> AnyPublisher<ReviewSummaryResponse, NetworkError> {
-        return NetworkProvider<ReviewUserTarget>
+        return NetworkProvider<ReviewUserAPI>
             .requestPublisher(.getMyReviewSummary, type: ReviewSummaryResponse.self)
             .map { $0.data }
             .eraseToAnyPublisher()
     }
 
     func fetchMyRecentReviews(size: Int, cursor: String?) -> AnyPublisher<RecentReviewResponse, NetworkError> {
-        return NetworkProvider<ReviewUserTarget>
+        return NetworkProvider<ReviewUserAPI>
             .requestPublisher(.getMyRecentReviews(size: size, cursor: cursor), type: RecentReviewResponse.self)
             .map { $0.data }
             .eraseToAnyPublisher()
     }
 
     func fetchOtherUserRecentReviews(userId: String, sport: Sports, size: Int, cursor: String?) -> AnyPublisher<RecentReviewResponse, NetworkError> {
-        return NetworkProvider<ReviewUserTarget>
+        return NetworkProvider<ReviewUserAPI>
             .requestPublisher(.getOtherUserRecentReviews(userId: userId, sport: sport, size: size, cursor: cursor), type: RecentReviewResponse.self)
             .map { $0.data }
             .eraseToAnyPublisher()
     }
 
     func fetchOtherUserReviewSummary(userId: String, sport: Sports) -> AnyPublisher<ReviewSummaryResponse, NetworkError> {
-        return NetworkProvider<ReviewUserTarget>
+        return NetworkProvider<ReviewUserAPI>
             .requestPublisher(.getOtherUserReviewSummary(userId: userId, sport: sport), type: ReviewSummaryResponse.self)
             .map { $0.data }
             .eraseToAnyPublisher()

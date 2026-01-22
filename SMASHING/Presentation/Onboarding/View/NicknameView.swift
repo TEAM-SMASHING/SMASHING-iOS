@@ -58,28 +58,37 @@ final class NicknameView: BaseUIView {
 extension NicknameView: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if string.isEmpty {
+            // 1. 글자 삭제 시에는 에러 초기화 후 허용
+            if string.isEmpty {
+                nicknameTextField.resetToDefault()
+                return true
+            }
+
+            // 2. 한글 조합 중(Marked Text)일 때는 검사를 건너뜁니다.
+            // 이 처리가 없으면 자음/모음 입력 시 정규식과 충돌할 수 있습니다.
+            if let markedRange = textField.markedTextRange {
+                return true
+            }
+
+            // 3. 정규식 검사 (한글 자모음, 완성형, 영어, 숫자 허용)
+            let pattern = "^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]*$"
+            if string.range(of: pattern, options: .regularExpression) == nil {
+                nicknameTextField.setError(message: "한글, 영어, 숫자만 입력 가능합니다.")
+                return false
+            }
+
+            // 4. 글자 수 제한 검사
+            let currentText = textField.text ?? ""
+            guard let stringRange = Range(range, in: currentText) else { return false }
+            let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+
+            if updatedText.count > maxNicknameLength {
+                return false
+            }
+
             nicknameTextField.resetToDefault()
             return true
         }
-
-        let pattern = "^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]*$"
-        if string.range(of: pattern, options: .regularExpression) == nil {
-            nicknameTextField.setError(message: "한글, 영어, 숫자만 입력 가능합니다.")
-            return false
-        }
-
-        let currentText = textField.text ?? ""
-        guard let stringRange = Range(range, in: currentText) else { return false }
-        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
-
-        if updatedText.count > maxNicknameLength {
-            return false
-        }
-
-        nicknameTextField.resetToDefault()
-        return true
-    }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         let count = textField.text?.count ?? 0

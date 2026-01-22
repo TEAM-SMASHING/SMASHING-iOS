@@ -38,6 +38,10 @@ final class MatchResultCreateViewController: BaseViewController {
         bind()
         view.backgroundColor = .Background.canvas
         input.send(.viewDidLoad)
+        
+        mainView.onBackTapped = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
     }
     
     override func loadView() {
@@ -84,6 +88,13 @@ final class MatchResultCreateViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] winner in
                 self?.mainView.updateSelectedWinner(winner)
+            }
+            .store(in: &cancellables)
+        
+        output.prefillData
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] prefill in
+                self?.mainView.applyPrefillData(myScore: prefill.myScore, opponentScore: prefill.opponentScore)
             }
             .store(in: &cancellables)
         

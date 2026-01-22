@@ -12,20 +12,42 @@ protocol TabBarFlowFactory {
 }
 
 final class DefaultTabBarFlowFactory: TabBarFlowFactory {
-    func makeTabFlow(for tab: MainTabBarController.Tab) -> (any Coordinator, UINavigationController) {
+    func makeTabFlow(
+        for tab: MainTabBarController.Tab
+    ) -> (
+        any Coordinator, UINavigationController
+    ) {
         switch tab {
         case .home:
             let navController = UINavigationController()
-            return (HomeCoordinator(navigationController: navController), navController)
+            return (
+                HomeCoordinator(
+                    navigationController: navController
+                ), navController
+            )
         case .matchingSearch:
             let navController = UINavigationController()
-            return (MatchingSearchCoordinator(navigationController: navController), navController)
+            let userSportProvider = KeychainUserSportProvider()
+            return (
+                MatchingSearchCoordinator(
+                    navigationController: navController,
+                    userSportProvider: userSportProvider
+                ), navController
+            )
         case .matchingManage:
             let navController = UINavigationController()
-            return (MatchingManageCoordinator(navigationController: navController), navController)
+            return (
+                MatchingManageCoordinator(
+                    navigationController: navController
+                ), navController
+            )
         case .profile:
             let navController = UINavigationController()
-            return (ProfileCoordinator(navigationController: navController), navController)
+            return (
+                ProfileCoordinator(
+                    navigationController: navController
+                ), navController
+            )
         }
     }
 }

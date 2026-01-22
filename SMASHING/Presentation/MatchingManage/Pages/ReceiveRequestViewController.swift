@@ -193,6 +193,12 @@ extension ReceiveRequestViewController: UICollectionViewDataSource {
 
         cell.onAcceptTapped = { [weak self] in
             self?.acceptButtonDidTap(at: indexPath.item)
+            let accept
+            = SSEMatchingAcceptNotificationCreatedPayload(
+                type: "", notificationId: "", notificationType: "", notificationCreatedAt: "",
+                matchingId: "", sportId: 10, receiverProfileId: "", acceptor: SSESimpleUserSummary(
+                    userId: "", nickname: "", tierCode: ""))
+            self?.showToast(type: SseEventType.matchingAcceptNotificationCreated(accept))
         }
 
         return cell

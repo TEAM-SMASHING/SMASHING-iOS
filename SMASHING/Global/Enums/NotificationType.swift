@@ -12,6 +12,8 @@ enum NotificationType: String, Codable {
     case resultRejectedScoreMismatch = "RESULT_REJECTED_SCORE_MISMATCH"
     case resultRejectedWinLoseReversed = "RESULT_REJECTED_WIN_LOSE_REVERSED"
     case reviewReceived = "REVIEW_RECEIVED"
+    case resultRejectedScoreAndWinLoseMismatch  = "RESULT_REJECTED_SCORE_AND_WIN_LOSE_MISMATCH"
+    case resultRejectedGameNotPlayedYet = "RESULT_REJECTED_GAME_NOT_PLAYED_YET"
     
     var displayText: String {
         switch self {
@@ -21,6 +23,8 @@ enum NotificationType: String, Codable {
         case .resultRejectedScoreMismatch: return "결과 반려 - 점수 오류"
         case .resultRejectedWinLoseReversed: return "결과 반려 - 승패 오류"
         case .reviewReceived: return "후기 도착"
+        case .resultRejectedScoreAndWinLoseMismatch: return "결과 반려 - 점수 + 승패 오류"
+        case .resultRejectedGameNotPlayedYet: return "결과 반려 - 진행되지 않은 게임"
         }
     }
 }
