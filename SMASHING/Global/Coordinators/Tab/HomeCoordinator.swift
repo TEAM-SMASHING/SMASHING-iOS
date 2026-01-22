@@ -17,6 +17,7 @@ final class HomeCoordinator: Coordinator {
     var childCoordinators: [Coordinator]
     var navigationController: UINavigationController
     private var cancellables = Set<AnyCancellable>()
+    private let userProfileService = UserProfileService()
     
     var navAction: ((NotificationAction) -> Void)?
     // TODO: 유저 정보 API 연동 후 수정
@@ -44,6 +45,13 @@ final class HomeCoordinator: Coordinator {
     }
     
     private func bindNavigationEvents(output: HomeViewModel.Output) {
+        
+        output.navToRegionSelection
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showRegionSelection()
+            }
+            .store(in: &cancellables)
         
         output.navToMatchingManageTab
             .receive(on: DispatchQueue.main)
@@ -129,4 +137,26 @@ final class HomeCoordinator: Coordinator {
         
         return sport
     }
+    
+    private func showRegionSelection() {
+            let addressCoordinator = AddressCoordinator(navigationController: navigationController)
+            childCoordinators.append(addressCoordinator)
+            
+            addressCoordinator.backAction = { [weak self, weak addressCoordinator] address in
+                guard let self else { return }
+                _ = KeychainService.add(key: Environment.regionKey, value: address)
+                
+                self.userProfileService.updateRegion(region: address)
+                    .receive(on: DispatchQueue.main)
+                    .sink(receiveCompletion: { _ in }, receiveValue: { })
+                    .store(in: &self.cancellables)
+                
+                self.navigationController.popViewController(animated: true)
+                if let coordinator = addressCoordinator {
+                    self.childCoordinators.removeAll { $0 === coordinator }
+                }
+            }
+            
+            addressCoordinator.start()
+        }
 }

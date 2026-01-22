@@ -62,6 +62,7 @@ final class HomeViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         input.send(.viewWillAppear)
+        homeView.reloadSections(IndexSet(integer: HomeViewLayout.navigationBar.rawValue))
     }
     
     private func setCollectionView() {
@@ -144,6 +145,9 @@ extension HomeViewController: UICollectionViewDataSource {
         case .navigationBar:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNavigationBarCell.reuseIdentifier, for: indexPath) as? HomeNavigationBarCell else { return UICollectionViewCell() }
             cell.configure(region: myRegion)
+            cell.onRegionButtonTapped = { [weak self] in
+                self?.input.send(.regionTapped)
+            }
             return cell
         case .matching:
             if recentMatching.isEmpty {

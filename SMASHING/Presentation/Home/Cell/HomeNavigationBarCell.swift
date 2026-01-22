@@ -11,6 +11,8 @@ import Then
 import SnapKit
 
 final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
+    var onRegionButtonTapped: (() -> Void)?
+    
     private let regionStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 4
@@ -65,6 +67,10 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         sportsAndTierStackView.addArrangedSubviews(sportsImage, tierLabel)
         
         addSubviews(regionStackView, sportsAndTierStackView, bellImage)
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(regionTapped))
+        regionStackView.isUserInteractionEnabled = true
+        regionStackView.addGestureRecognizer(tap)
     }
     
     override func setLayout() {
@@ -99,5 +105,10 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     func configure(region: String) {
         regionLabel.text = region
+    }
+    
+    @objc
+    private func regionTapped() {
+        onRegionButtonTapped?()
     }
 }
