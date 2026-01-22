@@ -119,11 +119,16 @@ final class ReviewCreateViewController: BaseViewController {
     
     @objc
     private func submitButtonDidTap() {
+        view.endEditing(true)
         showSubmitConfirmPopup()
     }
     
     private func showSubmitConfirmPopup() {
         let popup = SubmitConfirmAlertView()
+        let text = viewModel.submitPopupText
+        popup.configure(title: text.title, subtitle: text.subtitle)
+        
+
         popup.onConfirm = { [weak self] in
             self?.input.send(.submitButtonTapped)
         }
