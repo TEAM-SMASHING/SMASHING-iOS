@@ -31,9 +31,13 @@ final class NotificationViewController: BaseViewController {
     }
     
     private func setupCollectionView() {
-        mainView.notificationCollection.dataSource = self
-        mainView.notificationCollection.delegate = self
-        mainView.notificationCollection.register(NotificationCell.self, forCellWithReuseIdentifier: NotificationCell.reuseIdentifier)
+        mainView.collectionView.dataSource = self
+        mainView.collectionView.delegate = self
+        mainView.collectionView
+            .register(
+                NotificationCell.self,
+                forCellWithReuseIdentifier: NotificationCell.reuseIdentifier
+            )
     }
     
     private func bind() {
@@ -42,7 +46,7 @@ final class NotificationViewController: BaseViewController {
         output.dataFetched
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.mainView.notificationCollection.reloadData()
+                self?.mainView.collectionView.reloadData()
             }
             .store(in: &cancellables)
         
@@ -50,11 +54,11 @@ final class NotificationViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] index in
                 let indexPath = IndexPath(item: index, section: 0)
-                self?.mainView.notificationCollection.reloadItems(at: [indexPath])
+                self?.mainView.collectionView.reloadItems(at: [indexPath])
             }
             .store(in: &cancellables)
         
-        mainView.notificationCollection
+        mainView.collectionView
             .reachedBottomPublisher
             .sink { [weak self] _ in
                 guard let self else { return }

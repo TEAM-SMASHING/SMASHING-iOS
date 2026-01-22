@@ -18,27 +18,28 @@ final class NotificationView: BaseUIView {
     
     // MARK: - UI Components
     
-    private lazy var navigationBar = CustomNavigationBar(title: "알림") { [weak self] in
-        guard let self else { return }
-        backAction?()
-    }
+    private lazy var navigationBar = CustomNavigationBar(title: "알림")
     
-    let notificationCollection: UICollectionView = {
+    let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.minimumLineSpacing = 0
-
-        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collection.backgroundColor = .clear
-        collection.register(NotificationCell.self, forCellWithReuseIdentifier: NotificationCell.reuseIdentifier)
         
-        return collection
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
+        cv.register(NotificationCell.self, forCellWithReuseIdentifier: NotificationCell.reuseIdentifier)
+        return cv
     }()
     
     // MARK: - Setup Methods
     
     override func setUI() {
-        addSubviews(navigationBar, notificationCollection)
+        addSubviews(navigationBar, collectionView)
+        
+        navigationBar.setLeftButton {
+            self.backAction?()
+        }
     }
     
     override func setLayout() {
@@ -47,7 +48,7 @@ final class NotificationView: BaseUIView {
             $0.horizontalEdges.equalToSuperview()
         }
         
-        notificationCollection.snp.makeConstraints {
+        collectionView.snp.makeConstraints {
             $0.top.equalTo(navigationBar.snp.bottom)
             $0.horizontalEdges.equalToSuperview().inset(8)
             $0.bottom.equalTo(safeAreaLayoutGuide)
