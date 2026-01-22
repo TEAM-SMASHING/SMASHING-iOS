@@ -30,10 +30,10 @@ final class HomeViewModel: HomeViewModelProtocol {
         case matchingSeeAllTapped
         
         //추천 유저 섹션
-        case recommendedUserTapped
+        case recommendedUserTapped(userId: String)
         
         //랭킹 섹션
-        case rankingUserTapped
+        case rankingUserTapped(userId: String)
         case rankingSeeAllTapped
     }
     
@@ -49,7 +49,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         let navToMatchResultCreate = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
         let navToMatchResultConfirm = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
         let navToMatchingManageTab = PassthroughSubject<Void, Never>()
-        let navToSelectedUserProfile = PassthroughSubject<Int, Never>()
+        let navToSelectedUserProfile = PassthroughSubject<String, Never>()
         let navToRanking = PassthroughSubject<Void, Never>()
     }
     private var cancellables = Set<AnyCancellable>()
@@ -82,10 +82,10 @@ final class HomeViewModel: HomeViewModelProtocol {
             output.navToMatchResultConfirm.send(gameData)
         case .matchingSeeAllTapped:
             output.navToMatchingManageTab.send()
-        case .recommendedUserTapped:
-            break
-        case .rankingUserTapped:
-            break
+        case .recommendedUserTapped(let userId):
+            output.navToSelectedUserProfile.send(userId)
+        case .rankingUserTapped(let userId):
+            output.navToSelectedUserProfile.send(userId)
         case .rankingSeeAllTapped:
             output.navToRanking.send()
 
