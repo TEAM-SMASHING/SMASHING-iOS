@@ -29,17 +29,14 @@ final class RankingCardView: BaseUIView {
     }
     
     private let rankImage = UIImageView().then {
-        $0.image = .tierBronzeStage3
         $0.contentMode = .scaleAspectFit
     }
     
     private let tierImage = UIImageView().then {
-        $0.image = .icGold
         $0.contentMode = .scaleAspectFit
     }
     
     private let lpLabel = UILabel().then {
-        $0.text = "1400lp"
         $0.font = .pretendard(.captionXxsR)
         $0.textColor = .Text.tertiary
     }
@@ -85,9 +82,9 @@ final class RankingCardView: BaseUIView {
     
     // MARK: - Public Methods
     
-    func configure(rankImage: UIImage?, tierImage: UIImage?, lp: Int) {
+    func configure(rankImage: UIImage?, tierCode: String, lp: Int) {
         self.rankImage.image = rankImage
-        self.tierImage.image = tierImage
+        self.tierImage.image = Tier.from(tierCode: tierCode)?.badge
         lpLabel.text = "\(lp) LP"
         
         // 1등은 tierImage 가 더 큼
@@ -97,11 +94,23 @@ final class RankingCardView: BaseUIView {
                 $0.centerX.equalToSuperview()
                 $0.size.equalTo(60)
             }
+            self.rankImage.snp.makeConstraints {
+                $0.top.equalToSuperview().inset(12)
+                $0.centerX.equalToSuperview()
+                $0.width.equalTo(8)
+                $0.height.equalTo(16)
+            }
         } else {
             self.tierImage.snp.remakeConstraints {
                 $0.top.equalTo(self.rankImage.snp.bottom).offset(8)
                 $0.centerX.equalToSuperview()
                 $0.size.equalTo(40)
+            }
+            self.rankImage.snp.makeConstraints {
+                $0.top.equalToSuperview().inset(12)
+                $0.centerX.equalToSuperview()
+                $0.width.equalTo(8)
+                $0.height.equalTo(12)
             }
         }
     }

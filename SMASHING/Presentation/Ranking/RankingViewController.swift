@@ -47,7 +47,6 @@ final class RankingViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setDummyData()
         view.backgroundColor = .Background.canvas
         setCollectionView()
         
@@ -117,36 +116,9 @@ final class RankingViewController: BaseViewController {
     }
     
     private func updateTopThreePodium() {
-        guard topThreeUsers.count >= 3 else { return }
-        
-        let first = topThreeUsers[0]
-        let second = topThreeUsers[1]
-        let third = topThreeUsers[2]
-        
-        mainView.topThreePodium.configure(first: (nickname: first.nickname, profileImage: nil, tierImage: nil, lp: first.lp), second: (nickname: second.nickname, profileImage: nil, tierImage: nil, lp: second.lp), third: (nickname: third.nickname, profileImage: nil, tierImage: nil, lp: third.lp))
-    }
-    
-    private func setDummyData() {
-        mainView.topThreePodium.configure(
-            first: (
-                nickname: "밤이달이밤이달이밤이",
-                profileImage: nil,
-                tierImage: .bad,
-                lp: 1430
-            ),
-            second: (
-                nickname: "와구와구와구와구와구",
-                profileImage: nil,
-                tierImage: .good,
-                lp: 1298
-            ),
-            third: (
-                nickname: "스매싱고수스매싱고수",
-                profileImage: nil,
-                tierImage: .bad,
-                lp: 1156
-            )
-        )
+        topThreeUsers.forEach { user in
+            mainView.topThreePodium.configure(with: user)
+        }
     }
     
     private func updateMyRanking() {

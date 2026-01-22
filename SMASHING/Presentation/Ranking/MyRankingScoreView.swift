@@ -91,5 +91,6 @@ final class myRankingScoreView: BaseUIView {
         profileImageView.image = UIImage.defaultProfileImage(name: myRank.nickname)
         nameLabel.text = myRank.nickname
         tierLabel.text = myRank.tierWithLpText
+        tierEmblem.image = Tier.from(tierCode: myRank.tierCode)?.badge
     }
 }
