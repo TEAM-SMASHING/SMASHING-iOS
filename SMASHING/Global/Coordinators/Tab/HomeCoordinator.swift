@@ -8,6 +8,10 @@
 import UIKit
 import Combine
 
+enum NotificationAction {
+    case navConfirmedMatchManage, navRequestedMatchManage, navSearchUser
+}
+
 final class HomeCoordinator: Coordinator {
     
     var childCoordinators: [Coordinator]
@@ -15,7 +19,6 @@ final class HomeCoordinator: Coordinator {
     private var cancellables = Set<AnyCancellable>()
     
     var navAction: ((NotificationAction) -> Void)?
-
     // TODO: 유저 정보 API 연동 후 수정
     private var myUserId: String {
         return KeychainService.get(key: Environment.userIdKey) ?? ""
@@ -42,6 +45,14 @@ final class HomeCoordinator: Coordinator {
     
     private func bindNavigationEvents(output: HomeViewModel.Output) {
         
+        output.navToMatchingManageTab
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.navAction?(.navRequestedMatchManage)
+            }
+            .store(in: &cancellables)
+        
+        
         output.navToMatchResultCreate
             .receive(on: DispatchQueue.main)
             .sink { [weak self] gameData in
@@ -62,6 +73,13 @@ final class HomeCoordinator: Coordinator {
                 self?.showUserProfile(userId: userId)
             }
             .store(in: &cancellables)
+        
+        output.navToSearchUser
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.navAction?(.navSearchUser)
+            }
+            .store(in: &cancellables)
     }
     
     private func showMatchResultCreate(with gameData: MatchingConfirmedGameDTO) {
@@ -79,6 +97,7 @@ final class HomeCoordinator: Coordinator {
         navigationController.pushViewController(rankingVC, animated: true)
     }
     
+
     private func showNotificationFlow() {
         let notificationCoordinator = NotificationCoordinator(navigationController: navigationController)
         self.childCoordinators.append(notificationCoordinator)
@@ -100,14 +119,14 @@ final class HomeCoordinator: Coordinator {
         guard let userId = KeychainService.get(key: Environment.userIdKey), !userId.isEmpty else {
             return .badminton
         }
-
+        
         let key = "\(Environment.sportsCodeKeyPrefix).\(userId)"
         let rawValue = KeychainService.get(key: key)
         guard let rawValue,
               let sport = Sports(rawValue: rawValue) else {
             return .badminton
         }
-
+        
         return sport
     }
 }

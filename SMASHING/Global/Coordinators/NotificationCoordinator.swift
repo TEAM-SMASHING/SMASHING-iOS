@@ -9,10 +9,6 @@ import Combine
 import Foundation
 import UIKit
 
-enum NotificationAction {
-    case navConfirmedMatchManage, navRequestedMatchManage
-}
-
 final class NotificationCoordinator: Coordinator {
     var childCoordinators: [any Coordinator] = []
     var navigationController: UINavigationController

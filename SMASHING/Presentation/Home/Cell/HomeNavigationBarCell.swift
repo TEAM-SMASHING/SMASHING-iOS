@@ -96,4 +96,8 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.size.equalTo(24)
         }
     }
+    
+    func configure(region: String) {
+        regionLabel.text = region
+    }
 }

@@ -99,8 +99,6 @@ final class MatchingManageViewController: BaseViewController {
     }
     
     func moveToPage(tab: MatchingManageHeaderView.Tab) {
-        print("move to page : \(tab)")
-            
         self.matchingManageView.headerView.updateSelectedTab(tab)
         
         guard let currentVC = self.pageViewController.viewControllers?.first,

@@ -47,3 +47,4 @@ class BaseViewController: UIViewController, ToastDisplayable {
         toast.show()
     }
 }
+
