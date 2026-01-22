@@ -22,26 +22,24 @@ final class NotificationCoordinator: Coordinator {
     }
     
     func start() {
-        let service = MockNotificationService()
+        let service = NotificationService()
         let viewModel = NotificationViewModel(service: service)
-        let viewController = NotificationViewController(viewModel: viewModel)
+        let viewController = NotificationListViewController(viewModel: viewModel)
         navigationController.pushViewController(viewController, animated: false)
         
         viewModel.output.navConfirmedMatchManage.sink { [weak self] in
             self?.action?(.navConfirmedMatchManage)
-            // self?.navigationController.popViewController(animated: true)
         }
         .store(in: &cancellables)
         
         viewModel.output.navRequestedMatchManage.sink { [weak self] in
             self?.action?(.navRequestedMatchManage)
-            // self?.navigationController.popViewController(animated: true)
         }
         .store(in: &cancellables)
         
-//        viewModel.output.navPop.sink { [weak self] in
-//            self?.navigationController.popViewController(animated: true)
-//        }
-//        .store(in: &cancellables)
+        viewModel.output.navPop.sink { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
+        .store(in: &cancellables)
     }
 }

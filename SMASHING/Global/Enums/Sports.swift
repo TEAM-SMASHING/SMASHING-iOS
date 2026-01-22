@@ -39,3 +39,37 @@ enum Sports: String, Codable, CaseIterable {
         }
     }
 }
+
+enum IntSports: Int, Codable, CaseIterable {
+    case tableTennis = 1
+    case tennis = 2
+    case badminton = 3
+    
+    var intCode: Int {
+        switch self {
+        case .tableTennis: return 1
+        case .tennis: return 2
+        case .badminton: return 3
+        }
+    }
+    
+    var displayName: String {
+        switch self {
+        case .tableTennis: return "탁구"
+        case .tennis: return "테니스"
+        case .badminton: return "배드민턴"
+        }
+    }
+    
+    var image: UIImage {
+        switch self {
+        case .tableTennis:
+            .icPingpong
+        case .tennis:
+            .icTennis
+        case .badminton:
+            .icBadminton
+        }
+    }
+}
+

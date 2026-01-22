@@ -28,7 +28,7 @@ final class NotificationView: BaseUIView {
         
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
-        cv.register(NotificationCell.self, forCellWithReuseIdentifier: NotificationCell.reuseIdentifier)
+        cv.register(NotificationCollectionViewCell.self, forCellWithReuseIdentifier: NotificationCollectionViewCell.reuseIdentifier)
         return cv
     }()
     
@@ -50,7 +50,7 @@ final class NotificationView: BaseUIView {
         
         collectionView.snp.makeConstraints {
             $0.top.equalTo(navigationBar.snp.bottom)
-            $0.horizontalEdges.equalToSuperview().inset(8)
+            $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
