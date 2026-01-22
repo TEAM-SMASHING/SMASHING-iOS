@@ -29,7 +29,7 @@ extension HomeViewLayout {
         case .navigationBar:
             return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
         case .matching:
-            return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(202))
+            return NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(218))
         case .recommendedUser:
             return NSCollectionLayoutSize(widthDimension: .absolute(166), heightDimension: .absolute(187))
         case .ranking:
@@ -98,11 +98,11 @@ extension HomeViewLayout {
         case .navigationBar:
             return NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 20, trailing: 16)
         case .matching:
-            return NSDirectionalEdgeInsets(top: 28, leading: 16, bottom: 40, trailing: 16)
+            return NSDirectionalEdgeInsets(top: 20, leading: 16, bottom: 32, trailing: 16)
         case .recommendedUser:
-            return NSDirectionalEdgeInsets(top: 20, leading: 16, bottom: 40, trailing: 0)
+            return NSDirectionalEdgeInsets(top: 12, leading: 16, bottom: 32, trailing: 0)
         case .ranking:
-            return NSDirectionalEdgeInsets(top: 20, leading: 16, bottom: 0, trailing: 16)
+            return NSDirectionalEdgeInsets(top: 12, leading: 16, bottom: 44, trailing: 16)
         }
     }
     

@@ -20,11 +20,6 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.isUserInteractionEnabled = true
     }
     
-    private let leftProfileStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.spacing = 0
-    }
-    
     private let myImage = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
         $0.clipsToBounds = true
@@ -43,11 +38,6 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let VSImage = UIImageView().then {
         $0.image = .icVs
         $0.contentMode = .scaleAspectFit
-    }
-    
-    private let rightProfileStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.spacing = 0
     }
     
     private let rivalImage = UIImageView().then {
@@ -75,11 +65,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
     
     override func setUI() {
-        leftProfileStackView.addArrangedSubviews(myImage, myNickName)
-        
-        rightProfileStackView.addArrangedSubviews(rivalImage, rivalNickName)
-        
-        containerView.addSubviews(leftProfileStackView, rightProfileStackView, VSImage, writeResultButton)
+        containerView.addSubviews(myImage, myNickName, rivalImage, rivalNickName, VSImage, writeResultButton)
         
         contentView.addSubviews(containerView)
     }
@@ -90,30 +76,37 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
         
         myImage.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(32)
+            $0.leading.equalToSuperview().inset(44)
             $0.size.equalTo(64)
         }
         
-        leftProfileStackView.snp.makeConstraints {
-            $0.top.equalTo(containerView.snp.top).offset(25.5)
-            $0.leading.equalTo(containerView.snp.leading).inset(50.5)
+        myNickName.snp.makeConstraints {
+            $0.top.equalTo(myImage.snp.bottom).offset(4)
+            $0.centerX.equalTo(myImage)
         }
         
         VSImage.snp.makeConstraints {
             $0.top.equalTo(containerView.snp.top).offset(24)
+            $0.width.equalTo(100)
+            $0.height.equalTo(108)
             $0.centerX.equalToSuperview()
         }
         
         rivalImage.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(32)
+            $0.trailing.equalToSuperview().inset(44)
             $0.size.equalTo(64)
         }
         
-        rightProfileStackView.snp.makeConstraints {
-            $0.top.equalTo(containerView.snp.top).inset(25.5)
-            $0.trailing.equalTo(containerView.snp.trailing).inset(50.5)
+        rivalNickName.snp.makeConstraints {
+            $0.top.equalTo(rivalImage.snp.bottom).offset(4)
+            $0.centerX.equalTo(rivalImage)
         }
         
         writeResultButton.snp.makeConstraints {
-            $0.bottom.equalTo(containerView.snp.bottom).inset(18)
+            $0.top.equalTo(VSImage.snp.bottom).offset(20)
+            $0.bottom.equalTo(containerView.snp.bottom).inset(24)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(42)
         }

@@ -49,7 +49,6 @@ final class RankingView: BaseUIView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.layer.cornerRadius = 16
         return collectionView
     }()
     
@@ -99,7 +98,8 @@ final class RankingView: BaseUIView {
         }
         
         rankingCollectionView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(16)
+            $0.top.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(100)
         }
         
         rankingEmptyView.snp.makeConstraints {

@@ -25,7 +25,7 @@ struct RankingUserDTO: Decodable {
     
     var tierWithLpText: String {
         let tierName = tier?.displayName ?? "UNKNOWN"
-        return "\(tierName) \(lp)P"
+        return "\(tierName) · \(lp)LP"
     }
 }
 
@@ -40,6 +40,6 @@ struct MyRankingDTO: Decodable {
     
     var tierWithLpText: String {
         let tierName = tier?.displayName ?? "UNKNOWN"
-        return "\(tierName) \(lp)P"
+        return "\(tierName) · \(lp)P"
     }
 }
