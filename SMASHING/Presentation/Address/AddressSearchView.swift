@@ -24,7 +24,9 @@ final class AddressSearchView: BaseUIView {
         $0.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
     }
     
-    let searchTextField = SearchTextField()
+    let searchTextField = SearchTextField().then{
+        $0.setPlaceholder(text: "도로명 주소를 검색해주세요")
+    }
     
     let resultCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then {
         $0.scrollDirection = .vertical
