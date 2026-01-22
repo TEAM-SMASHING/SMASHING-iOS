@@ -17,15 +17,15 @@ enum OnboardingType: Int, CaseIterable {
     var mainTitle: String {
         switch self {
         case .nickname:
-            "사용하실 닉네임을 입력해주세요"
+            "닉네임을 입력해주세요"
         case .gender:
             "성별을 선택해주세요"
         case .chat:
             "카카오톡 오픈채팅 링크를 입력해주세요"
         case .sports:
-            "주 스포츠 1개를 선택해주세요"
+            "종목을 선택해주세요"
         case .tier:
-            "실력을 설정해주세요"
+            "구력을 선택해주세요"
         case .address:
             "활동 지역을 설정해주세요"
         }
@@ -34,17 +34,17 @@ enum OnboardingType: Int, CaseIterable {
     var subTitle: String {
         switch self {
         case .nickname:
-            "특수문자를 제외한 한글, 영어, 숫자만 가능해요"
+            "한글, 영어, 숫자만 가능해요"
         case .gender:
-            "매칭 시 성별을 보여드리기 위함이에요"
+            " "
         case .chat:
-            "매칭 시 상대방에게 공개돼요"
+            "매칭이 확정되면 상대방이 확인할 수 있어요"
         case .sports:
-            "회원가입 이후 스포츠 종목을 더 추가할 수 있어요"
+            "회원가입 이후 종목을 추가할 수 있어요"
         case .tier:
-            "구력을 통해 임시 티어가 결정돼요!"
+            "구력을 통해 임시 티어가 결정돼요"
         case .address:
-            "서울 소재 주소만 입력가능해요"
+            "서울 소재 주소만 입력 가능해요"
         }
     }
 }

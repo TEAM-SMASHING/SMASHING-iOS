@@ -83,6 +83,8 @@ extension TierExplanationViewController: UICollectionViewDelegate, UICollectionV
         if collectionView == mainView.tierCollectionView {
             let cell = collectionView.dequeueReusableCell(TierChipCell.self, for: indexPath)
             if indexPath.row == oreTier.index {
+                mainView.imageView.image = oreTier.image
+                mainView.tierLabel.textColor = oreTier.textColor
                 cell.selected()
             } else {
                 cell.deselected()

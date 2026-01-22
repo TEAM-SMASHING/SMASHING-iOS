@@ -26,6 +26,9 @@ enum SseEventType: Codable {
     // 리뷰 관련
     case reviewReceivedNotificationCreated(SSEReviewReceivedNotificationCreatedPayload)
     
+    // 매칭 결정
+    case acceptMatching // API 없음
+    
     var apiText: String {
         switch self {
         case .systemConnected: return "system.connected"
@@ -37,6 +40,7 @@ enum SseEventType: Codable {
         case .gameResultSubmittedNotificationCreated: return "game.result.submitted.notification.created"
         case .gameResultRejectedNotificationCreated: return "game.result.rejected.notification.created"
         case .reviewReceivedNotificationCreated: return "review.received.notification.created"
+        case .acceptMatching: return ""
         }
     }
     
@@ -46,6 +50,8 @@ enum SseEventType: Codable {
             return "누군가가 매칭을 신청했어요! 받은 요청 탭에서 확인해주세요."
         case .matchingAcceptNotificationCreated:
             return "누군가가 매칭을 수락했어요! 매칭 확정 탭에서 확인해주세요."
+        case .acceptMatching:
+            return "매칭을 수락했어요! 매칭 확정 탭에서 확인해주세요."
         default:
             return ""
         }

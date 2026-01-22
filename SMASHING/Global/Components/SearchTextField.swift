@@ -20,8 +20,8 @@ final class SearchTextField: UITextField {
 
     private let leftIconView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = .icSearchSm
-        $0.tintColor = .Text.secondary
+        $0.image = .icSearchSm.withRenderingMode(.alwaysTemplate)
+        $0.tintColor = .Icon.secondary
     }
     
     private lazy var clearButton = UIButton().then {

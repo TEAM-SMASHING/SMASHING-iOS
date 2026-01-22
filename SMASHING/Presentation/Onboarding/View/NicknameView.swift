@@ -37,8 +37,7 @@ final class NicknameView: BaseUIView {
 
     override func setLayout() {
         nicknameTextField.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
-            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.top.horizontalEdges.equalToSuperview()
         }
         
         countLabel.snp.makeConstraints {

@@ -14,7 +14,7 @@ final class AreaSelectionView: BaseUIView {
     
     // MARK: - Properties
     
-    private let placeholderText = "주소를 검색해주세요"
+    private let placeholderText = "도로명 주소를 검색해주세요"
     
     var action: (() -> Void)?
     
@@ -29,7 +29,7 @@ final class AreaSelectionView: BaseUIView {
     }
     
     private let addressLabel = UILabel().then {
-        $0.text = "주소를 검색해주세요"
+        $0.text = "도로명 주소를 검색해주세요"
         $0.textColor = .Text.disabled
         $0.font = .systemFont(ofSize: 16)
         $0.isUserInteractionEnabled = false
@@ -67,10 +67,10 @@ final class AreaSelectionView: BaseUIView {
     func updateAddress(address: String?) {
         if let address = address, !address.isEmpty {
             addressLabel.text = address
-            addressLabel.textColor = .white
+            addressLabel.textColor = .Text.primary
         } else {
             addressLabel.text = placeholderText
-            addressLabel.textColor = .systemGray2
+            addressLabel.textColor = .Text.secondary
         }
     }
 }

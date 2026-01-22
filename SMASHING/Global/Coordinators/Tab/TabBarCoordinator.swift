@@ -121,6 +121,8 @@ final class TabBarCoordinator: Coordinator {
             print("게임 결과 반려 알림 생성")
         case .reviewReceivedNotificationCreated:
             print("리뷰가 받아들여짐")
+        case .acceptMatching:
+            print("매칭 수락함")
         }
     }
 }
