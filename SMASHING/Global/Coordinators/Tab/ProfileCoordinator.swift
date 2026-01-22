@@ -30,7 +30,7 @@ final class ProfileCoordinator: Coordinator {
         navigationController.pushViewController(viewController, animated: true)
         
         viewModel.output.navigateToAddSports.sink { [weak self] in
-            
+            self?.showAddSports()
         }
         .store(in: &cancellables)
         
@@ -47,7 +47,8 @@ final class ProfileCoordinator: Coordinator {
     }
     
     func showAddSports() {
-        
+        let addSportsVC = AddSportsViewController()
+        navigationController.pushViewController(addSportsVC, animated: true)
     }
     
     func showAllReviews() {

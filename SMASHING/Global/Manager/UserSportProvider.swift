@@ -22,7 +22,6 @@ final class KeychainUserSportProvider: UserSportProviding {
               let sport = Sports(rawValue: rawValue) else {
             return .badminton
         }
-
         return sport
     }
 }

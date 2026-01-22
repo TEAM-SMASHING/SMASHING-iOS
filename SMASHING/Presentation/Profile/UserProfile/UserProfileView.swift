@@ -41,7 +41,9 @@ final class UserProfileView: BaseUIView {
         $0.addChallengeButton()
     }
     
-    let tierCard = TierCard()
+    let tierCard = TierCard().then {
+        $0.showsAddButton = false
+    }
     
     private let winRateCard = WinRateCard()
     

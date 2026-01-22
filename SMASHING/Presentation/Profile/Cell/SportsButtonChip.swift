@@ -16,6 +16,10 @@ final class SportsButtonChip: UIButton {
     
     private var sports: Sports?
     
+    private let tapGesture = UITapGestureRecognizer(
+        target: self, action: #selector(plusImageTapped)
+    )
+    
     // MARK: - UI Components
     
     private let contentStackView = UIStackView().then {
@@ -42,6 +46,9 @@ final class SportsButtonChip: UIButton {
             label.text = sports!.displayName
         } else {
             contentStackView.addArrangedSubview(plusImage)
+            contentStackView.isUserInteractionEnabled = true
+            plusImage.isUserInteractionEnabled = true
+            plusImage.addGestureRecognizer(tapGesture)
         }
         super.init(frame: .zero)
         self.setSelected(selected)
@@ -66,7 +73,6 @@ final class SportsButtonChip: UIButton {
         contentStackView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.top.bottom.equalToSuperview().inset(10)
-            $0.height.equalTo(24)
         }
         
         plusImage.snp.makeConstraints {
@@ -77,5 +83,9 @@ final class SportsButtonChip: UIButton {
     func setSelected(_ isSelected: Bool) {
         backgroundColor = isSelected ? .Background.canvasReverse : .Background.overlay
         label.textColor = isSelected ? .Text.primaryReverse : .Text.secondary
+    }
+
+    @objc private func plusImageTapped() {
+        sendActions(for: .touchUpInside)
     }
 }

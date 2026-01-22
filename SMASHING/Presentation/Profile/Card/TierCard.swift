@@ -18,6 +18,10 @@ final class TierCard: BaseUIView {
     var tierDetailAction: (() -> Void)?
     var onSportsAction: ((Sports?) -> Void)?
     var selectedSports: [Sports] = [.badminton, .tableTennis, .tennis]
+    private var selectedSport: Sports?
+    var showsAddButton: Bool = true {
+        didSet { sportsCollectionView.reloadData() }
+    }
     
     // MARK: - UI Components
     
@@ -161,6 +165,7 @@ final class TierCard: BaseUIView {
     }
     
     func configure(profile: MyProfileListResponse) {
+        selectedSport = profile.activeProfile.sportCode
         let max = profile.activeProfile.maxLp + 1
         let min = profile.activeProfile.minLp
         let current = profile.activeProfile.lp
@@ -173,9 +178,16 @@ final class TierCard: BaseUIView {
         // 추가: 활성화된 종목을 리스트의 가장 앞으로 보내거나
         // 서버에서 받은 전체 프로필 리스트를 reloadSports에 전달
         // self.reloadSports(with: profile.profiles.map { $0.sportCode })
+        let sortedSports = profile.allProfiles
+            .sorted { (lhs, rhs) in
+                (lhs.isCurrentlySelected ? 0 : 1) < (rhs.isCurrentlySelected ? 0 : 1)
+            }
+            .map(\.sportCode)
+        reloadSports(with: sortedSports)
     }
 
     func configure(profile: OtherUserProfileResponse) {
+        selectedSport = profile.selectedProfile.sportCode
         let max = profile.selectedProfile.maxLp + 1
         let min = profile.selectedProfile.minLp
         let current = profile.selectedProfile.lp
@@ -206,6 +218,11 @@ final class TierCard: BaseUIView {
     
     func reloadSports(with sports: [Sports]) {
         self.selectedSports = sports
+        if let selectedSport, !sports.contains(selectedSport) {
+            self.selectedSport = sports.first
+        } else if selectedSport == nil {
+            self.selectedSport = sports.first
+        }
         self.sportsCollectionView.reloadData()
     }
     
@@ -221,11 +238,17 @@ final class TierCard: BaseUIView {
 }
 
 extension TierCard: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
         let allSportsCount = Sports.allCases.count
         let currentCount = selectedSports.count
         
-        return currentCount < allSportsCount ? currentCount + 1 : currentCount
+        if showsAddButton, currentCount < allSportsCount {
+            return currentCount + 1
+        }
+        return allSportsCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -235,8 +258,8 @@ extension TierCard: UICollectionViewDataSource, UICollectionViewDelegate {
         
         if indexPath.item < selectedSports.count {
             let sport = selectedSports[indexPath.item]
-            cell.configure(with: sport, isSelected: indexPath.item == 0)
-        } else {
+            cell.configure(with: sport, isSelected: sport == selectedSport)
+        } else if showsAddButton {
             cell.configure(with: nil, isSelected: false)
         }
         
