@@ -124,21 +124,27 @@ final class WinRateCard: BaseUIView {
     
     func configure(profile: MyProfileListResponse) {
         let total = profile.activeProfile.wins + profile.activeProfile.losses
-        let rate = total == 0 ? 0.0 : Float(profile.activeProfile.wins) / (Float(total))
+        let rate = total == 0 ? 0.0 : Float(profile.activeProfile.wins) / Float(total)
         let roundedRate = (rate * 1000).rounded() / 10
-
+        let displayRate = (roundedRate == floor(roundedRate))
+                          ? String(Int(roundedRate))
+                          : String(roundedRate)
+        
         winCountLabel.text = profile.activeProfile.wins.description
         loseCountLabel.text = profile.activeProfile.losses.description
-        ratePercentageLabel.text = roundedRate.description + "%"
+        ratePercentageLabel.text = displayRate.description + "%"
     }
 
     func configure(profile: OtherUserProfileResponse) {
         let total = profile.selectedProfile.wins + profile.selectedProfile.losses
         let rate = total == 0 ? 0.0 : Float(profile.selectedProfile.wins) / (Float(total))
         let roundedRate = (rate * 1000).rounded() / 10
-
+        let displayRate = (roundedRate == floor(roundedRate))
+                          ? String(Int(roundedRate))
+                          : String(roundedRate)
+        
         winCountLabel.text = profile.selectedProfile.wins.description
         loseCountLabel.text = profile.selectedProfile.losses.description
-        ratePercentageLabel.text = roundedRate.description + "%"
+        ratePercentageLabel.text = displayRate.description + "%"
     }
 }
