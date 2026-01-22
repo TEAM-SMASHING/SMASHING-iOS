@@ -23,11 +23,35 @@ final class MatchingSearchCoordinator: Coordinator {
         matchingSearchVC.onSearchTapped = { [weak self] in
             self?.showSearchResult()
         }
+        matchingSearchVC.onUserSelected = { [weak self] userId in
+            self?.showUserProfile(userId: userId)
+        }
         navigationController.pushViewController(matchingSearchVC, animated: true)
     }
 
     private func showSearchResult() {
         let searchVC = SearchResultViewController()
         navigationController.pushViewController(searchVC, animated: true)
+    }
+
+    private func showUserProfile(userId: String) {
+        let viewModel = UserProfileViewModel(userId: userId, sport: currentUserSport())
+        let userProfileVC = UserProfileViewController(viewModel: viewModel)
+        navigationController.pushViewController(userProfileVC, animated: true)
+    }
+
+    private func currentUserSport() -> Sports {
+        guard let userId = KeychainService.get(key: Environment.userIdKey), !userId.isEmpty else {
+            return .badminton
+        }
+
+        let key = "\(Environment.sportsCodeKeyPrefix).\(userId)"
+        let rawValue = KeychainService.get(key: key)
+        guard let rawValue,
+              let sport = Sports(rawValue: rawValue) else {
+            return .badminton
+        }
+
+        return sport
     }
 }

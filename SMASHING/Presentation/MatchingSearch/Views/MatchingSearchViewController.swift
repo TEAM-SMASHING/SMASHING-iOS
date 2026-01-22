@@ -25,6 +25,7 @@ final class MatchingSearchViewController: BaseViewController {
 
     private var userList: [MatchingSearchUserProfileDTO] = []
     var onSearchTapped: (() -> Void)?
+    var onUserSelected: ((String) -> Void)?
 
     // MARK: - Init
 
@@ -78,7 +79,7 @@ final class MatchingSearchViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] userId in
                 guard let self else { return }
-                self.navigateToUserProfile(userId: userId)
+                self.onUserSelected?(userId)
             }
             .store(in: &cancellables)
 
@@ -116,10 +117,6 @@ final class MatchingSearchViewController: BaseViewController {
         matchingSearchView.headerView.onGenderFilterReset = { [weak self] in
             self?.input.send(.genderFilterChanged(nil))
         }
-    }
-
-    private func navigateToUserProfile(userId: String) {
-        print("Navigate to user profile: \(userId)")
     }
 
     // MARK: - Filter Actions
@@ -212,7 +209,10 @@ extension MatchingSearchViewController: UICollectionViewDataSource {
 
 extension MatchingSearchViewController: UICollectionViewDelegate {
 
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
         let user = userList[indexPath.row]
         input.send(.userCellTapped(user.userID))
     }
