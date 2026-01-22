@@ -16,8 +16,9 @@ final class SportsButtonChip: UIButton {
     
     private var sports: Sports?
     
-    private let tapGesture = UITapGestureRecognizer(
-        target: self, action: #selector(plusImageTapped)
+    private lazy var tapGesture = UITapGestureRecognizer(
+        target: self,
+        action: #selector(plusImageTapped)
     )
     
     // MARK: - UI Components
@@ -41,16 +42,17 @@ final class SportsButtonChip: UIButton {
     // MARK: - Setup Methods
     
     init(sports: Sports?, selected: Bool = false) {
-        if sports != nil {
+        super.init(frame: .zero)
+
+        if let sports {
             contentStackView.addArrangedSubview(label)
-            label.text = sports!.displayName
+            label.text = sports.displayName
         } else {
             contentStackView.addArrangedSubview(plusImage)
             contentStackView.isUserInteractionEnabled = true
             plusImage.isUserInteractionEnabled = true
             plusImage.addGestureRecognizer(tapGesture)
         }
-        super.init(frame: .zero)
         self.setSelected(selected)
         setUI()
         setLayout()

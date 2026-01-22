@@ -16,11 +16,15 @@ final class EditSportsSelectionViewController: BaseViewController {
     // MARK: - Properties
         
     let sportsView = SportsSelectionView()
+    var onSportSelected: ((Sports) -> Void)?
         
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view = sportsView
+        sportsView.configure { [weak self] sport in
+            self?.onSportSelected?(sport)
+        }
     }
 }

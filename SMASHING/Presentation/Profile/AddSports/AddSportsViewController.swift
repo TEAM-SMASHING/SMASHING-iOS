@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 import SnapKit
 
@@ -33,9 +34,21 @@ class AddSportsViewController: BaseViewController {
     
     private let containerView = OnboardingContainerView()
     private var currentStep: AddSportsType = .sportsSelection
+    private let viewModel: AddSportsViewModelProtocol
+    private let inputSubject = PassthroughSubject<AddSportsViewModel.Input, Never>()
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Life Cycle
         
+    init(viewModel: AddSportsViewModelProtocol = AddSportsViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func loadView() {
         self.view = containerView
     }
@@ -43,6 +56,7 @@ class AddSportsViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupActions()
+        bind()
         showStep(currentStep)
     }
     
@@ -110,12 +124,51 @@ class AddSportsViewController: BaseViewController {
     
     private func makeChildViewController(for step: AddSportsType) -> UIViewController {
         switch step {
-        case .sportsSelection: return EditSportsSelectionViewController()
-        case .tierSelection: return EditTierSelectionViewController()
+        case .sportsSelection:
+            let controller = EditSportsSelectionViewController()
+            controller.onSportSelected = { [weak self] sport in
+                self?.inputSubject.send(.sportSelected(sport))
+            }
+            return controller
+        case .tierSelection:
+            let controller = EditTierSelectionViewController()
+            controller.onExperienceSelected = { [weak self] experience in
+                self?.inputSubject.send(.experienceSelected(experience))
+            }
+            return controller
         }
     }
     
     private func finishOnboarding() {
-        print("온보딩 프로세스 완료")
+        inputSubject.send(.submit)
+    }
+
+    private func bind() {
+        let output = viewModel.transform(input: inputSubject.eraseToAnyPublisher())
+        
+        output.isLoading
+            .receive(on: DispatchQueue.main)
+            .sink { _ in }
+            .store(in: &cancellables)
+        
+        output.submitCompleted
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .store(in: &cancellables)
+        
+        output.errorMessage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                self?.showErrorAlert(message: message)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func showErrorAlert(message: String) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
 }

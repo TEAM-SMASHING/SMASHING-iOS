@@ -48,6 +48,7 @@ final class ProfileCoordinator: Coordinator {
     
     func showAddSports() {
         let addSportsVC = AddSportsViewController()
+        addSportsVC.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(addSportsVC, animated: true)
     }
     
