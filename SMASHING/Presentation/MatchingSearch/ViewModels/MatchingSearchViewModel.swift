@@ -38,6 +38,7 @@ final class MatchingSearchViewModel: MatchingSearchViewModelProtocol {
     // MARK: - Properties
 
     private let service: MatchingSearchServiceProtocol
+    private let sportCode: Sports
     private var cancellables = Set<AnyCancellable>()
     let output = Output()
 
@@ -53,8 +54,9 @@ final class MatchingSearchViewModel: MatchingSearchViewModelProtocol {
 
     // MARK: - Init
 
-    init(service: MatchingSearchServiceProtocol) {
+    init(service: MatchingSearchServiceProtocol, sportCode: Sports) {
         self.service = service
+        self.sportCode = sportCode
     }
 
     // MARK: - Transform
@@ -121,7 +123,8 @@ final class MatchingSearchViewModel: MatchingSearchViewModelProtocol {
             cursor: nextCursor,
             size: 20,
             gender: currentGenderFilter,
-            tier: currentTierFilter
+            tier: currentTierFilter,
+            sportCode: sportCode
         )
         .receive(on: DispatchQueue.main)
         .sink { [weak self] completion in
