@@ -51,7 +51,6 @@ final class TierExplanationView: BaseUIView {
         
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
-        $0.text = "상위 10%"
     }
     
     private let actualTierLabel = PaddingLabel().then {
@@ -63,7 +62,6 @@ final class TierExplanationView: BaseUIView {
         
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
-        $0.text = "실제 기준 5부"
     }
     
     let tierCollectionView: UICollectionView = {
@@ -86,6 +84,8 @@ final class TierExplanationView: BaseUIView {
         $0.textColor = .Text.primary
     }
     
+    let noResultView = EmptyView()
+    
     let tierExplanationCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -105,7 +105,7 @@ final class TierExplanationView: BaseUIView {
     
     override func setUI() {
         addSubviews(navigationBar, imageView, tierLabel, detailStack, tierCollectionView,
-                    recomandationLabel, tierExplanationCollectionView)
+                    recomandationLabel, tierExplanationCollectionView, noResultView)
         
         detailStack.addArrangedSubviews(topPercentLabel, actualTierLabel)
     }
@@ -132,6 +132,10 @@ final class TierExplanationView: BaseUIView {
             $0.centerX.equalToSuperview()
         }
         
+        noResultView.snp.makeConstraints {
+            $0.center.equalTo(tierExplanationCollectionView)
+        }
+        
         tierCollectionView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
             $0.top.equalTo(detailStack.snp.bottom).offset(28)
@@ -153,6 +157,23 @@ final class TierExplanationView: BaseUIView {
     func configure(oreTier: OreTier, sports: Sports) {
         tierLabel.text = oreTier.rawValue
         topPercentLabel.text = "상위 " + String(oreTier.percentage(sports: sports)) + "%"
+        actualTierLabel.text = "실제 " + String(oreTier.actualTier(sports: sports))
+        switch oreTier {
+        case .iron:
+            recomandationLabel.text = " "
+            noResultView.configure(title: "누구나 처음은 그렇습니다...", subtitle: "가능성을 찾으러 가볼까요?")
+            noResultView.isHidden = false
+            tierExplanationCollectionView.isHidden = true
+        case .challenger:
+            recomandationLabel.text = " "
+            noResultView.configure(title: "결국 해내셨군요!", subtitle: "끊임없이 덤비는 도전자들로부터 자격을 증명하세요!")
+            noResultView.isHidden = false
+            tierExplanationCollectionView.isHidden = true
+        default :
+            recomandationLabel.text = "승급을 위해 아래의 기술들을 연마해보세요"
+            noResultView.isHidden = true
+            tierExplanationCollectionView.isHidden = false
+        }
         if oreTier.actualTier(sports: sports).isEmpty {
             actualTierLabel.isHidden = true
         } else {
