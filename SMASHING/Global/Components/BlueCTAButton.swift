@@ -34,7 +34,7 @@ final class BlueCTAButton: UIButton {
     
     private func setAttributes(label: String) {
         self.setTitle(label, for: .normal)
-        self.titleLabel?.font = .pretendard(.subtitleLgSb)
+        self.titleLabel?.font = .pretendard(.textMdSb)
         
         self.backgroundColor = .Tier.diamondBackground
         self.setTitleColor(.Text.emphasis, for: .normal)
