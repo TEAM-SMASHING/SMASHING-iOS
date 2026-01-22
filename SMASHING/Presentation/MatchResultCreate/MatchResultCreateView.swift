@@ -17,7 +17,7 @@ final class MatchResultCreateView: BaseUIView {
     private var selectedWinner: String?
     
     var onBackTapped: (() -> Void)?
-    var onScoreChanged: ((Int, Int) -> Void)?
+    var onScoreChanged: ((Int?, Int?, Bool, Bool) -> Void)?
     
     lazy var navigationBar = CustomNavigationBar(title: "결과 작성",
                                                  leftAction: { [weak self] in
@@ -240,9 +240,18 @@ final class MatchResultCreateView: BaseUIView {
     }
     
     private func notifyScoreChanged() {
-        let myScore = getMyScore()
-        let opponentScore = getOpponentScore()
-        onScoreChanged?(myScore, opponentScore)
+        let myText = myScoreTextField.text ?? ""
+        let opponentText = rivalScoreTextField.text ?? ""
+        let hasMyScore = !myText.isEmpty
+        let hasOpponentScore = !opponentText.isEmpty
+        
+        let myScore = hasMyScore ? Int(myText) : nil
+        let opponentScore = hasOpponentScore ? Int(opponentText) : nil
+        onScoreChanged?(myScore, opponentScore, hasMyScore, hasOpponentScore)
+        
+//        let myScore = getMyScore()
+//        let opponentScore = getOpponentScore()
+//        onScoreChanged?(myScore, opponentScore)
     }
     
     private func updateScoreToMatchResultCard() {
@@ -288,13 +297,5 @@ final class MatchResultCreateView: BaseUIView {
     
     func getSelectedWinner() -> String? {
         return selectedWinner
-    }
-    
-    func getMyScore() -> Int {
-        return matchResultCard.getMyScore()
-    }
-    
-    func getOpponentScore() -> Int {
-        return matchResultCard.getRivalScore()
     }
 }
