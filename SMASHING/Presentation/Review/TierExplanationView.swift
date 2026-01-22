@@ -27,11 +27,9 @@ final class TierExplanationView: BaseUIView {
         $0.setLeftButtonHidden(true)
     }
     
-    private let imageView = UIImageView().then {
-        $0.backgroundColor = .darkGray
-    }
+    let imageView = UIImageView()
     
-    private let tierLabel = UILabel().then {
+    let tierLabel = UILabel().then {
         $0.text = "티어 설명"
         $0.font = .pretendard(.titleXlSb)
         $0.textColor = .Text.emphasis
@@ -155,6 +153,11 @@ final class TierExplanationView: BaseUIView {
     func configure(oreTier: OreTier, sports: Sports) {
         tierLabel.text = oreTier.rawValue
         topPercentLabel.text = "상위 " + String(oreTier.percentage(sports: sports)) + "%"
-        actualTierLabel.text = oreTier.actualTier(sports: sports)
+        // actualTierLabel.text = oreTier.actualTier(sports: sports)
+        if oreTier.actualTier(sports: sports).isEmpty {
+            actualTierLabel.isHidden = true
+        } else {
+            actualTierLabel.isHidden = false
+        }
     }
 }

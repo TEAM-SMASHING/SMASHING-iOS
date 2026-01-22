@@ -5,6 +5,8 @@
 //  Created by 이승준 on 1/14/26.
 //
 
+import UIKit
+
 enum OreTier: String, CaseIterable {
     case iron = "Iron"
     case bronze = "Bronze"
@@ -54,7 +56,6 @@ enum OreTier: String, CaseIterable {
             return "상위 1%"
         }
     }
-    
     
     func percentage(sports: Sports) -> Int {
         switch sports {
@@ -128,6 +129,44 @@ enum OreTier: String, CaseIterable {
             return 5
         case .challenger:
             return 6
+        }
+    }
+    
+    var image: UIImage {
+        switch self {
+        case .iron:
+            return UIImage.tierIron
+        case .bronze:
+            return UIImage.tierBronze
+        case .silver:
+            return UIImage.tierSliver
+        case .gold:
+            return UIImage.tierGold
+        case .platinum:
+            return UIImage.tierPlatium
+        case .diamond:
+            return UIImage.tierDiamond
+        case .challenger:
+            return UIImage.tierChallenger
+        }
+    }
+    
+    var textColor: UIColor {
+        switch self {
+        case .iron:
+            UIColor.Tier.ironText
+        case .bronze:
+            UIColor.Tier.bronzeText
+        case .silver:
+            UIColor.Tier.silverText
+        case .gold:
+            UIColor.Tier.goldText
+        case .platinum:
+            UIColor.Tier.platinumText
+        case .diamond:
+            UIColor.Tier.diamondText
+        case .challenger:
+            UIColor.Tier.challengerText
         }
     }
 }

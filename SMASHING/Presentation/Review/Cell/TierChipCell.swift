@@ -16,6 +16,8 @@ final class TierChipCell : BaseUICollectionViewCell, ReuseIdentifiable {
     
     static let horizontalPadding: CGFloat = 16
     
+    var tier: OreTier?
+    
     // MARK: - UI Components
     
     private let label = UILabel().then {
@@ -58,5 +60,6 @@ final class TierChipCell : BaseUICollectionViewCell, ReuseIdentifiable {
     
     func configure(with tier: OreTier) {
         label.text = tier.rawValue
+        self.tier = tier
     }
 }
