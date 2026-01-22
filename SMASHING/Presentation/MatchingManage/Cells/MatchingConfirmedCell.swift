@@ -213,14 +213,14 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
             self.writeResult.backgroundColor = .Button.backgroundPrimaryActive
         case .resultRejected:
             if canSubmit {
-                self.writeResult.backgroundColor = .Button.backgroundPrimaryActive
-                self.writeResult.setTitleColor(.Text.emphasis, for: .normal)
-            } else {
-                self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
+                print("이거야?")
+                self.writeResult.backgroundColor = .Button.backgroundRejected
                 self.writeResult.setTitleColor(.Button.textRejected, for: .normal)
+            } else {
+                print("이건가")
+                self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
+                self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
             }
-            self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
-            self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
         case .canceled:
             self.writeResult.backgroundColor = .Button.backgroundPrimaryDisabled
             self.writeResult.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
