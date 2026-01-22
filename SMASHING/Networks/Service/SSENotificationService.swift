@@ -70,13 +70,30 @@ struct SSERequesterSummary: Codable {
     let reviewCount: Int64
 }
 
+struct SSEMatchingAcceptNotificationCreatedPayload: Codable {
+    let type: String
+    let notificationId: String
+    let notificationType: String
+    let notificationCreatedAt: String
+    let matchingId: String
+    let sportId: Int64
+    let receiverProfileId: String
+    let acceptor: SSEAcceptorSummary
+}
+
+struct SSEAcceptorSummary: Codable {
+    let userId: String
+    let nickname: String
+    let tierCode: String
+}
+
 final class SSEService: NSObject {
     private var session: URLSession?
     private var eventSourceTask: URLSessionDataTask?
     
     private var buffer = Data()
     
-    private let eventSubject = PassthroughSubject<SseEventType, Never>()
+    let eventSubject = PassthroughSubject<SseEventType, Never>()
     
     var eventPublisher: AnyPublisher<SseEventType, Never> {
         return eventSubject.eraseToAnyPublisher()
@@ -149,6 +166,11 @@ extension SSEService: URLSessionDataDelegate {
                 let payload = try decoder.decode(SSEMatchingReceivedPayload.self, from: data)
                 print("✅ [SSE] Matching Received: \(payload.matchingId)")
                 eventSubject.send(.matchingReceived(payload))
+                
+            case "matching.accept.notification.created":
+                let payload = try decoder.decode(SSEMatchingAcceptNotificationCreatedPayload.self, from: data)
+                print("✅ [SSE] Matching Received: \(payload.matchingId)")
+                eventSubject.send(.matchingAcceptNotificationCreated)
                 
             case "matching.updated":
                 eventSubject.send(.matchingUpdated)
