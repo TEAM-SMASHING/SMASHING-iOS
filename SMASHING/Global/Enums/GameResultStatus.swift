@@ -28,7 +28,7 @@ enum GameResultStatus: String, Codable {
         case .pendingResult:
             return true
         case .resultRejected:
-            return !isMySubmission
+            return isMySubmission
         case .waitingConfirmation, .canceled, .resultConfirmed:
             return false
         }
@@ -59,7 +59,7 @@ enum GameResultStatus: String, Codable {
         case .waitingConfirmation:
             return isMySubmission ? "결과 확인 대기 중" : "경기 결과 확인하기"
         case .resultRejected:
-            return isMySubmission ? "결과 확인 대기 중" : "결과가 반려되었어요!"
+            return isMySubmission ? "결과가 반려되었어요!" : "결과 확인 대기 중"
         default:
             return buttonTitle
         }

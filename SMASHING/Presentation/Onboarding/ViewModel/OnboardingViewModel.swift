@@ -123,7 +123,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                                     nickname: store.nickname,
                                     gender: store.gender?.rawValue ?? "",
                                     openChatUrl: store.kakaoOpenChatLink,
-                                    sportCode: store.sports?.code ?? "",
+                                    sportCode: store.sports?.rawValue ?? "",
                                     experienceRange: store.experienceRange?.rawValue ?? "",
                                     region: store.address
                                 )

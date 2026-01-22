@@ -118,12 +118,6 @@ final class TierCard: BaseUIView {
             $0.size.equalTo(100)
         }
         
-        tierImage.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(sportsCollectionView.snp.bottom).offset(20)
-            $0.size.equalTo(100)
-        }
-        
         progressBar.snp.makeConstraints {
             $0.top.equalTo(tierImage.snp.bottom).offset(32)
             $0.horizontalEdges.equalToSuperview().inset(16)
@@ -175,10 +169,28 @@ final class TierCard: BaseUIView {
         progressBar.progress = Float(current - min) / Float(max - min)
         tierBadge.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
         tierImage.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.badge
-        
+
         // 추가: 활성화된 종목을 리스트의 가장 앞으로 보내거나
         // 서버에서 받은 전체 프로필 리스트를 reloadSports에 전달
         // self.reloadSports(with: profile.profiles.map { $0.sportCode })
+    }
+
+    func configure(profile: OtherUserProfileResponse) {
+        let max = profile.selectedProfile.maxLp + 1
+        let min = profile.selectedProfile.minLp
+        let current = profile.selectedProfile.lp
+        lastLPLabel.text = String(max - current)
+        totalLPLabel.text = String(max)
+        progressBar.progress = Float(current - min) / Float(max - min)
+        tierBadge.image = Tier.from(tierCode: profile.selectedProfile.tierCode)?.image
+        tierImage.image = Tier.from(tierCode: profile.selectedProfile.tierCode)?.badge
+
+        let sortedSports = profile.allProfiles
+            .sorted { (lhs, rhs) in
+                (lhs.isCurrentlySelected ? 0 : 1) < (rhs.isCurrentlySelected ? 0 : 1)
+            }
+            .map(\.sportCode)
+        reloadSports(with: sortedSports)
     }
     
     private func updatePlusButtonVisibility() {

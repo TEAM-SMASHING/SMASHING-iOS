@@ -25,6 +25,14 @@ final class ProfileCard: BaseUIView {
         winLoseRecordLabel.text = "\(profile.activeProfile.wins)" + "승 " + "\(profile.activeProfile.losses)" + "패"
         reviewCountsLabel.text = "\(profile.activeProfile.reviews ?? 0)"
     }
+
+    func configure(profile: OtherUserProfileResponse) {
+        titleLabel.text = profile.nickname
+        genderIcon.image = profile.gender.imageSm
+        tierIcon.image = Tier.from(tierCode: profile.selectedProfile.tierCode)?.image
+        winLoseRecordLabel.text = "\(profile.selectedProfile.wins)" + "승 " + "\(profile.selectedProfile.losses)" + "패"
+        reviewCountsLabel.text = "\(profile.selectedProfile.reviews ?? 0)"
+    }
     
     private let containerView = UIView().then {
         $0.backgroundColor = .Background.surface
@@ -81,6 +89,8 @@ final class ProfileCard: BaseUIView {
     
     private lazy var challengeButton = CTAButton(label: "경쟁 신청하기").then {
         $0.addTarget(self, action: #selector(challengeButtonTapped), for: .touchUpInside)
+        $0.titleLabel?.font = .pretendard(.textMdSb)
+        $0.setTitleColor(.Button.textPrimaryActive, for: .normal)
     }
     
     // MARK: - Setup Methods
@@ -104,19 +114,22 @@ final class ProfileCard: BaseUIView {
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(profileImage)
             $0.leading.equalTo(profileImage.snp.trailing).offset(12)
+            $0.trailing.lessThanOrEqualToSuperview().inset(16)
         }
         
         genderIcon.snp.makeConstraints {
             $0.centerY.equalTo(titleLabel)
             $0.leading.equalTo(titleLabel.snp.trailing).offset(4)
             $0.size.equalTo(20)
+            $0.trailing.lessThanOrEqualToSuperview().inset(16)
         }
         
         tierIcon.snp.makeConstraints {
-            $0.bottom.equalTo(profileImage)
-            $0.leading.equalTo(profileImage.snp.trailing).offset(12)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(8)
+            $0.leading.equalTo(titleLabel)
             $0.height.equalTo(24)
             $0.width.equalTo(67)
+            $0.trailing.lessThanOrEqualToSuperview().inset(16)
         }
         
         recordLabel.snp.makeConstraints {
@@ -130,7 +143,7 @@ final class ProfileCard: BaseUIView {
         }
         
         reviewLabel.snp.makeConstraints {
-            $0.top.equalTo(recordLabel.snp.bottom).offset(4)
+            $0.top.equalTo(recordLabel.snp.bottom).offset(8)
             $0.leading.equalToSuperview().inset(16)
         }
         
@@ -141,10 +154,11 @@ final class ProfileCard: BaseUIView {
     }
     
     func addChallengeButton() {
-        addSubview(challengeButton)
+        containerView.addSubview(challengeButton)
         challengeButton.snp.makeConstraints {
             $0.top.equalTo(reviewCountsLabel.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(16)
         }
     }
     

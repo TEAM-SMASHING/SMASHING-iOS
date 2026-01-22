@@ -17,4 +17,5 @@ enum Environment {
     static let kakaoId: String = "kakaoId"
     static let userIdKey: String = "userId"
     static let nicknameKey: String = "nicknameKey"
+    static let sportsCodeKeyPrefix: String = "sportsCode"
 }

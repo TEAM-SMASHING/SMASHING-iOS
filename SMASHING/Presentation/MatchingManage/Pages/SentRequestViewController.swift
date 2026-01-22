@@ -2,9 +2,7 @@
 //  SentRequestViewController.swift
 //  SMASHING
 //
-//  Created by JIN on 1/12/26.
-//
-
+//  Created by JIN on
 import UIKit
 
 import Combine
@@ -18,7 +16,6 @@ final class SentRequestViewController: BaseViewController {
     private let viewModel: SentRequestViewModel
     private let input = PassthroughSubject<SentRequestViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
-
     private var requestList: [SentRequestResultDTO] = []
 
     // MARK: - UI Components

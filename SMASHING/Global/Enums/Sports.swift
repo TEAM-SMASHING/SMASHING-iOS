@@ -7,16 +7,16 @@
 
 import UIKit
 
-enum Sports: Int, Codable, CaseIterable {
-    case tableTennis = 1
-    case tennis = 2
-    case badminton = 3
+enum Sports: String, Codable, CaseIterable {
+    case tableTennis = "TT"
+    case tennis = "TN"
+    case badminton = "BM"
     
-    var code: String {
+    var intCode: Int {
         switch self {
-        case .tableTennis: return "TT"
-        case .tennis: return "TN"
-        case .badminton: return "BM"
+        case .tableTennis: return 1
+        case .tennis: return 2
+        case .badminton: return 3
         }
     }
     

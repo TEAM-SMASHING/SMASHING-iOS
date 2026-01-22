@@ -65,6 +65,13 @@ final class ReviewCreateViewController: BaseViewController {
             }
             .store(in: &cancellables)
         
+        output.navToReviewConfirm
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] reviewId in
+                self?.navigateToReviewConfirm(reviewId: reviewId)
+            }
+            .store(in: &cancellables)
+        
         output.isLoading
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoading in
@@ -104,12 +111,19 @@ final class ReviewCreateViewController: BaseViewController {
     
     private func showSubmitConfirmPopup() {
         let popup = SubmitConfirmAlertView()
-           popup.onConfirm = { [weak self] in
-               self?.input.send(.submitButtonTapped)
-           }
-
-           popup.onCancel = { }
-           view.addSubview(popup)
-           popup.snp.makeConstraints { $0.edges.equalToSuperview() }
+        popup.onConfirm = { [weak self] in
+            self?.input.send(.submitButtonTapped)
+        }
+        
+        popup.onCancel = { }
+        view.addSubview(popup)
+        popup.snp.makeConstraints { $0.edges.equalToSuperview() }
+    }
+    
+    private func navigateToReviewConfirm(reviewId: String) {
+        let viewModel = ReviewConfirmViewModel(reviewId: reviewId)
+        let vc = ReviewConfirmViewController(viewModel: viewModel)
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
