@@ -34,6 +34,14 @@ final class HomeViewController: BaseViewController {
         return KeychainService.get(key: Environment.userIdKey) ?? ""
     }
     
+    private var myRegion: String {
+        return KeychainService.get(key: Environment.regionKey) ?? ""
+    }
+    
+    private var mySportCode: String {
+        return KeychainService.get(key: Environment.sportsCodeKeyPrefix) ?? ""
+    }
+    
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -135,6 +143,7 @@ extension HomeViewController: UICollectionViewDataSource {
         switch sectionType {
         case .navigationBar:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNavigationBarCell.reuseIdentifier, for: indexPath) as? HomeNavigationBarCell else { return UICollectionViewCell() }
+            cell.configure(region: myRegion)
             return cell
         case .matching:
             if recentMatching.isEmpty {
@@ -241,6 +250,10 @@ extension HomeViewController: UICollectionViewDelegate {
 extension HomeViewController {
     private func showRecommendedUserInfo() {
         print("유저 추천 인포 탭")
+        print("\(myRegion)")
+        print("\(myNickname)")
+        print("\(myUserId)")
+        print("\(mySportCode)")
     }
     
     private func showMore() {
