@@ -15,7 +15,8 @@ protocol MatchingSearchServiceProtocol {
         cursor: String?,
         size: Int?,
         gender: Gender?,
-        tier: String?
+        tier: String?,
+        sportCode: Sports
     ) -> AnyPublisher<MatchingSearchViewUserDTO, NetworkError>
 }
 
@@ -27,7 +28,8 @@ final class MatchingSearchService: MatchingSearchServiceProtocol {
         cursor: String?,
         size: Int?,
         gender: Gender?,
-        tier: String?
+        tier: String?,
+        sportCode: Sports
     ) -> AnyPublisher<MatchingSearchViewUserDTO, NetworkError> {
         return NetworkProvider<MatchingSearchAPI>
             .requestPublisher(
@@ -35,7 +37,8 @@ final class MatchingSearchService: MatchingSearchServiceProtocol {
                     cursor: cursor,
                     size: size,
                     gender: gender,
-                    tier: tier
+                    tier: tier,
+                    sportCode: sportCode
                 ),
                 type: MatchingSearchViewUserDTO.self
             )
@@ -54,7 +57,8 @@ final class MockMatchingSearchService: MatchingSearchServiceProtocol {
         cursor: String?,
         size: Int?,
         gender: Gender?,
-        tier: String?
+        tier: String?,
+        sportCode: Sports
     ) -> AnyPublisher<MatchingSearchViewUserDTO, NetworkError> {
         let mockResults: [MatchingSearchUserProfileDTO] = [
             MatchingSearchUserProfileDTO(
