@@ -99,7 +99,9 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
     }
 
     private func storeSportsCode(from response: MyProfileListResponse) {
-        guard let userId = KeychainService.get(key: Environment.userIdKey), !userId.isEmpty else { return }
+        guard let userId = KeychainService.get(key: Environment.userIdKey), !userId.isEmpty else {
+            return
+        }
         let key = "\(Environment.sportsCodeKeyPrefix).\(userId)"
         _ = KeychainService.add(key: key, value: response.activeProfile.sportCode.rawValue)
     }
