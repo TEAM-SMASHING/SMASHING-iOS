@@ -14,6 +14,7 @@ final class MatchingSearchCoordinator: Coordinator {
     var navigationController: UINavigationController
     private let userSportProvider: UserSportProviding
     var cancellables: Set<AnyCancellable> = []
+    let userProfileService = UserProfileService()
     
     var navAction: (() -> Void)?
 

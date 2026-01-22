@@ -45,11 +45,6 @@ final class MatchingSearchViewController: BaseViewController {
     
     // MARK: - Lifecycle
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        input.send(.refresh)
-    }
-
     override func viewDidLoad() {
         view = matchingSearchView
         super.viewDidLoad()
@@ -62,6 +57,7 @@ final class MatchingSearchViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        input.send(.refresh)
         updateRegionHeader()
     }
     
