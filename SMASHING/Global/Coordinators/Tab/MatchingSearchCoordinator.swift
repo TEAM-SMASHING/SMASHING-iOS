@@ -18,7 +18,10 @@ final class MatchingSearchCoordinator: Coordinator {
     }
 
     func start() {
-        let viewModel = MatchingSearchViewModel(service: MatchingSearchService())
+        let viewModel = MatchingSearchViewModel(
+            service: MatchingSearchService(),
+            sportCode: currentUserSport()
+        )
         let matchingSearchVC = MatchingSearchViewController(viewModel: viewModel)
         matchingSearchVC.onSearchTapped = { [weak self] in
             self?.showSearchResult()
@@ -46,7 +49,8 @@ final class MatchingSearchCoordinator: Coordinator {
         }
 
         let key = "\(Environment.sportsCodeKeyPrefix).\(userId)"
-        guard let rawValue = KeychainService.get(key: key),
+        let rawValue = KeychainService.get(key: key)
+        guard let rawValue,
               let sport = Sports(rawValue: rawValue) else {
             return .badminton
         }
