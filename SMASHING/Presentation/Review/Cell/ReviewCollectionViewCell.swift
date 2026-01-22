@@ -56,12 +56,7 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     // MARK: - UI Setup
     
     private func setUI() {
-        contentView.addSubviews(
-            profileImageView,
-            nicknameLabel,
-            dateLabel,
-            contentLabel,
-            dividerView
+        contentView.addSubviews(profileImageView, nicknameLabel, dateLabel, contentLabel, dividerView
         )
     }
     
