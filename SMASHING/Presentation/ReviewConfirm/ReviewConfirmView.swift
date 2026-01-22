@@ -134,4 +134,4 @@ final class ReviewConfirmView: BaseUIView {
             $0.layer.borderWidth = 0
         }
     }
-} 
+}
