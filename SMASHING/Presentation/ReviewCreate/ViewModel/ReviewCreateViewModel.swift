@@ -56,6 +56,26 @@ final class ReviewCreateViewModel: ReviewCreateViewModelProtocol {
     private var cancellables = Set<AnyCancellable>()
     let output = Output()
     
+    struct SubmitPopupText {
+        let title: String
+        let subtitle: String
+    }
+    
+    var submitPopupText: SubmitPopupText {
+            switch flowType {
+            case .submission:
+                return .init(
+                    title: "매칭 결과를 제출하시겠습니까?",
+                    subtitle: "정확한 경기 결과가 아닐 경우 반려될 수 있어요."
+                )
+            case .confirmation:
+                return .init(
+                    title: "매칭 결과를 확정하시겠습니까?",
+                    subtitle: "한 번 확정하면 수정할 수 없어요."
+                )
+            }
+        }
+    
     // MARK: - Init
 
         init(flowType: ReviewFlowType, gameService: GameServiceProtocol = GameService()) {

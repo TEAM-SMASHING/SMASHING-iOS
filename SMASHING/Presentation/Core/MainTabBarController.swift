@@ -23,7 +23,7 @@ final class MainTabBarController: UITabBarController {
         var title: String {
             switch self {
             case .home: return "홈"
-            case .matchingSearch: return "매칭 검색"
+            case .matchingSearch: return "매칭 탐색"
             case .matchingManage: return "매칭 관리"
             case .profile: return "프로필"
 

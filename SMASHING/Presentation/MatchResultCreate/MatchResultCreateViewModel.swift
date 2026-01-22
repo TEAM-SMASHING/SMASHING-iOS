@@ -27,7 +27,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         case winnerDropDownTapped
         case myOptionSelected
         case rivalOptionSelected
-        case scoreChanged(myScore: Int, opponentScore: Int)
+        case scoreChanged(myScore: Int?, opponentScore: Int?, hasMyScore: Bool, hasOpponentScore: Bool)
         case nextButtonTapped
         case submitResubmissionConfirmed(MatchResultData)
     }
@@ -61,6 +61,8 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
     private var selectedWinner: String?
     private var myScore: Int = 0
     private var opponentScore: Int = 0
+    private var hasMyScore: Bool = false
+    private var hasOpponentScore: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     let output = Output()
@@ -97,12 +99,12 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
             
         case .rivalOptionSelected:
             selectWinner(gameData.opponent.nickname)
-            
-        case .scoreChanged(let myScore, let opponentScore):
-            self.myScore = myScore
-            self.opponentScore = opponentScore
+        case .scoreChanged(let myScore, let opponentScore, let hasMyScore, let hasOpponentScore):
+            self.myScore = myScore ?? 0
+            self.opponentScore = opponentScore ?? 0
+            self.hasMyScore = hasMyScore
+            self.hasOpponentScore = hasOpponentScore
             validateWinnerAndScore()
-            
         case .nextButtonTapped:
             handleNextButtonTapped()
         case .submitResubmissionConfirmed(let matchResultData):
@@ -134,6 +136,11 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         guard let selectedWinner = selectedWinner else {
             output.isNextButtonEnabled.send(false)
             return
+        }
+        
+        guard hasMyScore, hasOpponentScore else {
+            output.isNextButtonEnabled.send(false)
+            return 
         }
         
         let isMyWin = (selectedWinner == myNickname)

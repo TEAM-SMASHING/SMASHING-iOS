@@ -54,8 +54,8 @@ final class MatchResultCreateViewController: BaseViewController {
         mainView.myOptionButton.addTarget(self, action: #selector(didTapMyOptionButton), for: .touchUpInside)
         mainView.rivalOptionButton.addTarget(self, action: #selector(didTapRivalOptionButton), for: .touchUpInside)
         
-        mainView.onScoreChanged = { [weak self] myScore, opponentScore in
-            self?.input.send(.scoreChanged(myScore: myScore, opponentScore: opponentScore))
+        mainView.onScoreChanged = { [weak self] myScore, opponentScore, hasMyScore, hasOpponentScore in
+            self?.input.send(.scoreChanged(myScore: myScore, opponentScore: opponentScore, hasMyScore: hasMyScore, hasOpponentScore: hasOpponentScore))
         }
     }
     
