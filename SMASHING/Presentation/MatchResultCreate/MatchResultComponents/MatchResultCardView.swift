@@ -20,11 +20,6 @@ final class MatchResultCardView: BaseUIView {
         $0.layer.cornerRadius = 12
     }
     
-    private let leftProfileStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.spacing = 0
-    }
-    
     private let leftCrownImageView = UIImageView().then {
         $0.image = .icCrown
         $0.contentMode = .scaleAspectFit
@@ -65,11 +60,6 @@ final class MatchResultCardView: BaseUIView {
         $0.textAlignment = .center
     }
     
-    private let rightProfileStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.spacing = 0
-    }
-    
     private let rightCrownImageView = UIImageView().then {
         $0.image = .icCrown
         $0.contentMode = .scaleAspectFit
@@ -90,14 +80,12 @@ final class MatchResultCardView: BaseUIView {
     }
     
     override func setUI() {
-        leftProfileStackView.addArrangedSubviews(myImage, myNickName)
-        
-        rightProfileStackView.addArrangedSubviews(rivalImage, rivalNickName)
-        
         containerView.addSubviews(leftCrownImageView,
                                   rightCrownImageView,
-                                  leftProfileStackView,
-                                  rightProfileStackView,
+                                  myImage,
+                                  myNickName,
+                                  rivalImage,
+                                  rivalNickName,
                                   myScore,
                                   scoreSemicolon,
                                   rivalScore)
@@ -111,19 +99,21 @@ final class MatchResultCardView: BaseUIView {
             $0.height.equalTo(160)
         }
         
+        leftCrownImageView.snp.makeConstraints {
+            $0.bottom.equalTo(myImage.snp.top).offset(2)
+            $0.centerX.equalTo(myImage)
+            $0.size.equalTo(24)
+        }
+        
         myImage.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(36)
+            $0.leading.equalToSuperview().inset(38)
             $0.size.equalTo(64)
         }
         
-        leftProfileStackView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalTo(containerView.snp.leading).inset(38)
-        }
-        
-        leftCrownImageView.snp.makeConstraints {
-            $0.bottom.equalTo(leftProfileStackView.snp.top).offset(2)
-            $0.centerX.equalTo(leftProfileStackView)
-            $0.size.equalTo(24)
+        myNickName.snp.makeConstraints {
+            $0.top.equalTo(myImage.snp.bottom)
+            $0.centerX.equalTo(myImage)
         }
         
         myScore.snp.makeConstraints {
@@ -142,18 +132,20 @@ final class MatchResultCardView: BaseUIView {
         }
         
         rightCrownImageView.snp.makeConstraints {
-            $0.bottom.equalTo(rightProfileStackView.snp.top).offset(2)
-            $0.centerX.equalTo(rightProfileStackView)
+            $0.bottom.equalTo(rivalImage.snp.top).offset(2)
+            $0.centerX.equalTo(rivalImage)
             $0.size.equalTo(24)
         }
         
         rivalImage.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(36)
+            $0.trailing.equalToSuperview().inset(38)
             $0.size.equalTo(64)
         }
         
-        rightProfileStackView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalTo(containerView.snp.trailing).inset(38)
+        rivalNickName.snp.makeConstraints {
+            $0.top.equalTo(rivalImage.snp.bottom)
+            $0.centerX.equalTo(rivalImage)
         }
     }
     

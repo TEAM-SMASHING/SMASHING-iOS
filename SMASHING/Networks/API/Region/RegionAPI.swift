@@ -5,10 +5,8 @@
 //  Created by 홍준범 on 1/17/26.
 //
 
-import Foundation
-
-import Moya
 import Alamofire
+import Moya
 
 enum RegionAPI {
     case getRecommendedUsers

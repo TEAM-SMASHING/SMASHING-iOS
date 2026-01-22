@@ -12,6 +12,14 @@ enum Sports: String, Codable, CaseIterable {
     case tennis = "TN"
     case badminton = "BM"
     
+    var intCode: Int {
+        switch self {
+        case .tableTennis: return 1
+        case .tennis: return 2
+        case .badminton: return 3
+        }
+    }
+    
     var displayName: String {
         switch self {
         case .tableTennis: return "탁구"

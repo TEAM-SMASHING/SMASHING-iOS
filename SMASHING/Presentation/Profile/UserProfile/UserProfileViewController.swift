@@ -11,18 +11,18 @@ import Combine
 import SnapKit
 import Then
 
-final class UserProfileViewController: UIViewController {
+final class UserProfileViewController: BaseViewController {
 
     // MARK: - Properties
 
     private let mainView = UserProfileView()
-    private let viewModel: UserProfileViewModelProtocol
+    private let viewModel: any UserProfileViewModelProtocol
     private let input = PassthroughSubject<UserProfileViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
 
-    init(viewModel: UserProfileViewModelProtocol) {
+    init(viewModel: any UserProfileViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

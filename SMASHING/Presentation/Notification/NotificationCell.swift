@@ -10,19 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-struct TempNotification {
-    let name: String
-    let type: NotificationType
-    let tier: Tier?
-    let isNew: Bool
-    let time: String
-}
-
-final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
-    
-    // MARK: - Properties
-    
-    private var notification: TempNotification?
+final class NotificationCell: UICollectionViewCell, ReuseIdentifiable {
     
     // MARK: - UI Components
     
@@ -30,49 +18,61 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 20
-        $0.backgroundColor = .Background.overlay
     }
     
     private let typeLabel = UILabel().then {
         $0.font = .pretendard(.textMdSb)
-        $0.numberOfLines = 1
         $0.textColor = .Text.primary
     }
     
     private let timeLabel = UILabel().then {
         $0.font = .pretendard(.textSmSb)
-        $0.numberOfLines = 1
         $0.textColor = .Text.tertiary
     }
     
     private let contentLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
-        $0.numberOfLines = 0
         $0.textColor = .Text.secondary
+        $0.numberOfLines = 0
+        $0.lineBreakMode = .byWordWrapping
+    }
+    
+    private let dividerView = UIView().then {
+        $0.backgroundColor = .Border.primary
     }
     
     // MARK: - Setup Methods
     
-    override func setUI() {
-        contentView.addSubviews(profileImage, typeLabel, timeLabel, contentLabel)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setUI()
+        setLayout()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    override func setLayout() {
+    func setUI() {
+        contentView.addSubviews(profileImage, typeLabel, timeLabel, contentLabel, dividerView)
+    }
+    
+    func setLayout() {
         profileImage.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(12)
             $0.size.equalTo(40)
             $0.leading.equalToSuperview().inset(16)
+        }
+        
+        timeLabel.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(16)
             $0.top.equalToSuperview().inset(12)
         }
         
         typeLabel.snp.makeConstraints {
             $0.leading.equalTo(profileImage.snp.trailing).offset(12)
-            $0.top.equalToSuperview().offset(12)
+            $0.top.equalTo(profileImage)
             $0.trailing.lessThanOrEqualTo(timeLabel.snp.leading).offset(-8)
-        }
-        
-        timeLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
-            $0.centerY.equalTo(typeLabel)
         }
         
         contentLabel.snp.makeConstraints {
@@ -81,18 +81,24 @@ final class NotificationCell: BaseUICollectionViewCell, ReuseIdentifiable {
             $0.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(12)
         }
+        
+        dividerView.snp.makeConstraints {
+            $0.top.equalTo(contentLabel.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+            $0.height.equalTo(1)
+        }
     }
     
-    func configure(notification: TempNotification) {
-        typeLabel.text = notification.type.displayText
-        timeLabel.text = "10:00 AM"
-        contentLabel.text = "'와쿠와쿠' 님이 소중한 후기를 보내주셨어요! 지금 확인해 볼까요 를레히히"
-        backgroundColor = notification.isNew ? .clear : .Background.surface
+    func configure(notification: NotificationSummaryResponseDTO) {
+        if notification.type == .reviewReceived {
+            typeLabel.text =  notification.type.displayText
+        } else {
+            typeLabel.text =  notification.receiverSportId.displayName + " " + notification.type.displayText
+        }
+        timeLabel.text = notification.createdAt.toDateFromISO8601?.toRelativeString()
+        contentLabel.text = notification.content
+        profileImage.image = UIImage.defaultProfileImage(name: notification.senderNickname)
+        backgroundColor = notification.isRead ? .clear : .Background.surface
     }
-}
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    NotificationViewController()
 }

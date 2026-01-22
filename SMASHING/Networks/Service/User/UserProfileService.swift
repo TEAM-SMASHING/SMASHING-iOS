@@ -19,7 +19,8 @@ protocol UserProfileServiceType {
 
 final class UserProfileService: UserProfileServiceType {
     func fetchMyProfileTier() -> AnyPublisher<MyProfileTierResponse, NetworkError> {
-        return NetworkProvider<ProfileUserTarget>.requestPublisher(.getMyProfileTier, type: MyProfileTierResponse.self)
+        return NetworkProvider<ProfileUserAPI>
+            .requestPublisher(.getMyProfileTier, type: MyProfileTierResponse.self)
             .map { response in
                 return response.data
             }
@@ -27,7 +28,7 @@ final class UserProfileService: UserProfileServiceType {
     }
     
     func fetchMyProfiles() -> AnyPublisher<MyProfileListResponse, NetworkError> {
-        return NetworkProvider<ProfileUserTarget>.requestPublisher(.getMyProfiles, type: MyProfileListResponse.self)
+        return NetworkProvider<ProfileUserAPI>.requestPublisher(.getMyProfiles, type: MyProfileListResponse.self)
             .map { response in
                 return response.data
             }
@@ -36,21 +37,21 @@ final class UserProfileService: UserProfileServiceType {
     
     func createProfile(sport: Sports, experience: ExperienceRange) -> AnyPublisher<Void, NetworkError> {
         let request = CreateProfileRequest(sportCode: sport, experienceRange: experience)
-        return NetworkProvider<ProfileUserTarget>.requestPublisher(.createProfile(request: request), type: EmptyDataDTO.self)
+        return NetworkProvider<ProfileUserAPI>.requestPublisher(.createProfile(request: request), type: EmptyDataDTO.self)
             .map { _ in () }
             .eraseToAnyPublisher()
     }
     
     func updateActiveProfile(profileId: String) -> AnyPublisher<Void, NetworkError> {
         let request = UpdateActiveProfileRequest(profileId: profileId)
-        return NetworkProvider<ProfileUserTarget>
+        return NetworkProvider<ProfileUserAPI>
             .requestPublisher(.updateActiveProfile(request: request), type: EmptyDataDTO.self)
             .map { _ in () }
             .eraseToAnyPublisher()
     }
     
     func fetchOtherUserProfile(userId: String, sport: Sports) -> AnyPublisher<OtherUserProfileResponse, NetworkError> {
-        return NetworkProvider<ProfileUserTarget>
+        return NetworkProvider<ProfileUserAPI>
             .requestPublisher(.getOtherUserProfile(userId: userId, sportCode: sport), type: OtherUserProfileResponse.self)
             .map { response in
                 return response.data
@@ -59,7 +60,7 @@ final class UserProfileService: UserProfileServiceType {
     }
     
     func updateRegion(region: String) -> AnyPublisher<Void, NetworkError> {
-        return NetworkProvider<ProfileUserTarget>.requestPublisher(.updateRegion(region: region), type: EmptyDataDTO.self)
+        return NetworkProvider<ProfileUserAPI>.requestPublisher(.updateRegion(region: region), type: EmptyDataDTO.self)
             .map { _ in () }
             .eraseToAnyPublisher()
     }

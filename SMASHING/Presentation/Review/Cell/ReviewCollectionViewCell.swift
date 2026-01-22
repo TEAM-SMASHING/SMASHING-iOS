@@ -22,18 +22,18 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     
     private let nicknameLabel = UILabel().then {
         $0.font = .pretendard(.textSmSb)
-        $0.textColor = .white
+        $0.textColor = .Text.primary
     }
     
     private let dateLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
-        $0.textColor = .systemGray2
+        $0.textColor = .Text.secondary
     }
     
     private let contentLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
-        $0.textColor = .white
-        $0.numberOfLines = 0 // 100자까지 모두 보이도록 설정
+        $0.textColor = .Text.primary
+        $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
     
@@ -45,8 +45,8 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupHierarchy()
-        setupConstraints()
+        setUI()
+        setLayouts()
     }
     
     required init?(coder: NSCoder) {
@@ -55,7 +55,7 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     
     // MARK: - UI Setup
     
-    private func setupHierarchy() {
+    private func setUI() {
         contentView.addSubviews(
             profileImageView,
             nicknameLabel,
@@ -65,11 +65,11 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
         )
     }
     
-    private func setupConstraints() {
+    private func setLayouts() {
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(16)
-            $0.leading.equalToSuperview()
             $0.size.equalTo(40)
+            $0.leading.equalToSuperview()
         }
         
         nicknameLabel.snp.makeConstraints {
@@ -96,18 +96,10 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
         }
     }
     
-    // MARK: - Data Binding
-    
     func configure(_ review :RecentReviewResult) {
+        profileImageView.image = UIImage.defaultProfileImage(name: review.opponentNickname)
         nicknameLabel.text = review.opponentNickname
         dateLabel.text = review.createdAt.toDateFromISO8601?.toRelativeString()
         contentLabel.text = review.content
-        
-        if let date = review.createdAt.toDateFromISO8601 {
-            print("1. 파싱 성공: \(date)")
-            print("2. 상대 시간: \(date.toRelativeString())")
-        } else {
-            print("1. 파싱 실패: 문자열 형식을 다시 확인하세요.")
-        }
     }
 }

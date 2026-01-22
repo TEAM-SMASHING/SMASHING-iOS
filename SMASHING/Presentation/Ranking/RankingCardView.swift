@@ -88,7 +88,7 @@ final class RankingCardView: BaseUIView {
     func configure(rankImage: UIImage?, tierImage: UIImage?, lp: Int) {
         self.rankImage.image = rankImage
         self.tierImage.image = tierImage
-        lpLabel.text = "\(lp)lp"
+        lpLabel.text = "\(lp) LP"
         
         // 1등은 tierImage 가 더 큼
         if rankImage == .icRank1 {
