@@ -77,6 +77,9 @@ final class KakaoAuthService: KakaoAuthServiceProtocol {
                           let nickname = data.nickname else {
                         throw NetworkError.decoding
                     }
+                    _ = KeychainService.add(key: Environment.accessTokenKey, value: accessToken)
+                    _ = KeychainService.add(key: Environment.refreshTokenKey, value: refreshToken)
+                    _ = KeychainService.add(key: Environment.nicknameKey, value: nickname)
                     return .success(
                         accessToken: accessToken,
                         refreshToken: refreshToken,
