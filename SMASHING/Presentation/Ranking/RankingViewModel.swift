@@ -80,18 +80,29 @@ final class RankingViewModel: RankingViewModelProtocol {
             } receiveValue: { [weak self] response in
                 guard let self else { return }
                 
-                let isEmpty = response.topUsers.isEmpty
+                let topThreeUsers = Array(response.topUsers.prefix(3))
+                self.output.topThreeUsers.send(topThreeUsers)
+                
+                let rest = Array(response.topUsers.dropFirst(3))
+                self.output.rankings.send(rest)
+                
+                let isEmpty = rest.isEmpty
                 self.output.isEmpty.send(isEmpty)
                 
-                if !isEmpty {
-                    let topThreeUsers = Array(response.topUsers.prefix(3))
-                    self.output.topThreeUsers.send(topThreeUsers)
-                    
-                    let rest = Array(response.topUsers.dropFirst(3))
-                    self.output.rankings.send(rest)
-                }
-                
                 self.output.myRanking.send(response.user)
+                
+//                let isEmpty = response.topUsers.isEmpty
+//                self.output.isEmpty.send(isEmpty)
+//                
+//                if !isEmpty {
+//                    let topThreeUsers = Array(response.topUsers.prefix(3))
+//                    self.output.topThreeUsers.send(topThreeUsers)
+//                    
+//                    let rest = Array(response.topUsers.dropFirst(3))
+//                    self.output.rankings.send(rest)
+//                }
+//                
+//                self.output.myRanking.send(response.user)
             }
             .store(in: &cancellables)
     }

@@ -93,6 +93,7 @@ final class RankingView: BaseUIView {
         topThreePodium.snp.makeConstraints {
             $0.top.equalTo(navigationBar.snp.bottom)
             $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(219)
         }
         
         collectionViewContainer.snp.makeConstraints {
@@ -107,7 +108,9 @@ final class RankingView: BaseUIView {
         }
         
         rankingEmptyView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(16)
+            $0.top.equalToSuperview().inset(135)
+            $0.leading.trailing.equalToSuperview()
+//            $0.edges.equalToSuperview().inset(16)
         }
         
         myRankingScore.snp.makeConstraints {

@@ -26,13 +26,9 @@ final class TopThreePodium: BaseUIView {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 20
-        $0.layer.borderColor = UIColor.Border.primary.cgColor
-        $0.layer.borderWidth = 1
-        $0.backgroundColor = .gray
     }
     
     private let secondNicknameLabel = UILabel().then {
-        $0.text = "닉네임"
         $0.setPretendard(.textSmM)
         $0.textColor = .Text.primary
         $0.textAlignment = .center
@@ -45,13 +41,9 @@ final class TopThreePodium: BaseUIView {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 20
-        $0.layer.borderColor = UIColor.Border.primary.cgColor
-        $0.layer.borderWidth = 1
-        $0.backgroundColor = .gray
     }
     
     private let firstNicknameLabel = UILabel().then {
-        $0.text = "닉네임"
         $0.setPretendard(.textSmM)
         $0.textColor = .Text.primary
         $0.textAlignment = .center
@@ -64,13 +56,9 @@ final class TopThreePodium: BaseUIView {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 20
-        $0.layer.borderColor = UIColor.Border.primary.cgColor
-        $0.layer.borderWidth = 1
-        $0.backgroundColor = .gray
     }
     
     private let thirdNicknameLabel = UILabel().then {
-        $0.text = "닉네임"
         $0.setPretendard(.textSmM)
         $0.textColor = .Text.primary
         $0.textAlignment = .center
@@ -113,6 +101,7 @@ final class TopThreePodium: BaseUIView {
             $0.top.equalTo(secondNicknameLabel.snp.bottom).offset(4)
             $0.leading.equalToSuperview()
             $0.trailing.equalTo(firstCard.snp.leading)
+            $0.height.equalTo(111)
             $0.bottom.equalToSuperview()
         }
         
@@ -161,29 +150,35 @@ final class TopThreePodium: BaseUIView {
             $0.leading.equalTo(firstCard.snp.trailing)
             $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
+            $0.height.equalTo(103)
         }
     }
     
     // MARK: - Public Methods
     
-    func configure(
-        first: (nickname: String, profileImage: UIImage?, tierImage: UIImage?, lp: Int),
-        second: (nickname: String, profileImage: UIImage?, tierImage: UIImage?, lp: Int),
-        third: (nickname: String, profileImage: UIImage?, tierImage: UIImage?, lp: Int)
-    ) {
-        // 1등
-        firstNicknameLabel.text = first.nickname
-        firstProfileImageView.image = UIImage.defaultProfileImage(name: first.nickname)
-        firstCard.configure(rankImage: .icRank1, tierImage: first.tierImage, lp: first.lp)
-        
-        // 2등
-        secondNicknameLabel.text = second.nickname
-        secondProfileImageView.image = UIImage.defaultProfileImage(name: second.nickname)
-        secondCard.configure(rankImage: .icRank2, tierImage: second.tierImage, lp: second.lp)
-        
-        // 3등
-        thirdNicknameLabel.text = third.nickname
-        thirdProfileImageView.image = UIImage.defaultProfileImage(name: third.nickname)
-        thirdCard.configure(rankImage: .icRank3, tierImage: third.tierImage, lp: third.lp)
+    func configure(with user: RankingUserDTO) {
+        switch user.rank {
+        case 1:
+            firstNicknameLabel.text = user.nickname
+            firstProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
+            firstCard.configure(rankImage: .icRank1, tierCode: user.tierCode, lp: user.lp)
+            firstProfileImageView.layer.borderColor = UIColor.Border.primary.cgColor
+            firstProfileImageView.layer.borderWidth = 1
+            crownImageView.isHidden = false
+        case 2:
+            secondNicknameLabel.text = user.nickname
+            secondProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
+            secondCard.configure(rankImage: .icRank2, tierCode: user.tierCode, lp: user.lp)
+            secondProfileImageView.layer.borderColor = UIColor.Border.primary.cgColor
+            secondProfileImageView.layer.borderWidth = 1
+        case 3:
+            thirdNicknameLabel.text = user.nickname
+            thirdProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
+            thirdCard.configure(rankImage: .icRank3, tierCode: user.tierCode, lp: user.lp)
+            thirdProfileImageView.layer.borderColor = UIColor.Border.primary.cgColor
+            thirdProfileImageView.layer.borderWidth = 1
+        default:
+            break
+        }
     }
 }
