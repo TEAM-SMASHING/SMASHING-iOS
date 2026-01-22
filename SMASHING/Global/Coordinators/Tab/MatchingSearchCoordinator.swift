@@ -18,10 +18,7 @@ final class MatchingSearchCoordinator: Coordinator {
     }
 
     func start() {
-        let viewModel = MatchingSearchViewModel(
-            service: MatchingSearchService(),
-            sportCode: currentUserSport()
-        )
+        let viewModel = MatchingSearchViewModel(service: MatchingSearchService())
         let matchingSearchVC = MatchingSearchViewController(viewModel: viewModel)
         matchingSearchVC.onSearchTapped = { [weak self] in
             self?.showSearchResult()

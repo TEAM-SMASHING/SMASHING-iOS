@@ -11,7 +11,7 @@ import Moya
 import Alamofire
 
 enum MatchingSearchAPI {
-    case getUserProfileList(cursor: String?, size: Int?, gender: Gender?, tier: String?, sportCode: Sports)
+    case getUserProfileList(cursor: String?, size: Int?, gender: Gender?, tier: String?)
 }
 
 extension MatchingSearchAPI: BaseTargetType {
@@ -32,13 +32,12 @@ extension MatchingSearchAPI: BaseTargetType {
 
     var task: Moya.Task {
         switch self {
-        case .getUserProfileList(let cursor, let size, let gender, let tier, let sportCode):
+        case .getUserProfileList(let cursor, let size, let gender, let tier):
             var parameters: [String: Any] = [:]
             if let cursor = cursor { parameters["cursor"] = cursor }
             if let size = size { parameters["size"] = size }
             if let gender = gender { parameters["gender"] = gender.rawValue }
             if let tier = tier { parameters["tier"] = tier }
-            parameters["sportCode"] = sportCode.rawValue
             return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         }
     }
