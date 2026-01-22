@@ -8,6 +8,14 @@
 import Foundation
 import Combine
 
+// MARK: - MatchResultPrefillData
+
+struct MatchResultPrefillData {
+    let winnerNickname: String
+    let myScore: Int
+    let opponentScore: Int
+}
+
 protocol MatchResultCreateViewModelProtocol: InputOutputProtocol {
     
 }
@@ -28,6 +36,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         let myNickname = PassthroughSubject<String, Never>()
         let opponentNickname = PassthroughSubject<String, Never>()
         let nextButtonTitle = PassthroughSubject<String, Never>()
+        let prefillData = PassthroughSubject<MatchResultPrefillData, Never>()
         
         let toggleDropDown = PassthroughSubject<Void, Never>()
         let selectedWinner = PassthroughSubject<String, Never>()
@@ -35,6 +44,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         
         let navToReviewCreate = PassthroughSubject<(MatchingConfirmedGameDTO, MatchResultData, String), Never>()
         let submitResubmission = PassthroughSubject<MatchResultData, Never>()
+        let navToHome = PassthroughSubject<Void, Never>()
         
         let isLoading = PassthroughSubject<Bool, Never>()
         let error = PassthroughSubject<Error, Never>()
@@ -104,6 +114,10 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         let buttonTitle = gameData.resultStatus.isFirstSubmission ? "다음" : "완료 작성"
         output.nextButtonTitle.send(buttonTitle)
         output.isNextButtonEnabled.send(false)
+        
+        if shouldPrefillResubmission, let submissionId = gameData.latestSubmissionId {
+            fetchSubmissionDetail(submittionId: submissionId)
+        }
     }
     
     private func selectWinner(_ winner: String) {
@@ -130,7 +144,8 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         if gameData.resultStatus.isFirstSubmission {
             output.navToReviewCreate.send((gameData, matchResultData, myUserId))
         } else {
-            output.submitResubmission.send(matchResultData)
+            submitResubmission(matchResultData)
+            //            output.submitResubmission.send(matchResultData)
         }
     }
     
@@ -153,5 +168,60 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
             scoreWinner: scoreWinner,
             scoreLoser: scoreLoser
         )
+    }
+    
+    private var shouldPrefillResubmission: Bool {
+        guard gameData.resultStatus == .resultRejected else { return false }
+        guard let latestSubmitterId = gameData.latestSubmitterId else { return false }
+        return latestSubmitterId == myUserId
+    }
+    
+    private func fetchSubmissionDetail(submittionId: String) {
+        output.isLoading.send(true)
+        gameService.getSubmissionDetail(gameId: gameData.gameID, submissionId: submittionId)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                self.output.isLoading.send(false)
+                if case .failure(let error) = completion {
+                    self.output.error.send(error)
+                }
+            } receiveValue: { [weak self] dto in
+                guard let self else { return }
+                let matchResultData = MatchResultData(winnerUserId: dto.winner.userId, loserUserId: dto.loser.userId, scoreWinner: dto.winner.score, scoreLoser: dto.loser.score)
+                let isMyWin = matchResultData.winnerUserId == self.myUserId
+                let prefill = MatchResultPrefillData(winnerNickname: isMyWin ? self.myNickname : self.gameData.opponent.nickname, myScore: isMyWin ? matchResultData.scoreWinner : matchResultData.scoreLoser, opponentScore: isMyWin ? matchResultData.scoreLoser : matchResultData.scoreWinner)
+                self.selectedWinner = prefill.winnerNickname
+                               self.myScore = prefill.myScore
+                               self.opponentScore = prefill.opponentScore
+                               self.output.prefillData.send(prefill)
+                               self.output.selectedWinner.send(prefill.winnerNickname)
+                               self.validateWinnerAndScore()
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func submitResubmission(_ matchResultData: MatchResultData) {
+        output.isLoading.send(true)
+
+                let request = GameResubmissionRequestDTO(
+                    winnerUserId: matchResultData.winnerUserId,
+                    loserUserId: matchResultData.loserUserId,
+                    scoreWinner: matchResultData.scoreWinner,
+                    scoreLoser: matchResultData.scoreLoser
+                )
+        
+        gameService.resubmitResult(gameId: gameData.gameID, request: request)
+                   .receive(on: DispatchQueue.main)
+                   .sink { [weak self] completion in
+                       guard let self else { return }
+                       self.output.isLoading.send(false)
+                       if case .failure(let error) = completion {
+                           self.output.error.send(error)
+                       }
+                   } receiveValue: { [weak self] _ in
+                       self?.output.navToHome.send()
+                   }
+                   .store(in: &cancellables)
     }
 }

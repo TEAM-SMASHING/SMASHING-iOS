@@ -131,7 +131,7 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         // WAITING_CONFIRMATION 상태에서 상대방이 제출했으면 확인 가능
         let canConfirm = resultStatus.canConfirm(isMySubmission: isMySubmission)
         let canSubmit = resultStatus.canSubmit(isMySubmission: isMySubmission) && !matching.isSubmitLocked
-//        let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
+        //        let canSubmit = resultStatus.canSubmit && !matching.isSubmitLocked
         
         let buttonTitle = resultStatus.buttonTitle(isMySubmission: isMySubmission)
         
@@ -148,13 +148,20 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
             writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
         case .resultRejected:
+            if canSubmit {
+                writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
+                writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
+            } else {
+                writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
+                writeResultButton.setTitleColor(.Button.textRejected, for: .normal)
+            }
             writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
-            writeResultButton.setTitleColor(.Button.textRejected, for: .normal)
+            writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
         case .waitingConfirmation:
             if canConfirm {
                 // 상대방이 제출 → 내가 확인해야 함
-                writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
-                writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
+                writeResultButton.backgroundColor = .Button.backgroundConfirmed
+                writeResultButton.setTitleColor(.Button.backgroundSecondaryActive, for: .normal)
             } else {
                 writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
                 writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)

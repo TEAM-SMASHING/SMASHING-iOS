@@ -11,6 +11,6 @@ struct ReviewDetailResponse: Decodable {
     let rating: ReviewScore
     let reviewerNickname: String
     let revieweeNickname: String
-    let tags: [ReviewTag]
+    let tag: [ReviewTag]
     let content: String?
 }

@@ -23,8 +23,6 @@ struct MatchingConfirmedGameDTO: Codable {
     let resultStatus: GameResultStatus
     let createdAt: String
     let opponent: OpponentSummaryDTO
-//    let submitAvailableAt: String
-//    let remainingSeconds: Int
     let isSubmitLocked: Bool
     let latestSubmissionId: String?
     let latestSubmitterId: String?
