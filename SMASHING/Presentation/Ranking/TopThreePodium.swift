@@ -26,6 +26,8 @@ final class TopThreePodium: BaseUIView {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 20
+        $0.layer.borderColor = UIColor.Border.primary.cgColor
+        $0.layer.borderWidth = 1
         $0.backgroundColor = .gray
     }
     
@@ -43,6 +45,8 @@ final class TopThreePodium: BaseUIView {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 20
+        $0.layer.borderColor = UIColor.Border.primary.cgColor
+        $0.layer.borderWidth = 1
         $0.backgroundColor = .gray
     }
     
@@ -60,6 +64,8 @@ final class TopThreePodium: BaseUIView {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 20
+        $0.layer.borderColor = UIColor.Border.primary.cgColor
+        $0.layer.borderWidth = 1
         $0.backgroundColor = .gray
     }
     
@@ -167,17 +173,17 @@ final class TopThreePodium: BaseUIView {
     ) {
         // 1등
         firstNicknameLabel.text = first.nickname
-        firstProfileImageView.image = first.profileImage
+        firstProfileImageView.image = UIImage.defaultProfileImage(name: first.nickname)
         firstCard.configure(rankImage: .icRank1, tierImage: first.tierImage, lp: first.lp)
         
         // 2등
         secondNicknameLabel.text = second.nickname
-        secondProfileImageView.image = second.profileImage
+        secondProfileImageView.image = UIImage.defaultProfileImage(name: second.nickname)
         secondCard.configure(rankImage: .icRank2, tierImage: second.tierImage, lp: second.lp)
         
         // 3등
         thirdNicknameLabel.text = third.nickname
-        thirdProfileImageView.image = third.profileImage
+        thirdProfileImageView.image = UIImage.defaultProfileImage(name: third.nickname)
         thirdCard.configure(rankImage: .icRank3, tierImage: third.tierImage, lp: third.lp)
     }
 }

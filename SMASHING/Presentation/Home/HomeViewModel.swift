@@ -26,6 +26,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         
         //매칭 섹션
         case matchingResultCreateButtonTapped(MatchingConfirmedGameDTO)
+        case matchingResultConfirmButtonTapped(MatchingConfirmedGameDTO)
         case matchingSeeAllTapped
         
         //추천 유저 섹션
@@ -49,6 +50,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         let error = PassthroughSubject<Error, Never>()
         
         let navToMatchResultCreate = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
+        let navToMatchResultConfirm = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
         let navToMatchingManageTab = PassthroughSubject<Void, Never>()
         let navToSelectedUserProfile = PassthroughSubject<Int, Never>()
         let navToRanking = PassthroughSubject<Void, Never>()
@@ -80,6 +82,8 @@ final class HomeViewModel: HomeViewModelProtocol {
             fetchHomeData()
         case .matchingResultCreateButtonTapped(let gameData):
             output.navToMatchResultCreate.send(gameData)
+        case .matchingResultConfirmButtonTapped(let gameData):
+            output.navToMatchResultConfirm.send(gameData)
         case .matchingSeeAllTapped:
             output.navToMatchingManageTab.send()
         case .recommendedUserTapped:

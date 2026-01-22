@@ -67,6 +67,7 @@ final class HomeCoordinator: Coordinator {
         let regionService = RegionService()
         let viewModel = RankingViewModel(regionService: regionService)
         let rankingVC = RankingViewController(viewModel: viewModel)
+        rankingVC.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(rankingVC, animated: true)
     }
     

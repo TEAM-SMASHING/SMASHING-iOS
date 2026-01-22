@@ -142,7 +142,10 @@ final class ConfirmPopupViewController: DimmedViewController {
         }
     }
     
-    @objc private func handleBackgroundTap() {
-        dismiss(animated: true)
+    @objc private func handleBackgroundTap(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: view)
+        if !containerView.frame.contains(location) {
+            dismiss(animated: true)
+        }
     }
 }

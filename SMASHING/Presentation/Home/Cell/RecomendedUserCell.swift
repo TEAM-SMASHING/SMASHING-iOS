@@ -19,6 +19,8 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "circle.fill")
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 26
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
     }
@@ -141,6 +143,7 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
         } else {
             genderImageView.image = .icManSm
         }
+        profileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
         winLoseLabel.text = "\(user.wins)승 \(user.losses)패"
         reviewCountLabel.text = String(user.reviews)
     }
