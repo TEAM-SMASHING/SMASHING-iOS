@@ -30,6 +30,7 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
         let isLoading = PassthroughSubject<Bool, Never>()
         let errorMessage = PassthroughSubject<String, Never>()
         let challengeRequestCompleted = PassthroughSubject<Void, Never>()
+        let navToMatchManage = PassthroughSubject<Void, Never>()
     }
 
     // MARK: - Properties
@@ -77,6 +78,7 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
         case .viewDidLoad, .refresh:
             fetchUserProfile()
         case .challengeConfirmed:
+            output.navToMatchManage.send()
             requestMatching()
         }
     }

@@ -23,6 +23,7 @@ final class MyProfileView: BaseUIView {
     private let profileCard = ProfileCard()
     
     let tierCard = TierCard().then {
+        $0.showsAddButton = true
         $0.addTierDetailButton()
     }
     

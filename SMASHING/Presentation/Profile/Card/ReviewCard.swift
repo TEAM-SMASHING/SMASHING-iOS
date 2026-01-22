@@ -119,12 +119,11 @@ final class ReviewCard: BaseUIView {
     func updateEmptyState(isEmpty: Bool) {
         noReviewLabel.isHidden = !isEmpty
         reviewCollectionView.isHidden = isEmpty
+        satisfactionStackView.isHidden = isEmpty
         
         if isEmpty {
             noReviewLabel.snp.remakeConstraints {
-                $0.top.equalTo(satisfactionStackView.snp.bottom).offset(12)
-                $0.centerX.equalToSuperview()
-                $0.bottom.equalToSuperview().inset(24)
+                $0.center.equalToSuperview()
             }
         } else {
             reviewCollectionView.snp.remakeConstraints {

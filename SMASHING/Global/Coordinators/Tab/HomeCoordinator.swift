@@ -9,7 +9,7 @@ import UIKit
 import Combine
 
 enum NotificationAction {
-    case navConfirmedMatchManage, navRequestedMatchManage, navSearchUser
+    case navConfirmedMatchManage, navRequestedMatchManage, navSentRequestManage , navSearchUser
 }
 
 final class HomeCoordinator: Coordinator {

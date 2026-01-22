@@ -13,9 +13,11 @@ final class MatchingSearchCoordinator: Coordinator {
     var childCoordinators: [Coordinator]
     var navigationController: UINavigationController
     private let userSportProvider: UserSportProviding
-    private let userProfileService = UserProfileService()
-    private var cancellables = Set<AnyCancellable>()
+    var cancellables: Set<AnyCancellable> = []
+    let userProfileService = UserProfileService()
     
+    var navAction: (() -> Void)?
+
     init(navigationController: UINavigationController, userSportProvider: UserSportProviding) {
         self.childCoordinators = []
         self.navigationController = navigationController
@@ -42,6 +44,12 @@ final class MatchingSearchCoordinator: Coordinator {
             navigationController: navigationController,
             userSportProvider: userSportProvider
         )
+        searchResultCoordinator.navToMatchManage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.navAction?()
+            }
+            .store(in: &cancellables)
         childCoordinators.append(searchResultCoordinator)
         searchResultCoordinator.start()
     }
@@ -50,6 +58,11 @@ final class MatchingSearchCoordinator: Coordinator {
         let viewModel = UserProfileViewModel(userId: userId, sport: userSportProvider.currentSport())
         let userProfileVC = UserProfileViewController(viewModel: viewModel)
         navigationController.pushViewController(userProfileVC, animated: true)
+        
+        viewModel.output.navToMatchManage.sink { [weak self] in
+            self?.navAction?()
+        }
+        .store(in: &cancellables)
     }
     
     private func showRegionSelection() {

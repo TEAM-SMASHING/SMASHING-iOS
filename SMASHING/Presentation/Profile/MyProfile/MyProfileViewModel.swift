@@ -37,6 +37,8 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
     private var userProfileService: UserProfileService
     private var userReviewService: UserReviewServiceProtocol
     private var cancellables: Set<AnyCancellable> = []
+    private var profileIdBySport: [Sports: String] = [:]
+    private var currentSport: Sports?
 
     init(
         userProfileService: UserProfileService,
@@ -52,15 +54,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
                 guard let self else { return }
                 switch input {
                 case .viewDidLoad, .viewWillAppear:
-                    userProfileService.fetchMyProfiles()
-                        .receive(on: DispatchQueue.main)
-                        .sink { _ in
-                        } receiveValue: { [weak self] response in
-                            guard let self else { return }
-                            self.storeSportsCode(from: response)
-                            output.myProfileFetched.send(response)
-                        }
-                        .store(in: &cancellables)
+                    fetchMyProfiles()
                     
                     userReviewService.fetchMyRecentReviews(size: 8, cursor: nil)
                         .receive(on: DispatchQueue.main)
@@ -82,7 +76,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
                         .store(in: &cancellables)
                 case .sportsCellTapped(let sport):
                     if let sport = sport {
-                        // TODO: 해당 종목의 프로필로 데이터 전환 로직 (updateActiveProfile 등 호출 가능)
+                        updateActiveProfile(for: sport)
                     } else {
                         output.navigateToAddSports.send()
                     }
@@ -104,5 +98,35 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
         }
         let key = "\(Environment.sportsCodeKeyPrefix).\(userId)"
         _ = KeychainService.add(key: key, value: response.activeProfile.sportCode.rawValue)
+    }
+
+    private func fetchMyProfiles() {
+        userProfileService.fetchMyProfiles()
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+            } receiveValue: { [weak self] response in
+                guard let self else { return }
+                self.storeSportsCode(from: response)
+                self.currentSport = response.activeProfile.sportCode
+                self.profileIdBySport = Dictionary(
+                    uniqueKeysWithValues: response.allProfiles.map { ($0.sportCode, $0.profileId) }
+                )
+                self.output.myProfileFetched.send(response)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func updateActiveProfile(for sport: Sports) {
+        guard sport != currentSport else { return }
+        guard let profileId = profileIdBySport[sport] else { return }
+
+        userProfileService.updateActiveProfile(profileId: profileId)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+            } receiveValue: { [weak self] _ in
+                self?.currentSport = sport
+                self?.fetchMyProfiles()
+            }
+            .store(in: &cancellables)
     }
 }

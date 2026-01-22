@@ -32,9 +32,10 @@ final class SportsButtonCell: BaseUICollectionViewCell, ReuseIdentifiable {
         self.sports = sports
         let newChip = SportsButtonChip(sports: sports, selected: isSelected)
         self.chip = newChip
-        
+
         newChip.isUserInteractionEnabled = true
-        newChip.addTarget(self, action: #selector(chipTapped), for: .touchUpInside)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(chipTapped))
+        newChip.addGestureRecognizer(tapGesture)
         
         contentView.addSubview(newChip)
         newChip.snp.makeConstraints {

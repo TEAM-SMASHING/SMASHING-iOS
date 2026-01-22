@@ -48,13 +48,23 @@ final class TabBarCoordinator: Coordinator {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             self.goToMatchManage(index: 2)
                         }
-
                     case .navSearchUser:
                         tabBarController.selectedIndex = 1
+                    default:
+                        break
                     }
                 }
             }
             
+            if let matchingSearchCoordinator = coordinator as? MatchingSearchCoordinator {
+                matchingSearchCoordinator.navAction = { [weak self] in
+                    guard let self else { return }
+                    tabBarController.selectedIndex = 2
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.goToMatchManage(index: 1)
+                    }
+                }
+            }            
             MainTabBarController.setupTabBarItem(for: navController, with: tab)
             
             childCoordinators.append(coordinator)
@@ -76,6 +86,9 @@ final class TabBarCoordinator: Coordinator {
         }
         if index == 0 {
             matchingManageVC.moveToPage(tab: .received)
+        }
+        else if index == 1 {
+            matchingManageVC.moveToPage(tab: .sent)
         } else if index == 2 {
             matchingManageVC.moveToPage(tab: .confirmed)
         }

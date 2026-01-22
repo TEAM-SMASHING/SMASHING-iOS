@@ -14,11 +14,15 @@ import Then
 final class EditTierSelectionViewController: BaseViewController {
     
     let tierSelectionView = ExperienceSelectionView()
+    var onExperienceSelected: ((ExperienceRange) -> Void)?
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view = tierSelectionView
+        tierSelectionView.configure { [weak self] experience in
+            self?.onExperienceSelected?(experience)
+        }
     }
 }
