@@ -28,7 +28,7 @@ final class EmptyMatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
            $0.text = "아직 확정된 매칭이 없어요.\n지금 바로 매칭을 신청해보세요!"
        }
     
-    lazy var goToMatchingSearchButton = UIButton().then {
+    private lazy var goToMatchingSearchButton = UIButton().then {
         $0.setTitle("매칭 탐색하러 가기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textMdM)
         $0.setTitleColor(.Button.backgroundSecondaryActive, for: .normal)
@@ -49,12 +49,13 @@ final class EmptyMatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
         
         messageLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(63)
-            $0.leading.trailing.equalToSuperview().inset(64)
+            $0.top.equalToSuperview().inset(39)
+            $0.leading.trailing.equalToSuperview().inset(30)
         }
         
         goToMatchingSearchButton.snp.makeConstraints {
-            $0.bottom.equalTo(containerView.snp.bottom).inset(18)
+            $0.top.equalTo(messageLabel.snp.bottom).offset(45)
+            $0.bottom.equalTo(containerView.snp.bottom).inset(44)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(42)
         }

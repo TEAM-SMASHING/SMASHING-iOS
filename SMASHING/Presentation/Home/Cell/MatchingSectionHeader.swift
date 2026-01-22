@@ -11,6 +11,9 @@ import SnapKit
 import Then
 
 final class MatchingSectionHeader: UICollectionReusableView, ReuseIdentifiable {
+    
+    var onMoreButtonTapped: (() -> Void)?
+    
     private let titleLabel = UILabel().then {
         $0.setPretendard(.title2xlSb)
         $0.textColor = .Text.primary
@@ -21,10 +24,11 @@ final class MatchingSectionHeader: UICollectionReusableView, ReuseIdentifiable {
         $0.textColor = .Text.primary
     }
     
-    private let moreButton = UIButton().then {
+    private lazy var moreButton = UIButton().then {
         $0.setTitle("모두 보기", for: .normal)
         $0.titleLabel?.font = .pretendard(.textSmM)
         $0.setTitleColor(.Text.tertiary, for: .normal)
+        $0.addTarget(self, action: #selector(moreButtonDidTap), for: .touchUpInside)
     }
     
     override init(frame: CGRect) {
@@ -60,5 +64,10 @@ final class MatchingSectionHeader: UICollectionReusableView, ReuseIdentifiable {
     func configure(title: String, subTitle: String) {
         titleLabel.text = title
         subTitleLabel.text = subTitle
+    }
+    
+    @objc
+    private func moreButtonDidTap() {
+        onMoreButtonTapped?()
     }
 }

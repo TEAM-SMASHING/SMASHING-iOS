@@ -17,18 +17,27 @@ final class ReviewCreateView: BaseUIView {
     var onRapidReviewTagsChanged: (([ReviewTag]) -> Void)?
     var onReviewContentChanged: ((String?) -> Void)?
     
+    var onBackTapped: (() -> Void)?
     // MARK: - UI Components
     
-    private let navigationBar = CustomNavigationBar(title: "결과 작성")
+    lazy var navigationBar = CustomNavigationBar(title: "후기 작성", leftAction: { [weak self] in
+        self?.onBackTapped?()
+    })
     
     private let titleLabel = UILabel().then {
-        $0.text = "밤이달이님과의 경기는 어떠셨나요?"
+        $0.text = "밤이달이님과의"
+        $0.setPretendard(.titleXlSb)
+        $0.textColor = .Text.primary
+    }
+    
+    private let titleLabel2 = UILabel().then {
+        $0.text = "경기는 어떠셨나요?"
         $0.setPretendard(.titleXlSb)
         $0.textColor = .Text.primary
     }
     
     private let satisfactionSelectionLabel = UILabel().then {
-        $0.text = "만족도 선택"
+        $0.text = "만족도를 선택해주세요"
         $0.setPretendard(.textMdM)
         $0.textColor = .Text.primary
     }
@@ -72,7 +81,7 @@ final class ReviewCreateView: BaseUIView {
     let rapidReviewChipContainer = RapidReviewChipContainer()
     
     private let reviewDescription = UILabel().then {
-        $0.text = "따뜻한 경기 후기를 보내주세요!"
+        $0.text = "따뜻한 후기를 보내주세요!"
         $0.setPretendard(.textMdM)
         $0.textColor = .Text.primary
     }
@@ -88,6 +97,7 @@ final class ReviewCreateView: BaseUIView {
         
         addSubviews(navigationBar,
                     titleLabel,
+                    titleLabel2,
                     satisfactionSelectionLabel,
                     satisfactionRequiredStar,
                     satisfactionContainer,
@@ -120,13 +130,18 @@ final class ReviewCreateView: BaseUIView {
             $0.leading.equalToSuperview().inset(16)
         }
         
+        titleLabel2.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom)
+            $0.leading.equalToSuperview().inset(16)
+        }
+        
         satisfactionSelectionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(28)
+            $0.top.equalTo(titleLabel2.snp.bottom).offset(28)
             $0.leading.equalToSuperview().inset(16)
         }
         
         satisfactionRequiredStar.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(28)
+            $0.top.equalTo(titleLabel2.snp.bottom).offset(28)
             $0.leading.equalTo(satisfactionSelectionLabel.snp.trailing)
         }
         
@@ -181,9 +196,9 @@ final class ReviewCreateView: BaseUIView {
         }
         
         reviewTextView.snp.makeConstraints {
-            $0.top.equalTo(reviewDescription.snp.bottom).offset(12)
+            $0.top.equalTo(reviewDescription.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(120)
+            $0.bottom.equalTo(submitButton.snp.top).offset(-9)
         }
         
         submitButton.snp.makeConstraints {
@@ -231,6 +246,6 @@ final class ReviewCreateView: BaseUIView {
     }
     
     func configure(opponentNickname: String) {
-        titleLabel.text = "\(opponentNickname)님과의 경기는 어떠셨나요?"
+        titleLabel.text = "\(opponentNickname)님과의"
     }
 }

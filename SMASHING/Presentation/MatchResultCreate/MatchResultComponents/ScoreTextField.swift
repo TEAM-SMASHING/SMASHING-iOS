@@ -12,6 +12,8 @@ import Then
 
 final class ScoreTextField: UITextField {
     
+    private let maxLength = 2
+    
     var onDone: (() -> Void)?
     
     private let defaultBorderColor: UIColor = .clear
@@ -39,6 +41,8 @@ final class ScoreTextField: UITextField {
         self.layer.borderColor = defaultBorderColor.cgColor
         
         configurePlaceholderColor(.Text.disabled)
+        
+        self.delegate = self
         
         self.snp.makeConstraints {
             $0.width.equalTo(60)
@@ -82,5 +86,16 @@ final class ScoreTextField: UITextField {
             self.layer.borderColor = defaultBorderColor.cgColor
         }
         return result
+    }
+}
+
+extension ScoreTextField: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if string.isEmpty { return true }
+        if string.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) != nil { return false }
+        let current = textField.text ?? ""
+        guard let textRange = Range(range, in: current) else { return false }
+        let updated = current.replacingCharacters(in: textRange, with: string)
+        return updated.count <= maxLength
     }
 }

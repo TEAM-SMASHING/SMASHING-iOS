@@ -28,6 +28,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         case matchingResultCreateButtonTapped(MatchingConfirmedGameDTO)
         case matchingResultConfirmButtonTapped(MatchingConfirmedGameDTO)
         case matchingSeeAllTapped
+        case emptyButtonTapped
         
         //추천 유저 섹션
         case recommendedUserTapped(userId: String)
@@ -51,6 +52,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         let navToMatchingManageTab = PassthroughSubject<Void, Never>()
         let navToSelectedUserProfile = PassthroughSubject<String, Never>()
         let navToRanking = PassthroughSubject<Void, Never>()
+        let navToSearchUser = PassthroughSubject<Void, Never>()
     }
     private var cancellables = Set<AnyCancellable>()
     
@@ -76,6 +78,8 @@ final class HomeViewModel: HomeViewModelProtocol {
             fetchHomeData()
         case .viewWillAppear:
             fetchHomeData()
+        case .emptyButtonTapped:
+            output.navToSearchUser.send()
         case .matchingResultCreateButtonTapped(let gameData):
             output.navToMatchResultCreate.send(gameData)
         case .matchingResultConfirmButtonTapped(let gameData):

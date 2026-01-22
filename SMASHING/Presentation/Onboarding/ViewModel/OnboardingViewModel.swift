@@ -148,6 +148,16 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                                             key: Environment.refreshTokenKey,
                                             value: response.refreshToken
                                         )
+                                    _ = KeychainService
+                                        .add(key: Environment.userIdKey, value: response.userId)
+                                    _ = KeychainService
+                                        .add(key: Environment.nicknameKey, value: store.nickname)
+                                    _ = KeychainService
+                                        .add(key: Environment.regionKey, value: store.address)
+                                    if let sportCode = store.sports?.rawValue {
+                                        let key = "\(Environment.sportsCodeKeyPrefix).\(response.userId)"
+                                        _ = KeychainService.add(key: key, value: sportCode)
+                                    }
                                     output.navPushToOnboardingCompletionEvent.send()
                                 }
                                 .store(in: &cancellables)

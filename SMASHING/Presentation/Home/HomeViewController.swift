@@ -34,6 +34,14 @@ final class HomeViewController: BaseViewController {
         return KeychainService.get(key: Environment.userIdKey) ?? ""
     }
     
+    private var myRegion: String {
+        return KeychainService.get(key: Environment.regionKey) ?? ""
+    }
+    
+    private var mySportCode: String {
+        return KeychainService.get(key: Environment.sportsCodeKeyPrefix) ?? ""
+    }
+    
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -135,12 +143,13 @@ extension HomeViewController: UICollectionViewDataSource {
         switch sectionType {
         case .navigationBar:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNavigationBarCell.reuseIdentifier, for: indexPath) as? HomeNavigationBarCell else { return UICollectionViewCell() }
+            cell.configure(region: myRegion)
             return cell
         case .matching:
             if recentMatching.isEmpty {
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyMatchingCell.reuseIdentifier, for: indexPath) as? EmptyMatchingCell else { return UICollectionViewCell() }
                 cell.onExploreButtonTapped = { [weak self] in
-                    //                           self?.input.send(.matchingSeeAllTapped) // “매칭 탐색” 이동 트리거
+                    self?.input.send(.emptyButtonTapped)
                     print("매칭 탐색하러가기")
                 }
                 return cell
@@ -192,6 +201,9 @@ extension HomeViewController: UICollectionViewDataSource {
             }
             
             header.configure(title: "\(myNickname)님,", subTitle: "곧 다가오는 매칭이 있어요")
+            header.onMoreButtonTapped = { [weak self] in
+                self?.input.send(.matchingSeeAllTapped)
+            }
             return header
         case .recommendedUser:
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CommonSectionHeader.reuseIdentifier, for: indexPath) as? CommonSectionHeader else {
@@ -238,6 +250,10 @@ extension HomeViewController: UICollectionViewDelegate {
 extension HomeViewController {
     private func showRecommendedUserInfo() {
         print("유저 추천 인포 탭")
+        print("\(myRegion)")
+        print("\(myNickname)")
+        print("\(myUserId)")
+        print("\(mySportCode)")
     }
     
     private func showMore() {
