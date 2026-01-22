@@ -63,6 +63,11 @@ final class RankingView: BaseUIView {
         let spread: CGFloat = 100
         let rect = backgroundEffectView.bounds.insetBy(dx: -spread, dy: -spread)
         backgroundEffectView.layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: backgroundEffectView.layer.cornerRadius + spread).cgPath
+        
+        let bottomInset = myRankingScore.bounds.height + 16
+        rankingCollectionView.contentInset.bottom = bottomInset
+        rankingCollectionView.scrollIndicatorInsets.bottom = bottomInset
+        bringSubviewToFront(myRankingScore)
     }
     
     override func setUI() {
@@ -93,13 +98,12 @@ final class RankingView: BaseUIView {
         collectionViewContainer.snp.makeConstraints {
             $0.top.equalTo(topThreePodium.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-//            $0.bottom.equalTo(myRankingScore.snp.top)
-                        $0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview()
         }
         
         rankingCollectionView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(100)
+            $0.bottom.equalToSuperview()
         }
         
         rankingEmptyView.snp.makeConstraints {
