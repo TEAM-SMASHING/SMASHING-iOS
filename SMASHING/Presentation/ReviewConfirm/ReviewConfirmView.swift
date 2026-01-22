@@ -121,7 +121,7 @@ final class ReviewConfirmView: BaseUIView {
     }
     
     func configure(data: ReviewDetailResponse) {
-        textLabel.text = "\(data.reviewerNickname)님이 보낸 후기가 도착했어요"
+        textLabel.text = "\(data.reviewerNickname)님이"
         fingerImageView.image = data.rating.imageLarge
         fingerLabel.text = data.rating.displayText
         reviewTextLabel.text = data.content?.isEmpty == false ? data.content : "작성된 후기가 없어요"
@@ -134,4 +134,4 @@ final class ReviewConfirmView: BaseUIView {
             $0.layer.borderWidth = 0
         }
     }
-}
+} 
