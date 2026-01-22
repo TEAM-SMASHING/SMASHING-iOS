@@ -43,6 +43,12 @@ final class MatchingSearchCoordinator: Coordinator {
             navigationController: navigationController,
             userSportProvider: userSportProvider
         )
+        searchResultCoordinator.navToMatchManage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.navAction?()
+            }
+            .store(in: &cancellables)
         childCoordinators.append(searchResultCoordinator)
         searchResultCoordinator.start()
     }

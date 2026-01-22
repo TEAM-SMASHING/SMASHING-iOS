@@ -13,9 +13,10 @@ final class SearchResultCoordinator: Coordinator {
     var childCoordinators: [Coordinator]
     var navigationController: UINavigationController
     private var cancellables: Set<AnyCancellable> = []
-
     private let userSportProvider: UserSportProviding
-
+    
+    var navToMatchManage = PassthroughSubject<Void, Never>()
+    
     init(navigationController: UINavigationController, userSportProvider: UserSportProviding) {
         self.childCoordinators = []
         self.navigationController = navigationController
@@ -39,6 +40,12 @@ final class SearchResultCoordinator: Coordinator {
     private func showUserProfile(userId: String) {
         let viewModel = UserProfileViewModel(userId: userId, sport: userSportProvider.currentSport())
         let userProfileVC = UserProfileViewController(viewModel: viewModel)
+        viewModel.output.navToMatchManage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.navToMatchManage.send()
+            }
+            .store(in: &cancellables)
         navigationController.pushViewController(userProfileVC, animated: true)
     }
 }
