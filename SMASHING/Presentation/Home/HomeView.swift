@@ -13,10 +13,16 @@ import SnapKit
 
 final class HomeView: UICollectionView {
     
-    private var compositionalLayout: UICollectionViewCompositionalLayout = {
-        UICollectionViewCompositionalLayout { sectionIndex, _ in
+    private var isRecommendedUserEmpty: Bool = false
+    
+    private lazy var compositionalLayout: UICollectionViewCompositionalLayout = {
+        UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
             guard let sectionType = HomeViewLayout(rawValue: sectionIndex) else {
                 return HomeViewLayout.matching.section
+            }
+            
+            if sectionType == .recommendedUser, self?.isRecommendedUserEmpty == true {
+                return HomeViewLayout.recommendedUserEmptySection
             }
             return sectionType.section
         }
@@ -24,13 +30,14 @@ final class HomeView: UICollectionView {
     
     //    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
     //        super.init(frame: .zero, collectionViewLayout: self.compositionalLayout)
-    //        
+    //
     //        register()
     //        setStyle()
     //    }
     //
     init() {
-        super.init(frame: .zero, collectionViewLayout: self.compositionalLayout)
+        super.init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+        setCollectionViewLayout(compositionalLayout, animated: false)
         register()
         setStyle()
     }
@@ -45,6 +52,7 @@ final class HomeView: UICollectionView {
         self.cellRegister(RecomendedUserCell.self)
         self.cellRegister(RankingCell.self)
         self.cellRegister(EmptyMatchingCell.self)
+        self.cellRegister(EmptyRecommendedUserCell.self)
         
         register(
             MatchingSectionHeader.self,
@@ -61,5 +69,11 @@ final class HomeView: UICollectionView {
     
     private func setStyle() {
         backgroundColor = .white
+    }
+    
+    func setRecommendedUserEmpty(_ isEmpty: Bool) {
+        guard isRecommendedUserEmpty != isEmpty else { return }
+        isRecommendedUserEmpty = isEmpty
+        setCollectionViewLayout(compositionalLayout, animated: false)
     }
 }
