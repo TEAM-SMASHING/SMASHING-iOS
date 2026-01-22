@@ -18,18 +18,16 @@ final class TabBarCoordinator: Coordinator {
     let tabBarController = MainTabBarController()
     
     private var cancellables = Set<AnyCancellable>()
-    private let sseService = SSEService()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.childCoordinators = []
-        
-        sseService.eventPublisher
+        SSEService.shared.start()
+        SSEService.shared.eventPublisher
             .sink { [weak self] payload in
                 self?.handleNotification(type: payload)
             }
             .store(in: &cancellables)
-        startListening()
     }
 
     func start() {
@@ -78,10 +76,6 @@ final class TabBarCoordinator: Coordinator {
         } else if index == 2 {
             matchingManageVC.moveToPage(tab: .confirmed)
         }
-    }
-    
-    func startListening() {
-        sseService.connect(accessToken: KeychainService.get(key: Environment.accessTokenKey)!)
     }
     
     private func handleNotification(type: SseEventType) {
