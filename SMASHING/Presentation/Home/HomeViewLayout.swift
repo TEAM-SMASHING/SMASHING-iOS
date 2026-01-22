@@ -148,3 +148,29 @@ extension HomeViewLayout {
         return layout
     }
 }
+
+extension HomeViewLayout {
+    static var recommendedUserEmptySection: NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(86)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(86)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 16, bottom: 32, trailing: 16)
+        section.orthogonalScrollingBehavior = .none
+        
+        if let header = HomeViewLayout.recommendedUser.header {
+            section.boundarySupplementaryItems = [header]
+        }
+        
+        return section
+    }
+}

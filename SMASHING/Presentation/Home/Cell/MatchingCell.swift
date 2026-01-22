@@ -142,14 +142,12 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
         case .resultRejected:
             if canSubmit {
-                writeResultButton.backgroundColor = .Button.backgroundPrimaryActive
-                writeResultButton.setTitleColor(.Text.emphasis, for: .normal)
+                writeResultButton.backgroundColor = .Button.backgroundRejected
+                writeResultButton.setTitleColor(.Button.textRejected, for: .normal)
             } else {
                 writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
-                writeResultButton.setTitleColor(.Button.textRejected, for: .normal)
+                writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
             }
-            writeResultButton.backgroundColor = .Button.backgroundPrimaryDisabled
-            writeResultButton.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
         case .waitingConfirmation:
             if canConfirm {
                 // 상대방이 제출 → 내가 확인해야 함

@@ -49,13 +49,13 @@ final class EmptyMatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
         
         messageLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(39)
+            $0.top.equalToSuperview().inset(52)
             $0.leading.trailing.equalToSuperview().inset(30)
         }
         
         goToMatchingSearchButton.snp.makeConstraints {
-            $0.top.equalTo(messageLabel.snp.bottom).offset(45)
-            $0.bottom.equalTo(containerView.snp.bottom).inset(44)
+            $0.top.equalTo(messageLabel.snp.bottom).offset(24)
+            $0.bottom.equalTo(containerView.snp.bottom).inset(52)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(42)
         }

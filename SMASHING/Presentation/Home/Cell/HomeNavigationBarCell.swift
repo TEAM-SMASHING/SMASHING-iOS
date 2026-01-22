@@ -38,7 +38,7 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private let sportsAndTierStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
-        $0.layer.cornerRadius = 16
+        $0.layer.cornerRadius = 18
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.Border.secondary.cgColor
         $0.isLayoutMarginsRelativeArrangement = true

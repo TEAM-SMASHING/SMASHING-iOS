@@ -85,6 +85,7 @@ final class HomeViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] users in
                 self?.recommendedUsers = users
+                self?.homeView.setRecommendedUserEmpty(users.isEmpty)
                 self?.homeView.reloadSections(IndexSet(integer: HomeViewLayout.recommendedUser.rawValue))
             }
             .store(in: &cancellables)
@@ -132,7 +133,7 @@ extension HomeViewController: UICollectionViewDataSource {
         case .matching:
             return 1
         case .recommendedUser:
-            return recommendedUsers.count
+            return recommendedUsers.isEmpty ? 1 : recommendedUsers.count
         case .ranking:
             return rankings.count
         }
@@ -177,10 +178,19 @@ extension HomeViewController: UICollectionViewDataSource {
             }
             
         case .recommendedUser:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecomendedUserCell.reuseIdentifier, for: indexPath) as? RecomendedUserCell else { return UICollectionViewCell() }
-            let user = recommendedUsers[indexPath.item]
-            cell.configure(with: user)
-            return cell
+            
+            if recommendedUsers.isEmpty {
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyRecommendedUserCell.reuseIdentifier, for: indexPath) as? EmptyRecommendedUserCell else {
+                    return UICollectionViewCell()
+                }
+                return cell
+            } else {
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecomendedUserCell.reuseIdentifier, for: indexPath) as? RecomendedUserCell else { return UICollectionViewCell() }
+                let user = recommendedUsers[indexPath.item]
+                cell.configure(with: user)
+                return cell
+            }
+            
         case .ranking:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RankingCell.reuseIdentifier, for: indexPath) as? RankingCell else { return UICollectionViewCell() }
             let ranker = rankings[indexPath.item]

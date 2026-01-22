@@ -112,10 +112,17 @@ final class MatchResultCreateViewController: BaseViewController {
             }
             .store(in: &cancellables)
         
-        output.submitResubmission
+        output.showSubmitConfirm
             .receive(on: DispatchQueue.main)
             .sink { [weak self] matchResultData in
-                self?.handleResubmission(matchResultData)
+                self?.showSubmitConfirmPopup(matchResultData: matchResultData)
+            }
+            .store(in: &cancellables)
+        
+        output.navToHome
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.navigationController?.popToRootViewController(animated: true)
             }
             .store(in: &cancellables)
     }
@@ -139,11 +146,6 @@ final class MatchResultCreateViewController: BaseViewController {
     private func didTapNextButton() {
         input.send(.nextButtonTapped)
     }
-    //    
-    //    private func navigateToReviewCreate(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String) {
-    //        let vc = ReviewCreateViewController(viewModel: ReviewCreateViewModel(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId))
-    //        navigationController?.pushViewController(vc, animated: true)
-    //    }
     
     private func navigateToReviewCreate(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String) {
         let flowType = ReviewFlowType.submission(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId)
@@ -152,10 +154,16 @@ final class MatchResultCreateViewController: BaseViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    private func handleResubmission(_ matchResultData: MatchResultData) {
-        // TODO: Resubmission API 호출 구현
-        print("Resubmission data: \(matchResultData)")
-    }
+    private func showSubmitConfirmPopup(matchResultData: MatchResultData) {
+            let popup = SubmitConfirmAlertView()
+        popup.configure(title: "매칭 결과를 다시 제출하시겠습니까?", subtitle: "상대가 다시 반려할 경우 매칭 기록은 삭제됩니다.")
+            popup.onConfirm = { [weak self] in
+                self?.input.send(.submitResubmissionConfirmed(matchResultData))
+            }
+            popup.onCancel = { }
+            view.addSubview(popup)
+            popup.snp.makeConstraints { $0.edges.equalToSuperview() }
+        }
     
 }
 

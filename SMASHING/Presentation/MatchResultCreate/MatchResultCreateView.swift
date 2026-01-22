@@ -59,13 +59,13 @@ final class MatchResultCreateView: BaseUIView {
     
     let myOptionButton = UIButton().then {
         $0.setTitle("밤이달이", for: .normal)
-        $0.titleLabel?.setPretendard(.textMdM)
+        $0.titleLabel?.setPretendard(.textSmM)
         $0.setTitleColor(.Text.primary, for: .normal)
     }
     
     let rivalOptionButton = UIButton().then {
         $0.setTitle("와구와구", for: .normal)
-        $0.titleLabel?.setPretendard(.textMdM)
+        $0.titleLabel?.setPretendard(.textSmM)
         $0.setTitleColor(.Text.primary, for: .normal)
     }
     

@@ -117,7 +117,7 @@ final class MatchResultCardView: BaseUIView {
         }
         
         myScore.snp.makeConstraints {
-            $0.trailing.equalTo(scoreSemicolon.snp.leading).offset(-2)
+            $0.trailing.equalTo(scoreSemicolon.snp.leading).offset(-6)
             $0.centerY.equalTo(scoreSemicolon)
         }
         
@@ -127,7 +127,7 @@ final class MatchResultCardView: BaseUIView {
         }
         
         rivalScore.snp.makeConstraints {
-            $0.leading.equalTo(scoreSemicolon.snp.trailing).offset(2)
+            $0.leading.equalTo(scoreSemicolon.snp.trailing).offset(6)
             $0.centerY.equalTo(scoreSemicolon)
         }
         
