@@ -24,10 +24,15 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
         case refresh
         case loadMore
         case closeTapped(index: Int)
+        case matchingResultCreateButtonTapped(MatchingConfirmedGameDTO)
+        case matchingResultConfirmButtonTapped(MatchingConfirmedGameDTO)
+        
     }
 
     struct Output {
         let gameList: AnyPublisher<[MatchingConfirmedGameDTO], Never>
+        let navToMatchResultCreate: AnyPublisher<MatchingConfirmedGameDTO, Never>
+        let navToMatchResultConfirm: AnyPublisher<MatchingConfirmedGameDTO, Never>
         let isLoading: AnyPublisher<Bool, Never>
         let isLoadingMore: AnyPublisher<Bool, Never>
         let errorMessage: AnyPublisher<String, Never>
@@ -35,7 +40,8 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
     }
 
     // MARK: - Private Subjects
-
+    private let navToMatchResultCreateSubject = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
+    private let navToMatchResultConfirmSubject = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
     private let gameListSubject = CurrentValueSubject<[MatchingConfirmedGameDTO], Never>([])
     private let isLoadingSubject = CurrentValueSubject<Bool, Never>(false)
     private let isLoadingMoreSubject = CurrentValueSubject<Bool, Never>(false)
@@ -73,7 +79,10 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
                 switch event {
                 case .viewDidLoad:
                     self.fetchFirstPage()
-
+                case .matchingResultCreateButtonTapped(let gameData):
+                    navToMatchResultCreateSubject.send(gameData)
+                case .matchingResultConfirmButtonTapped(let gameData):
+                    navToMatchResultConfirmSubject.send(gameData)
                 case .refresh:
                     self.handleRefresh()
 
@@ -94,6 +103,8 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
 
         return Output(
             gameList: gameListSubject.eraseToAnyPublisher(),
+            navToMatchResultCreate: navToMatchResultCreateSubject.eraseToAnyPublisher(),
+            navToMatchResultConfirm: navToMatchResultConfirmSubject.eraseToAnyPublisher(),
             isLoading: isLoadingSubject.eraseToAnyPublisher(),
             isLoadingMore: isLoadingMoreSubject.eraseToAnyPublisher(),
             errorMessage: errorMessageSubject.eraseToAnyPublisher(),
