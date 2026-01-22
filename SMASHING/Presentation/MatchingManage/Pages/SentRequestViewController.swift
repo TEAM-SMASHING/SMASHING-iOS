@@ -36,12 +36,8 @@ final class SentRequestViewController: BaseViewController {
         return collectionView
     }()
 
-    private let emptyLabel = UILabel().then {
-        $0.text = "보낸 요청이 없습니다"
-        $0.font = .pretendard(.textMdM)
-        $0.textColor = .Text.tertiary
-        $0.textAlignment = .center
-        $0.isHidden = true
+    private let emptyView = EmptyView().then {
+        $0.configure(title: "보낸 매칭이 없어요", subtitle: "직접 경쟁을 신청해보세요!")
     }
 
     private let loadingIndicator = UIActivityIndicatorView(style: .medium).then {
@@ -72,7 +68,7 @@ final class SentRequestViewController: BaseViewController {
 
     override func setUI() {
         view.backgroundColor = UIColor(resource: .Background.canvas)
-        view.addSubviews(collectionView, emptyLabel, loadingIndicator)
+        view.addSubviews(collectionView, emptyView, loadingIndicator)
     }
 
     override func setLayout() {
@@ -80,7 +76,7 @@ final class SentRequestViewController: BaseViewController {
             $0.edges.equalToSuperview()
         }
 
-        emptyLabel.snp.makeConstraints {
+        emptyView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
 
@@ -101,7 +97,7 @@ final class SentRequestViewController: BaseViewController {
                 guard let self else { return }
                 self.requestList = requests
                 self.collectionView.reloadData()
-                self.emptyLabel.isHidden = isLoading || !requests.isEmpty
+                self.emptyView.isHidden = isLoading || !requests.isEmpty
             }
             .store(in: &cancellables)
 
@@ -133,7 +129,7 @@ final class SentRequestViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self else { return }
-                self.emptyLabel.isHidden = !self.requestList.isEmpty
+                self.emptyView.isHidden = !self.requestList.isEmpty
             }
             .store(in: &cancellables)
 

@@ -47,12 +47,8 @@ final class MatchingConfirmedViewController: BaseViewController {
         return collectionView
     }()
 
-    private let emptyLabel = UILabel().then {
-        $0.text = "확정된 매칭이 없습니다"
-        $0.font = .pretendard(.textMdM)
-        $0.textColor = .Text.tertiary
-        $0.textAlignment = .center
-        $0.isHidden = true
+    private let emptyView = EmptyView().then {
+        $0.configure(title: "확정된 매칭이 없어요", subtitle: "직접 경쟁을 신청해보세요!")
     }
 
     private let loadingIndicator = UIActivityIndicatorView(style: .medium).then {
@@ -88,7 +84,7 @@ final class MatchingConfirmedViewController: BaseViewController {
 
     override func setUI() {
         view.backgroundColor = UIColor(resource: .Background.canvas)
-        view.addSubviews(collectionView, emptyLabel, loadingIndicator)
+        view.addSubviews(collectionView, emptyView, loadingIndicator)
     }
 
     override func setLayout() {
@@ -96,7 +92,7 @@ final class MatchingConfirmedViewController: BaseViewController {
             $0.edges.equalToSuperview()
         }
 
-        emptyLabel.snp.makeConstraints {
+        emptyView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
 
@@ -117,7 +113,7 @@ final class MatchingConfirmedViewController: BaseViewController {
                 guard let self else { return }
                 self.gameList = games
                 self.collectionView.reloadData()
-                self.emptyLabel.isHidden = isLoading || !games.isEmpty
+                self.emptyView.isHidden = isLoading || !games.isEmpty
             }
             .store(in: &cancellables)
 
@@ -149,7 +145,7 @@ final class MatchingConfirmedViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self else { return }
-                self.emptyLabel.isHidden = !self.gameList.isEmpty
+                self.emptyView.isHidden = !self.gameList.isEmpty
             }
             .store(in: &cancellables)
 
