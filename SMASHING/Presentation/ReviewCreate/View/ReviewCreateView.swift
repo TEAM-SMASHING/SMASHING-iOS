@@ -17,9 +17,12 @@ final class ReviewCreateView: BaseUIView {
     var onRapidReviewTagsChanged: (([ReviewTag]) -> Void)?
     var onReviewContentChanged: ((String?) -> Void)?
     
+    var onBackTapped: (() -> Void)?
     // MARK: - UI Components
     
-    private let navigationBar = CustomNavigationBar(title: "후기 작성")
+    lazy var navigationBar = CustomNavigationBar(title: "후기 작성", leftAction: { [weak self] in
+        self?.onBackTapped?()
+    })
     
     private let titleLabel = UILabel().then {
         $0.text = "밤이달이님과의"
@@ -138,7 +141,7 @@ final class ReviewCreateView: BaseUIView {
         }
         
         satisfactionRequiredStar.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(28)
+            $0.top.equalTo(titleLabel2.snp.bottom).offset(28)
             $0.leading.equalTo(satisfactionSelectionLabel.snp.trailing)
         }
         

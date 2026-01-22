@@ -37,8 +37,16 @@ final class ReviewCreateViewController: BaseViewController {
         super.viewDidLoad()
         view.backgroundColor = .Background.canvas
         setAddTarget()
+        bindKeyboard()
         bind()
         input.send(.viewDidLoad)
+        mainView.onBackTapped = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    @MainActor deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     private func bind() {
@@ -104,6 +112,11 @@ final class ReviewCreateViewController: BaseViewController {
         }
     }
     
+    private func bindKeyboard() {
+        bindKeyboardToSafeArea()
+            .store(in: &cancellables)
+    }
+    
     @objc
     private func submitButtonDidTap() {
         showSubmitConfirmPopup()
@@ -126,6 +139,8 @@ final class ReviewCreateViewController: BaseViewController {
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    
 }
 
 import SwiftUI

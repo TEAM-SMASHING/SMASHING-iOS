@@ -38,6 +38,10 @@ final class MatchResultCreateViewController: BaseViewController {
         bind()
         view.backgroundColor = .Background.canvas
         input.send(.viewDidLoad)
+        
+        mainView.onBackTapped = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
     }
     
     override func loadView() {
