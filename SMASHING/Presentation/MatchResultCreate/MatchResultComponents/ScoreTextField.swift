@@ -98,4 +98,8 @@ extension ScoreTextField: UITextFieldDelegate {
         let updated = current.replacingCharacters(in: textRange, with: string)
         return updated.count <= maxLength
     }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        onDone?()
+    }
 }
