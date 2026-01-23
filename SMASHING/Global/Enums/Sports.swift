@@ -31,12 +31,20 @@ enum Sports: String, Codable, CaseIterable {
     var image: UIImage {
         switch self {
         case .tableTennis:
-            .icPingpong
+                .icPingpong
         case .tennis:
-            .icTennis
+                .icTennis
         case .badminton:
-            .icBadminton
+                .icBadminton
         }
+    }
+    
+    static func image(from code: String?) -> UIImage {
+        guard let code,
+              let sport = Sports(rawValue: code) else {
+            return .icBadminton   // 기본 이미지
+        }
+        return sport.image
     }
 }
 
@@ -64,11 +72,11 @@ enum IntSports: Int, Codable, CaseIterable {
     var image: UIImage {
         switch self {
         case .tableTennis:
-            .icPingpong
+                .icPingpong
         case .tennis:
-            .icTennis
+                .icTennis
         case .badminton:
-            .icBadminton
+                .icBadminton
         }
     }
 }

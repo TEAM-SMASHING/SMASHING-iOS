@@ -112,8 +112,12 @@ final class ReceiveRequestViewModel: ReceiveRequestViewModelProtocol {
             .receive(on: DispatchQueue.main)
             .sink { type in
                 switch type {
-                case .matchingReceived(_), .matchingUpdated(_):
-                    self.handleRefresh()
+                case .matchingReceived(_),
+                        .matchingUpdated(_),
+                        .matchingRequestNotificationCreated(_):
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                        self?.handleRefresh()
+                    }
                 default:
                     break
                 }

@@ -24,7 +24,8 @@ final class MatchResultConfirmViewModel: MatchResultConfirmViewModelProtocol {
         
         // (gameId, submissionId, opponentNickname)
         let navToReviewCreate = PassthroughSubject<(String, String, String), Never>()
-        let showRejectAlert = PassthroughSubject<Void, Never>()
+        let showRejectBottomSheet = PassthroughSubject<Void, Never>()
+        let showFinalRejectPopup = PassthroughSubject<Void, Never>()
         let rejectSuccess = PassthroughSubject<Void, Never>()
         
         let isLoading = PassthroughSubject<Bool, Never>()
@@ -82,7 +83,12 @@ final class MatchResultConfirmViewModel: MatchResultConfirmViewModelProtocol {
             output.navToReviewCreate.send((gameData.gameID, submissionId, confirmData.opponentNickname))
             
         case .rejectButtonTapped:
-            output.showRejectAlert.send()
+            guard let confirmData else { return }
+            if confirmData.isFirstSubmission {
+                output.showRejectBottomSheet.send()
+            } else {
+                output.showFinalRejectPopup.send()
+            }
         }
     }
     
@@ -123,21 +129,33 @@ final class MatchResultConfirmViewModel: MatchResultConfirmViewModelProtocol {
         )
     }
     
-    func rejectResult(reason: RejectReason) {
+    func rejectResult(reason: RejectReason?) {
+        guard let confirmData else { return }
+        
+        if confirmData.isFirstSubmission {
+            guard let reason else { return }
+            callReject(reason: reason.rawValue)
+        } else {
+            callReject(reason: nil)
+        }
+    }
+    
+    private func callReject(reason: String?) {
         output.isLoading.send(true)
         print("경기 확인 거절")
         
-        gameService.rejectSubmission(gameId: gameData.gameID, submissionId: submissionId, reason: reason.rawValue)
+        gameService.rejectSubmission(gameId: gameData.gameID, submissionId: submissionId, reason: reason)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 self?.output.isLoading.send(false)
-                if case .failure(let error) = completion {
-                    self?.output.error.send(error)
-                }
+                       if case .failure(let error) = completion {
+                           self?.output.error.send(error)
+                       }
             } receiveValue: { [weak self] _ in
                 self?.output.rejectSuccess.send()
             }
             .store(in: &cancellables)
+        
     }
     
 }

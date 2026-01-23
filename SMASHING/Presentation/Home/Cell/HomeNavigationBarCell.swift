@@ -14,6 +14,7 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     var onRegionButtonTapped: (() -> Void)?
     var onSportsAndTierTapped: (() -> Void)?
     var hasNewNotification: ((Bool) -> Void)?
+    var onBellTapped: (() -> Void)?
     
     private let regionStackView = UIStackView().then {
         $0.axis = .horizontal
@@ -73,10 +74,14 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         let tap = UITapGestureRecognizer(target: self, action: #selector(regionTapped))
         regionStackView.isUserInteractionEnabled = true
         regionStackView.addGestureRecognizer(tap)
-
+        
         let sportsTap = UITapGestureRecognizer(target: self, action: #selector(sportsAndTierTapped))
         sportsAndTierStackView.isUserInteractionEnabled = true
         sportsAndTierStackView.addGestureRecognizer(sportsTap)
+        
+        let bellTap = UITapGestureRecognizer(target: self, action: #selector(bellTapped))
+        bellImage.isUserInteractionEnabled = true
+        bellImage.addGestureRecognizer(bellTap)
     }
     
     override func setLayout() {
@@ -109,8 +114,10 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
     }
     
-    func configure(region: String) {
+    func configure(region: String, sportCode: String?, tierCode: String) {
         regionLabel.text = region
+        sportsImage.image = Sports.image(from: sportCode)
+        tierLabel.text = Tier.from(tierCode: tierCode)?.displayName ?? "—"
     }
     
     func newNotification(hasNew: Bool) {
@@ -121,9 +128,13 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     private func regionTapped() {
         onRegionButtonTapped?()
     }
-
+    
     @objc
     private func sportsAndTierTapped() {
         onSportsAndTierTapped?()
+    }
+    
+    @objc private func bellTapped() {
+        onBellTapped?()
     }
 }

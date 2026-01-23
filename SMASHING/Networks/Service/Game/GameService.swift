@@ -12,7 +12,7 @@ protocol GameServiceProtocol {
     func submitResult(gameId: String, request: GameFirstSubmissionRequestDTO) -> AnyPublisher<GameSubmissionResponseDTO, NetworkError>
     func resubmitResult(gameId: String, request: GameResubmissionRequestDTO) -> AnyPublisher<GameSubmissionResponseDTO, NetworkError>
     func getSubmissionDetail(gameId: String, submissionId: String) -> AnyPublisher<GameSubmissionDetailDTO, NetworkError>
-    func rejectSubmission(gameId: String, submissionId: String, reason: String) -> AnyPublisher<Void, NetworkError>
+    func rejectSubmission(gameId: String, submissionId: String, reason: String?) -> AnyPublisher<Void, NetworkError>
     func confirmSubmission(gameId: String, submissionId: String, review: ReviewRequestDTO) -> AnyPublisher<GameConfirmResponseDTO, NetworkError>
 }
 
@@ -44,7 +44,7 @@ final class GameService: GameServiceProtocol {
                 .eraseToAnyPublisher()
         }
 
-    func rejectSubmission(gameId: String, submissionId: String, reason: String) -> AnyPublisher<Void, NetworkError> {
+    func rejectSubmission(gameId: String, submissionId: String, reason: String?) -> AnyPublisher<Void, NetworkError> {
         let request = GameRejectRequestDTO(reason: reason)
             return NetworkProvider<GameAPI>
             .requestPublisher(.rejectSubmission(gameId: gameId, submissionId: submissionId, request: request), type: EmptyDataDTO.self)

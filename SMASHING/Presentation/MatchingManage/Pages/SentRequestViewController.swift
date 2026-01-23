@@ -65,7 +65,6 @@ final class SentRequestViewController: BaseViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        bind()
         input.send(.refresh)
     }
 
