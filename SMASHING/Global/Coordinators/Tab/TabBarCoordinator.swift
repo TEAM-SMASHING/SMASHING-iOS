@@ -108,7 +108,8 @@ final class TabBarCoordinator: Coordinator {
                 }
             }
         case .systemConnected:
-            print("SSE 연결 성공!")
+            break
+            // print("SSE 연결 성공!")
         case .matchingRequestNotificationCreated:
             print("매칭 요청 알림 생성")
         case .matchingUpdated:

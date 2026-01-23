@@ -120,10 +120,11 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
             .receive(on: DispatchQueue.main)
             .sink { type in
                 switch type {
-                case .matchingReceived(_),
-                    .matchingUpdated(_),
-                    .gameResultRejectedNotificationCreated(_),
-                    .gameResultSubmittedNotificationCreated(_):
+                case .matchingAcceptNotificationCreated(_),
+                        .gameResultRejectedNotificationCreated(_),
+                        .gameResultSubmittedNotificationCreated(_),
+                        .gameUpdated(_),
+                        .matchingUpdated(_):
                     self.handleRefresh()
                 default:
                     break

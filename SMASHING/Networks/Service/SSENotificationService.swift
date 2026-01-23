@@ -21,7 +21,7 @@ enum SseEventType: Codable {
     // 게임 관련
     case gameUpdated(SSEGameUpdatedPayload)
     case gameResultSubmittedNotificationCreated(SSEGameResultSubmittedNotificationCreatedPayload)
-    case gameResultRejectedNotificationCreated(SSEGameResultSubmittedNotificationCreatedPayload)
+    case gameResultRejectedNotificationCreated(SSEGameResultRejectedNotificationCreatedPayload)
     
     // 리뷰 관련
     case reviewReceivedNotificationCreated(SSEReviewReceivedNotificationCreatedPayload)
@@ -73,10 +73,10 @@ final class SSEService: NSObject {
     
     private var lastHeartbeat: Date?
     private var reconnectTimer: AnyCancellable?
-    private var appStateCancellable: AnyCancellable?
     private var isIntentionallyDisconnected = false
+    private var isReconnecting = false // 재연결 중인지 확인하는 플래그
     
-    private let checkInterval: TimeInterval = 10.0
+    private let checkInterval: TimeInterval = 1.0 // 1초 간격
     
     private let eventSubject = PassthroughSubject<SseEventType, Never>()
     var eventPublisher: AnyPublisher<SseEventType, Never> {
@@ -89,16 +89,22 @@ final class SSEService: NSObject {
     
     func start() {
         isIntentionallyDisconnected = false
+        isReconnecting = false
+        attemptConnection()
+        startMonitoring()
+    }
+    
+    private func attemptConnection() {
         guard let token = KeychainService.get(key: Environment.accessTokenKey) else {
             print("❌ [SSE] Keychain 토큰 없음")
             return
         }
         self.connect(accessToken: token)
-        self.startMonitoring()
     }
     
     private func connect(accessToken: String) {
-        disconnect(isManual: false)
+        // 재시도 중일 때는 세션을 완전히 파괴(invalidate)하지 않고 Task만 교체합니다.
+        eventSourceTask?.cancel()
         
         guard let url = URL(string: Environment.baseURL + "/api/v1/sse/subscribe") else { return }
         
@@ -111,16 +117,19 @@ final class SSEService: NSObject {
         request.setValue("keep-alive", forHTTPHeaderField: "Connection")
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         
-        let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = Double.infinity
-        configuration.timeoutIntervalForResource = Double.infinity
+        // 세션이 없거나 무효화된 경우에만 새로 생성
+        if session == nil {
+            let configuration = URLSessionConfiguration.default
+            configuration.timeoutIntervalForRequest = Double.infinity
+            configuration.timeoutIntervalForResource = Double.infinity
+            session = URLSession(configuration: configuration, delegate: self, delegateQueue: .main)
+        }
         
-        session = URLSession(configuration: configuration, delegate: self, delegateQueue: .main)
         eventSourceTask = session?.dataTask(with: request)
         eventSourceTask?.resume()
         
         lastHeartbeat = Date()
-        print("🚀 [SSE] Connection Started (15s interval): \(url.absoluteString)")
+        // print("🚀 [SSE] Connection Attempted: \(url.absoluteString)")
     }
     
     private func startMonitoring() {
@@ -133,24 +142,41 @@ final class SSEService: NSObject {
     }
     
     private func checkConnection() {
+        // 수동 종료 상태라면 체크하지 않음
         guard !isIntentionallyDisconnected else { return }
         
         let timeSinceLastHeartbeat = Date().timeIntervalSince(lastHeartbeat ?? Date.distantPast)
-        if timeSinceLastHeartbeat > (checkInterval * 2) || eventSourceTask?.state != .running {
-            print("⚠️ [SSE] Heartbeat Timeout. Reconnecting...")
-            self.start()
+        
+        // 연결이 끊겼거나(running이 아님) 하트비트가 1.5초 이상 지연된 경우
+        if eventSourceTask?.state != .running || timeSinceLastHeartbeat > (checkInterval * 1.5) {
+            if !isReconnecting {
+                // print("⚠️ [SSE] Connection lost. Retrying every 1s...")
+                isReconnecting = true
+            }
+            // Disconnect()를 호출하지 않고 바로 연결 시도 (세션 유지)
+            attemptConnection()
+        } else {
+            // 연결이 정상적으로 복구되면 플래그 해제
+            if isReconnecting {
+                // print("✅ [SSE] Connection Restored")
+                isReconnecting = false
+            }
         }
     }
     
     func disconnect(isManual: Bool = true) {
         isIntentionallyDisconnected = isManual
+        isReconnecting = false
+        
         if isManual {
             reconnectTimer?.cancel()
         }
+        
         eventSourceTask?.cancel()
         session?.invalidateAndCancel()
+        session = nil // 세션 초기화
         buffer.removeAll()
-        print("🛑 [SSE] Connection Disconnected")
+        print("🛑 [SSE] Connection \(isManual ? "Manually" : "Automatically") Stopped")
     }
 }
 
@@ -181,7 +207,7 @@ extension SSEService: URLSessionDataDelegate {
         do {
             switch eventName {
             case "system.connected":
-                print("✅ [SSE] System Connected")
+                // print("✅ [SSE] System Connected")
                 eventSubject.send(.systemConnected)
 
             case "matching.received":
@@ -214,6 +240,11 @@ extension SSEService: URLSessionDataDelegate {
                 print("✅ [SSE] Game Result Submitted Notification Created: \(payload.gameId)")
                 eventSubject.send(.gameResultSubmittedNotificationCreated(payload))
             
+            case "game.result.rejected.notification.created":
+                let payload = try decoder.decode(SSEGameResultRejectedNotificationCreatedPayload.self, from: data)
+                print("✅ [SSE] Game Result Rejected Notification Created: \(payload.gameId)")
+                eventSubject.send(.gameResultRejectedNotificationCreated(payload))
+            
             case "review.received.notification.created":
                 let payload = try decoder.decode(
                     SSEReviewReceivedNotificationCreatedPayload.self,
@@ -221,7 +252,7 @@ extension SSEService: URLSessionDataDelegate {
                 )
                 print("✅ [SSE] Review Received Notification Created: \(payload.gameId)")
                 eventSubject.send(.reviewReceivedNotificationCreated(payload))
-            default:
+            default: // ⚠️ [SSE] Unhandled Event: game.result.rejected.notification.created
                 print("⚠️ [SSE] Unhandled Event: \(eventName)")
             }
         } catch {
