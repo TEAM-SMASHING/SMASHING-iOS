@@ -47,13 +47,6 @@ final class SearchResultCoordinator: Coordinator {
                 self?.navToMatchManage.send()
             }
             .store(in: &cancellables)
-        viewModel.output.refreshSentRequests
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                self?.refreshSentRequests.send()
-                print("아웃풋 가동")
-            }
-            .store(in: &cancellables)
         navigationController.pushViewController(userProfileVC, animated: true)
     }
 }
