@@ -11,20 +11,21 @@ import SnapKit
 import Then
 
 final class HomeDropDownView: BaseUIView {
-
+    
     // MARK: - Properties
     
     var onRegionButtonTapped: (() -> Void)?
     var onSportsAndTierTapped: (() -> Void)?
     var onSportsCellTapped: ((Sports?) -> Void)?
-
+    var onBellTapped: (() -> Void)?
+    
     // MARK: - UI Components
     
     private let tierCard = TierCard(usesContainerView: false).then {
         $0.showsAddButton = false
         $0.backgroundColor = .Background.surface
     }
-
+    
     private let winRateCard = WinRateCard(usesContainerView: false)
         .then {
             $0.backgroundColor = .Background.surface
@@ -77,9 +78,9 @@ final class HomeDropDownView: BaseUIView {
         $0.axis = .horizontal
         $0.spacing = 4
     }
-        
+    
     // MARK: - Setup Methods
-
+    
     override func setUI() {
         backgroundColor = .Background.surface
         setCornerRadius(16, maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner])
@@ -98,6 +99,10 @@ final class HomeDropDownView: BaseUIView {
         let sportsTap = UITapGestureRecognizer(target: self, action: #selector(sportsAndTierTapped))
         sportsAndTierStackView.isUserInteractionEnabled = true
         sportsAndTierStackView.addGestureRecognizer(sportsTap)
+        
+        let bellTap = UITapGestureRecognizer(target: self, action: #selector(bellTapped))
+        bellImage.isUserInteractionEnabled = true
+        bellImage.addGestureRecognizer(bellTap)
     }
     
     override func setLayout() {
@@ -128,7 +133,7 @@ final class HomeDropDownView: BaseUIView {
         sportsImage.snp.makeConstraints {
             $0.size.equalTo(24)
         }
-
+        
         tierCard.snp.makeConstraints {
             $0.top.equalTo(regionStackView.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
@@ -144,14 +149,13 @@ final class HomeDropDownView: BaseUIView {
     
     func configure(profile: MyProfileListResponse, myRegion: String) {
         regionLabel.text = myRegion
-
-        // ✅ 상단 스포츠/티어 갱신
+        
         let sportCode = profile.activeProfile.sportCode.rawValue
         let tierCode = profile.activeProfile.tierCode
-
+        
         sportsImage.image = Sports.image(from: sportCode)
         tierLabel.text = Tier.from(tierCode: tierCode)?.displayName ?? "—"
-
+        
         // 기존 카드들
         tierCard.configure(profile: profile)
         winRateCard.configure(profile: profile)
@@ -159,11 +163,18 @@ final class HomeDropDownView: BaseUIView {
     
     // MARK: - Actions
     
-    @objc private func regionTapped() {
+    @objc
+    private func regionTapped() {
         onRegionButtonTapped?()
     }
     
-    @objc private func sportsAndTierTapped() {
+    @objc
+    private func sportsAndTierTapped() {
         onSportsAndTierTapped?()
+    }
+    
+    @objc
+    private func bellTapped() {
+        onBellTapped?()
     }
 }
