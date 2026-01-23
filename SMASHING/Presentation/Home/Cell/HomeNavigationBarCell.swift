@@ -13,6 +13,7 @@ import SnapKit
 final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     var onRegionButtonTapped: (() -> Void)?
     var onSportsAndTierTapped: (() -> Void)?
+    var onBellTapped: (() -> Void)?
     
     private let regionStackView = UIStackView().then {
         $0.axis = .horizontal
@@ -76,6 +77,10 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         let sportsTap = UITapGestureRecognizer(target: self, action: #selector(sportsAndTierTapped))
         sportsAndTierStackView.isUserInteractionEnabled = true
         sportsAndTierStackView.addGestureRecognizer(sportsTap)
+        
+        let bellTap = UITapGestureRecognizer(target: self, action: #selector(bellTapped))
+        bellImage.isUserInteractionEnabled = true
+        bellImage.addGestureRecognizer(bellTap)
     }
     
     override func setLayout() {
@@ -122,5 +127,9 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     @objc
     private func sportsAndTierTapped() {
         onSportsAndTierTapped?()
+    }
+    
+    @objc private func bellTapped() {
+        onBellTapped?()
     }
 }

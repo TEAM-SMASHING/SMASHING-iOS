@@ -201,6 +201,9 @@ extension HomeViewController: UICollectionViewDataSource {
             cell.onSportsAndTierTapped = { [weak self] in
                 self?.toggleDropDown()
             }
+            cell.onBellTapped = { [weak self] in
+                self?.input.send(.notificationTapped)
+            }
             return cell
         case .matching:
             if recentMatching.isEmpty {
@@ -305,8 +308,6 @@ extension HomeViewController {
         guard !isDropDownShown else { return }
         isDropDownShown = true
 
-        // ✅ 레이아웃 안정화(첫 토글 튐 방지)
-        // 탭 이벤트 직후/데이터 갱신 직후엔 frame이 덜 잡힐 수 있어서 한 틱 미룸
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
 
@@ -316,7 +317,6 @@ extension HomeViewController {
 
             let indexPath = IndexPath(item: 0, section: HomeViewLayout.navigationBar.rawValue)
 
-            // ✅ cellForItem 대신 layoutAttributes로 frame 계산 (더 안정적)
             guard let attr = self.homeView.layoutAttributesForItem(at: indexPath) else {
                 self.isDropDownShown = false
                 return
@@ -329,6 +329,10 @@ extension HomeViewController {
             if self.dropDownView == nil {
                 let dd = HomeDropDownView()
                 self.dropDownView = dd
+                dd.onBellTapped = { [weak self] in
+                    self?.hideDropDown()
+                    self?.input.send(.notificationTapped)
+                }
                 
                 if let profile = self.latestMyProfile {
                     dd.configure(profile: profile, myRegion: myRegion)
@@ -347,22 +351,18 @@ extension HomeViewController {
                     self?.hideDropDown()
                 }
 
-                // ✅ 오버레이들은 rootView 위에
                 self.rootView.addSubview(self.dimView)
                 self.rootView.addSubview(dd)
 
-                // dim은 전체 덮기
                 self.dimView.snp.remakeConstraints { $0.edges.equalToSuperview() }
 
-                // dd는 "패널 높이만" (원하는 높이로 조절)
                 dd.snp.makeConstraints {
                     $0.leading.trailing.equalToSuperview()
                     $0.top.equalToSuperview().offset(topY)
-                    $0.height.equalTo(420)   // 🔥 필요하면 너 디자인에 맞게 조절
+                    $0.height.equalTo(420)
                 }
 
             } else {
-                // 이미 있으면 top만 갱신
                 self.dropDownView?.snp.updateConstraints {
                     $0.top.equalToSuperview().offset(topY)
                 }
@@ -370,7 +370,6 @@ extension HomeViewController {
 
             self.rootView.layoutIfNeeded()
 
-            // ✅ z-order 확실히
             self.rootView.bringSubviewToFront(self.dimView)
             if let dd = self.dropDownView {
                 self.rootView.bringSubviewToFront(dd)
