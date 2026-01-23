@@ -19,9 +19,16 @@ final class HomeViewController: BaseViewController {
     }
     
     private var dropDownView: HomeDropDownView?
+
+    private var dropDownTopConstraint: Constraint?
+    private var isDropDownVisible = false
+    private var dropDownBackgroundView: UIView?
+    private var hasNewNotification: Bool = false
+
     private let dimView = UIView()
     
     private var isDropDownShown = false
+
     
     override func loadView() {
         view = rootView
@@ -148,6 +155,15 @@ final class HomeViewController: BaseViewController {
                 self?.navigateToMatchResultConfirm(gameData: gameData)
             }
             .store(in: &cancellables)
+        
+        output.sseNotificationTriggered
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self = self else { return }
+                self.hasNewNotification = true
+                self.homeView.reloadSections(IndexSet(integer: HomeViewLayout.navigationBar.rawValue))
+            }
+            .store(in: &cancellables)
 
 
         let myProfileOutput = myProfileViewModel.transform(input: myProfileInput.eraseToAnyPublisher())
@@ -201,6 +217,8 @@ extension HomeViewController: UICollectionViewDataSource {
         switch sectionType {
         case .navigationBar:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNavigationBarCell.reuseIdentifier, for: indexPath) as? HomeNavigationBarCell else { return UICollectionViewCell() }
+
+            cell.newNotification(hasNew: self.hasNewNotification)
             let region = myRegion
             let sportCode = latestMyProfile?.activeProfile.sportCode.rawValue
             let tierCode = latestMyProfile?.activeProfile.tierCode ?? ""

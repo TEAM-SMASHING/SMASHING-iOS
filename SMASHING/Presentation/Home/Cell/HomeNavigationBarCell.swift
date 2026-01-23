@@ -13,6 +13,7 @@ import SnapKit
 final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     var onRegionButtonTapped: (() -> Void)?
     var onSportsAndTierTapped: (() -> Void)?
+    var hasNewNotification: ((Bool) -> Void)?
     var onBellTapped: (() -> Void)?
     
     private let regionStackView = UIStackView().then {
@@ -117,6 +118,10 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         regionLabel.text = region
         sportsImage.image = Sports.image(from: sportCode)
         tierLabel.text = Tier.from(tierCode: tierCode)?.displayName ?? "—"
+    }
+    
+    func newNotification(hasNew: Bool) {
+        bellImage.image = hasNew ? .icBellNotificaton : .icBell
     }
     
     @objc

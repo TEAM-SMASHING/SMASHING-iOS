@@ -46,7 +46,7 @@ enum SseEventType: Codable {
     
     var displayText: String {
         switch self {
-        case .matchingReceived:
+        case .matchingReceived, .matchingRequestNotificationCreated(_):
             return "누군가가 매칭을 신청했어요! 받은 요청 탭에서 확인해주세요."
         case .matchingAcceptNotificationCreated:
             return "누군가가 매칭을 수락했어요! 매칭 확정 탭에서 확인해주세요."

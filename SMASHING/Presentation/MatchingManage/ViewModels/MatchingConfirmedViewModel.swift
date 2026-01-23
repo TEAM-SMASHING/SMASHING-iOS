@@ -68,6 +68,7 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
 
     init(service: MatchingConfirmedServiceProtocol = MatchingConfirmedService()) {
         self.service = service
+        sseBind()
     }
 
     // MARK: - Transform
@@ -113,6 +114,23 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
     }
 
     // MARK: - Private Methods
+    
+    private func sseBind() {
+        SSEService.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { type in
+                switch type {
+                case .matchingReceived(_),
+                    .matchingUpdated(_),
+                    .gameResultRejectedNotificationCreated(_),
+                    .gameResultSubmittedNotificationCreated(_):
+                    self.handleRefresh()
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     private func handleRefresh() {
         let now = Date()
