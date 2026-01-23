@@ -85,7 +85,7 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
                 case .matchingResultConfirmButtonTapped(let gameData):
                     navToMatchResultConfirmSubject.send(gameData)
                 case .refresh:
-                    self.handleRefresh()
+                    self.fetchFirstPage()
 
                 case .loadMore:
                     self.fetchNextPage()
@@ -131,15 +131,6 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
                 }
             }
             .store(in: &cancellables)
-    }
-
-    private func handleRefresh() {
-        let now = Date()
-        if let lastTime = lastRefreshTime, now.timeIntervalSince(lastTime) < 0.5 {
-            return
-        }
-        lastRefreshTime = now
-        fetchFirstPage()
     }
 
     private func fetchFirstPage() {

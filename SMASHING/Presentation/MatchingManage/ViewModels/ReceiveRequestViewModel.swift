@@ -77,7 +77,7 @@ final class ReceiveRequestViewModel: ReceiveRequestViewModelProtocol {
                     self.fetchFirstPage()
 
                 case .refresh:
-                    self.handleRefresh()
+                    self.fetchFirstPage()
 
                 case .loadMore:
                     self.fetchNextPage()
@@ -117,22 +117,13 @@ final class ReceiveRequestViewModel: ReceiveRequestViewModelProtocol {
                         .gameUpdated(_),
                         .matchingRequestNotificationCreated(_):
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                        self?.handleRefresh()
+                        self?.fetchFirstPage()
                     }
                 default:
                     break
                 }
             }
             .store(in: &cancellables)
-    }
-
-    private func handleRefresh() {
-        let now = Date()
-        if let lastTime = lastRefreshTime, now.timeIntervalSince(lastTime) < 0.5 {
-            return
-        }
-        lastRefreshTime = now
-        fetchFirstPage()
     }
 
     private func fetchFirstPage() {

@@ -46,7 +46,7 @@ final class OnboardingCoordinator: Coordinator {
     }
     
     private func pushAddressFlow() {
-        let addressCoordinator = AddressCoordinator(navigationController: navigationController)
+        let addressCoordinator = AddressCoordinator(navigationController: navigationController, mode: .onboarding)
         childCoordinators.append(addressCoordinator)
         
         addressCoordinator.backAction = { [weak self, weak addressCoordinator] address in

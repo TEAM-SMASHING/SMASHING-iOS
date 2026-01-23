@@ -76,7 +76,6 @@ final class SentRequestViewModel: SentRequestViewModelProtocol {
                     self.fetchFirstPage()
 
                 case .refresh:
-//                    self.handleRefresh()
                     self.fetchFirstPage()
 
                 case .loadMore:
@@ -120,15 +119,6 @@ final class SentRequestViewModel: SentRequestViewModelProtocol {
                 }
             }
             .store(in: &cancellables)
-    }
-
-    private func handleRefresh() {
-        let now = Date()
-        if let lastTime = lastRefreshTime, now.timeIntervalSince(lastTime) < 0.5 {
-            return
-        }
-        lastRefreshTime = now
-        fetchFirstPage()
     }
 
     private func fetchFirstPage() {
@@ -235,4 +225,3 @@ final class SentRequestViewModel: SentRequestViewModelProtocol {
         }
     }
 }
-

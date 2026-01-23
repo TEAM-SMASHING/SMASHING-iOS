@@ -49,14 +49,11 @@ final class HomeDropDownView: BaseUIView {
         $0.contentMode = .scaleAspectFit
     }
     
-    private let sportsAndTierStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 8
-        $0.alignment = .center
-        $0.layer.cornerRadius = 18
-        $0.layer.borderWidth = 1
+    private let containerView = UIView().then {
+        $0.backgroundColor = .clear
+        $0.layer.cornerRadius = 16
         $0.layer.borderColor = UIColor.Border.secondary.cgColor
-        $0.layoutMargins = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16)
+        $0.layer.borderWidth = 1
     }
     
     private let sportsImage = UIImageView().then {
@@ -85,10 +82,12 @@ final class HomeDropDownView: BaseUIView {
     override func setUI() {
         backgroundColor = .Background.surface
         setCornerRadius(16, maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner])
-        addSubviews(regionStackView, sportsAndTierStackView, bellImage, tierCard, winRateCard)
+        addSubviews(regionStackView, containerView, bellImage, tierCard, winRateCard)
+        
+        containerView.addSubviews(sportsImage, tierLabel)
         
         regionStackView.addArrangedSubviews(pinImageView, regionLabel, chevronImageView)
-        sportsAndTierStackView.addArrangedSubviews(sportsImage, tierLabel)
+
         tierCard.onSportsAction = { [weak self] sport in
             self?.onSportsCellTapped?(sport)
         }
@@ -101,8 +100,8 @@ final class HomeDropDownView: BaseUIView {
         regionStackView.addGestureRecognizer(regionTap)
         
         let sportsTap = UITapGestureRecognizer(target: self, action: #selector(sportsAndTierTapped))
-        sportsAndTierStackView.isUserInteractionEnabled = true
-        sportsAndTierStackView.addGestureRecognizer(sportsTap)
+        containerView.isUserInteractionEnabled = true
+        containerView.addGestureRecognizer(sportsTap)
         
         let bellTap = UITapGestureRecognizer(target: self, action: #selector(bellTapped))
         bellImage.isUserInteractionEnabled = true
@@ -129,14 +128,23 @@ final class HomeDropDownView: BaseUIView {
             $0.size.equalTo(24)
         }
         
-        sportsAndTierStackView.snp.makeConstraints {
+        containerView.snp.makeConstraints {
             $0.centerY.equalTo(regionStackView)
             $0.trailing.equalTo(bellImage.snp.leading).offset(-12)
             $0.height.equalTo(34)
+            $0.width.equalTo(100)
         }
         
         sportsImage.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(10)
             $0.size.equalTo(24)
+        }
+        
+        tierLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(sportsImage.snp.trailing).offset(5)
+            $0.trailing.equalToSuperview().inset(10)
         }
         
         tierCard.snp.makeConstraints {
@@ -183,3 +191,4 @@ final class HomeDropDownView: BaseUIView {
         onBellTapped?()
     }
 }
+

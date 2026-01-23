@@ -58,7 +58,7 @@ final class AppCoordinator: Coordinator {
     
     private func showAddressFlow() {
         navigationController.viewControllers.removeAll()
-        let addressCoordinator = AddressCoordinator(navigationController: navigationController)
+        let addressCoordinator = AddressCoordinator(navigationController: navigationController, mode: .onboarding)
         childCoordinators.append(addressCoordinator)
         addressCoordinator.start()
     }

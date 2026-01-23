@@ -168,7 +168,6 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     @objc
     private func writeResultButtonDidTap() {
-        print("🔴 writeResultButtonDidTap 호출됨")
         onWriteResultButtonTapped?()
     }
 }
