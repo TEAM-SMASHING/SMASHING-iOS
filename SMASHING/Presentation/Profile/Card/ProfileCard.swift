@@ -18,22 +18,6 @@ final class ProfileCard: BaseUIView {
     
     // MARK: - UI Componetns
     
-    func configure(profile: MyProfileListResponse) {
-        titleLabel.text = profile.nickname
-        genderIcon.image = profile.gender.imageSm
-        tierIcon.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
-        winLoseRecordLabel.text = "\(profile.activeProfile.wins)" + "승 " + "\(profile.activeProfile.losses)" + "패"
-        reviewCountsLabel.text = "\(profile.activeProfile.reviews ?? 0)"
-    }
-
-    func configure(profile: OtherUserProfileResponse) {
-        titleLabel.text = profile.nickname
-        genderIcon.image = profile.gender.imageSm
-        tierIcon.image = Tier.from(tierCode: profile.selectedProfile.tierCode)?.image
-        winLoseRecordLabel.text = "\(profile.selectedProfile.wins)" + "승 " + "\(profile.selectedProfile.losses)" + "패"
-        reviewCountsLabel.text = "\(profile.selectedProfile.reviews ?? 0)"
-    }
-    
     private let containerView = UIView().then {
         $0.backgroundColor = .Background.surface
         $0.layer.cornerRadius = 8
@@ -171,4 +155,25 @@ final class ProfileCard: BaseUIView {
     @objc private func challengeButtonTapped() {
         challengeAction?()
     }
+    
+    // MARK: - Configure
+    
+    func configure(profile: MyProfileListResponse) {
+        titleLabel.text = profile.nickname
+        genderIcon.image = profile.gender.imageSm
+        tierIcon.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
+        winLoseRecordLabel.text = "\(profile.activeProfile.wins)" + "승 " + "\(profile.activeProfile.losses)" + "패"
+        reviewCountsLabel.text = "\(profile.activeProfile.reviews ?? 0)"
+        profileImage.image = UIImage.defaultProfileImage(name: profile.nickname)
+    }
+
+    func configure(profile: OtherUserProfileResponse) {
+        titleLabel.text = profile.nickname
+        genderIcon.image = profile.gender.imageSm
+        tierIcon.image = Tier.from(tierCode: profile.selectedProfile.tierCode)?.image
+        winLoseRecordLabel.text = "\(profile.selectedProfile.wins)" + "승 " + "\(profile.selectedProfile.losses)" + "패"
+        reviewCountsLabel.text = "\(profile.selectedProfile.reviews ?? 0)"
+        profileImage.image = UIImage.defaultProfileImage(name: profile.nickname)
+    }
 }
+
