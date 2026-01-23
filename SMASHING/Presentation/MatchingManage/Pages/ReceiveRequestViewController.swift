@@ -180,15 +180,16 @@ extension ReceiveRequestViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
-        let request = self.requestList[indexPath.row]
+        let reversedIndex = self.requestList.count - 1 - indexPath.item
+        let request = self.requestList[reversedIndex]
         cell.configure(with: request.requester)
 
         cell.onSkipTapped = { [weak self] in
-            self?.skipButtonDidTap(at: indexPath.item)
+            self?.skipButtonDidTap(at: reversedIndex)
         }
 
         cell.onAcceptTapped = { [weak self] in
-            self?.acceptButtonDidTap(at: indexPath.item)
+            self?.acceptButtonDidTap(at: reversedIndex)
             self?.showToast(type: SseEventType.acceptMatching)
         }
 

@@ -159,6 +159,7 @@ final class MatchingSearchCell: BaseUICollectionViewCell, ReuseIdentifiable {
         self.recordValueLabel.text = "\(wins)승 \(losses)패"
         self.reviewValueLabel.text = "\(reviews)"
         self.configureTierBadge(tierCode: tierCode)
+        self.profileImageView.image = UIImage.defaultProfileImage(name: nickname)
     }
 
     private func configureTierBadge(tierCode: String) {

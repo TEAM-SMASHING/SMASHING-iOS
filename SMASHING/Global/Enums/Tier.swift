@@ -59,7 +59,7 @@ extension Tier {
         case .silver3, .silver2, .silver1: return "실버"
         case .gold3, .gold2, .gold1: return "골드"
         case .platinum3, .platinum2, .platinum1: return "플래티넘"
-        case .diamond3, .diamond2, .diamond1: return "다이아몬드"
+        case .diamond3, .diamond2, .diamond1: return "다이아"
         case .challenger: return "챌린저"
         }
     }
