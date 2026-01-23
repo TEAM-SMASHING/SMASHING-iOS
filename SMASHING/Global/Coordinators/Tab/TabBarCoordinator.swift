@@ -22,7 +22,7 @@ final class TabBarCoordinator: Coordinator {
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.childCoordinators = []
-        SSEService.shared.start()
+        
         SSEService.shared.eventPublisher
             .sink { [weak self] payload in
                 self?.handleNotification(type: payload)

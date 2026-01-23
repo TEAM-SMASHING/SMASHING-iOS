@@ -10,7 +10,7 @@ import Foundation
 struct SSEMatchingReceivedPayload: Codable {
     let type: String
     let matchingId: String
-    let sportId: Int64
+    let sportId: Int
     let receiverProfileId: String
     let requester: SSERequesterSummary
 }

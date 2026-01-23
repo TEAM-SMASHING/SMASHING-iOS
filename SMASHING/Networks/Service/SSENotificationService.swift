@@ -60,6 +60,7 @@ enum SseEventType: Codable {
 
 import Foundation
 import Combine
+import Network
 
 // [기존 SseEventType 코드는 동일하게 유지]
 
@@ -70,11 +71,12 @@ final class SSEService: NSObject {
     private var eventSourceTask: URLSessionDataTask?
     private var buffer = Data()
     
-    // 재연결 및 상태 관리를 위한 프로퍼티
     private var lastHeartbeat: Date?
     private var reconnectTimer: AnyCancellable?
+    private var appStateCancellable: AnyCancellable?
     private var isIntentionallyDisconnected = false
-    private let checkInterval: TimeInterval = 30.0 // 30초마다 상태 확인
+    
+    private let checkInterval: TimeInterval = 10.0
     
     private let eventSubject = PassthroughSubject<SseEventType, Never>()
     var eventPublisher: AnyPublisher<SseEventType, Never> {
@@ -87,14 +89,12 @@ final class SSEService: NSObject {
     
     func start() {
         isIntentionallyDisconnected = false
-        
         guard let token = KeychainService.get(key: Environment.accessTokenKey) else {
-            print("❌ [SSE] Keychain에 토큰이 없어 연결을 시작할 수 없습니다.")
+            print("❌ [SSE] Keychain 토큰 없음")
             return
         }
-        
         self.connect(accessToken: token)
-        self.startMonitoring() // 감시 타이머 시작
+        self.startMonitoring()
     }
     
     private func connect(accessToken: String) {
@@ -112,7 +112,6 @@ final class SSEService: NSObject {
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         
         let configuration = URLSessionConfiguration.default
-        // 중요: timeoutIntervalForResource를 매우 길게 설정하거나 유연하게 관리해야 합니다.
         configuration.timeoutIntervalForRequest = Double.infinity
         configuration.timeoutIntervalForResource = Double.infinity
         
@@ -120,11 +119,10 @@ final class SSEService: NSObject {
         eventSourceTask = session?.dataTask(with: request)
         eventSourceTask?.resume()
         
-        lastHeartbeat = Date() // 연결 시점 초기화
-        print("🚀 [SSE] Connection Started: \(url.absoluteString)")
+        lastHeartbeat = Date()
+        print("🚀 [SSE] Connection Started (15s interval): \(url.absoluteString)")
     }
     
-    /// 주기적으로 연결 상태를 확인하는 타이머
     private func startMonitoring() {
         reconnectTimer?.cancel()
         reconnectTimer = Timer.publish(every: checkInterval, on: .main, in: .common)
@@ -137,12 +135,9 @@ final class SSEService: NSObject {
     private func checkConnection() {
         guard !isIntentionallyDisconnected else { return }
         
-        // 마지막 수신 후 일정 시간이 지났거나 태스크가 중단된 경우 재연결
         let timeSinceLastHeartbeat = Date().timeIntervalSince(lastHeartbeat ?? Date.distantPast)
-        
-        // 1분(interval * 2) 동안 소식이 없거나 task가 비활성 상태면 재연결
         if timeSinceLastHeartbeat > (checkInterval * 2) || eventSourceTask?.state != .running {
-            print("⚠️ [SSE] Connection lost or heartbeat timeout. Reconnecting...")
+            print("⚠️ [SSE] Heartbeat Timeout. Reconnecting...")
             self.start()
         }
     }
@@ -152,18 +147,15 @@ final class SSEService: NSObject {
         if isManual {
             reconnectTimer?.cancel()
         }
-        
         eventSourceTask?.cancel()
         session?.invalidateAndCancel()
         buffer.removeAll()
-        print("🛑 [SSE] Connection Disconnected (Manual: \(isManual))")
+        print("🛑 [SSE] Connection Disconnected")
     }
 }
 
-// MARK: - URLSessionDataDelegate
 extension SSEService: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        // 데이터를 수신할 때마다 하트비트 업데이트
         lastHeartbeat = Date()
         
         guard let responseString = String(data: data, encoding: .utf8) else { return }
@@ -177,7 +169,6 @@ extension SSEService: URLSessionDataDelegate {
             } else if line.hasPrefix("data:"), let eventName = eventName {
                 let rawData = line.replacingOccurrences(of: "data:", with: "").trimmingCharacters(in: .whitespaces)
                 
-                // 빈 데이터(Keep-alive용)가 아닐 때만 처리
                 if !rawData.isEmpty, let jsonData = rawData.data(using: .utf8) {
                     handleDecodedEvent(eventName: eventName, data: jsonData)
                 }
@@ -239,26 +230,23 @@ extension SSEService: URLSessionDataDelegate {
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        if let error = error {
-            let nsError = error as NSError
-            
-            // 1. 사용자가 의도적으로 끊었거나(cancelled), 재연결을 위해 기존 태스크를 취소한 경우 무시
-            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
-                print("ℹ️ [SSE] Connection cancelled as intended or for reconnection.")
-                return
-            }
-            
-            print("❌ [SSE] Connection Error: \(error.localizedDescription)")
-            
-            // 2. 진짜 에러(네트워크 끊김 등)인 경우에만 재시도 예약
-            if !isIntentionallyDisconnected {
-                // 기존 타이머나 중복 실행을 방지하기 위해 딜레이 후 실행
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
-                    guard let self = self, !self.isIntentionallyDisconnected else { return }
-                    print("🔄 [SSE] Retrying connection after error...")
-                    self.start()
+            if let error = error {
+                let nsError = error as NSError
+                
+                // 기존 연결 취소에 의한 에러는 재시도 루프를 방지하기 위해 무시
+                if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                    return
+                }
+                
+                print("❌ [SSE] Connection Error: \(error.localizedDescription)")
+                
+                if !isIntentionallyDisconnected {
+                    // 에러 발생 시 3초 후 재연결 시도
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+                        guard let self = self, !self.isIntentionallyDisconnected else { return }
+                        self.start()
+                    }
                 }
             }
         }
-    }
 }

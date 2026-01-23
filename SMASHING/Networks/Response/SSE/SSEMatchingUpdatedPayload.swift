@@ -16,4 +16,5 @@ struct SSEMatchingUpdatedPayload: Codable {
 enum SSEMatchingUpdatedPayloadState: String, Codable {
     case cancelled  = "CANCELLED"
     case rejected = "REJECTED"
+    case accepted = "ACCEPTED"
 }

@@ -10,10 +10,10 @@ import Foundation
 struct SSEMatchingAcceptNotificationCreatedPayload: Codable {
     let type: String
     let notificationId: String
-    let notificationType: String
+    let notificationType: NotificationType
     let notificationCreatedAt: String
     let matchingId: String
-    let sportId: Int64
+    let sportId: Int
     let receiverProfileId: String
     let acceptor: SSESimpleUserSummary
 }

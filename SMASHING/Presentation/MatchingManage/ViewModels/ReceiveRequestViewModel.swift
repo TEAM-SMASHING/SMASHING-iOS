@@ -114,6 +114,7 @@ final class ReceiveRequestViewModel: ReceiveRequestViewModelProtocol {
                 switch type {
                 case .matchingReceived(_),
                         .matchingUpdated(_),
+                        .gameUpdated(_),
                         .matchingRequestNotificationCreated(_):
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                         self?.handleRefresh()

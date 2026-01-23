@@ -49,22 +49,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
     }
     
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
-    
     func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
+        // 1. 앱이 다시 화면에 나타날 때 SSE 연결 확인 및 재시작
+        // TabBarCoordinator가 이미 생성되어 SSE를 사용 중인 상태인지 확인 후 호출하는 것이 좋습니다.
+        SSEService.shared.start()
     }
-    
+
     func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
+        
     }
-    
     
 }
-
