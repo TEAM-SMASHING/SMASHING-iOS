@@ -17,7 +17,6 @@ final class MatchingSearchCoordinator: Coordinator {
     let userProfileService = UserProfileService()
     
     var navAction: (() -> Void)?
-
     init(navigationController: UINavigationController, userSportProvider: UserSportProviding) {
         self.childCoordinators = []
         self.navigationController = navigationController

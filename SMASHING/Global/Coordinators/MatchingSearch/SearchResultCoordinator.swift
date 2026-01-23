@@ -16,6 +16,7 @@ final class SearchResultCoordinator: Coordinator {
     private let userSportProvider: UserSportProviding
     
     var navToMatchManage = PassthroughSubject<Void, Never>()
+    var refreshSentRequests = PassthroughSubject<Void, Never>()
     
     init(navigationController: UINavigationController, userSportProvider: UserSportProviding) {
         self.childCoordinators = []

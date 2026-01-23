@@ -18,6 +18,7 @@ final class MatchingManageViewController: BaseViewController {
     private var currentTabIndex: MatchingManageHeaderView.Tab = .received
     private var categories: [UIViewController] = []
     private var cancellables = Set<AnyCancellable>()
+    private var sentRequestViewController: SentRequestViewController?
 
     //MARK: - UI Components
 
@@ -57,6 +58,7 @@ final class MatchingManageViewController: BaseViewController {
         let sentVC = SentRequestViewController(viewModel: SentRequestViewModel())
         let confirmedVC = MatchingConfirmedViewController()
         self.categories = [receivedVC, sentVC, confirmedVC]
+        self.sentRequestViewController = sentVC
 
         receiveViewModel.requestAccepted
             .receive(on: DispatchQueue.main)
@@ -120,6 +122,10 @@ final class MatchingManageViewController: BaseViewController {
                 }
             )
         }
+    }
+
+    func refreshSentRequests() {
+        sentRequestViewController?.refresh()
     }
     
     override func setLayout() {

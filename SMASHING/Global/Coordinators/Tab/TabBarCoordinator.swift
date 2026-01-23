@@ -62,6 +62,7 @@ final class TabBarCoordinator: Coordinator {
                     tabBarController.selectedIndex = 2
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         self.goToMatchManage(index: 1)
+                        self.refreshSentRequests()
                     }
                 }
             }            
@@ -92,6 +93,14 @@ final class TabBarCoordinator: Coordinator {
         } else if index == 2 {
             matchingManageVC.moveToPage(tab: .confirmed)
         }
+    }
+
+    private func refreshSentRequests() {
+        guard let navVC = tabBarController.viewControllers?[2] as? UINavigationController,
+              let matchingManageVC = navVC.viewControllers.first as? MatchingManageViewController else {
+            return
+        }
+        matchingManageVC.refreshSentRequests()
     }
     
     private func handleNotification(type: SseEventType) {

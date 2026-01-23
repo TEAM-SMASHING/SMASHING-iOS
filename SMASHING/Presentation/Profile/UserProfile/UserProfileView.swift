@@ -130,6 +130,9 @@ final class UserProfileView: BaseUIView {
         tierCard.configure(profile: profile)
         winRateCard.configure(profile: profile)
         configure(mode: mode)
+        if mode == .plain {
+            profileCard.changeButtonState(isEnabled: profile.isChallengeable)
+        }
     }
     
     private func showBottomButtons(isShown: Bool) {
