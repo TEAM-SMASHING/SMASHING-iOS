@@ -18,11 +18,12 @@ final class HomeDropDownView: BaseUIView {
     var onSportsAndTierTapped: (() -> Void)?
     var onSportsCellTapped: ((Sports?) -> Void)?
     var onBellTapped: (() -> Void)?
+    var onAddSportsTapped: (() -> Void)?
     
     // MARK: - UI Components
     
     private let tierCard = TierCard(usesContainerView: false).then {
-        $0.showsAddButton = false
+        $0.showsAddButton = true
         $0.backgroundColor = .Background.surface
     }
     
@@ -90,6 +91,9 @@ final class HomeDropDownView: BaseUIView {
         sportsAndTierStackView.addArrangedSubviews(sportsImage, tierLabel)
         tierCard.onSportsAction = { [weak self] sport in
             self?.onSportsCellTapped?(sport)
+        }
+        tierCard.addAction = { [weak self] in
+            self?.onAddSportsTapped?()
         }
         
         let regionTap = UITapGestureRecognizer(target: self, action: #selector(regionTapped))

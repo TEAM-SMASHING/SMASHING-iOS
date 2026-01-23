@@ -41,16 +41,6 @@ final class MatchingSearchHeader: BaseUIView {
         $0.addTarget(self,action: #selector(searchButtonDidTap),for: .touchUpInside)
     }
     
-    private let notificationButton = UIButton().then {
-        $0.setImage(UIImage(resource: .icBell), for: .normal)
-    }
-    
-    private let topButtonStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.spacing = 12
-        $0.alignment = .center
-    }
-    
     private let tierFilterContainer = UIView().then {
         $0.backgroundColor = .Background.surface
         $0.layer.cornerRadius = 17
@@ -172,12 +162,10 @@ final class MatchingSearchHeader: BaseUIView {
         
         addSubviews(
             locationStackView,
-            topButtonStackView,
+            searchButton,
             filterStackView
         )
-        
-        topButtonStackView.addArrangedSubviews(searchButton, notificationButton)
-        
+                
         tierfilterStackView.addArrangedSubviews(
             tierFilterLabel,
             tierFilterIconView,
@@ -209,16 +197,9 @@ final class MatchingSearchHeader: BaseUIView {
             $0.size.equalTo(24)
         }
         
-        topButtonStackView.snp.makeConstraints {
+        searchButton.snp.makeConstraints {
             $0.centerY.equalTo(locationStackView)
             $0.trailing.equalToSuperview().inset(16)
-        }
-        
-        searchButton.snp.makeConstraints {
-            $0.width.height.equalTo(24)
-        }
-        
-        notificationButton.snp.makeConstraints {
             $0.width.height.equalTo(24)
         }
         
@@ -326,4 +307,5 @@ final class MatchingSearchHeader: BaseUIView {
         onRegionTapped?()
     }
 }
+
 

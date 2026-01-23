@@ -92,11 +92,18 @@ final class HomeCoordinator: Coordinator {
                 self?.navAction?(.navSearchUser)
             }
             .store(in: &cancellables)
-        
+
         output.navToNotification
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.showNotificationFlow()
+            }
+            .store(in: &cancellables)
+
+        output.navToAddSports
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showAddSports()
             }
             .store(in: &cancellables)
     }
@@ -169,5 +176,19 @@ final class HomeCoordinator: Coordinator {
         }
         
         addressCoordinator.start()
+    }
+
+    private func showAllReviews() {
+        ProfileCoordinator.showAllReviews(
+            navigationController: navigationController,
+            childCoordinators: &childCoordinators
+        )
+    }
+
+    private func showAddSports() {
+        ProfileCoordinator.showAddSports(
+            navigationController: navigationController,
+            childCoordinators: &childCoordinators
+        )
     }
 }

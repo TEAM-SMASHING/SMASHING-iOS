@@ -41,6 +41,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         
         // 알림 아이콘 탭
         case notificationTapped
+        case addSportsTapped
     }
     
     struct Output {
@@ -60,6 +61,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         let navToRanking = PassthroughSubject<Void, Never>()
         let navToNotification = PassthroughSubject<Void, Never>()
         let navToSearchUser = PassthroughSubject<Void, Never>()
+        let navToAddSports = PassthroughSubject<Void, Never>()
     }
     private var cancellables = Set<AnyCancellable>()
     
@@ -103,6 +105,8 @@ final class HomeViewModel: HomeViewModelProtocol {
             output.navToRanking.send()
         case .notificationTapped:
             output.navToNotification.send()
+        case .addSportsTapped:
+            output.navToAddSports.send()
         }
     }
     
