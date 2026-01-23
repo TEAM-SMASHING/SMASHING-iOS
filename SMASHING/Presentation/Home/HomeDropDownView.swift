@@ -102,7 +102,7 @@ final class HomeDropDownView: BaseUIView {
     
     override func setLayout() {
         regionStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(16)
+            $0.top.equalToSuperview().offset(52)
             $0.leading.equalToSuperview().inset(16)
         }
         
@@ -142,7 +142,17 @@ final class HomeDropDownView: BaseUIView {
         }
     }
     
-    func configure(profile: MyProfileListResponse) {
+    func configure(profile: MyProfileListResponse, myRegion: String) {
+        regionLabel.text = myRegion
+
+        // ✅ 상단 스포츠/티어 갱신
+        let sportCode = profile.activeProfile.sportCode.rawValue
+        let tierCode = profile.activeProfile.tierCode
+
+        sportsImage.image = Sports.image(from: sportCode)
+        tierLabel.text = Tier.from(tierCode: tierCode)?.displayName ?? "—"
+
+        // 기존 카드들
         tierCard.configure(profile: profile)
         winRateCard.configure(profile: profile)
     }
