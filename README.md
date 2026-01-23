@@ -9,7 +9,7 @@ SMASHING iOS 레포입니다 🏓
 
 | 이승준 | 홍준범 | 이진재 |
 | :----: | :----: | :----: |
-| <img src="https://github.com/user-attachments/assets/85578013-a587-41fb-aadc-117bb8d345cd" width="180" height="180" /> | <img src="https://github.com/user-attachments/assets/b38d23f3-c33f-473b-bf24-223a2c1ef959" width="180" height="180" /> | <img src="https://github.com/user-attachments/assets/a7ddcfa9-d7bf-4584-9058-929c62710eee" width="180" height="180" /> |
+| <img src="https://github.com/user-attachments/assets/aaeaa04c-6e4d-4912-91ed-cb3b0aa37da4" width="180" height="180" /> | <img src="https://github.com/user-attachments/assets/a6db8aa7-ae6f-41a1-b0ff-8ef37ba6b911" width="180" height="180" /> | <img src="https://github.com/user-attachments/assets/17863acd-7f48-4a11-b063-b0adc5b038cf" width="180" height="180" /> |
 | `iOS Lead` | `iOS Developer` | `iOS Developer` |
 
 # 사용할 라이브러리 및 기술스택
