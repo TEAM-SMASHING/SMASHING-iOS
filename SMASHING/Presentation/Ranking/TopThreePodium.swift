@@ -13,6 +13,13 @@ import Then
 
 final class TopThreePodium: BaseUIView {
     
+    var onUserTapped: ((String) -> Void)?
+    
+    // rank별 userId 저장용
+    private var firstUserId: String?
+    private var secondUserId: String?
+    private var thirdUserId: String?
+    
     // MARK: - UI Components
     
     // 왕관(1등 전용)
@@ -81,6 +88,20 @@ final class TopThreePodium: BaseUIView {
                     secondNicknameLabel,
                     thirdCard
         )
+        
+        firstProfileImageView.isUserInteractionEnabled = true
+        secondProfileImageView.isUserInteractionEnabled = true
+        thirdProfileImageView.isUserInteractionEnabled = true
+        
+        firstProfileImageView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self, action: #selector(didTapFirst)
+        ))
+        secondProfileImageView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self, action: #selector(didTapSecond)
+        ))
+        thirdProfileImageView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self, action: #selector(didTapThird)
+        ))
     }
     
     override func setLayout() {
@@ -154,11 +175,27 @@ final class TopThreePodium: BaseUIView {
         }
     }
     
+    @objc private func didTapFirst() {
+        guard let id = firstUserId else { return }
+        onUserTapped?(id)
+    }
+    
+    @objc private func didTapSecond() {
+        guard let id = secondUserId else { return }
+        onUserTapped?(id)
+    }
+    
+    @objc private func didTapThird() {
+        guard let id = thirdUserId else { return }
+        onUserTapped?(id)
+    }
+    
     // MARK: - Public Methods
     
     func configure(with user: RankingUserDTO) {
         switch user.rank {
         case 1:
+            firstUserId = user.userId
             firstNicknameLabel.text = user.nickname
             firstProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
             firstCard.configure(rankImage: .icRank1, tierCode: user.tierCode, lp: user.lp)
@@ -166,12 +203,14 @@ final class TopThreePodium: BaseUIView {
             firstProfileImageView.layer.borderWidth = 1
             crownImageView.isHidden = false
         case 2:
+            secondUserId = user.userId
             secondNicknameLabel.text = user.nickname
             secondProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
             secondCard.configure(rankImage: .icRank2, tierCode: user.tierCode, lp: user.lp)
             secondProfileImageView.layer.borderColor = UIColor.Border.primary.cgColor
             secondProfileImageView.layer.borderWidth = 1
         case 3:
+            thirdUserId = user.userId
             thirdNicknameLabel.text = user.nickname
             thirdProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
             thirdCard.configure(rankImage: .icRank3, tierCode: user.tierCode, lp: user.lp)

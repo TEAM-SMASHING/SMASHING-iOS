@@ -54,6 +54,10 @@ final class RankingViewController: BaseViewController {
             self?.navigationController?.popViewController(animated: true)
         }
         
+        mainView.topThreePodium.onUserTapped = { [weak self] userId in
+            self?.input.send(.rankingUserTapped(userId: userId))
+        }
+        
         bind()
         input.send(.viewDidLoad)
     }
