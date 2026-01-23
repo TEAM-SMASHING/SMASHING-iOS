@@ -125,7 +125,7 @@ final class MatchingConfirmedViewModel: MatchingConfirmedViewModelProtocol {
                         .gameResultSubmittedNotificationCreated(_),
                         .gameUpdated(_),
                         .matchingUpdated(_):
-                    self.handleRefresh()
+                    self.fetchFirstPage()
                 default:
                     break
                 }
