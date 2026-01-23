@@ -17,6 +17,7 @@ final class HomeViewModel: HomeViewModelProtocol {
     init(regionService: RegionServiceProtocol, matchingConfirmedService: MatchingConfirmedServiceProtocol) {
         self.regionService = regionService
         self.matchingConfirmedService = matchingConfirmedService
+        sseBind()
     }
     
     enum Input {
@@ -41,6 +42,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         
         // 알림 아이콘 탭
         case notificationTapped
+        case notificationTriggered
     }
     
     struct Output {
@@ -51,6 +53,8 @@ final class HomeViewModel: HomeViewModelProtocol {
         
         let isLoading = PassthroughSubject<Bool, Never>()
         let error = PassthroughSubject<Error, Never>()
+        
+        let sseNotificationTriggered = PassthroughSubject<Void, Never>()
         
         let navToRegionSelection = PassthroughSubject<Void, Never>()
         let navToMatchResultCreate = PassthroughSubject<MatchingConfirmedGameDTO, Never>()
@@ -67,6 +71,24 @@ final class HomeViewModel: HomeViewModelProtocol {
     private let matchingConfirmedService: MatchingConfirmedServiceProtocol
     
     let output = Output()
+    
+    func sseBind() {
+        SSEService.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { type in
+                switch type {
+                case .gameResultRejectedNotificationCreated(_),
+                        .gameResultSubmittedNotificationCreated(_),
+                        .matchingAcceptNotificationCreated(_),
+                        .matchingRequestNotificationCreated(_),
+                        .reviewReceivedNotificationCreated(_):
+                    self.output.sseNotificationTriggered.send()
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+    }
     
     func transform(input: AnyPublisher<Input, Never>) -> Output {
         input
@@ -103,6 +125,8 @@ final class HomeViewModel: HomeViewModelProtocol {
             output.navToRanking.send()
         case .notificationTapped:
             output.navToNotification.send()
+        default:
+            break
         }
     }
     

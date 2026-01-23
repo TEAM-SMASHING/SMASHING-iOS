@@ -63,6 +63,7 @@ final class ReceiveRequestViewModel: ReceiveRequestViewModelProtocol {
 
     init(service: ReceiveRequestServiceProtocol = ReceiveRequestService()) {
         self.service = service
+        sseBind()
     }
 
     // MARK: - Transform
@@ -105,6 +106,20 @@ final class ReceiveRequestViewModel: ReceiveRequestViewModelProtocol {
     }
 
     // MARK: - Private Methods
+    
+    private func sseBind() {
+        SSEService.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { type in
+                switch type {
+                case .matchingReceived(_), .matchingUpdated(_):
+                    self.handleRefresh()
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     private func handleRefresh() {
         let now = Date()
