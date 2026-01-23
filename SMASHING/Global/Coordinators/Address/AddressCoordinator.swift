@@ -35,7 +35,7 @@ final class AddressCoordinator: Coordinator {
         
         viewModel.output.navAddressSelected.sink { [weak self] address in
             guard let self else { return }
-            backAction?(address)
+            backAction?(address.replacingOccurrences(of: "서울 ", with: ""))
         }
         .store(in: &cancellables)
         
