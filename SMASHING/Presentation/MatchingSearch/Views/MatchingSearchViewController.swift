@@ -154,7 +154,10 @@ final class MatchingSearchViewController: BaseViewController {
         }
         
         if let sheet = tierFilterVC.sheetPresentationController {
-            sheet.detents = [.medium()]
+            let customDetent = UISheetPresentationController.Detent.custom { _ in
+                return 500
+            }
+            sheet.detents = [customDetent]
             sheet.prefersGrabberVisible = true
         }
         
@@ -248,7 +251,7 @@ extension MatchingSearchViewController: UICollectionViewDelegateFlowLayout {
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         let width = (collectionView.frame.width - 43) / 2
-        let height: CGFloat = 224
+        let height: CGFloat = 203
         return CGSize(width: width, height: height)
     }
 }
