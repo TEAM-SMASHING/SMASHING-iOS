@@ -173,8 +173,7 @@ final class OnboardingViewModel: OnboardingViewModelProtocol {
                                         .add(key: Environment.userIdKey, value: response.userId)
                                     _ = KeychainService
                                         .add(key: Environment.nicknameKey, value: store.nickname)
-                                    _ = KeychainService
-                                        .add(key: Environment.regionKey, value: store.address)
+                                    UserDefaults.standard.set(store.address, forKey: UserDefaultKey.region)
                                     if let sportCode = store.sports?.rawValue {
                                         let key = "\(Environment.sportsCodeKeyPrefix).\(response.userId)"
                                         _ = KeychainService.add(key: key, value: sportCode)

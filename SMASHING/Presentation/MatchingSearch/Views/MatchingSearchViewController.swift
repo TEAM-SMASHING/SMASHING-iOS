@@ -29,7 +29,7 @@ final class MatchingSearchViewController: BaseViewController {
     var onRegionTapped: (() -> Void)?
     
     private var myRegion: String {
-        return KeychainService.get(key: Environment.regionKey) ?? ""
+        return UserDefaults.standard.string(forKey: UserDefaultKey.region) ?? ""
     }
     
     // MARK: - Init
