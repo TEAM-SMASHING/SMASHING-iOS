@@ -39,6 +39,6 @@ struct GameConfirmRequestDTO: Encodable {
 
 /// 결과 반려 - 사유 필수
 struct GameRejectRequestDTO: Encodable {
-    let reason: String
+    let reason: String?
 }
 
