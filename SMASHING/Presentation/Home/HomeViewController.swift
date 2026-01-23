@@ -201,6 +201,9 @@ extension HomeViewController: UICollectionViewDataSource {
             cell.onSportsAndTierTapped = { [weak self] in
                 self?.toggleDropDown()
             }
+            cell.onBellTapped = { [weak self] in
+                self?.input.send(.notificationTapped)
+            }
             return cell
         case .matching:
             if recentMatching.isEmpty {

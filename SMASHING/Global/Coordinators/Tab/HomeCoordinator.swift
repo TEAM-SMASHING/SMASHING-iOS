@@ -92,6 +92,13 @@ final class HomeCoordinator: Coordinator {
                 self?.navAction?(.navSearchUser)
             }
             .store(in: &cancellables)
+        
+        output.navToNotification
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showNotificationFlow()
+            }
+            .store(in: &cancellables)
     }
     
     private func showMatchResultCreate(with gameData: MatchingConfirmedGameDTO) {
@@ -109,7 +116,7 @@ final class HomeCoordinator: Coordinator {
         navigationController.pushViewController(rankingVC, animated: true)
     }
     
-
+    
     private func showNotificationFlow() {
         let notificationCoordinator = NotificationCoordinator(navigationController: navigationController)
         self.childCoordinators.append(notificationCoordinator)
@@ -120,7 +127,7 @@ final class HomeCoordinator: Coordinator {
             self?.navAction?(nav)
         }
     }
-
+    
     private func showUserProfile(userId: String) {
         let viewModel = UserProfileViewModel(userId: userId, sport: currentUserSport())
         let userProfileVC = UserProfileViewController(viewModel: viewModel)
@@ -143,24 +150,24 @@ final class HomeCoordinator: Coordinator {
     }
     
     private func showRegionSelection() {
-            let addressCoordinator = AddressCoordinator(navigationController: navigationController)
-            childCoordinators.append(addressCoordinator)
+        let addressCoordinator = AddressCoordinator(navigationController: navigationController)
+        childCoordinators.append(addressCoordinator)
+        
+        addressCoordinator.backAction = { [weak self, weak addressCoordinator] address in
+            guard let self else { return }
+            _ = KeychainService.add(key: Environment.regionKey, value: address)
             
-            addressCoordinator.backAction = { [weak self, weak addressCoordinator] address in
-                guard let self else { return }
-                _ = KeychainService.add(key: Environment.regionKey, value: address)
-                
-                self.userProfileService.updateRegion(region: address)
-                    .receive(on: DispatchQueue.main)
-                    .sink(receiveCompletion: { _ in }, receiveValue: { })
-                    .store(in: &self.cancellables)
-                
-                self.navigationController.popViewController(animated: true)
-                if let coordinator = addressCoordinator {
-                    self.childCoordinators.removeAll { $0 === coordinator }
-                }
+            self.userProfileService.updateRegion(region: address)
+                .receive(on: DispatchQueue.main)
+                .sink(receiveCompletion: { _ in }, receiveValue: { })
+                .store(in: &self.cancellables)
+            
+            self.navigationController.popViewController(animated: true)
+            if let coordinator = addressCoordinator {
+                self.childCoordinators.removeAll { $0 === coordinator }
             }
-            
-            addressCoordinator.start()
         }
+        
+        addressCoordinator.start()
+    }
 }

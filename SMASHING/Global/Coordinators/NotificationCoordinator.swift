@@ -25,7 +25,8 @@ final class NotificationCoordinator: Coordinator {
         let service = NotificationService()
         let viewModel = NotificationViewModel(service: service)
         let viewController = NotificationListViewController(viewModel: viewModel)
-        navigationController.pushViewController(viewController, animated: false)
+        viewController.hidesBottomBarWhenPushed = true
+        navigationController.pushViewController(viewController, animated: true)
         
         viewModel.output.navConfirmedMatchManage.sink { [weak self] in
             self?.action?(.navConfirmedMatchManage)
