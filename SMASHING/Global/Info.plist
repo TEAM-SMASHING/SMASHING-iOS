@@ -2,11 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>BaseURL</key>
 	<string>$(BaseURL)</string>
 	<key>CFBundleURLTypes</key>
@@ -20,17 +15,8 @@
 			</array>
 		</dict>
 	</array>
-	<key>UIDesignRequiresCompatibility</key>
-	<true/>
 	<key>KAKAO_APP_Key</key>
 	<string>$(KAKAO_APP_Key)</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Pretendard-Bold.ttf</string>
-		<string>Pretendard-Medium.ttf</string>
-		<string>Pretendard-Regular.ttf</string>
-		<string>Pretendard-SemiBold.ttf</string>
-	</array>
 	<key>KAKAO_REST_API_Key</key>
 	<string>$(KAKAO_REST_API_Key)</string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -38,6 +24,18 @@
 		<string>kakaokompassauth</string>
 		<string>kakaolink</string>
 		<string>kakaoplus</string>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Pretendard-Bold.ttf</string>
+		<string>Pretendard-Medium.ttf</string>
+		<string>Pretendard-Regular.ttf</string>
+		<string>Pretendard-SemiBold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
@@ -56,5 +54,7 @@
 			</array>
 		</dict>
 	</dict>
+	<key>UIDesignRequiresCompatibility</key>
+	<true/>
 </dict>
 </plist>

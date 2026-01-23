@@ -157,22 +157,28 @@ final class HomeCoordinator: Coordinator {
     }
     
     private func showRegionSelection() {
-        let addressCoordinator = AddressCoordinator(navigationController: navigationController)
-        childCoordinators.append(addressCoordinator)
+        let addressCoordinator = AddressCoordinator(
+            navigationController: navigationController,
+            mode: .changeRegion
+        )
         
-        addressCoordinator.backAction = { [weak self, weak addressCoordinator] address in
+        childCoordinators.append(addressCoordinator)
+
+        addressCoordinator.onAddressSelectedForRegionChange = { [weak self] address in
             guard let self else { return }
+
             UserDefaults.standard.set(address, forKey: UserDefaultKey.region)
-            
+
             self.userProfileService.updateRegion(region: address)
                 .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { _ in }, receiveValue: { })
+                .sink(receiveCompletion: { completion in
+                    if case .failure(let err) = completion {
+                        print("❌ updateRegion 실패:", err)
+                    }
+                }, receiveValue: { _ in
+                    print("✅ updateRegion 성공:", address)
+                })
                 .store(in: &self.cancellables)
-            
-            self.navigationController.popViewController(animated: true)
-            if let coordinator = addressCoordinator {
-                self.childCoordinators.removeAll { $0 === coordinator }
-            }
         }
         
         addressCoordinator.start()
