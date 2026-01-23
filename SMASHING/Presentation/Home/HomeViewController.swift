@@ -96,11 +96,21 @@ final class HomeViewController: BaseViewController {
         view.addSubview(dimView)
         dimView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
-        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapDimView))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapDimView(_:)))
         dimView.addGestureRecognizer(tap)
+        
+        
     }
     
-    @objc private func didTapDimView() {
+    @objc private func didTapDimView(_ gesture: UITapGestureRecognizer) {
+        guard let dropDownView else {
+            hideDropDown()
+            return
+        }
+        let location = gesture.location(in: rootView)
+        if dropDownView.frame.contains(location) {
+            return
+        }
         hideDropDown()
     }
     
@@ -138,6 +148,7 @@ final class HomeViewController: BaseViewController {
                 self?.navigateToMatchResultConfirm(gameData: gameData)
             }
             .store(in: &cancellables)
+
 
         let myProfileOutput = myProfileViewModel.transform(input: myProfileInput.eraseToAnyPublisher())
         myProfileOutput.myProfileFetched
@@ -348,7 +359,17 @@ extension HomeViewController {
                 }
 
                 dd.onSportsCellTapped = { [weak self] sport in
+                    guard let self else { return }
+                    if let sport {
+                        self.myProfileInput.send(.sportsCellTapped(sport))
+                    } else {
+                        self.input.send(.addSportsTapped)
+                    }
+                }
+
+                dd.onAddSportsTapped = { [weak self] in
                     self?.hideDropDown()
+                    self?.input.send(.addSportsTapped)
                 }
 
                 self.rootView.addSubview(self.dimView)

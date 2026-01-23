@@ -65,4 +65,22 @@ final class ProfileCoordinator: Coordinator {
         }
         navigationController.present(tierViewController, animated: true)
     }
+
+    static func showAllReviews(
+        navigationController: UINavigationController,
+        childCoordinators: inout [Coordinator]
+    ) {
+        let myReviewCoordinator = MyReviewCoordinator(navigationController: navigationController)
+        childCoordinators.append(myReviewCoordinator)
+        myReviewCoordinator.start()
+    }
+
+    static func showAddSports(
+        navigationController: UINavigationController,
+        childCoordinators: inout [Coordinator]
+    ) {
+        let addSportsVC = AddSportsViewController()
+        addSportsVC.hidesBottomBarWhenPushed = true
+        navigationController.pushViewController(addSportsVC, animated: true)
+    }
 }
