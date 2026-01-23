@@ -162,7 +162,7 @@ final class HomeCoordinator: Coordinator {
         
         addressCoordinator.backAction = { [weak self, weak addressCoordinator] address in
             guard let self else { return }
-            _ = KeychainService.add(key: Environment.regionKey, value: address)
+            UserDefaults.standard.set(address, forKey: UserDefaultKey.region)
             
             self.userProfileService.updateRegion(region: address)
                 .receive(on: DispatchQueue.main)

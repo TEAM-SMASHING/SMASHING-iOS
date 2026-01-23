@@ -53,7 +53,7 @@ final class HomeViewController: BaseViewController {
     }
     
     private var myRegion: String {
-        return KeychainService.get(key: Environment.regionKey) ?? ""
+        return UserDefaults.standard.string(forKey: UserDefaultKey.region) ?? ""
     }
     
     private var mySportCode: String {
