@@ -193,12 +193,11 @@ extension SentRequestViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
-        let reversedIndex = self.requestList.count - 1 - indexPath.item
-        let request = self.requestList[reversedIndex]
+        let request = self.requestList[indexPath.item]
         cell.configure(with: request.receiver)
 
         cell.onCloseTapped = { [weak self] in
-            self?.closeButtonDidTap(at: reversedIndex)
+            self?.closeButtonDidTap(at: indexPath.item)
         }
 
         return cell

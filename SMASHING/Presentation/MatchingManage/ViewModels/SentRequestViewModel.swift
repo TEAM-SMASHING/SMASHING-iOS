@@ -76,7 +76,8 @@ final class SentRequestViewModel: SentRequestViewModelProtocol {
                     self.fetchFirstPage()
 
                 case .refresh:
-                    self.handleRefresh()
+//                    self.handleRefresh()
+                    self.fetchFirstPage()
 
                 case .loadMore:
                     self.fetchNextPage()
