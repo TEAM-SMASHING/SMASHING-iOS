@@ -16,5 +16,13 @@ struct SSEGameResultSubmittedNotificationCreatedPayload: Codable {
     let receiverProfileId: String
     let gameId: String
     let submissionId: String
+    let reason: GameResultRejectReason
     let submitter: SSESimpleUserSummary
+}
+
+enum GameResultRejectReason: String, Codable {
+    case scoreMismatch = "SCORE_MISMATCH"
+    case winLoseReversed = "WIN_LOSE_REVERSED"
+    case scoreAndWinLoseMismatch = "SCORE_AND_WIN_LOSE_MISMATCH"
+    case gameNotPlayedYet = "GAME_NOT_PLAYED_YET"
 }

@@ -103,6 +103,23 @@ final class SentRequestViewModel: SentRequestViewModelProtocol {
     }
 
     // MARK: - Private Methods
+    
+    private func sseBind() {
+        SSEService.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { type in
+                switch type {
+                case .matchingRequestNotificationCreated(_),
+                        .matchingUpdated(_):
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                        self?.handleRefresh()
+                    }
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     private func fetchFirstPage() {
         guard !isLoadingSubject.value else { return }

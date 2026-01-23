@@ -21,7 +21,7 @@ class MatchingManageHeaderView: BaseUIView {
         
         var title: String {
             switch self {
-            case .received: return "받은 요청"
+            case .received: return "받은 매칭"
             case .sent: return "보낸 매칭"
             case .confirmed: return "매칭 확정"
             }
