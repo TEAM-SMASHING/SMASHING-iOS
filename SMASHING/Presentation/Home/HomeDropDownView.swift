@@ -52,11 +52,11 @@ final class HomeDropDownView: BaseUIView {
     private let sportsAndTierStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 8
+        $0.alignment = .center
         $0.layer.cornerRadius = 18
         $0.layer.borderWidth = 1
         $0.layer.borderColor = UIColor.Border.secondary.cgColor
-        $0.isLayoutMarginsRelativeArrangement = true
-        $0.layoutMargins = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        $0.layoutMargins = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16)
     }
     
     private let sportsImage = UIImageView().then {
@@ -132,6 +132,7 @@ final class HomeDropDownView: BaseUIView {
         sportsAndTierStackView.snp.makeConstraints {
             $0.centerY.equalTo(regionStackView)
             $0.trailing.equalTo(bellImage.snp.leading).offset(-12)
+            $0.height.equalTo(34)
         }
         
         sportsImage.snp.makeConstraints {
