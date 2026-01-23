@@ -58,6 +58,7 @@ final class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = .clear
         self.setupCustomTabBar()
         self.selectedIndex = self.defaultTab.rawValue
     }
