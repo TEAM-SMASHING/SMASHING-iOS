@@ -112,7 +112,7 @@ final class SentRequestViewModel: SentRequestViewModelProtocol {
                 case .matchingRequestNotificationCreated(_),
                         .matchingUpdated(_):
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                        self?.handleRefresh()
+                        self?.fetchFirstPage()
                     }
                 default:
                     break

@@ -30,6 +30,8 @@ final class MatchResultCardView: BaseUIView {
         $0.image = UIImage(systemName: "circle.fill")
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 32
     }
     
     private let myNickName = UILabel().then {
@@ -70,6 +72,8 @@ final class MatchResultCardView: BaseUIView {
         $0.image = UIImage(systemName: "circle.fill")
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 32
     }
     
     private let rivalNickName = UILabel().then {
@@ -177,7 +181,7 @@ final class MatchResultCardView: BaseUIView {
     func configure(myName: String, myImage: UIImage?, rivalName: String, rivalImage: UIImage?) {
         myNickName.text = myName
         rivalNickName.text = rivalName
-        self.myImage.image = myImage
-        self.rivalImage.image = rivalImage
+        self.myImage.image = UIImage.defaultProfileImage(name: myName)
+        self.rivalImage.image = UIImage.defaultProfileImage(name: rivalName)
     }
 }
