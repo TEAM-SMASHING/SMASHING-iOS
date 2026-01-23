@@ -69,10 +69,17 @@ final class MatchResultConfirmViewController: BaseViewController {
             }
             .store(in: &cancellables)
         
-        output.showRejectAlert
+        output.showRejectBottomSheet
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.showRejectReasonBottomSheet()
+            }
+            .store(in: &cancellables)
+        
+        output.showFinalRejectPopup
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showFinalRejectPopup()
             }
             .store(in: &cancellables)
         
@@ -122,5 +129,27 @@ final class MatchResultConfirmViewController: BaseViewController {
         }
         
         present(bottomSheetVC, animated: true)
+    }
+    
+    private func showFinalRejectPopup() {
+        let alertView = SubmitConfirmAlertView()
+        
+        alertView.configure(
+            title: "마지막 반려 기회예요",
+            subtitle: "이번에 반려 시 해당 매칭은 취소됩니다."
+        )
+
+        alertView.onCancel = {
+            // 그냥 닫힘 (아무 것도 안 함)
+        }
+
+        alertView.onConfirm = { [weak self] in
+            self?.viewModel.rejectResult(reason: nil)
+        }
+
+        view.addSubview(alertView)
+        alertView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
 }

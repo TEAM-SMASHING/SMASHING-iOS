@@ -72,7 +72,7 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         let tap = UITapGestureRecognizer(target: self, action: #selector(regionTapped))
         regionStackView.isUserInteractionEnabled = true
         regionStackView.addGestureRecognizer(tap)
-
+        
         let sportsTap = UITapGestureRecognizer(target: self, action: #selector(sportsAndTierTapped))
         sportsAndTierStackView.isUserInteractionEnabled = true
         sportsAndTierStackView.addGestureRecognizer(sportsTap)
@@ -108,15 +108,17 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
     }
     
-    func configure(region: String) {
+    func configure(region: String, sportCode: String?, tierCode: String) {
         regionLabel.text = region
+        sportsImage.image = Sports.image(from: sportCode)
+        tierLabel.text = Tier.from(tierCode: tierCode)?.displayName ?? "—"
     }
     
     @objc
     private func regionTapped() {
         onRegionButtonTapped?()
     }
-
+    
     @objc
     private func sportsAndTierTapped() {
         onSportsAndTierTapped?()

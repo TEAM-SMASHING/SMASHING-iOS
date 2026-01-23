@@ -12,15 +12,19 @@ import Then
 import SnapKit
 
 final class HomeViewController: BaseViewController {
+    private var dropDownHeightConstraint: Constraint?
+    private let rootView = UIView()
+    private let homeView = HomeView().then {
+        $0.backgroundColor = .Background.canvas
+    }
     
-    private let homeView = HomeView()
     private var dropDownView: HomeDropDownView?
-    private var dropDownTopConstraint: Constraint?
-    private var isDropDownVisible = false
-    private var dropDownBackgroundView: UIView?
+    private let dimView = UIView()
+    
+    private var isDropDownShown = false
     
     override func loadView() {
-        view = homeView
+        view = rootView
     }
     
     private let viewModel: HomeViewModel
@@ -61,8 +65,13 @@ final class HomeViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        rootView.backgroundColor = .Background.canvas
+        rootView.addSubview(homeView)
+        homeView.snp.makeConstraints {$0.edges.equalToSuperview()}
+        
         setCollectionView()
         view.backgroundColor = .Background.canvas
+        setupDimView()
         bind()
         input.send(.viewDidLoad)
         myProfileInput.send(.viewDidLoad)
@@ -78,6 +87,21 @@ final class HomeViewController: BaseViewController {
     private func setCollectionView() {
         homeView.delegate = self
         homeView.dataSource = self
+    }
+    
+    private func setupDimView() {
+        dimView.backgroundColor = UIColor.black.withAlphaComponent(0.35)
+        dimView.alpha = 0
+        dimView.isHidden = true
+        view.addSubview(dimView)
+        dimView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapDimView))
+        dimView.addGestureRecognizer(tap)
+    }
+    
+    @objc private func didTapDimView() {
+        hideDropDown()
     }
     
     private func bind() {
@@ -119,8 +143,10 @@ final class HomeViewController: BaseViewController {
         myProfileOutput.myProfileFetched
             .receive(on: DispatchQueue.main)
             .sink { [weak self] response in
-                self?.latestMyProfile = response
-                self?.dropDownView?.configure(profile: response)
+                guard let self else { return }
+                self.latestMyProfile = response
+                self.dropDownView?.configure(profile: response, myRegion: self.myRegion)
+                self.homeView.reloadSections(IndexSet(integer: HomeViewLayout.navigationBar.rawValue))
             }
             .store(in: &cancellables)
     }
@@ -164,7 +190,11 @@ extension HomeViewController: UICollectionViewDataSource {
         switch sectionType {
         case .navigationBar:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNavigationBarCell.reuseIdentifier, for: indexPath) as? HomeNavigationBarCell else { return UICollectionViewCell() }
-            cell.configure(region: myRegion)
+            let region = myRegion
+            let sportCode = latestMyProfile?.activeProfile.sportCode.rawValue
+            let tierCode = latestMyProfile?.activeProfile.tierCode ?? ""
+            
+            cell.configure(region: myRegion, sportCode: sportCode, tierCode: tierCode)
             cell.onRegionButtonTapped = { [weak self] in
                 self?.input.send(.regionTapped)
             }
@@ -265,85 +295,114 @@ extension HomeViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - DropDown
+extension HomeViewController {
 
-private extension HomeViewController {
-    func toggleDropDown() {
-        if isDropDownVisible {
-            hideDropDown()
-        } else {
-            showDropDown()
+    private func toggleDropDown() {
+        isDropDownShown ? hideDropDown() : showDropDown()
+    }
+
+    private func showDropDown() {
+        guard !isDropDownShown else { return }
+        isDropDownShown = true
+
+        // ✅ 레이아웃 안정화(첫 토글 튐 방지)
+        // 탭 이벤트 직후/데이터 갱신 직후엔 frame이 덜 잡힐 수 있어서 한 틱 미룸
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+
+            // 레이아웃 강제 반영
+            self.homeView.layoutIfNeeded()
+            self.rootView.layoutIfNeeded()
+
+            let indexPath = IndexPath(item: 0, section: HomeViewLayout.navigationBar.rawValue)
+
+            // ✅ cellForItem 대신 layoutAttributes로 frame 계산 (더 안정적)
+            guard let attr = self.homeView.layoutAttributesForItem(at: indexPath) else {
+                self.isDropDownShown = false
+                return
+            }
+
+            let frameInRoot = self.homeView.convert(attr.frame, to: self.rootView)
+//            let topY = frameInRoot.minY - 32
+            let topY = max(0, frameInRoot.minY - view.safeAreaInsets.top)
+
+            if self.dropDownView == nil {
+                let dd = HomeDropDownView()
+                self.dropDownView = dd
+                
+                if let profile = self.latestMyProfile {
+                    dd.configure(profile: profile, myRegion: myRegion)
+                }
+
+                dd.onRegionButtonTapped = { [weak self] in
+                    self?.hideDropDown()
+                    self?.input.send(.regionTapped)
+                }
+
+                dd.onSportsAndTierTapped = { [weak self] in
+                    self?.hideDropDown()
+                }
+
+                dd.onSportsCellTapped = { [weak self] sport in
+                    self?.hideDropDown()
+                }
+
+                // ✅ 오버레이들은 rootView 위에
+                self.rootView.addSubview(self.dimView)
+                self.rootView.addSubview(dd)
+
+                // dim은 전체 덮기
+                self.dimView.snp.remakeConstraints { $0.edges.equalToSuperview() }
+
+                // dd는 "패널 높이만" (원하는 높이로 조절)
+                dd.snp.makeConstraints {
+                    $0.leading.trailing.equalToSuperview()
+                    $0.top.equalToSuperview().offset(topY)
+                    $0.height.equalTo(420)   // 🔥 필요하면 너 디자인에 맞게 조절
+                }
+
+            } else {
+                // 이미 있으면 top만 갱신
+                self.dropDownView?.snp.updateConstraints {
+                    $0.top.equalToSuperview().offset(topY)
+                }
+            }
+
+            self.rootView.layoutIfNeeded()
+
+            // ✅ z-order 확실히
+            self.rootView.bringSubviewToFront(self.dimView)
+            if let dd = self.dropDownView {
+                self.rootView.bringSubviewToFront(dd)
+            }
+
+            // 애니메이션
+            self.dimView.isHidden = false
+            self.dimView.alpha = 0
+
+            self.dropDownView?.alpha = 0
+            self.dropDownView?.transform = CGAffineTransform(translationX: 0, y: -8)
+
+            UIView.animate(withDuration: 0.22, delay: 0, options: [.curveEaseOut]) {
+                self.dimView.alpha = 1
+                self.dropDownView?.alpha = 1
+                self.dropDownView?.transform = .identity
+            }
         }
     }
 
-    func showDropDown() {
-        if dropDownView == nil {
-            let backgroundView = UIView()
-            backgroundView.backgroundColor = .Background.dimmed
-            backgroundView.alpha = 0
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dropDownBackgroundTapped))
-            backgroundView.addGestureRecognizer(tapGesture)
-            view.addSubview(backgroundView)
-            backgroundView.snp.makeConstraints {
-                $0.edges.equalToSuperview()
-            }
-            dropDownBackgroundView = backgroundView
+    private func hideDropDown() {
+        guard isDropDownShown else { return }
+        isDropDownShown = false
 
-            let dropDown = HomeDropDownView()
-            dropDown.onRegionButtonTapped = { [weak self] in
-                self?.input.send(.regionTapped)
-            }
-            dropDown.onSportsCellTapped = { [weak self] sport in
-                self?.myProfileInput.send(.sportsCellTapped(sport))
-            }
-            dropDown.onSportsAndTierTapped = { [weak self] in
-                self?.hideDropDown()
-            }
-            view.addSubview(dropDown)
-            dropDown.snp.makeConstraints {
-                $0.centerX.equalToSuperview()
-                $0.width.equalTo(373)
-                $0.bottom.equalToSuperview()
-                dropDownTopConstraint = $0.top.equalToSuperview().offset(-view.bounds.height).constraint
-            }
-            dropDownView = dropDown
-
-            UIView.animate(withDuration: 0.2) {
-                backgroundView.alpha = 1
-            }
+        UIView.animate(withDuration: 0.18, delay: 0, options: [.curveEaseIn]) {
+            self.dimView.alpha = 0
+            self.dropDownView?.alpha = 0
+            self.dropDownView?.transform = CGAffineTransform(translationX: 0, y: -8)
+        } completion: { _ in
+            self.dimView.isHidden = true
+            self.dropDownView?.transform = .identity
         }
-        if let profile = latestMyProfile {
-            dropDownView?.configure(profile: profile)
-        }
-
-        view.layoutIfNeeded()
-        dropDownTopConstraint?.update(offset: 0)
-        UIView.animate(withDuration: 0.25, animations: { [weak self] in
-            self?.view.layoutIfNeeded()
-        }, completion: { [weak self] _ in
-            self?.isDropDownVisible = true
-        })
-    }
-
-    func hideDropDown() {
-        guard let dropDownView else { return }
-        dropDownTopConstraint?.update(offset: -view.bounds.height)
-        UIView.animate(withDuration: 0.2, animations: { [weak self] in
-            self?.view.layoutIfNeeded()
-            self?.dropDownBackgroundView?.alpha = 0
-        }, completion: { [weak self] _ in
-            self?.isDropDownVisible = false
-            dropDownView.removeFromSuperview()
-            self?.dropDownView = nil
-            self?.dropDownBackgroundView?.removeFromSuperview()
-            self?.dropDownBackgroundView = nil
-        })
-    }
-}
-
-@objc private extension HomeViewController {
-    func dropDownBackgroundTapped() {
-        hideDropDown()
     }
 }
 
