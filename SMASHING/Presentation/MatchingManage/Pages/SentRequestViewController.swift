@@ -67,6 +67,11 @@ final class SentRequestViewController: BaseViewController {
         bind()
         input.send(.viewDidLoad)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        bind()
+        input.send(.refresh)
+    }
 
     // MARK: - Setup Methods
 
@@ -193,11 +198,12 @@ extension SentRequestViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
-        let request = self.requestList[indexPath.row]
+        let reversedIndex = self.requestList.count - 1 - indexPath.item
+        let request = self.requestList[reversedIndex]
         cell.configure(with: request.receiver)
 
         cell.onCloseTapped = { [weak self] in
-            self?.closeButtonDidTap(at: indexPath.item)
+            self?.closeButtonDidTap(at: reversedIndex)
         }
 
         return cell
@@ -218,4 +224,3 @@ extension SentRequestViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: height)
     }
 }
-
