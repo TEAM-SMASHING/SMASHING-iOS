@@ -63,12 +63,6 @@ final class MatchingSearchCoordinator: Coordinator {
             self?.navAction?()
         }
         .store(in: &cancellables)
-
-        viewModel.output.navToSeeAllReviews
-            .sink { [weak self] in
-                self?.showAllReviews()
-            }
-            .store(in: &cancellables)
     }
     
     private func showRegionSelection() {
@@ -91,12 +85,5 @@ final class MatchingSearchCoordinator: Coordinator {
         }
         
         addressCoordinator.start()
-    }
-
-    private func showAllReviews() {
-        ProfileCoordinator.showAllReviews(
-            navigationController: navigationController,
-            childCoordinators: &childCoordinators
-        )
     }
 }

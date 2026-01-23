@@ -125,13 +125,6 @@ final class HomeCoordinator: Coordinator {
         let viewModel = UserProfileViewModel(userId: userId, sport: currentUserSport())
         let userProfileVC = UserProfileViewController(viewModel: viewModel)
         navigationController.pushViewController(userProfileVC, animated: true)
-
-        viewModel.output.navToSeeAllReviews
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                self?.showAllReviews()
-            }
-            .store(in: &cancellables)
     }
     
     private func currentUserSport() -> Sports {
@@ -170,11 +163,4 @@ final class HomeCoordinator: Coordinator {
             
             addressCoordinator.start()
         }
-
-    private func showAllReviews() {
-        ProfileCoordinator.showAllReviews(
-            navigationController: navigationController,
-            childCoordinators: &childCoordinators
-        )
-    }
 }

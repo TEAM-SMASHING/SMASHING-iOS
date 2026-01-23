@@ -45,9 +45,6 @@ final class UserProfileViewController: BaseViewController {
 
         mainView.reviewCard.reviewCollectionView.delegate = self
         mainView.reviewCard.reviewCollectionView.dataSource = self
-        mainView.reviewCard.seeAllAction = { [weak self] in
-            self?.input.send(.seeAllReviewsTapped)
-        }
 
         bind()
         input.send(.viewDidLoad)
