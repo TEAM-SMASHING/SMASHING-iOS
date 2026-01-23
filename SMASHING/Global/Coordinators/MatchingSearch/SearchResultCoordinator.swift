@@ -46,6 +46,19 @@ final class SearchResultCoordinator: Coordinator {
                 self?.navToMatchManage.send()
             }
             .store(in: &cancellables)
+        viewModel.output.navToSeeAllReviews
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showAllReviews()
+            }
+            .store(in: &cancellables)
         navigationController.pushViewController(userProfileVC, animated: true)
+    }
+
+    private func showAllReviews() {
+        ProfileCoordinator.showAllReviews(
+            navigationController: navigationController,
+            childCoordinators: &childCoordinators
+        )
     }
 }

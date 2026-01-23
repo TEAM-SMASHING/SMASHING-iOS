@@ -45,6 +45,9 @@ final class UserProfileViewController: BaseViewController {
 
         mainView.reviewCard.reviewCollectionView.delegate = self
         mainView.reviewCard.reviewCollectionView.dataSource = self
+        mainView.reviewCard.seeAllAction = { [weak self] in
+            self?.input.send(.seeAllReviewsTapped)
+        }
 
         bind()
         input.send(.viewDidLoad)
@@ -87,7 +90,16 @@ final class UserProfileViewController: BaseViewController {
 
     private func updateUI(with profile: OtherUserProfileResponse) {
         mainView.configure(with: profile, mode: .plain)
+        let isEmpty = viewModel.reviewPreviews.isEmpty
+        mainView.reviewCard.updateEmptyState(isEmpty: isEmpty)
         mainView.reviewCard.reviewCollectionView.reloadData()
+        if !isEmpty {
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.mainView.reviewCard.updateCollectionViewHeight(with: self.viewModel.reviewPreviews)
+                self.view.layoutIfNeeded()
+            }
+        }
     }
 
     private func presentChallengePopup() {

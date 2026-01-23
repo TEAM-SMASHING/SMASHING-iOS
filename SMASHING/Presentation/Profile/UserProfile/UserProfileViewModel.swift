@@ -21,6 +21,7 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
         case viewDidLoad
         case refresh
         case challengeConfirmed
+        case seeAllReviewsTapped
     }
 
     // MARK: - Output
@@ -31,6 +32,7 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
         let errorMessage = PassthroughSubject<String, Never>()
         let challengeRequestCompleted = PassthroughSubject<Void, Never>()
         let navToMatchManage = PassthroughSubject<Void, Never>()
+        let navToSeeAllReviews = PassthroughSubject<Void, Never>()
     }
 
     // MARK: - Properties
@@ -80,6 +82,8 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
         case .challengeConfirmed:
             output.navToMatchManage.send()
             requestMatching()
+        case .seeAllReviewsTapped:
+            output.navToSeeAllReviews.send()
         }
     }
 

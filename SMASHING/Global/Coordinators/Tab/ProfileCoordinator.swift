@@ -65,4 +65,13 @@ final class ProfileCoordinator: Coordinator {
         }
         navigationController.present(tierViewController, animated: true)
     }
+
+    static func showAllReviews(
+        navigationController: UINavigationController,
+        childCoordinators: inout [Coordinator]
+    ) {
+        let myReviewCoordinator = MyReviewCoordinator(navigationController: navigationController)
+        childCoordinators.append(myReviewCoordinator)
+        myReviewCoordinator.start()
+    }
 }
