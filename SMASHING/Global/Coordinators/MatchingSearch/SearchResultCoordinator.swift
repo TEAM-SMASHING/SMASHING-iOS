@@ -16,6 +16,7 @@ final class SearchResultCoordinator: Coordinator {
     private let userSportProvider: UserSportProviding
     
     var navToMatchManage = PassthroughSubject<Void, Never>()
+    var refreshSentRequests = PassthroughSubject<Void, Never>()
     
     init(navigationController: UINavigationController, userSportProvider: UserSportProviding) {
         self.childCoordinators = []
@@ -44,6 +45,13 @@ final class SearchResultCoordinator: Coordinator {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.navToMatchManage.send()
+            }
+            .store(in: &cancellables)
+        viewModel.output.refreshSentRequests
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.refreshSentRequests.send()
+                print("아웃풋 가동")
             }
             .store(in: &cancellables)
         navigationController.pushViewController(userProfileVC, animated: true)

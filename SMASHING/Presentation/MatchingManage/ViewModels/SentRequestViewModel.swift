@@ -76,7 +76,6 @@ final class SentRequestViewModel: SentRequestViewModelProtocol {
                     self.fetchFirstPage()
 
                 case .refresh:
-//                    self.handleRefresh()
                     self.fetchFirstPage()
 
                 case .loadMore:
@@ -104,15 +103,6 @@ final class SentRequestViewModel: SentRequestViewModelProtocol {
     }
 
     // MARK: - Private Methods
-
-    private func handleRefresh() {
-        let now = Date()
-        if let lastTime = lastRefreshTime, now.timeIntervalSince(lastTime) < 0.5 {
-            return
-        }
-        lastRefreshTime = now
-        fetchFirstPage()
-    }
 
     private func fetchFirstPage() {
         guard !isLoadingSubject.value else { return }
@@ -218,4 +208,3 @@ final class SentRequestViewModel: SentRequestViewModelProtocol {
         }
     }
 }
-

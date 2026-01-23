@@ -17,6 +17,7 @@ final class MatchingSearchCoordinator: Coordinator {
     let userProfileService = UserProfileService()
     
     var navAction: (() -> Void)?
+    var refreshSentRequestsAction: (() -> Void)?
 
     init(navigationController: UINavigationController, userSportProvider: UserSportProviding) {
         self.childCoordinators = []
@@ -50,6 +51,12 @@ final class MatchingSearchCoordinator: Coordinator {
                 self?.navAction?()
             }
             .store(in: &cancellables)
+        searchResultCoordinator.refreshSentRequests
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.refreshSentRequestsAction?()
+            }
+            .store(in: &cancellables)
         childCoordinators.append(searchResultCoordinator)
         searchResultCoordinator.start()
     }
@@ -63,6 +70,12 @@ final class MatchingSearchCoordinator: Coordinator {
             self?.navAction?()
         }
         .store(in: &cancellables)
+
+        viewModel.output.refreshSentRequests
+            .sink { [weak self] in
+                self?.refreshSentRequestsAction?()
+            }
+            .store(in: &cancellables)
     }
     
     private func showRegionSelection() {
