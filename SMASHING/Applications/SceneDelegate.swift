@@ -52,7 +52,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {
         // 1. 앱이 다시 화면에 나타날 때 SSE 연결 확인 및 재시작
         // TabBarCoordinator가 이미 생성되어 SSE를 사용 중인 상태인지 확인 후 호출하는 것이 좋습니다.
-        SSEService.shared.start()
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {

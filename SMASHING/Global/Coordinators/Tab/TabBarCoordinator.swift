@@ -23,6 +23,7 @@ final class TabBarCoordinator: Coordinator {
         self.navigationController = navigationController
         self.childCoordinators = []
         
+        SSEService.shared.start()
         SSEService.shared.eventPublisher
             .sink { [weak self] payload in
                 self?.handleNotification(type: payload)
