@@ -62,9 +62,15 @@ final class SSEService {
     static let shared = SSEService()
 
     private var streamTask: Task<Void, Never>?
+    private var healthCheckTask: Task<Void, Never>?
     private var isManualDisconnect = false
     private var retryDelay: TimeInterval = 1.0
     private let maxRetryDelay: TimeInterval = 30.0
+
+    // 연결 상태 체크 설정
+    private var lastEventTime: Date?
+    private let checkInterval: TimeInterval = 60        // 1분마다 체크
+    private let connectionTimeout: TimeInterval = 180   // 3분 동안 이벤트 없으면 재연결
 
     private let eventSubject = PassthroughSubject<SseEventType, Never>()
     var eventPublisher: AnyPublisher<SseEventType, Never> {
@@ -83,12 +89,42 @@ final class SSEService {
     func start() {
         isManualDisconnect = false
         retryDelay = 1.0
+        lastEventTime = Date()
 
         guard let token = KeychainService.get(key: Environment.accessTokenKey) else {
             print("❌ [SSE] 토큰 없음")
             return
         }
         connect(token: token)
+        startHealthCheck(token: token)
+    }
+
+    private func startHealthCheck(token: String) {
+        healthCheckTask?.cancel()
+
+        healthCheckTask = Task { [weak self] in
+            while !Task.isCancelled {
+                do {
+                    try await Task.sleep(nanoseconds: UInt64(self?.checkInterval ?? 60) * 1_000_000_000)
+
+                    guard let self = self,
+                          !self.isManualDisconnect,
+                          let lastTime = self.lastEventTime else { continue }
+
+                    let elapsed = Date().timeIntervalSince(lastTime)
+
+                    if elapsed > self.connectionTimeout {
+                        print("⚠️ [SSE] \(Int(elapsed))초 동안 이벤트 없음 - 재연결")
+                        self.retryDelay = 1.0
+                        self.connect(token: token)
+                    } else {
+                        print("😀 [SSE] 연결 상태 양호 (마지막 이벤트: \(Int(elapsed))초 전)")
+                    }
+                } catch {
+                    break
+                }
+            }
+        }
     }
 
     private func connect(token: String) {
@@ -123,6 +159,8 @@ final class SSEService {
 
                 for try await line in bytes.lines {
                     if Task.isCancelled { break }
+
+                    self?.lastEventTime = Date()  // 이벤트 수신 시간 업데이트
 
                     if line.hasPrefix("event:") {
                         eventName = line.replacingOccurrences(of: "event:", with: "").trimmingCharacters(in: .whitespaces)
@@ -173,6 +211,9 @@ final class SSEService {
         isManualDisconnect = true
         streamTask?.cancel()
         streamTask = nil
+        healthCheckTask?.cancel()
+        healthCheckTask = nil
+        lastEventTime = nil
         print("🛑 [SSE] 연결 종료")
     }
 
