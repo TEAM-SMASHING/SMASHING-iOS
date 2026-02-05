@@ -58,7 +58,7 @@ enum SseEventType: Codable {
     }
 }
 
-final class SSEService {
+actor SSEService {
     static let shared = SSEService()
 
     private var streamTask: Task<Void, Never>?
@@ -84,8 +84,6 @@ final class SSEService {
         return URLSession(configuration: config)
     }()
 
-    private init() {}
-
     func start() {
         isManualDisconnect = false
         retryDelay = 1.0
@@ -102,21 +100,22 @@ final class SSEService {
     private func startHealthCheck(token: String) {
         healthCheckTask?.cancel()
 
-        healthCheckTask = Task { [weak self] in
+        healthCheckTask = Task {
             while !Task.isCancelled {
                 do {
-                    try await Task.sleep(nanoseconds: UInt64(self?.checkInterval ?? 60) * 1_000_000_000)
+                    try await Task.sleep(nanoseconds: UInt64(checkInterval) * 1_000_000_000)
 
-                    guard let self = self,
-                          !self.isManualDisconnect,
+                    guard !self.isManualDisconnect,
                           let lastTime = self.lastEventTime else { continue }
 
                     let elapsed = Date().timeIntervalSince(lastTime)
 
                     if elapsed > self.connectionTimeout {
                         print("⚠️ [SSE] \(Int(elapsed))초 동안 이벤트 없음 - 재연결")
-                        self.retryDelay = 1.0
-                        self.connect(token: token)
+                        self.resetRetryDelay()
+                        if let freshToken = await KeychainService.get(key: Environment.accessTokenKey) {
+                            self.connect(token: freshToken)
+                        }
                     } else {
                         print("😀 [SSE] 연결 상태 양호 (마지막 이벤트: \(Int(elapsed))초 전)")
                     }
@@ -153,21 +152,21 @@ final class SSEService {
                 }
 
                 print("✅ [SSE] 스트림 연결됨")
-                self?.retryDelay = 1.0  // 연결 성공 시 리셋
+                await self?.resetRetryDelay()  // 연결 성공 시 리셋
 
                 var eventName: String?
 
                 for try await line in bytes.lines {
                     if Task.isCancelled { break }
 
-                    self?.lastEventTime = Date()  // 이벤트 수신 시간 업데이트
+                    await self?.updateLastEventTime()  // 이벤트 수신 시간 업데이트
 
                     if line.hasPrefix("event:") {
                         eventName = line.replacingOccurrences(of: "event:", with: "").trimmingCharacters(in: .whitespaces)
                     } else if line.hasPrefix("data:"), let event = eventName {
                         let rawData = line.replacingOccurrences(of: "data:", with: "").trimmingCharacters(in: .whitespaces)
                         if !rawData.isEmpty, let jsonData = rawData.data(using: .utf8) {
-                            self?.handleDecodedEvent(eventName: event, data: jsonData)
+                            await self?.handleDecodedEvent(eventName: event, data: jsonData)
                         }
                         eventName = nil
                     }
@@ -217,13 +216,20 @@ final class SSEService {
         print("🛑 [SSE] 연결 종료")
     }
 
-    @MainActor
+    // Actor-isolated 프로퍼티 업데이트 헬퍼 메서드
+    private func resetRetryDelay() {
+        retryDelay = 1.0
+    }
+
+    private func updateLastEventTime() {
+        lastEventTime = Date()
+    }
+
     private func handleDecodedEvent(eventName: String, data: Data) {
         let decoder = JSONDecoder()
         do {
             switch eventName {
             case "system.connected":
-                // print("✅ [SSE] System Connected")
                 eventSubject.send(.systemConnected)
 
             case "matching.received":
