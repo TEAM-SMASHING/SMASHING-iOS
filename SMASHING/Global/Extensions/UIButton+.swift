@@ -21,7 +21,6 @@ extension UIControl {
 
         return subject.eraseToAnyPublisher()
     }
-
 }
 
 extension UIButton {
@@ -29,7 +28,6 @@ extension UIButton {
     func tapPublisher() -> AnyPublisher<Void, Never> {
         controlEventPublisher(for: .touchUpInside)
     }
-
 }
 
 private enum AssociatedKeys {
@@ -47,5 +45,4 @@ private final class EventHandler: NSObject {
     @objc func invoke() {
         subject.send()
     }
-
 }
