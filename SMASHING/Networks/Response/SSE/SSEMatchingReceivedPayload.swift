@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SSEMatchingReceivedPayload: Codable {
+struct SSEMatchingReceivedPayload: Codable, Sendable {
     let type: String
     let matchingId: String
     let sportId: Int
@@ -15,7 +15,7 @@ struct SSEMatchingReceivedPayload: Codable {
     let requester: SSERequesterSummary
 }
 
-struct SSERequesterSummary: Codable {
+struct SSERequesterSummary: Codable, Sendable {
     let userId: String
     let nickname: String
     let gender: String

@@ -56,3 +56,47 @@ enum SseEventType: Codable {
         }
     }
 }
+
+extension SseEventType {
+    static func decode(name: String, data: Data, decoder: JSONDecoder) throws -> SseEventType? {
+        switch name {
+        case "system.connected":
+            return .systemConnected
+            
+        case "matching.received":
+            let payload = try decoder.decode(SSEMatchingReceivedPayload.self, from: data)
+            return .matchingReceived(payload)
+            
+        case "matching.updated":
+            let payload = try decoder.decode(SSEMatchingUpdatedPayload.self, from: data)
+            return .matchingUpdated(payload)
+            
+        case "matching.request.notification.created":
+            let payload = try decoder.decode(SSEMatchingRequestNotificationCreatedPayload.self, from: data)
+            return .matchingRequestNotificationCreated(payload)
+            
+        case "matching.accept.notification.created":
+            let payload = try decoder.decode(SSEMatchingAcceptNotificationCreatedPayload.self, from: data)
+            return .matchingAcceptNotificationCreated(payload)
+            
+        case "game.updated":
+            let payload = try decoder.decode(SSEGameUpdatedPayload.self, from: data)
+            return .gameUpdated(payload)
+            
+        case "game.result.submitted.notification.created":
+            let payload = try decoder.decode(SSEGameResultSubmittedNotificationCreatedPayload.self, from: data)
+            return .gameResultSubmittedNotificationCreated(payload)
+            
+        case "game.result.rejected.notification.created":
+            let payload = try decoder.decode(SSEGameResultRejectedNotificationCreatedPayload.self, from: data)
+            return .gameResultRejectedNotificationCreated(payload)
+            
+        case "review.received.notification.created":
+            let payload = try decoder.decode(SSEReviewReceivedNotificationCreatedPayload.self, from: data)
+            return .reviewReceivedNotificationCreated(payload)
+            
+        default:
+            return nil
+        }
+    }
+}
