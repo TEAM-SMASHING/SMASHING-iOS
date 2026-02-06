@@ -38,7 +38,6 @@ actor SSEService {
         isManualDisconnect = false
         retryDelay = 1.0
         lastEventTime = Date()
-
         guard let token = KeychainService.get(key: Environment.accessTokenKey) else {
             print("❌ [SSE] 토큰 없음")
             return
@@ -90,33 +89,33 @@ actor SSEService {
 
         print("🚀 [SSE] 연결 시도: \(url)")
 
-        streamTask = Task { [weak self] in
+        streamTask = Task {
             do {
                 let (bytes, response) = try await session.bytes(for: request)
 
                 guard let httpResponse = response as? HTTPURLResponse,
                       httpResponse.statusCode == 200 else {
                     print("❌ [SSE] 연결 실패: 잘못된 응답")
-                    await self?.scheduleReconnect(token: token)
+                    await scheduleReconnect(token: token)
                     return
                 }
 
                 print("✅ [SSE] 스트림 연결됨")
-                await self?.resetRetryDelay()  // 연결 성공 시 리셋
+                resetRetryDelay()  // 연결 성공 시 리셋
 
                 var eventName: String?
 
                 for try await line in bytes.lines {
                     if Task.isCancelled { break }
 
-                    await self?.updateLastEventTime()  // 이벤트 수신 시간 업데이트
+                    updateLastEventTime()  // 이벤트 수신 시간 업데이트
 
                     if line.hasPrefix("event:") {
                         eventName = line.replacingOccurrences(of: "event:", with: "").trimmingCharacters(in: .whitespaces)
                     } else if line.hasPrefix("data:"), let event = eventName {
                         let rawData = line.replacingOccurrences(of: "data:", with: "").trimmingCharacters(in: .whitespaces)
                         if !rawData.isEmpty, let jsonData = rawData.data(using: .utf8) {
-                            await self?.handleDecodedEvent(eventName: event, data: jsonData)
+                            handleDecodedEvent(eventName: event, data: jsonData)
                         }
                         eventName = nil
                     }
@@ -125,12 +124,12 @@ actor SSEService {
                 // 스트림이 정상 종료된 경우 (서버가 연결을 끊음)
                 if !Task.isCancelled {
                     print("⚠️ [SSE] 스트림 종료됨")
-                    await self?.scheduleReconnect(token: token)
+                    await scheduleReconnect(token: token)
                 }
             } catch {
                 if !Task.isCancelled {
                     print("❌ [SSE] 연결 에러: \(error.localizedDescription)")
-                    await self?.scheduleReconnect(token: token)
+                    await scheduleReconnect(token: token)
                 }
             }
         }
@@ -166,7 +165,6 @@ actor SSEService {
         print("🛑 [SSE] 연결 종료")
     }
 
-    // Actor-isolated 프로퍼티 업데이트 헬퍼 메서드
     private func resetRetryDelay() {
         retryDelay = 1.0
     }
@@ -220,8 +218,7 @@ actor SSEService {
             case "review.received.notification.created":
                 let payload = try decoder.decode(
                     SSEReviewReceivedNotificationCreatedPayload.self,
-                    from: data
-                )
+                    from: data)
                 print("✅ [SSE] Review Received Notification Created: \(payload.gameId)")
                 eventSubject.send(.reviewReceivedNotificationCreated(payload))
 
