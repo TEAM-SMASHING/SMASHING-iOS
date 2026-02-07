@@ -92,6 +92,6 @@ final class NotificationCollectionViewCell: UICollectionViewCell, ReuseIdentifia
         titleLabel.text = data.title
         contentLabel.text = data.content
         timeLabel.text = data.createdAt.toDateFromISO8601?.toRelativeString()
-        contentView.backgroundColor = data.isRead ? .Background.surface : .Border.primary
+        contentView.backgroundColor = data.isRead ? .Background.canvas : .Background.surface
     }
 }
