@@ -10,20 +10,14 @@ import UIKit
 
 final class OnboardingCoordinator: Coordinator {
     
-    var childCoordinators: [Coordinator]
-    var navigationController: UINavigationController
+    var childCoordinators: [Coordinator] = []
     var cancellables: Set<AnyCancellable> = []
     
     var confirmAction: (() -> Void)?
     
     private weak var onboardingViewController: OnboardingViewController?
 
-    init(navigationController: UINavigationController) {
-        self.childCoordinators = []
-        self.navigationController = navigationController
-    }
-
-    func start() {
+    override func start() {
         let viewModel = OnboardingViewModel()
         let viewController = OnboardingViewController(viewModel: viewModel)
         self.onboardingViewController = viewController

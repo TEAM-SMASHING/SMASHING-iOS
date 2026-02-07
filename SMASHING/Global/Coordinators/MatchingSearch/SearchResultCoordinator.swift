@@ -10,21 +10,16 @@ import UIKit
 
 final class SearchResultCoordinator: Coordinator {
 
-    var childCoordinators: [Coordinator]
-    var navigationController: UINavigationController
+    var childCoordinators: [Coordinator] = []
     private var cancellables: Set<AnyCancellable> = []
     private let userSportProvider: UserSportProviding
-    
-    var navToMatchManage = PassthroughSubject<Void, Never>()
-    var refreshSentRequests = PassthroughSubject<Void, Never>()
-    
+
     init(navigationController: UINavigationController, userSportProvider: UserSportProviding) {
-        self.childCoordinators = []
-        self.navigationController = navigationController
         self.userSportProvider = userSportProvider
+        super.init(navigationController: navigationController)
     }
 
-    func start() {
+    override func start() {
         let viewModel = SearchResultViewModel()
         let viewController = SearchResultViewController(viewModel: viewModel)
 
@@ -43,8 +38,8 @@ final class SearchResultCoordinator: Coordinator {
         let userProfileVC = UserProfileViewController(viewModel: viewModel)
         viewModel.output.navToMatchManage
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                self?.navToMatchManage.send()
+            .sink { _ in
+                NavigationManager.shared.navigateToMatchManageSentAndRefresh()
             }
             .store(in: &cancellables)
         navigationController.pushViewController(userProfileVC, animated: true)

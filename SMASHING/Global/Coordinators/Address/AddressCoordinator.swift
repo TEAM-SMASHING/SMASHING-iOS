@@ -22,37 +22,29 @@ final class AddressCoordinator: Coordinator {
 
         // 홈에서 사용: 주소 선택 즉시 반영 트리거
         var onAddressSelectedForRegionChange: ((String) -> Void)?
-    
+
     var backAction: ((String) -> Void)?
 
-    var childCoordinators: [Coordinator]
-    var navigationController: UINavigationController
+    var childCoordinators: [Coordinator] = []
 
     var cancellables: Set<AnyCancellable> = []
 
     init(navigationController: UINavigationController, mode: SelectionMode) {
-        self.childCoordinators = []
-        self.navigationController = navigationController
         self.mode = mode
+        super.init(navigationController: navigationController)
     }
 
-    func start() {
+    override func start() {
         let service = KakaoAddressService()
         let viewModel = AddressSearchViewModel(addressService: service)
         let viewController = AddressSearchViewController(viewModel: viewModel)
-        
+
         viewModel.output.navBackTapped.sink { [weak self] in
             guard let self else { return }
             self.navigationController.popViewController(animated: true)
         }
         .store(in: &cancellables)
-        
-//        viewModel.output.navAddressSelected.sink { [weak self] address in
-//            guard let self else { return }
-//            backAction?(address.replacingOccurrences(of: "서울 ", with: ""))
-//        }
-//        .store(in: &cancellables)
-        
+
         viewModel.output.navAddressSelected
                    .map { $0.replacingOccurrences(of: "서울 ", with: "") }
                    .sink { [weak self] address in
@@ -60,10 +52,7 @@ final class AddressCoordinator: Coordinator {
 
                        switch self.mode {
                        case .onboarding:
-//                           self.onAddressSelectedForOnboarding?(address)
                            self.backAction?(address)
-                           // ✅ 온보딩도 보통 pop 해서 돌아가는 게 맞음
-//                           self.navigationController.popViewController(animated: true)
 
                        case .changeRegion:
                            self.onAddressSelectedForRegionChange?(address)
@@ -72,7 +61,7 @@ final class AddressCoordinator: Coordinator {
                        }
                    }
                    .store(in: &cancellables)
-        
+
         navigationController.pushViewController(viewController, animated: true)
     }
 }

@@ -15,7 +15,7 @@ final class DefaultTabBarFlowFactory: TabBarFlowFactory {
     func makeTabFlow(
         for tab: MainTabBarController.Tab
     ) -> (
-        any Coordinator, UINavigationController
+        Coordinator, UINavigationController
     ) {
         switch tab {
         case .home:

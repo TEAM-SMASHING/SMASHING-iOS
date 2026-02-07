@@ -9,15 +9,9 @@ import UIKit
 
 final class MatchingManageCoordinator: Coordinator {
 
-    var childCoordinators: [Coordinator]
-    var navigationController: UINavigationController
+    var childCoordinators: [Coordinator] = []
 
-    init(navigationController: UINavigationController) {
-        self.childCoordinators = []
-        self.navigationController = navigationController
-    }
-
-    func start() {
+    override func start() {
         navigationController.pushViewController(MatchingManageViewController(), animated: true)
     }
 }

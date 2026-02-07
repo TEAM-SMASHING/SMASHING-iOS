@@ -9,21 +9,18 @@ import UIKit
 import Combine
 
 final class MatchingSearchCoordinator: Coordinator {
-    
-    var childCoordinators: [Coordinator]
-    var navigationController: UINavigationController
+
+    var childCoordinators: [Coordinator] = []
     private let userSportProvider: UserSportProviding
     var cancellables: Set<AnyCancellable> = []
     let userProfileService = UserProfileService()
-    
-    var navAction: (() -> Void)?
+
     init(navigationController: UINavigationController, userSportProvider: UserSportProviding) {
-        self.childCoordinators = []
-        self.navigationController = navigationController
         self.userSportProvider = userSportProvider
+        super.init(navigationController: navigationController)
     }
-    
-    func start() {
+
+    override func start() {
         let viewModel = MatchingSearchViewModel(service: MatchingSearchService())
         let matchingSearchVC = MatchingSearchViewController(viewModel: viewModel)
         matchingSearchVC.onSearchTapped = { [weak self] in
@@ -37,39 +34,33 @@ final class MatchingSearchCoordinator: Coordinator {
         }
         navigationController.pushViewController(matchingSearchVC, animated: true)
     }
-    
+
     private func showSearchResult() {
         let searchResultCoordinator = SearchResultCoordinator(
             navigationController: navigationController,
             userSportProvider: userSportProvider
         )
-        searchResultCoordinator.navToMatchManage
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                self?.navAction?()
-            }
-            .store(in: &cancellables)
         childCoordinators.append(searchResultCoordinator)
         searchResultCoordinator.start()
     }
-    
+
     private func showUserProfile(userId: String) {
         let viewModel = UserProfileViewModel(userId: userId, sport: userSportProvider.currentSport())
         let userProfileVC = UserProfileViewController(viewModel: viewModel)
         navigationController.pushViewController(userProfileVC, animated: true)
-        
-        viewModel.output.navToMatchManage.sink { [weak self] in
-            self?.navAction?()
+
+        viewModel.output.navToMatchManage.sink { _ in
+            NavigationManager.shared.navigateToMatchManageSentAndRefresh()
         }
         .store(in: &cancellables)
     }
-    
+
     private func showRegionSelection() {
         let addressCoordinator = AddressCoordinator(
             navigationController: navigationController,
             mode: .changeRegion
         )
-        
+
         childCoordinators.append(addressCoordinator)
 
         addressCoordinator.onAddressSelectedForRegionChange = { [weak self] address in
@@ -88,7 +79,7 @@ final class MatchingSearchCoordinator: Coordinator {
                 })
                 .store(in: &self.cancellables)
         }
-        
+
         addressCoordinator.start()
     }
 }

@@ -9,23 +9,17 @@ import Combine
 import UIKit
 
 final class MyReviewCoordinator: Coordinator {
-    var childCoordinators: [Coordinator]
-    var navigationController: UINavigationController
-    
+    var childCoordinators: [Coordinator] = []
+
     private var cancellables: Set<AnyCancellable> = []
-    
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-        self.childCoordinators = []
-    }
-    
-    func start() {
+
+    override func start() {
         let service = UserReviewService()
         let viewModel = MyReviewsViewModel(service: service)
         let viewController = MyReviewsViewController(viewModel: viewModel)
         viewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(viewController, animated: true)
-        
+
         viewModel.output
             .navBack
             .sink { [weak self] _ in

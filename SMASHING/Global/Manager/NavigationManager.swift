@@ -35,38 +35,30 @@ final class NavigationManager {
 
     // MARK: - Root Flow
 
-    /// 루트 네비게이션 스택을 완전히 교체합니다.
-    /// 로그인 -> 온보딩 -> 탭바 등 플로우 전환 시 사용합니다.
     func resetRootFlow(to viewControllers: [UIViewController], animated: Bool = false) {
-        rootNavigationController?.viewControllers.removeAll()
         rootNavigationController?.setViewControllers(viewControllers, animated: animated)
     }
 
-    /// 루트 네비게이션 바 표시 여부를 설정합니다.
     func setRootNavigationBarHidden(_ hidden: Bool, animated: Bool = false) {
         rootNavigationController?.setNavigationBarHidden(hidden, animated: animated)
     }
 
     // MARK: - Tab Navigation
 
-    /// 특정 탭으로 전환합니다.
     func switchTab(to tab: MainTabBarController.Tab) {
         tabBarController?.selectedIndex = tab.rawValue
     }
 
-    /// 현재 선택된 탭의 UINavigationController를 반환합니다.
     var currentTabNavigationController: UINavigationController? {
         tabBarController?.selectedViewController as? UINavigationController
     }
 
-    /// 특정 탭의 UINavigationController를 반환합니다.
     func navigationController(for tab: MainTabBarController.Tab) -> UINavigationController? {
         tabBarController?.viewControllers?[tab.rawValue] as? UINavigationController
     }
 
     // MARK: - Push
 
-    /// 현재 활성 탭(또는 지정된 탭)의 네비게이션 스택에 ViewController를 push합니다.
     func push(
         _ viewController: UIViewController,
         on tab: MainTabBarController.Tab? = nil,
@@ -78,29 +70,24 @@ final class NavigationManager {
         nav?.pushViewController(viewController, animated: animated)
     }
 
-    /// 루트 네비게이션 컨트롤러에 직접 push합니다.
-    /// 탭바가 아직 설정되지 않은 로그인/온보딩 플로우에서 사용합니다.
     func pushToRoot(_ viewController: UIViewController, animated: Bool = true) {
         rootNavigationController?.pushViewController(viewController, animated: animated)
     }
 
     // MARK: - Pop
 
-    /// 현재 활성 탭(또는 지정된 탭)의 네비게이션 스택에서 pop합니다.
     @discardableResult
     func pop(on tab: MainTabBarController.Tab? = nil, animated: Bool = true) -> UIViewController? {
         let nav = resolveNavigationController(for: tab)
         return nav?.popViewController(animated: animated)
     }
 
-    /// 현재 활성 탭(또는 지정된 탭)의 네비게이션 스택을 루트까지 pop합니다.
     @discardableResult
     func popToRoot(on tab: MainTabBarController.Tab? = nil, animated: Bool = true) -> [UIViewController]? {
         let nav = resolveNavigationController(for: tab)
         return nav?.popToRootViewController(animated: animated)
     }
 
-    /// 루트 네비게이션 컨트롤러에서 pop합니다.
     @discardableResult
     func popFromRoot(animated: Bool = true) -> UIViewController? {
         rootNavigationController?.popViewController(animated: animated)
@@ -108,7 +95,6 @@ final class NavigationManager {
 
     // MARK: - Modal Presentation
 
-    /// 현재 활성 탭(또는 지정된 탭)의 최상위 ViewController에서 모달을 present합니다.
     func present(
         _ viewController: UIViewController,
         on tab: MainTabBarController.Tab? = nil,
@@ -120,7 +106,6 @@ final class NavigationManager {
         presenter?.present(viewController, animated: animated, completion: completion)
     }
 
-    /// 현재 활성 탭(또는 지정된 탭)의 최상위 ViewController에서 모달을 dismiss합니다.
     func dismiss(
         on tab: MainTabBarController.Tab? = nil,
         animated: Bool = true,
@@ -147,11 +132,10 @@ final class NavigationManager {
         }
     }
 
-    /// 매칭 관리 탭으로 이동하고 특정 페이지를 표시합니다.
     func navigateToMatchManage(page: MatchManagePage) {
         switchTab(to: .matchingManage)
 
-        DispatchQueue.main.async { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let nav = self?.navigationController(for: .matchingManage),
                   let matchingManageVC = nav.viewControllers.first as? MatchingManageViewController else {
                 return
@@ -160,27 +144,25 @@ final class NavigationManager {
         }
     }
 
-    /// 매칭 관리 탭의 보낸 요청으로 이동하고, 목록을 새로고침합니다.
     func navigateToMatchManageSentAndRefresh() {
-        navigateToMatchManage(page: .sent)
+        switchTab(to: .matchingManage)
 
-        DispatchQueue.main.async { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let nav = self?.navigationController(for: .matchingManage),
                   let matchingManageVC = nav.viewControllers.first as? MatchingManageViewController else {
                 return
             }
+            matchingManageVC.moveToPage(tab: MatchManagePage.sent.headerTab)
             matchingManageVC.refreshSentRequests()
         }
     }
 
-    /// 매칭 탐색 탭으로 이동합니다.
     func navigateToMatchingSearch() {
         switchTab(to: .matchingSearch)
     }
 
     // MARK: - Toast
 
-    /// 현재 활성 화면에 Toast 메시지를 표시합니다.
     func showToast(type: SseEventType) {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -196,7 +178,6 @@ final class NavigationManager {
 
     // MARK: - NotificationAction Handling
 
-    /// 기존 Coordinator에서 사용하던 NotificationAction을 처리합니다.
     func handleNotificationAction(_ action: NotificationAction) {
         switch action {
         case .navConfirmedMatchManage:
@@ -212,7 +193,6 @@ final class NavigationManager {
 
     // MARK: - SSE Event Handling
 
-    /// SSE 이벤트를 구독하고 Toast를 표시합니다.
     func subscribeToSSEEvents() {
         SSEService.shared.eventPublisher
             .sink { [weak self] payload in
@@ -246,12 +226,41 @@ final class NavigationManager {
 
     // MARK: - Utility
 
-    /// 현재 최상위에 표시된 UIViewController를 반환합니다.
     var topViewController: UIViewController? {
         if let nav = currentTabNavigationController {
             return nav.topViewController
         }
         return rootNavigationController?.topViewController
+    }
+
+    // MARK: - Tab Bar Setup
+
+    func setupTabBar() {
+        let tabBar = MainTabBarController()
+        setTabBarController(tabBar)
+        subscribeToSSEEvents()
+
+        var controllers: [UIViewController] = []
+        for tab in MainTabBarController.Tab.allCases {
+            let nav = UINavigationController()
+            let rootVC = makeRootViewController(for: tab)
+            nav.pushViewController(rootVC, animated: false)
+            MainTabBarController.setupTabBarItem(for: nav, with: tab)
+            controllers.append(nav)
+        }
+
+        tabBar.viewControllers = controllers
+        setRootNavigationBarHidden(true)
+        pushToRoot(tabBar, animated: false)
+    }
+
+    private func makeRootViewController(for tab: MainTabBarController.Tab) -> UIViewController {
+        switch tab {
+        case .home:           return HomeViewController()
+        case .matchingSearch: return MatchingSearchViewController()
+        case .matchingManage: return MatchingManageViewController()
+        case .profile:        return MyProfileViewController()
+        }
     }
 
     // MARK: - Private

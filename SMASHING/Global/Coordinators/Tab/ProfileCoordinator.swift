@@ -12,52 +12,46 @@ import Then
 
 final class ProfileCoordinator: Coordinator {
 
-    var childCoordinators: [Coordinator]
-    var navigationController: UINavigationController
-    
+    var childCoordinators: [Coordinator] = []
+
     var cancellables: Set<AnyCancellable> = []
 
-    init(navigationController: UINavigationController) {
-        self.childCoordinators = []
-        self.navigationController = navigationController
-    }
-
-    func start() {
+    override func start() {
         let profileService = UserProfileService()
         let reviewService = UserReviewService()
         let viewModel = MyProfileViewModel(userProfileService: profileService, userReviewService: reviewService)
         let viewController = MyProfileViewController(viewModel: viewModel)
         navigationController.pushViewController(viewController, animated: true)
-        
+
         viewModel.output.navigateToAddSports.sink { [weak self] in
             self?.showAddSports()
         }
         .store(in: &cancellables)
-        
-        
+
+
         viewModel.output.navToSeeAllReviews.sink { [weak self] in
             self?.showAllReviews()
         }
         .store(in: &cancellables)
-        
+
         viewModel.output.navToTierExplanation.sink { [weak self] in
             self?.TierExplanation()
         }
         .store(in: &cancellables)
     }
-    
+
     func showAddSports() {
         let addSportsVC = AddSportsViewController()
         addSportsVC.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(addSportsVC, animated: true)
     }
-    
+
     func showAllReviews() {
         let myReviewCoordinator = MyReviewCoordinator(navigationController: navigationController)
         childCoordinators.append(myReviewCoordinator)
         myReviewCoordinator.start()
     }
-    
+
     func TierExplanation() {
         let tierViewController = TierExplanationViewController(sports: .badminton, oreTier: .bronze)
         tierViewController.dismissAction = { [weak self] in
