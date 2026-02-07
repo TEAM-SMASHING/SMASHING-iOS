@@ -8,9 +8,8 @@
 import Combine
 import UIKit
 
-class Coordinator {
+final class AppCoordinator {
     var navigationController: UINavigationController
-    private var cancellables = Set<AnyCancellable>()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController

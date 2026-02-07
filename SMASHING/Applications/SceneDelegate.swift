@@ -12,7 +12,7 @@ import KakaoSDKAuth
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var appCoordinator: Coordinator?
+    var appCoordinator: AppCoordinator?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let navigationController = UINavigationController()
         NavigationManager.shared.setRootNavigationController(navigationController)
-        appCoordinator = Coordinator(navigationController: navigationController)
+        appCoordinator = AppCoordinator(navigationController: navigationController)
         appCoordinator?.start()
 
         window = UIWindow(windowScene: windowScene)
