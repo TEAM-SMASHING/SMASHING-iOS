@@ -96,7 +96,7 @@ final class MatchingManageViewController: BaseViewController {
 
     private func setupCallbacks() {
         self.matchingManageView.onBackButtonTapped = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
+            NavigationManager.shared.pop()
         }
     }
     

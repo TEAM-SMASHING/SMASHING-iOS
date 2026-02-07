@@ -51,23 +51,29 @@ enum OnboardingType: Int, CaseIterable {
 
 final class OnboardingViewController: BaseViewController {
     
-    // MARK: - Properties
+    // MARK: - Navigation Closures
     
     var backAction: (() -> Void)?
+    var onComplete: (() -> Void)?
 
     // MARK: - Properties
 
     private let containerView = OnboardingContainerView()
     private var currentStep: OnboardingType = .nickname
 
-    private var viewModel: any OnboardingViewModelProtocol
+    private var viewModel: OnboardingViewModel
     private var input = PassthroughSubject<OnboardingViewModel.Input, Never>()
     private var cancellables: Set<AnyCancellable> = []
 
-    // MARK: - Life Cycle
+    // MARK: - Init
+    
+    init() {
+        self.viewModel = OnboardingViewModel()
+        super.init(nibName: nil, bundle: nil)
+    }
 
     init(viewModel: any OnboardingViewModelProtocol) {
-        self.viewModel = viewModel
+        self.viewModel = viewModel as! OnboardingViewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -75,6 +81,8 @@ final class OnboardingViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         self.view = containerView
         setupActions()
@@ -103,6 +111,20 @@ final class OnboardingViewController: BaseViewController {
             .sink { [weak self] bool in
                 guard let self else { return }
                 containerView.nextButton.isEnabled = bool
+            }
+            .store(in: &cancellables)
+        
+        output.navAddressPushEvent
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.pushAddressFlow()
+            }
+            .store(in: &cancellables)
+
+        output.navPushToOnboardingCompletionEvent
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.pushToOnboardingCompletion()
             }
             .store(in: &cancellables)
     }
@@ -176,13 +198,32 @@ final class OnboardingViewController: BaseViewController {
         print("온보딩 프로세스 완료")
     }
     
+    // MARK: - Navigation
+    
+    private func pushAddressFlow() {
+        let addressVC = AddressSearchViewController(mode: .onboarding)
+        addressVC.onAddressSelected = { [weak self] address in
+            self?.updateSelectedAddress(address)
+            NavigationManager.shared.popFromRoot()
+        }
+        NavigationManager.shared.pushToRoot(addressVC)
+    }
+
+    private func pushToOnboardingCompletion() {
+        let completionVC = OnboardingCompletionViewController()
+        completionVC.nextAction = { [weak self] in
+            self?.onComplete?()
+        }
+        NavigationManager.shared.pushToRoot(completionVC)
+    }
+
     func updateSelectedAddress(_ address: String) {
         self.input.send(.addressSelected(address))
         if currentStep == .address {
             updateAddressUI(address)
         }
     }
-    
+
     private func updateAddressUI(_ address: String) {
         if let areaVC = children.first(where: { $0 is AreaSelectionViewController }) as? AreaSelectionViewController {
             (areaVC.view as? AreaSelectionView)?.updateAddress(address: address)
