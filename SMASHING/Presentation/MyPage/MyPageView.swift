@@ -13,8 +13,12 @@ import SnapKit
 final class MyPageView: BaseUIView {
     
     // MARK: - Properties
-    
+
     var leftButtonAction: (() -> Void)?
+    var logoutAction: (() -> Void)?
+    var signoutAction: (() -> Void)?
+    var privacyPolicyAction: (() -> Void)?
+    var termsOfServiceAction: (() -> Void)?
     
     // MARK: - UI Components
     
@@ -65,11 +69,16 @@ final class MyPageView: BaseUIView {
         $0.textColor = .Text.tertiary
     }
     
-    private lazy var logoutButton = button(title: "로그아웃")
-    private lazy var signoutButton = button(title: "계정 탈퇴")
+    private lazy var logoutButton = button(title: "로그아웃").then {
+        $0.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
+    }
+    private lazy var signoutButton = button(title: "계정 탈퇴").then {
+        $0.addTarget(self, action: #selector(signoutButtonTapped), for: .touchUpInside)
+    }
     private lazy var signoutArrowButton = UIButton().then {
         $0.contentMode = .scaleAspectFit
         $0.setImage( .icArrowNext , for: .normal)
+        $0.addTarget(self, action: #selector(signoutButtonTapped), for: .touchUpInside)
     }
     
     private let divider = UIView().then {
@@ -86,8 +95,12 @@ final class MyPageView: BaseUIView {
         $0.textColor = .Text.tertiary
     }
     
-    private lazy var privacyPolicyButton = button(title: "개인정보 처리 방침")
-    private lazy var termsOfServiceButton = button(title: "이용약관")
+    private lazy var privacyPolicyButton = button(title: "개인정보 처리 방침").then {
+        $0.addTarget(self, action: #selector(privacyPolicyButtonTapped), for: .touchUpInside)
+    }
+    private lazy var termsOfServiceButton = button(title: "이용약관").then {
+        $0.addTarget(self, action: #selector(termsOfServiceButtonTapped), for: .touchUpInside)
+    }
     private let versionLabel = UILabel().then {
         $0.text = "버전 정보"
         $0.font = .pretendard(.textSmM)
@@ -114,7 +127,11 @@ final class MyPageView: BaseUIView {
                                                signoutButton,
                                                signoutArrowButton)
         addSubviews(divider, policyContainerView)
-        policyContainerView.addSubviews(policyAndInformationLabel, privacyPolicyButton, termsOfServiceButton, versionLabel, versionInfoLabel)
+        policyContainerView.addSubviews(policyAndInformationLabel,
+                                        privacyPolicyButton,
+                                        termsOfServiceButton,
+                                        versionLabel,
+                                        versionInfoLabel)
     }
     
     override func setLayout() {
@@ -214,6 +231,24 @@ final class MyPageView: BaseUIView {
         }
     }
     
+    // MARK: - Actions
+
+    @objc private func logoutButtonTapped() {
+        logoutAction?()
+    }
+
+    @objc private func signoutButtonTapped() {
+        signoutAction?()
+    }
+
+    @objc private func privacyPolicyButtonTapped() {
+        privacyPolicyAction?()
+    }
+
+    @objc private func termsOfServiceButtonTapped() {
+        termsOfServiceAction?()
+    }
+
     private func button(title: String) -> UIButton {
         return UIButton().then {
             $0.titleLabel?.font = .pretendard(.textSmM)
