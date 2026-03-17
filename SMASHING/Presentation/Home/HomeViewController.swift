@@ -37,39 +37,54 @@ final class HomeViewController: BaseViewController {
     private let viewModel: HomeViewModel
     private let input = PassthroughSubject<HomeViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
-    private let myProfileViewModel: any MyProfileViewModelProtocol
+    private let myProfileViewModel: MyProfileViewModel
     private let myProfileInput = PassthroughSubject<MyProfileViewModel.Input, Never>()
     private var latestMyProfile: MyProfileListResponse?
-    
+
+    private let userProfileService = UserProfileService()
+
     private var recentMatching: [MatchingConfirmedGameDTO] = []
     private var recommendedUsers: [RecommendedUserDTO] = []
     private var rankings: [RankingUserDTO] = []
     private var myNickname: String {
         return KeychainService.get(key: Environment.nicknameKey) ?? ""
     }
-    
+
     private var myUserId: String {
         return KeychainService.get(key: Environment.userIdKey) ?? ""
     }
-    
+
     private var myRegion: String {
         return UserDefaults.standard.string(forKey: UserDefaultKey.region) ?? ""
     }
-    
+
     private var mySportCode: String {
         return KeychainService.get(key: Environment.sportsCodeKeyPrefix) ?? ""
     }
-    
-    init(viewModel: HomeViewModel, myProfileViewModel: any MyProfileViewModelProtocol) {
-        self.viewModel = viewModel
-        self.myProfileViewModel = myProfileViewModel
+
+    // MARK: - Init
+
+    init() {
+        let regionService = RegionService()
+        let matchingConfirmedService = MatchingConfirmedService()
+        self.viewModel = HomeViewModel(regionService: regionService, matchingConfirmedService: matchingConfirmedService)
+        self.myProfileViewModel = MyProfileViewModel(
+            userProfileService: UserProfileService(),
+            userReviewService: UserReviewService()
+        )
         super.init(nibName: nil, bundle: nil)
     }
-    
+
+    init(viewModel: HomeViewModel, myProfileViewModel: any MyProfileViewModelProtocol) {
+        self.viewModel = viewModel
+        self.myProfileViewModel = myProfileViewModel as! MyProfileViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         rootView.backgroundColor = .Background.canvas
@@ -165,6 +180,63 @@ final class HomeViewController: BaseViewController {
             }
             .store(in: &cancellables)
 
+        // MARK: - Navigation Bindings (from HomeCoordinator)
+
+        output.navToRegionSelection
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showRegionSelection()
+            }
+            .store(in: &cancellables)
+
+        output.navToMatchingManageTab
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                NavigationManager.shared.handleNotificationAction(.navRequestedMatchManage)
+            }
+            .store(in: &cancellables)
+
+        output.navToMatchResultCreate
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] gameData in
+                self?.showMatchResultCreate(with: gameData)
+            }
+            .store(in: &cancellables)
+
+        output.navToRanking
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showRanking()
+            }
+            .store(in: &cancellables)
+
+        output.navToSelectedUserProfile
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] userId in
+                self?.showUserProfile(userId: userId)
+            }
+            .store(in: &cancellables)
+
+        output.navToSearchUser
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                NavigationManager.shared.handleNotificationAction(.navSearchUser)
+            }
+            .store(in: &cancellables)
+
+        output.navToNotification
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showNotificationFlow()
+            }
+            .store(in: &cancellables)
+
+        output.navToAddSports
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showAddSports()
+            }
+            .store(in: &cancellables)
 
         let myProfileOutput = myProfileViewModel.transform(input: myProfileInput.eraseToAnyPublisher())
         myProfileOutput.myProfileFetched
@@ -186,8 +258,90 @@ final class HomeViewController: BaseViewController {
             myUserId: myUserId
         )
         let vc = MatchResultConfirmViewController(viewModel: viewModel)
-        vc.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
+        NavigationManager.shared.push(vc, hidesBottomBar: true)
+    }
+    
+    // MARK: - Navigation Methods
+
+    private func showMatchResultCreate(with gameData: MatchingConfirmedGameDTO) {
+        let vm = MatchResultCreateViewModel(gameData: gameData, myUserId: myUserId, myNickname: myNickname)
+        let vc = MatchResultCreateViewController(viewModel: vm)
+        NavigationManager.shared.push(vc, hidesBottomBar: true)
+    }
+
+    private func showRanking() {
+        let regionService = RegionService()
+        let viewModel = RankingViewModel(regionService: regionService)
+        let rankingVC = RankingViewController(viewModel: viewModel)
+        NavigationManager.shared.push(rankingVC, hidesBottomBar: true)
+    }
+
+    private func showNotificationFlow() {
+        let service = NotificationService()
+        let viewModel = NotificationViewModel(service: service)
+        let vc = NotificationListViewController(viewModel: viewModel)
+
+        viewModel.output.navConfirmedMatchManage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                NavigationManager.shared.pop()
+                NavigationManager.shared.handleNotificationAction(.navConfirmedMatchManage)
+            }
+            .store(in: &cancellables)
+
+        viewModel.output.navRequestedMatchManage
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                NavigationManager.shared.pop()
+                NavigationManager.shared.handleNotificationAction(.navRequestedMatchManage)
+            }
+            .store(in: &cancellables)
+
+        NavigationManager.shared.push(vc, hidesBottomBar: true)
+    }
+
+    private func showUserProfile(userId: String) {
+        let viewModel = UserProfileViewModel(userId: userId, sport: currentUserSport())
+        let userProfileVC = UserProfileViewController(viewModel: viewModel)
+
+        viewModel.output.navToMatchManage
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                NavigationManager.shared.navigateToMatchManageSentAndRefresh()
+            }
+            .store(in: &cancellables)
+
+        NavigationManager.shared.push(userProfileVC)
+    }
+
+    private func currentUserSport() -> Sports {
+        guard let userId = KeychainService.get(key: Environment.userIdKey), !userId.isEmpty else {
+            return .badminton
+        }
+        let key = "\(Environment.sportsCodeKeyPrefix).\(userId)"
+        let rawValue = KeychainService.get(key: key)
+        guard let rawValue, let sport = Sports(rawValue: rawValue) else {
+            return .badminton
+        }
+        return sport
+    }
+
+    private func showRegionSelection() {
+        let addressVC = AddressSearchViewController(mode: .changeRegion)
+        addressVC.onAddressSelected = { [weak self] address in
+            guard let self else { return }
+            UserDefaults.standard.set(address, forKey: UserDefaultKey.region)
+            self.userProfileService.updateRegion(region: address)
+                .receive(on: DispatchQueue.main)
+                .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+                .store(in: &self.cancellables)
+        }
+        NavigationManager.shared.push(addressVC, hidesBottomBar: true)
+    }
+
+    private func showAddSports() {
+        let addSportsVC = AddSportsViewController()
+        NavigationManager.shared.push(addSportsVC, hidesBottomBar: true)
     }
 }
 
@@ -274,7 +428,7 @@ extension HomeViewController: UICollectionViewDataSource {
                 cell.configure(with: user)
                 return cell
             }
-            
+
         case .ranking:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RankingCell.reuseIdentifier, for: indexPath) as? RankingCell else { return UICollectionViewCell() }
             let ranker = rankings[indexPath.item]
@@ -282,7 +436,7 @@ extension HomeViewController: UICollectionViewDataSource {
             return cell
         }
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard kind == UICollectionView.elementKindSectionHeader else {
             return UICollectionReusableView()
@@ -352,7 +506,6 @@ extension HomeViewController {
             }
 
             let frameInRoot = self.homeView.convert(attr.frame, to: self.rootView)
-//            let topY = frameInRoot.minY - 32
             let topY = max(0, frameInRoot.minY - view.safeAreaInsets.top)
 
             if self.dropDownView == nil {
@@ -470,7 +623,7 @@ extension HomeViewController {
         print("\(myUserId)")
         print("\(mySportCode)")
     }
-    
+
     private func showMore() {
         input.send(.rankingSeeAllTapped)
     }

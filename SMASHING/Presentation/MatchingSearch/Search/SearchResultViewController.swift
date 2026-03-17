@@ -15,7 +15,7 @@ final class SearchResultViewController: BaseViewController {
 
     // MARK: - Properties
 
-    private let viewModel: SearchResultViewModelProtocol
+    private let viewModel: SearchResultViewModel
     private let inputSubject = PassthroughSubject<SearchResultViewModel.Input, Never>()
     private var cancellables = Set<AnyCancellable>()
 
@@ -25,8 +25,13 @@ final class SearchResultViewController: BaseViewController {
 
     // MARK: - Initialize
 
-    init(viewModel: SearchResultViewModelProtocol = SearchResultViewModel()) {
-        self.viewModel = viewModel
+    init() {
+        self.viewModel = SearchResultViewModel()
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    init(viewModel: SearchResultViewModelProtocol) {
+        self.viewModel = viewModel as! SearchResultViewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -57,7 +62,7 @@ final class SearchResultViewController: BaseViewController {
 
     private func setupActions() {
         searchResultView.onBackButtonTapped = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
+            NavigationManager.shared.pop()
         }
     }
 
@@ -93,6 +98,31 @@ final class SearchResultViewController: BaseViewController {
                 self?.inputSubject.send(.searchNickname(query))
             }
             .store(in: &cancellables)
+
+        // Navigation binding
+        viewModel.navigationEvent.userSelected
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] userId in
+                self?.showUserProfile(userId: userId)
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - Navigation Methods
+
+    private func showUserProfile(userId: String) {
+        let sport = KeychainUserSportProvider().currentSport()
+        let viewModel = UserProfileViewModel(userId: userId, sport: sport)
+        let userProfileVC = UserProfileViewController(viewModel: viewModel)
+
+        viewModel.output.navToMatchManage
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                NavigationManager.shared.navigateToMatchManageSentAndRefresh()
+            }
+            .store(in: &self.cancellables)
+
+        NavigationManager.shared.push(userProfileVC)
     }
 
     // MARK: - Helper Methods
