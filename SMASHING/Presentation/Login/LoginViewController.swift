@@ -31,7 +31,24 @@ final class LoginViewController: BaseViewController {
         
         mainView.kakaoLoginAction = { [weak self] in
             guard let self else { return }
-            input.send(.loginButtonTapped)
+            // input.send(.loginButtonTapped)
+            checkAutoUpdate()
         }
+    }
+    
+    private func checkAutoUpdate() {
+        let popup = CheckPopupViewController(
+            title: "최신 버전 업데이트",
+            message: "최신 버전 업데이트를 위해 스토어로 이동합니다.",
+            confirmTitle: "확인"
+        )
+
+        popup.onConfirmTapped = { [weak self] in
+            // Input/Output 패턴 추가
+        }
+        
+        print("check auto update")
+
+        present(popup, animated: true)
     }
 }
