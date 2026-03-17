@@ -31,8 +31,7 @@ final class LoginViewController: BaseViewController {
         
         mainView.kakaoLoginAction = { [weak self] in
             guard let self else { return }
-            // input.send(.loginButtonTapped)
-            checkAutoUpdate()
+            input.send(.loginButtonTapped)
         }
     }
     
