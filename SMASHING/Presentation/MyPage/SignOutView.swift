@@ -13,8 +13,10 @@ import SnapKit
 final class SignOutView: BaseUIView {
     
     // MARK: - Properties
-    
+
     var leftButtonAction: (() -> Void)?
+    var checkboxAction: (() -> Void)?
+    var signoutAction: (() -> Void)?
     private let deletedInfos = ["프로필 및 계정 정보", "매칭 및 경기 기록"]
     
     // MARK: - UI Components
@@ -69,7 +71,9 @@ final class SignOutView: BaseUIView {
             notificationCell,
             checkboxButton,
             acceptLabel,
-            signOutButton,)
+            signOutButton)
+        checkboxButton.addTarget(self, action: #selector(checkboxTapped), for: .touchUpInside)
+        signOutButton.addTarget(self, action: #selector(signoutButtonTapped), for: .touchUpInside)
     }
     
     override func setLayout() {
@@ -130,6 +134,26 @@ final class SignOutView: BaseUIView {
             make.width.equalToSuperview().inset(16)
         }
     }
+    
+    // MARK: - Public
+    
+    func configure(isSignOutEnabled: Bool) {
+        signOutButton.isEnabled = isSignOutEnabled
+    }
+    
+    // MARK: - Actions
+    
+    @objc private func checkboxTapped() {
+        let isChecked = checkboxButton.image(for: .normal) == UIImage(resource: .icCheckbox)
+        checkboxButton.setImage(isChecked ? .icCheckboxEmpty : .icCheckbox, for: .normal)
+        checkboxAction?()
+    }
+    
+    @objc private func signoutButtonTapped() {
+        signoutAction?()
+    }
+    
+    // MARK: - Private
     
     private func deletedInfoCell(text: String) -> UIView {
         let container = UIView().then {
