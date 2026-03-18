@@ -42,11 +42,6 @@ final class CheckPopupViewController: DimmedViewController {
     
     // MARK: - Properties
     
-    private lazy var tapGesture = UITapGestureRecognizer(
-        target: self,
-        action: #selector(handleBackgroundTap)
-    )
-    
     var onCancelTapped: (() -> Void)?
     lazy var onConfirmTapped: (() -> Void)? = {
         self.dismiss(animated: true)
@@ -69,7 +64,6 @@ final class CheckPopupViewController: DimmedViewController {
         super.init()
         setUI()
         setLayout()
-        view.addGestureRecognizer(tapGesture)
     }
     
     required init?(coder: NSCoder) {
@@ -113,15 +107,6 @@ final class CheckPopupViewController: DimmedViewController {
     // MARK: - Actions
     
     @objc private func confirmButtonDidTap() {
-        dismiss(animated: true) { [weak self] in
-            self?.onConfirmTapped?()
-        }
-    }
-    
-    @objc private func handleBackgroundTap(_ gesture: UITapGestureRecognizer) {
-        let location = gesture.location(in: view)
-        if !containerView.frame.contains(location) {
-            dismiss(animated: true)
-        }
+        // 앱 스토어로 이동
     }
 }
