@@ -25,11 +25,11 @@ final class SignOutViewController: BaseViewController {
         signOutView.leftButtonAction = {
             NavigationManager.shared.pop()
         }
-
+        
         signOutView.checkboxAction = { [weak self] in
             self?.inputSubject.send(.checkBoxTapped)
         }
-
+        
         signOutView.signoutAction = { [weak self] in
             self?.inputSubject.send(.signoutTapped)
         }
