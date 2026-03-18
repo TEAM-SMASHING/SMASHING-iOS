@@ -34,6 +34,7 @@ final class MyPageViewController: BaseViewController {
 
         mainView.signoutAction = { [weak self] in
             guard let self else { return }
+            NavigationManager.shared.push(SignOutViewController())
         }
 
         mainView.privacyPolicyAction = { [weak self] in

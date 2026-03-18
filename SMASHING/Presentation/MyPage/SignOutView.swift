@@ -41,7 +41,7 @@ final class SignOutView: BaseUIView {
     private lazy var chatingCell = deletedInfoCell(text: "채팅 내역")
     private lazy var notificationCell = deletedInfoCell(text: "알림 및 차단 / 신고 내역")
     
-    private let checkboxButton = UIButton().then {
+    let checkboxButton = UIButton().then {
         $0.setImage(.icCheckboxEmpty, for: .normal)
     }
     
