@@ -20,6 +20,16 @@ final class MyPageViewController: BaseViewController {
 
         mainView.logoutAction = { [weak self] in
             guard let self else { return }
+            let popup = ConfirmPopupViewController(
+                title: "로그아웃",
+                message: "정말 로그아웃 하시겠습니까?",
+                cancelTitle: "취소",
+                confirmTitle: "로그아웃"
+            )
+            popup.onConfirmTapped = { [weak self] in
+                // 로그아웃 API 연동
+            }
+            present(popup, animated: true)
         }
 
         mainView.signoutAction = { [weak self] in
