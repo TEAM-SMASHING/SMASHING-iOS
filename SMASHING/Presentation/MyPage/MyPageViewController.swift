@@ -39,10 +39,18 @@ final class MyPageViewController: BaseViewController {
 
         mainView.privacyPolicyAction = { [weak self] in
             guard let self else { return }
+            present(PrivacyWebVC(), animated: true)
         }
 
         mainView.termsOfServiceAction = { [weak self] in
             guard let self else { return }
+            present(TermsOfUseWebVC(), animated: true)
         }
     }
+}
+
+import SwiftUI
+@available(iOS 18.0, *)
+#Preview {
+    MyPageViewController()
 }
