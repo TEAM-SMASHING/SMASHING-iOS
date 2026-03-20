@@ -30,8 +30,8 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
         let isLoading = PassthroughSubject<Bool, Never>()
         let errorMessage = PassthroughSubject<String, Never>()
         let challengeRequestCompleted = PassthroughSubject<Void, Never>()
-        let navToMatchManage = PassthroughSubject<Void, Never>()
         let refreshSentRequests = PassthroughSubject<Void, Never>()
+        let navToMatchManage = PassthroughSubject<Void, Never>()
     }
 
     // MARK: - Properties
