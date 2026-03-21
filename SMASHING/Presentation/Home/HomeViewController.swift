@@ -452,7 +452,8 @@ extension HomeViewController: UICollectionViewDataSource {
                 return UICollectionReusableView()
             }
             
-            header.configure(title: "\(myNickname)님,", subTitle: "곧 다가오는 매칭이 있어요")
+            let subTitle = recentMatching.isEmpty ? "새로운 매칭을 잡아볼까요?" : "곧 다가오는 매칭이 있어요"
+            header.configure(title: "\(myNickname)님,", subTitle: subTitle)
             header.onMoreButtonTapped = { [weak self] in
                 self?.input.send(.matchingSeeAllTapped)
             }
