@@ -508,6 +508,7 @@ extension HomeViewController {
 
             let frameInRoot = self.homeView.convert(attr.frame, to: self.rootView)
             let topY = max(0, frameInRoot.minY - view.safeAreaInsets.top)
+            let regionTopOffset = frameInRoot.minY + 13 - topY
 
             if self.dropDownView == nil {
                 let dd = HomeDropDownView()
@@ -554,11 +555,13 @@ extension HomeViewController {
                     $0.top.equalToSuperview().offset(topY)
                     $0.height.equalTo(420)
                 }
+                dd.updateRegionTopOffset(regionTopOffset)
 
             } else {
                 self.dropDownView?.snp.updateConstraints {
                     $0.top.equalToSuperview().offset(topY)
                 }
+                self.dropDownView?.updateRegionTopOffset(regionTopOffset)
             }
 
             self.rootView.layoutIfNeeded()
