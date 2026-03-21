@@ -22,6 +22,9 @@ final class HomeViewController: BaseViewController {
     private let dimView = UIView()
     private var isDropDownShown = false
     
+    private var tooltipView: TooltipView?
+    private var tooltipDismissTap: UITapGestureRecognizer?
+    
     override func loadView() {
         view = rootView
     }
@@ -454,8 +457,8 @@ extension HomeViewController: UICollectionViewDataSource {
                 return UICollectionReusableView()
             }
             header.configure(title: "\(myNickname)님을 위한 추천", showInfoButton: true)
-            header.onInfoButtonTapped = { [weak self ] in
-                self?.showRecommendedUserInfo()
+            header.onInfoButtonTapped = { [weak self ] button in
+                self?.toggleTooltip(from: button)
             }
             return header
         case .ranking:
@@ -572,6 +575,10 @@ extension HomeViewController {
 
 extension HomeViewController: UICollectionViewDelegate {
     
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if tooltipView != nil { hideTooltip() }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let sectionType = HomeViewLayout(rawValue: indexPath.section) else { return }
         switch sectionType {
@@ -589,14 +596,59 @@ extension HomeViewController: UICollectionViewDelegate {
 
 // MARK: Header Button
 extension HomeViewController {
-    private func showRecommendedUserInfo() {
-        print("유저 추천 인포 탭")
-        print("\(myRegion)")
-        print("\(myNickname)")
-        print("\(myUserId)")
-        print("\(mySportCode)")
+    private func toggleTooltip(from sourceView: UIView) {
+        tooltipView != nil ? hideTooltip() : showTooltip(from: sourceView)
     }
-    
+
+    private func showTooltip(from sourceView: UIView) {
+        let buttonFrame = sourceView.convert(sourceView.bounds, to: rootView)
+
+        let tooltip = TooltipView(message: "내 동네에서 LP ± 200점 범위 안의 5명의 유저가 랜덤으로 추천돼요!")
+        let tooltipWidth = tooltip.intrinsicContentSize.width
+        let tooltipLeading = rootView.bounds.width - 16 - tooltipWidth
+        tooltip.arrowTipX = buttonFrame.midX - tooltipLeading
+        tooltipView = tooltip
+
+        rootView.addSubview(tooltip)
+        tooltip.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(buttonFrame.maxY + 4)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.width.equalTo(tooltipWidth)
+        }
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTooltipOutsideTap(_:)))
+        tap.cancelsTouchesInView = false
+        rootView.addGestureRecognizer(tap)
+        tooltipDismissTap = tap
+
+        tooltip.alpha = 0
+        tooltip.transform = CGAffineTransform(translationX: 0, y: -4)
+        UIView.animate(withDuration: 0.18, delay: 0, options: .curveEaseOut) {
+            tooltip.alpha = 1
+            tooltip.transform = .identity
+        }
+    }
+
+    private func hideTooltip() {
+        if let tap = tooltipDismissTap {
+            rootView.removeGestureRecognizer(tap)
+            tooltipDismissTap = nil
+        }
+        UIView.animate(withDuration: 0.15) {
+            self.tooltipView?.alpha = 0
+        } completion: { _ in
+            self.tooltipView?.removeFromSuperview()
+            self.tooltipView = nil
+        }
+    }
+
+    @objc private func handleTooltipOutsideTap(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: rootView)
+        guard let tooltip = tooltipView else { return }
+        if !tooltip.frame.contains(location) {
+            hideTooltip()
+        }
+    }
     private func showMore() {
         input.send(.rankingSeeAllTapped)
     }
