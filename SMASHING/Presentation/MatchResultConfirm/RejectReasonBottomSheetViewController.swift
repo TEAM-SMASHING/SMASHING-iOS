@@ -13,19 +13,13 @@ import Then
 // MARK: - RejectReason
 
 enum RejectReason: String, CaseIterable {
-    case wrongScore = "SCORE_MISMATCH"
     case wrongWinner = "WIN_LOSE_REVERSED"
-    case wrongBoth = "SCORE_AND_WIN_LOSE_MISMATCH"
     case notPlayed = "GAME_NOT_PLAYED_YET"
     
     var displayText: String {
         switch self {
-        case .wrongScore:
-            return "스코어가 잘못됐어요"
         case .wrongWinner:
             return "승자가 잘못됐어요"
-        case .wrongBoth:
-            return "스코어와 승자 모두 잘못됐어요"
         case .notPlayed:
             return "아직 진행하지 않은 경기예요"
         }
