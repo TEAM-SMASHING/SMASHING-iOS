@@ -11,8 +11,8 @@ import Then
 import SnapKit
 
 final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
+    var onSportsAndTierTapped: ((UIView) -> Void)?
     var onRegionButtonTapped: ((_ regionFrame: CGRect) -> Void)?
-    var onSportsAndTierTapped: (() -> Void)?
     var hasNewNotification: ((Bool) -> Void)?
     var onBellTapped: (() -> Void)?
     
@@ -132,7 +132,7 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     @objc
     private func sportsAndTierTapped() {
-        onSportsAndTierTapped?()
+        onSportsAndTierTapped?(regionStackView)
     }
     
     @objc private func bellTapped() {

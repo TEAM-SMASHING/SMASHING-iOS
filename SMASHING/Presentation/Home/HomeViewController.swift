@@ -12,26 +12,22 @@ import Then
 import SnapKit
 
 final class HomeViewController: BaseViewController {
-    private var dropDownHeightConstraint: Constraint?
     private let rootView = UIView()
     private let homeView = HomeView().then {
         $0.backgroundColor = .Background.canvas
     }
     
     private var dropDownView: HomeDropDownView?
-
-    private var dropDownTopConstraint: Constraint?
-    private var isDropDownVisible = false
-    private var dropDownBackgroundView: UIView?
     private var hasNewNotification: Bool = false
     private var regionDropDownView: RegionDropDownView?
     private var regionDropDownBackdrop: UIView?
     private var isRegionDropDownShown = false
 
     private let dimView = UIView()
-    
     private var isDropDownShown = false
-
+    
+    private var tooltipView: TooltipView?
+    private var tooltipDismissTap: UITapGestureRecognizer?
     
     override func loadView() {
         view = rootView
@@ -43,30 +39,30 @@ final class HomeViewController: BaseViewController {
     private let myProfileViewModel: MyProfileViewModel
     private let myProfileInput = PassthroughSubject<MyProfileViewModel.Input, Never>()
     private var latestMyProfile: MyProfileListResponse?
-
+    
     private let userProfileService = UserProfileService()
-
+    
     private var recentMatching: [MatchingConfirmedGameDTO] = []
     private var recommendedUsers: [RecommendedUserDTO] = []
     private var rankings: [RankingUserDTO] = []
     private var myNickname: String {
         return KeychainService.get(key: Environment.nicknameKey) ?? ""
     }
-
+    
     private var myUserId: String {
         return KeychainService.get(key: Environment.userIdKey) ?? ""
     }
-
+    
     private var myRegion: String {
         return UserDefaults.standard.string(forKey: UserDefaultKey.region) ?? ""
     }
-
+    
     private var mySportCode: String {
         return KeychainService.get(key: Environment.sportsCodeKeyPrefix) ?? ""
     }
-
+    
     // MARK: - Init
-
+    
     init() {
         let regionService = RegionService()
         let matchingConfirmedService = MatchingConfirmedService()
@@ -77,17 +73,17 @@ final class HomeViewController: BaseViewController {
         )
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     init(viewModel: HomeViewModel, myProfileViewModel: any MyProfileViewModelProtocol) {
         self.viewModel = viewModel
         self.myProfileViewModel = myProfileViewModel as! MyProfileViewModel
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         rootView.backgroundColor = .Background.canvas
@@ -120,7 +116,7 @@ final class HomeViewController: BaseViewController {
         dimView.isHidden = true
         view.addSubview(dimView)
         dimView.snp.makeConstraints { $0.edges.equalToSuperview() }
-
+        
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapDimView(_:)))
         dimView.addGestureRecognizer(tap)
         
@@ -182,65 +178,65 @@ final class HomeViewController: BaseViewController {
                 self.homeView.reloadSections(IndexSet(integer: HomeViewLayout.navigationBar.rawValue))
             }
             .store(in: &cancellables)
-
+        
         // MARK: - Navigation Bindings (from HomeCoordinator)
-
+        
         output.navToRegionSelection
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.showRegionSelection()
             }
             .store(in: &cancellables)
-
+        
         output.navToMatchingManageTab
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 NavigationManager.shared.handleNotificationAction(.navRequestedMatchManage)
             }
             .store(in: &cancellables)
-
+        
         output.navToMatchResultCreate
             .receive(on: DispatchQueue.main)
             .sink { [weak self] gameData in
                 self?.showMatchResultCreate(with: gameData)
             }
             .store(in: &cancellables)
-
+        
         output.navToRanking
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.showRanking()
             }
             .store(in: &cancellables)
-
+        
         output.navToSelectedUserProfile
             .receive(on: DispatchQueue.main)
             .sink { [weak self] userId in
                 self?.showUserProfile(userId: userId)
             }
             .store(in: &cancellables)
-
+        
         output.navToSearchUser
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 NavigationManager.shared.handleNotificationAction(.navSearchUser)
             }
             .store(in: &cancellables)
-
+        
         output.navToNotification
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.showNotificationFlow()
             }
             .store(in: &cancellables)
-
+        
         output.navToAddSports
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.showAddSports()
             }
             .store(in: &cancellables)
-
+        
         let myProfileOutput = myProfileViewModel.transform(input: myProfileInput.eraseToAnyPublisher())
         myProfileOutput.myProfileFetched
             .receive(on: DispatchQueue.main)
@@ -265,25 +261,25 @@ final class HomeViewController: BaseViewController {
     }
     
     // MARK: - Navigation Methods
-
+    
     private func showMatchResultCreate(with gameData: MatchingConfirmedGameDTO) {
         let vm = MatchResultCreateViewModel(gameData: gameData, myUserId: myUserId, myNickname: myNickname)
         let vc = MatchResultCreateViewController(viewModel: vm)
         NavigationManager.shared.push(vc, hidesBottomBar: true)
     }
-
+    
     private func showRanking() {
         let regionService = RegionService()
         let viewModel = RankingViewModel(regionService: regionService)
         let rankingVC = RankingViewController(viewModel: viewModel)
         NavigationManager.shared.push(rankingVC, hidesBottomBar: true)
     }
-
+    
     private func showNotificationFlow() {
         let service = NotificationService()
         let viewModel = NotificationViewModel(service: service)
         let vc = NotificationListViewController(viewModel: viewModel)
-
+        
         viewModel.output.navConfirmedMatchManage
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
@@ -291,7 +287,7 @@ final class HomeViewController: BaseViewController {
                 NavigationManager.shared.handleNotificationAction(.navConfirmedMatchManage)
             }
             .store(in: &cancellables)
-
+        
         viewModel.output.navRequestedMatchManage
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
@@ -299,24 +295,24 @@ final class HomeViewController: BaseViewController {
                 NavigationManager.shared.handleNotificationAction(.navRequestedMatchManage)
             }
             .store(in: &cancellables)
-
+        
         NavigationManager.shared.push(vc, hidesBottomBar: true)
     }
-
+    
     private func showUserProfile(userId: String) {
         let viewModel = UserProfileViewModel(userId: userId, sport: currentUserSport())
         let userProfileVC = UserProfileViewController(viewModel: viewModel)
-
+        
         viewModel.output.navToMatchManage
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 NavigationManager.shared.navigateToMatchManageSentAndRefresh()
             }
             .store(in: &cancellables)
-
+        
         NavigationManager.shared.push(userProfileVC)
     }
-
+    
     private func currentUserSport() -> Sports {
         guard let userId = KeychainService.get(key: Environment.userIdKey), !userId.isEmpty else {
             return .badminton
@@ -421,7 +417,7 @@ final class HomeViewController: BaseViewController {
         }
         NavigationManager.shared.push(addressVC, hidesBottomBar: true)
     }
-
+    
     private func showAddSports() {
         let addSportsVC = AddSportsViewController()
         NavigationManager.shared.push(addSportsVC, hidesBottomBar: true)
@@ -454,7 +450,7 @@ extension HomeViewController: UICollectionViewDataSource {
         switch sectionType {
         case .navigationBar:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeNavigationBarCell.reuseIdentifier, for: indexPath) as? HomeNavigationBarCell else { return UICollectionViewCell() }
-
+            
             cell.newNotification(hasNew: self.hasNewNotification)
             let region = myRegion
             let sportCode = latestMyProfile?.activeProfile.sportCode.rawValue
@@ -466,8 +462,8 @@ extension HomeViewController: UICollectionViewDataSource {
                 let frameInRoot = self.rootView.convert(regionFrame, from: nil)
                 self.showRegionDropDown(below: frameInRoot)
             }
-            cell.onSportsAndTierTapped = { [weak self] in
-                self?.toggleDropDown()
+            cell.onSportsAndTierTapped = { [weak self] regionView in
+                self?.toggleDropDown(from: regionView)
             }
             cell.onBellTapped = { [weak self] in
                 self?.input.send(.notificationTapped)
@@ -513,7 +509,7 @@ extension HomeViewController: UICollectionViewDataSource {
                 cell.configure(with: user)
                 return cell
             }
-
+            
         case .ranking:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RankingCell.reuseIdentifier, for: indexPath) as? RankingCell else { return UICollectionViewCell() }
             let ranker = rankings[indexPath.item]
@@ -521,7 +517,7 @@ extension HomeViewController: UICollectionViewDataSource {
             return cell
         }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard kind == UICollectionView.elementKindSectionHeader else {
             return UICollectionReusableView()
@@ -547,8 +543,8 @@ extension HomeViewController: UICollectionViewDataSource {
                 return UICollectionReusableView()
             }
             header.configure(title: "\(myNickname)님을 위한 추천", showInfoButton: true)
-            header.onInfoButtonTapped = { [weak self ] in
-                self?.showRecommendedUserInfo()
+            header.onInfoButtonTapped = { [weak self ] button in
+                self?.toggleTooltip(from: button)
             }
             return header
         case .ranking:
@@ -567,110 +563,91 @@ extension HomeViewController: UICollectionViewDataSource {
 }
 
 extension HomeViewController {
-
-    private func toggleDropDown() {
-        isDropDownShown ? hideDropDown() : showDropDown()
+    
+    private func toggleDropDown(from sourceView: UIView) {
+        isDropDownShown ? hideDropDown() : showDropDown(from: sourceView)
     }
-
-    private func showDropDown() {
+    
+    private func showDropDown(from sourceView: UIView) {
         guard !isDropDownShown else { return }
         isDropDownShown = true
-
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-
-            // 레이아웃 강제 반영
-            self.homeView.layoutIfNeeded()
-            self.rootView.layoutIfNeeded()
-
-            let indexPath = IndexPath(item: 0, section: HomeViewLayout.navigationBar.rawValue)
-
-            guard let attr = self.homeView.layoutAttributesForItem(at: indexPath) else {
-                self.isDropDownShown = false
-                return
+        
+        // regionStackView의 rootView 기준 절대 좌표로 내부 offset 결정, 드롭다운은 항상 y=0에서 시작
+        let sourceFrameInRoot = sourceView.convert(sourceView.bounds, to: rootView)
+        let regionOffset = sourceFrameInRoot.minY
+        
+        if dropDownView == nil {
+            let dd = HomeDropDownView()
+            dropDownView = dd
+            
+            dd.onBellTapped = { [weak self] in
+                self?.hideDropDown()
+                self?.input.send(.notificationTapped)
             }
-
-            let frameInRoot = self.homeView.convert(attr.frame, to: self.rootView)
-            let topY = max(0, frameInRoot.minY - view.safeAreaInsets.top)
-
-            if self.dropDownView == nil {
-                let dd = HomeDropDownView()
-                self.dropDownView = dd
-                dd.onBellTapped = { [weak self] in
-                    self?.hideDropDown()
-                    self?.input.send(.notificationTapped)
-                }
-                
-                if let profile = self.latestMyProfile {
-                    dd.configure(profile: profile, myRegion: myRegion)
-                }
-
-                dd.onRegionButtonTapped = { [weak self] in
-                    self?.hideDropDown()
-                    self?.input.send(.regionTapped)
-                }
-
-                dd.onSportsAndTierTapped = { [weak self] in
-                    self?.hideDropDown()
-                }
-
-                dd.onSportsCellTapped = { [weak self] sport in
-                    guard let self else { return }
-                    if let sport {
-                        self.myProfileInput.send(.sportsCellTapped(sport))
-                    } else {
-                        self.input.send(.addSportsTapped)
-                    }
-                }
-
-                dd.onAddSportsTapped = { [weak self] in
-                    self?.hideDropDown()
-                    self?.input.send(.addSportsTapped)
-                }
-
-                self.rootView.addSubview(self.dimView)
-                self.rootView.addSubview(dd)
-
-                self.dimView.snp.remakeConstraints { $0.edges.equalToSuperview() }
-
-                dd.snp.makeConstraints {
-                    $0.leading.trailing.equalToSuperview()
-                    $0.top.equalToSuperview().offset(topY)
-                    $0.height.equalTo(420)
-                }
-
-            } else {
-                self.dropDownView?.snp.updateConstraints {
-                    $0.top.equalToSuperview().offset(topY)
+            
+            dd.onRegionButtonTapped = { [weak self] in
+                self?.hideDropDown()
+                self?.input.send(.regionTapped)
+            }
+            
+            dd.onSportsAndTierTapped = { [weak self] in
+                self?.hideDropDown()
+            }
+            
+            dd.onSportsCellTapped = { [weak self] sport in
+                guard let self else { return }
+                if let sport {
+                    self.myProfileInput.send(.sportsCellTapped(sport))
+                } else {
+                    self.input.send(.addSportsTapped)
                 }
             }
-
-            self.rootView.layoutIfNeeded()
-
-            self.rootView.bringSubviewToFront(self.dimView)
-            if let dd = self.dropDownView {
-                self.rootView.bringSubviewToFront(dd)
+            
+            dd.onAddSportsTapped = { [weak self] in
+                self?.hideDropDown()
+                self?.input.send(.addSportsTapped)
             }
-
-            // 애니메이션
-            self.dimView.isHidden = false
-            self.dimView.alpha = 0
-
-            self.dropDownView?.alpha = 0
-            self.dropDownView?.transform = CGAffineTransform(translationX: 0, y: -8)
-
-            UIView.animate(withDuration: 0.22, delay: 0, options: [.curveEaseOut]) {
-                self.dimView.alpha = 1
-                self.dropDownView?.alpha = 1
-                self.dropDownView?.transform = .identity
+            
+            rootView.addSubview(dimView)
+            rootView.addSubview(dd)
+            
+            dimView.snp.remakeConstraints {
+                $0.edges.equalToSuperview()
+            }
+            
+            dd.snp.makeConstraints {
+                $0.leading.trailing.equalToSuperview()
+                $0.top.equalToSuperview()
+                $0.height.equalTo(420)
             }
         }
+        
+        if let profile = latestMyProfile {
+            dropDownView?.configure(profile: profile, myRegion: myRegion)
+        }
+        
+        dropDownView?.updateRegionTopOffset(regionOffset)
+        
+        rootView.bringSubviewToFront(dimView)
+        if let dd = dropDownView {
+            rootView.bringSubviewToFront(dd) }
+        
+        dimView.isHidden = false
+        dimView.alpha = 0
+        dropDownView?.alpha = 0
+        dropDownView?.transform = CGAffineTransform(translationX: 0, y: -8)
+        
+        UIView.animate(withDuration: 0.22, delay: 0, options: [.curveEaseOut]) {
+            self.dimView.alpha = 1
+            self.dropDownView?.alpha = 1
+            self.dropDownView?.transform = .identity
+        }
     }
-
+    
     private func hideDropDown() {
         guard isDropDownShown else { return }
         isDropDownShown = false
-
+        
         UIView.animate(withDuration: 0.18, delay: 0, options: [.curveEaseIn]) {
             self.dimView.alpha = 0
             self.dropDownView?.alpha = 0
@@ -683,6 +660,10 @@ extension HomeViewController {
 }
 
 extension HomeViewController: UICollectionViewDelegate {
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if tooltipView != nil { hideTooltip() }
+    }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let sectionType = HomeViewLayout(rawValue: indexPath.section) else { return }
@@ -701,14 +682,59 @@ extension HomeViewController: UICollectionViewDelegate {
 
 // MARK: Header Button
 extension HomeViewController {
-    private func showRecommendedUserInfo() {
-        print("유저 추천 인포 탭")
-        print("\(myRegion)")
-        print("\(myNickname)")
-        print("\(myUserId)")
-        print("\(mySportCode)")
+    private func toggleTooltip(from sourceView: UIView) {
+        tooltipView != nil ? hideTooltip() : showTooltip(from: sourceView)
     }
 
+    private func showTooltip(from sourceView: UIView) {
+        let buttonFrame = sourceView.convert(sourceView.bounds, to: rootView)
+
+        let tooltip = TooltipView(message: "내 동네에서 LP ± 200점 범위 안의 5명의 유저가 랜덤으로 추천돼요!")
+        let tooltipWidth = tooltip.intrinsicContentSize.width
+        let tooltipLeading = rootView.bounds.width - 16 - tooltipWidth
+        tooltip.arrowTipX = buttonFrame.midX - tooltipLeading
+        tooltipView = tooltip
+
+        rootView.addSubview(tooltip)
+        tooltip.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(buttonFrame.maxY + 4)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.width.equalTo(tooltipWidth)
+        }
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTooltipOutsideTap(_:)))
+        tap.cancelsTouchesInView = false
+        rootView.addGestureRecognizer(tap)
+        tooltipDismissTap = tap
+
+        tooltip.alpha = 0
+        tooltip.transform = CGAffineTransform(translationX: 0, y: -4)
+        UIView.animate(withDuration: 0.18, delay: 0, options: .curveEaseOut) {
+            tooltip.alpha = 1
+            tooltip.transform = .identity
+        }
+    }
+
+    private func hideTooltip() {
+        if let tap = tooltipDismissTap {
+            rootView.removeGestureRecognizer(tap)
+            tooltipDismissTap = nil
+        }
+        UIView.animate(withDuration: 0.15) {
+            self.tooltipView?.alpha = 0
+        } completion: { _ in
+            self.tooltipView?.removeFromSuperview()
+            self.tooltipView = nil
+        }
+    }
+
+    @objc private func handleTooltipOutsideTap(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: rootView)
+        guard let tooltip = tooltipView else { return }
+        if !tooltip.frame.contains(location) {
+            hideTooltip()
+        }
+    }
     private func showMore() {
         input.send(.rankingSeeAllTapped)
     }

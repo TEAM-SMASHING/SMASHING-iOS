@@ -160,6 +160,12 @@ final class HomeDropDownView: BaseUIView {
         }
     }
     
+    func updateRegionTopOffset(_ offset: CGFloat) {
+        regionStackView.snp.updateConstraints {
+            $0.top.equalToSuperview().offset(offset)
+        }
+    }
+    
     func configure(profile: MyProfileListResponse, myRegion: String) {
         regionLabel.text = myRegion
         
