@@ -20,7 +20,7 @@ extension SentRequestResultAPI: BaseTargetType {
     var path: String {
         switch self {
         case .getSentRequestList:
-            return "api/v1/users/me/matchings/sent"
+            return "api/v1/matchings/sent"
         case .cancelSentRequest(let matchingId):
             return "api/v1/matchings/\(matchingId)"
         }

@@ -42,7 +42,7 @@ struct RequesterSummaryDTO: Codable {
     let losses: Int
 
     enum CodingKeys: String, CodingKey {
-        case userID = "userId"
+        case userID = "requesterProfileId"
         case nickname, gender, reviewCount
         case tierCode, wins, losses
     }
