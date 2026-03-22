@@ -18,7 +18,7 @@ extension MatchingConfirmedAPI: BaseTargetType {
     var path: String {
         switch self {
         case .getConfirmedGameList:
-            return "api/v1/users/me/games/pending-results"
+            return "api/v1/games/pending-results"
         case .cancelGame(let gameId):
             return "api/v1/games/\(gameId)"
         }

@@ -19,7 +19,7 @@ extension ReceiveRequestAPI: BaseTargetType {
     var path: String {
         switch self {
         case .getReceivedRequestList:
-            return "api/v1/users/me/matchings/received"
+            return "api/v1/matchings/received"
         case .acceptRequest(let matchingId):
             return "api/v1/matchings/\(matchingId)/accept"
         case .rejectRequest(let matchingId):
