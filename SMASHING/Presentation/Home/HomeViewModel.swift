@@ -44,7 +44,8 @@ final class HomeViewModel: HomeViewModelProtocol {
         case notificationTapped
         case notificationTriggered
         case addSportsTapped
-
+        
+        case myPageTapped
     }
     
     struct Output {
@@ -67,6 +68,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         let navToNotification = PassthroughSubject<Void, Never>()
         let navToSearchUser = PassthroughSubject<Void, Never>()
         let navToAddSports = PassthroughSubject<Void, Never>()
+        let navToMyPage = PassthroughSubject<Void, Never>()
     }
     private var cancellables = Set<AnyCancellable>()
     
@@ -130,6 +132,8 @@ final class HomeViewModel: HomeViewModelProtocol {
             output.navToNotification.send()
         case .addSportsTapped:
             output.navToAddSports.send()
+        case .myPageTapped:
+            output.navToMyPage.send()
         default:
             break
 

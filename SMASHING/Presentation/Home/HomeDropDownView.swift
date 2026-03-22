@@ -14,7 +14,7 @@ final class HomeDropDownView: BaseUIView {
     
     // MARK: - Properties
     
-    var onRegionButtonTapped: (() -> Void)?
+    var onRegionButtonTapped: ((_ regionFrame: CGRect) -> Void)?
     
     private var regionTopConstraint: Constraint?
     var onSportsAndTierTapped: (() -> Void)?
@@ -184,7 +184,8 @@ final class HomeDropDownView: BaseUIView {
     
     @objc
     private func regionTapped() {
-        onRegionButtonTapped?()
+        let frame = regionStackView.convert(regionStackView.bounds, to: nil)
+        onRegionButtonTapped?(frame)
     }
     
     @objc
