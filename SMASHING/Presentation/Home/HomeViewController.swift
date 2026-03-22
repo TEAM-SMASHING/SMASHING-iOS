@@ -693,7 +693,7 @@ extension HomeViewController: UICollectionViewDelegate {
             input.send(.recommendedUserTapped(userId: user.userId))
         case .ranking:
             let ranker = rankings[indexPath.row]
-            input.send(.rankingUserTapped(userId: ranker.userId))
+            input.send(.rankingUserTapped(userId: ranker.userProfileId))
         default:
             break
         }
