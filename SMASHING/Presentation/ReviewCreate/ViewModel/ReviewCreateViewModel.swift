@@ -164,11 +164,9 @@ final class ReviewCreateViewModel: ReviewCreateViewModelProtocol {
                 tags: selectedTags.isEmpty ? nil : selectedTags.map { $0.rawValue }
             )
 
-            let requestDTO = GameFirstSubmissionRequestDTO(
-                winnerUserId: matchResultData.winnerUserId,
-                loserUserId: matchResultData.loserUserId,
-                scoreWinner: matchResultData.scoreWinner,
-                scoreLoser: matchResultData.scoreLoser,
+            let requestDTO = GameSubmissionRequestDTO(
+                winnerProfileId: matchResultData.winnerProfileId,
+                loserProfileId: matchResultData.loserProfileId,
                 review: reviewRequestDTO
             )
 
