@@ -19,6 +19,10 @@ final class HomeViewController: BaseViewController {
     
     private var dropDownView: HomeDropDownView?
     private var hasNewNotification: Bool = false
+    private var regionDropDownView: RegionDropDownView?
+    private var regionDropDownBackdrop: UIView?
+    private var isRegionDropDownShown = false
+
     private let dimView = UIView()
     private var isDropDownShown = false
     
@@ -321,6 +325,86 @@ final class HomeViewController: BaseViewController {
         return sport
     }
     
+    private func showRegionDropDown(below sourceFrame: CGRect) {
+        guard !isRegionDropDownShown else { return }
+        isRegionDropDownShown = true
+
+        // 투명 backdrop - 바깥 탭 시 드롭다운 닫기
+        let backdrop = UIView()
+        regionDropDownBackdrop = backdrop
+        rootView.addSubview(backdrop)
+        backdrop.snp.makeConstraints { $0.edges.equalToSuperview() }
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapRegionBackdrop))
+        backdrop.addGestureRecognizer(tap)
+        
+        let navIndexPath = IndexPath(item: 0, section: HomeViewLayout.navigationBar.rawValue)
+        guard let navAttr = homeView.layoutAttributesForItem(at: navIndexPath) else {
+            isRegionDropDownShown = false
+            return
+        }
+        let navCellFrameInRoot = homeView.convert(navAttr.frame, to: rootView)
+        let topY = navCellFrameInRoot.maxY + 4
+
+        let dd: RegionDropDownView
+        if let existing = regionDropDownView {
+            dd = existing
+            dd.configure(region: myRegion)
+            dd.snp.remakeConstraints {
+                $0.top.equalToSuperview().offset(topY)
+                $0.leading.equalToSuperview().offset(sourceFrame.minX)
+                $0.width.equalTo(123)
+            }
+        } else {
+            let newDD = RegionDropDownView()
+            regionDropDownView = newDD
+            dd = newDD
+
+            newDD.onCurrentRegionTapped = { [weak self] in
+                self?.hideRegionDropDown()
+            }
+            newDD.onChangeRegionTapped = { [weak self] in
+                self?.hideRegionDropDown()
+                self?.input.send(.regionTapped)
+            }
+            newDD.configure(region: myRegion)
+            rootView.addSubview(newDD)
+
+            newDD.snp.makeConstraints {
+                $0.top.equalToSuperview().offset(topY)
+                $0.leading.equalToSuperview().offset(sourceFrame.minX)
+                $0.width.equalTo(123)
+            }
+        }
+
+        rootView.bringSubviewToFront(dd)
+
+        dd.alpha = 0
+        dd.transform = CGAffineTransform(translationX: 0, y: -8)
+
+        UIView.animate(withDuration: 0.22, delay: 0, options: [.curveEaseOut]) {
+            dd.alpha = 1
+            dd.transform = .identity
+        }
+    }
+
+    private func hideRegionDropDown() {
+        guard isRegionDropDownShown else { return }
+        isRegionDropDownShown = false
+
+        UIView.animate(withDuration: 0.18, delay: 0, options: [.curveEaseIn]) {
+            self.regionDropDownView?.alpha = 0
+            self.regionDropDownView?.transform = CGAffineTransform(translationX: 0, y: -8)
+        } completion: { _ in
+            self.regionDropDownView?.transform = .identity
+            self.regionDropDownBackdrop?.removeFromSuperview()
+            self.regionDropDownBackdrop = nil
+        }
+    }
+
+    @objc private func didTapRegionBackdrop() {
+        hideRegionDropDown()
+    }
+
     private func showRegionSelection() {
         let addressVC = AddressSearchViewController(mode: .changeRegion)
         addressVC.onAddressSelected = { [weak self] address in
@@ -373,8 +457,10 @@ extension HomeViewController: UICollectionViewDataSource {
             let tierCode = latestMyProfile?.activeProfile.tierCode ?? ""
             
             cell.configure(region: myRegion, sportCode: sportCode, tierCode: tierCode)
-            cell.onRegionButtonTapped = { [weak self] in
-                self?.input.send(.regionTapped)
+            cell.onRegionButtonTapped = { [weak self] regionFrame in
+                guard let self else { return }
+                let frameInRoot = self.rootView.convert(regionFrame, from: nil)
+                self.showRegionDropDown(below: frameInRoot)
             }
             cell.onSportsAndTierTapped = { [weak self] regionView in
                 self?.toggleDropDown(from: regionView)

@@ -110,7 +110,7 @@ final class HomeDropDownView: BaseUIView {
     
     override func setLayout() {
         regionStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(52)
+            $0.top.equalTo(safeAreaLayoutGuide.snp.top).offset(13)
             $0.leading.equalToSuperview().inset(16)
         }
         
