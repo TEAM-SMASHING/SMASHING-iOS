@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 final class CommonSectionHeader: UICollectionReusableView, ReuseIdentifiable {
-    var onInfoButtonTapped: (() -> Void)?
+    var onInfoButtonTapped: ((UIView) -> Void)?
     var onMoreButtonTapped: (() -> Void)?
     
     private let titleLabel = UILabel().then {
@@ -49,7 +49,7 @@ final class CommonSectionHeader: UICollectionReusableView, ReuseIdentifiable {
     
     @objc
     private func infoButtonDidTap() {
-        onInfoButtonTapped?()
+        onInfoButtonTapped?(infoButton)
     }
     
     @objc
