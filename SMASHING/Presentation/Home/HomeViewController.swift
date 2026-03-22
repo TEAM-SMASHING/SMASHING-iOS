@@ -151,7 +151,6 @@ final class HomeViewController: BaseViewController {
             .sink { [weak self] users in
                 self?.recommendedUsers = users
                 self?.homeView.setRecommendedUserEmpty(users.isEmpty)
-                self?.homeView.reloadSections(IndexSet(integer: HomeViewLayout.recommendedUser.rawValue))
             }
             .store(in: &cancellables)
         
@@ -533,7 +532,8 @@ extension HomeViewController: UICollectionViewDataSource {
                 return UICollectionReusableView()
             }
             
-            header.configure(title: "\(myNickname)님,", subTitle: "곧 다가오는 매칭이 있어요")
+            let subTitle = recentMatching.isEmpty ? "새로운 매칭을 잡아볼까요?" : "곧 다가오는 매칭이 있어요"
+            header.configure(title: "\(myNickname)님,", subTitle: subTitle)
             header.onMoreButtonTapped = { [weak self] in
                 self?.input.send(.matchingSeeAllTapped)
             }
@@ -584,23 +584,63 @@ extension HomeViewController {
                 self?.hideDropDown()
                 self?.input.send(.notificationTapped)
             }
-            
-            dd.onRegionButtonTapped = { [weak self] in
-                self?.hideDropDown()
-                self?.input.send(.regionTapped)
-            }
-            
-            dd.onSportsAndTierTapped = { [weak self] in
-                self?.hideDropDown()
-            }
-            
-            dd.onSportsCellTapped = { [weak self] sport in
-                guard let self else { return }
-                if let sport {
-                    self.myProfileInput.send(.sportsCellTapped(sport))
-                } else {
-                    self.input.send(.addSportsTapped)
+
+            let frameInRoot = self.homeView.convert(attr.frame, to: self.rootView)
+            let topY = max(0, frameInRoot.minY - view.safeAreaInsets.top)
+            let regionTopOffset = frameInRoot.minY + 13 - topY
+
+            if self.dropDownView == nil {
+                let dd = HomeDropDownView()
+                self.dropDownView = dd
+                dd.onBellTapped = { [weak self] in
+                    self?.hideDropDown()
+                    self?.input.send(.notificationTapped)
                 }
+                
+                if let profile = self.latestMyProfile {
+                    dd.configure(profile: profile, myRegion: myRegion)
+                }
+
+                dd.onRegionButtonTapped = { [weak self] in
+                    self?.hideDropDown()
+                    self?.input.send(.regionTapped)
+                }
+
+                dd.onSportsAndTierTapped = { [weak self] in
+                    self?.hideDropDown()
+                }
+
+                dd.onSportsCellTapped = { [weak self] sport in
+                    guard let self else { return }
+                    if let sport {
+                        self.myProfileInput.send(.sportsCellTapped(sport))
+                    } else {
+                        self.input.send(.addSportsTapped)
+                    }
+                }
+
+                dd.onAddSportsTapped = { [weak self] in
+                    self?.hideDropDown()
+                    self?.input.send(.addSportsTapped)
+                }
+
+                self.rootView.addSubview(self.dimView)
+                self.rootView.addSubview(dd)
+
+                self.dimView.snp.remakeConstraints { $0.edges.equalToSuperview() }
+
+                dd.snp.makeConstraints {
+                    $0.leading.trailing.equalToSuperview()
+                    $0.top.equalToSuperview().offset(topY)
+                    $0.height.equalTo(420)
+                }
+                dd.updateRegionTopOffset(regionTopOffset)
+
+            } else {
+                self.dropDownView?.snp.updateConstraints {
+                    $0.top.equalToSuperview().offset(topY)
+                }
+                self.dropDownView?.updateRegionTopOffset(regionTopOffset)
             }
             
             dd.onAddSportsTapped = { [weak self] in
@@ -669,6 +709,7 @@ extension HomeViewController: UICollectionViewDelegate {
         guard let sectionType = HomeViewLayout(rawValue: indexPath.section) else { return }
         switch sectionType {
         case .recommendedUser:
+            guard !recommendedUsers.isEmpty else { return }
             let user = recommendedUsers[indexPath.row]
             input.send(.recommendedUserTapped(userId: user.userId))
         case .ranking:
