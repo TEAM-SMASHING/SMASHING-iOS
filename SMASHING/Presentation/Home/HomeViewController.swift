@@ -636,7 +636,6 @@ extension HomeViewController {
             dd.snp.makeConstraints {
                 $0.leading.trailing.equalToSuperview()
                 $0.top.equalToSuperview()
-                $0.height.equalTo(420)
             }
         } else {
             if let profile = latestMyProfile {

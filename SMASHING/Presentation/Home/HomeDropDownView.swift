@@ -159,6 +159,7 @@ final class HomeDropDownView: BaseUIView {
             $0.top.equalTo(tierCard.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(20)
+            $0.height.equalTo(78)
         }
     }
     
