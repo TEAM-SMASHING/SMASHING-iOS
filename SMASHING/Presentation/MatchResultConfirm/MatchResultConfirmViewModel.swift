@@ -118,8 +118,8 @@ final class MatchResultConfirmViewModel: MatchResultConfirmViewModelProtocol {
             myNickname: myNickname,
             opponentNickname: gameData.opponent.nickname,
             winnerNickname: dto.winner.nickname,
-            winnerProfileId: dto.winner.userId,
-            loserProfileId: dto.loser.userId,
+            winnerProfileId: dto.winner.profileId,
+            loserProfileId: dto.loser.profileId,
             submissionId: submissionId,
             isFirstSubmission: dto.attemptNo == 1
         )
