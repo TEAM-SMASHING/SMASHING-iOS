@@ -16,6 +16,7 @@ final class MyPageViewController: BaseViewController {
 
         mainView.leftButtonAction = { [weak self] in
             guard let self else { return }
+            NavigationManager.shared.pop()
         }
 
         mainView.logoutAction = { [weak self] in
