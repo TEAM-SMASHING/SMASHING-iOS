@@ -167,6 +167,7 @@ final class HomeViewModel: HomeViewModelProtocol {
                 self.output.isLoading.send(false)
                 if case .failure(let error) = completion {
                     self.output.error.send(error)
+                    self.output.recommendedUsers.send([])
                 }
             } receiveValue: { [weak self] response in
                 guard let self else { return }

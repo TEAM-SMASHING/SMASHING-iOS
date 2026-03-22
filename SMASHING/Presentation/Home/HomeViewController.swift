@@ -152,7 +152,6 @@ final class HomeViewController: BaseViewController {
             .sink { [weak self] users in
                 self?.recommendedUsers = users
                 self?.homeView.setRecommendedUserEmpty(users.isEmpty)
-                self?.homeView.reloadSections(IndexSet(integer: HomeViewLayout.recommendedUser.rawValue))
             }
             .store(in: &cancellables)
         
@@ -607,6 +606,7 @@ extension HomeViewController: UICollectionViewDelegate {
         guard let sectionType = HomeViewLayout(rawValue: indexPath.section) else { return }
         switch sectionType {
         case .recommendedUser:
+            guard !recommendedUsers.isEmpty else { return }
             let user = recommendedUsers[indexPath.row]
             input.send(.recommendedUserTapped(userId: user.userId))
         case .ranking:
