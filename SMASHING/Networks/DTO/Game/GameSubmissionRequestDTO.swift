@@ -7,19 +7,10 @@
 
 import Foundation
 
-struct GameFirstSubmissionRequestDTO: Encodable {
-    let winnerUserId: String
-    let loserUserId: String
-    let scoreWinner: Int
-    let scoreLoser: Int
-    let review: ReviewRequestDTO
-}
-
-struct GameResubmissionRequestDTO: Encodable {
-    let winnerUserId: String
-    let loserUserId: String
-    let scoreWinner: Int
-    let scoreLoser: Int
+struct GameSubmissionRequestDTO: Encodable {
+    let winnerProfileId: String
+    let loserProfileId: String
+    let review: ReviewRequestDTO?
 }
 
 struct ReviewRequestDTO: Encodable {
