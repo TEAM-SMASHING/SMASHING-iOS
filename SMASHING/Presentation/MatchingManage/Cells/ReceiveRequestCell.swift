@@ -91,17 +91,13 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
 
     private lazy var skipButton = UIButton().then {
-        $0.setTitle("건너뛰기", for: .normal)
-        $0.setTitleColor(.Text.tertiary, for: .normal)
-        $0.titleLabel?.font = .pretendard(.captionXsR)
+        $0.setImage(UIImage(named: "ic_close-sm"), for: .normal)
         $0.backgroundColor = .clear
         $0.addTarget(self, action: #selector(skipButtonDidTap), for: .touchUpInside)
     }
 
     private lazy var acceptButton = UIButton().then {
-        $0.setTitle("수락", for: .normal)
-        $0.setTitleColor(.Text.primary, for: .normal)
-        $0.titleLabel?.font = .pretendard(.textSmM)
+        $0.setImage(UIImage(named: "ic_check"), for: .normal)
         $0.backgroundColor = .Button.backgroundSecondaryActive
         $0.layer.cornerRadius = 4
         $0.addTarget(self, action: #selector(acceptButtonDidTap), for: .touchUpInside)
