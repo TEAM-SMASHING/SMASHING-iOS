@@ -636,7 +636,6 @@ extension HomeViewController {
             dd.snp.makeConstraints {
                 $0.leading.trailing.equalToSuperview()
                 $0.top.equalToSuperview()
-                $0.height.equalTo(420)
             }
         } else {
             if let profile = latestMyProfile {
@@ -690,10 +689,10 @@ extension HomeViewController: UICollectionViewDelegate {
         case .recommendedUser:
             guard !recommendedUsers.isEmpty else { return }
             let user = recommendedUsers[indexPath.row]
-            input.send(.recommendedUserTapped(userId: user.userId))
+            input.send(.recommendedUserTapped(userId: user.userProfileId))
         case .ranking:
             let ranker = rankings[indexPath.row]
-            input.send(.rankingUserTapped(userId: ranker.userId))
+            input.send(.rankingUserTapped(userId: ranker.userProfileId))
         default:
             break
         }

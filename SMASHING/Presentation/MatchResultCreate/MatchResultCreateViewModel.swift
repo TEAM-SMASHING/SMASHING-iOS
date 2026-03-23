@@ -161,7 +161,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
                 }
             } receiveValue: { [weak self] dto in
                 guard let self else { return }
-                let isMyWin = dto.winner.userId == self.myUserId
+                let isMyWin = dto.winner.profileId == self.myUserId
                 let winnerNickname = isMyWin ? self.myNickname : self.gameData.opponent.nickname
                 self.selectedWinner = winnerNickname
                 self.output.prefillData.send(MatchResultPrefillData(winnerNickname: winnerNickname))
