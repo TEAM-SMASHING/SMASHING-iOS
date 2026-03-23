@@ -575,86 +575,46 @@ extension HomeViewController {
         // regionStackView의 rootView 기준 절대 좌표로 내부 offset 결정, 드롭다운은 항상 y=0에서 시작
         let sourceFrameInRoot = sourceView.convert(sourceView.bounds, to: rootView)
         let regionOffset = sourceFrameInRoot.minY
-        
+
         if dropDownView == nil {
             let dd = HomeDropDownView()
             dropDownView = dd
-            
+
             dd.onBellTapped = { [weak self] in
                 self?.hideDropDown()
                 self?.input.send(.notificationTapped)
             }
 
-            let frameInRoot = self.homeView.convert(attr.frame, to: self.rootView)
-            let topY = max(0, frameInRoot.minY - view.safeAreaInsets.top)
-            let regionTopOffset = frameInRoot.minY + 13 - topY
-
-            if self.dropDownView == nil {
-                let dd = HomeDropDownView()
-                self.dropDownView = dd
-                dd.onBellTapped = { [weak self] in
-                    self?.hideDropDown()
-                    self?.input.send(.notificationTapped)
-                }
-                
-                if let profile = self.latestMyProfile {
-                    dd.configure(profile: profile, myRegion: myRegion)
-                }
-
-                dd.onRegionButtonTapped = { [weak self] in
-                    self?.hideDropDown()
-                    self?.input.send(.regionTapped)
-                }
-
-                dd.onSportsAndTierTapped = { [weak self] in
-                    self?.hideDropDown()
-                }
-
-                dd.onSportsCellTapped = { [weak self] sport in
-                    guard let self else { return }
-                    if let sport {
-                        self.myProfileInput.send(.sportsCellTapped(sport))
-                    } else {
-                        self.input.send(.addSportsTapped)
-                    }
-                }
-
-                dd.onAddSportsTapped = { [weak self] in
-                    self?.hideDropDown()
-                    self?.input.send(.addSportsTapped)
-                }
-
-                self.rootView.addSubview(self.dimView)
-                self.rootView.addSubview(dd)
-
-                self.dimView.snp.remakeConstraints { $0.edges.equalToSuperview() }
-
-                dd.snp.makeConstraints {
-                    $0.leading.trailing.equalToSuperview()
-                    $0.top.equalToSuperview().offset(topY)
-                    $0.height.equalTo(420)
-                }
-                dd.updateRegionTopOffset(regionTopOffset)
-
-            } else {
-                self.dropDownView?.snp.updateConstraints {
-                    $0.top.equalToSuperview().offset(topY)
-                }
-                self.dropDownView?.updateRegionTopOffset(regionTopOffset)
+            dd.onRegionButtonTapped = { [weak self] in
+                self?.hideDropDown()
+                self?.input.send(.regionTapped)
             }
-            
+
+            dd.onSportsAndTierTapped = { [weak self] in
+                self?.hideDropDown()
+            }
+
+            dd.onSportsCellTapped = { [weak self] sport in
+                guard let self else { return }
+                if let sport {
+                    self.myProfileInput.send(.sportsCellTapped(sport))
+                } else {
+                    self.input.send(.addSportsTapped)
+                }
+            }
+
             dd.onAddSportsTapped = { [weak self] in
                 self?.hideDropDown()
                 self?.input.send(.addSportsTapped)
             }
-            
+
             rootView.addSubview(dimView)
             rootView.addSubview(dd)
-            
+
             dimView.snp.remakeConstraints {
                 $0.edges.equalToSuperview()
             }
-            
+
             dd.snp.makeConstraints {
                 $0.leading.trailing.equalToSuperview()
                 $0.top.equalToSuperview()

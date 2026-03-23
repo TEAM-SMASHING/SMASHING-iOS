@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Then
+import SwiftUI
 
 final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
 
@@ -91,16 +92,26 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
 
     private lazy var skipButton = UIButton().then {
-        $0.setImage(UIImage(named: "ic_close-sm"), for: .normal)
         $0.backgroundColor = .clear
         $0.addTarget(self, action: #selector(skipButtonDidTap), for: .touchUpInside)
     }
 
+    private let skipIconImageView = UIImageView().then {
+        $0.image = UIImage(named: "ic_close-sm")
+        $0.contentMode = .scaleAspectFit
+        $0.isUserInteractionEnabled = false
+    }
+
     private lazy var acceptButton = UIButton().then {
-        $0.setImage(UIImage(named: "ic_check"), for: .normal)
         $0.backgroundColor = .Button.backgroundSecondaryActive
         $0.layer.cornerRadius = 4
         $0.addTarget(self, action: #selector(acceptButtonDidTap), for: .touchUpInside)
+    }
+
+    private let acceptIconImageView = UIImageView().then {
+        $0.image = UIImage(named: "ic_check")
+        $0.contentMode = .scaleAspectFit
+        $0.isUserInteractionEnabled = false
     }
     
     private let buttonStackView = UIStackView().then {
@@ -130,6 +141,8 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
         recordStackView.addArrangedSubviews(recordTitleLabel, recordValueLabel)
         reviewStackView.addArrangedSubviews(reviewTitleLabel, reviewValueLabel)
         buttonStackView.addArrangedSubviews(skipButton, acceptButton)
+        skipButton.addSubview(skipIconImageView)
+        acceptButton.addSubview(acceptIconImageView)
     }
 
     override func setLayout() {
@@ -167,7 +180,27 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
 
         buttonStackView.snp.makeConstraints {
             $0.top.equalTo(reviewStackView.snp.bottom).offset(8)
-            $0.horizontalEdges.equalToSuperview().inset(24.5)
+            $0.horizontalEdges.equalToSuperview().inset(14)
+            $0.height.equalTo(29)
+        }
+
+        skipButton.snp.makeConstraints {
+            $0.size.equalTo(24)
+        }
+
+        skipIconImageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalTo(24)
+        }
+
+        acceptButton.snp.makeConstraints {
+            $0.height.equalTo(29)
+            $0.width.equalTo(55)
+        }
+
+        acceptIconImageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalTo(24)
         }
     }
 
@@ -203,3 +236,40 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
         self.tierBadgeLabel.textColor = tier.textColor
     }
 }
+
+// MARK: - Preview
+
+#if DEBUG
+private struct ReceiveRequestCellPreview: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        let vc = UIViewController()
+        vc.view.backgroundColor = .systemBackground
+
+        let cell = ReceiveRequestCell()
+        let mockDTO = RequesterSummaryDTO(
+            userID: "preview-id",
+            nickname: "스매셔",
+            gender: .male,
+            reviewCount: 12,
+            tierCode: "GOLD",
+            wins: 8,
+            losses: 3
+        )
+        cell.configure(with: mockDTO)
+
+        vc.view.addSubview(cell)
+        cell.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.equalTo(150)
+            $0.height.equalTo(220)
+        }
+        return vc
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+#Preview {
+    ReceiveRequestCellPreview()
+}
+#endif
