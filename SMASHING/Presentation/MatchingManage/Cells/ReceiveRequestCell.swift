@@ -180,7 +180,7 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
 
         buttonStackView.snp.makeConstraints {
             $0.top.equalTo(reviewStackView.snp.bottom).offset(8)
-            $0.horizontalEdges.equalToSuperview().inset(14)
+            $0.horizontalEdges.equalToSuperview().inset(24)
             $0.height.equalTo(29)
         }
 
@@ -236,3 +236,41 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
         self.tierBadgeLabel.textColor = tier.textColor
     }
 }
+
+// MARK: - Preview
+
+#if DEBUG
+private struct ReceiveRequestCellPreview: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        let vc = UIViewController()
+        vc.view.backgroundColor = .systemBackground
+
+        let cell = ReceiveRequestCell()
+        let mockDTO = RequesterSummaryDTO(
+            userID: "preview-id",
+            nickname: "스매셔",
+            gender: .male,
+            reviewCount: 12,
+            tierCode: "GOLD",
+            wins: 8,
+            losses: 3
+        )
+        cell.configure(with: mockDTO)
+
+        vc.view.addSubview(cell)
+        cell.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.equalTo(150)
+            $0.height.equalTo(220)
+        }
+        return vc
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+#Preview {
+    ReceiveRequestCellPreview()
+}
+#endif
+
