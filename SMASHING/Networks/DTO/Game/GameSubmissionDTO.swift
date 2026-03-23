@@ -21,12 +21,12 @@ struct GameSubmissionDetailDTO: Codable {
 struct SubmitterSummaryDTO: Codable {
     let userId: String
     let nickname: String
+    let profileId: String
 }
 
 // MARK: - SideSummary
 
 struct SideSummaryDTO: Codable {
-    let userId: String
+    let profileId: String
     let nickname: String
-    let score: Int
 }

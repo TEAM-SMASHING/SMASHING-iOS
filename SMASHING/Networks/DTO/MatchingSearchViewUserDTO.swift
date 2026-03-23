@@ -28,7 +28,7 @@ struct MatchingSearchUserProfileDTO: Codable {
     let reviews: Int
 
     enum CodingKeys: String, CodingKey {
-        case userID = "userId"
+        case userID = "userProfileId"
         case nickname, gender, tierCode, wins, losses, reviews
     }
 }

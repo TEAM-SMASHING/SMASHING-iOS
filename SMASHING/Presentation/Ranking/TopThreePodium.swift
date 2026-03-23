@@ -195,7 +195,7 @@ final class TopThreePodium: BaseUIView {
     func configure(with user: RankingUserDTO) {
         switch user.rank {
         case 1:
-            firstUserId = user.userId
+            firstUserId = user.userProfileId
             firstNicknameLabel.text = user.nickname
             firstProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
             firstCard.configure(rankImage: .icRank1, tierCode: user.tierCode, lp: user.lp)
@@ -203,14 +203,14 @@ final class TopThreePodium: BaseUIView {
             firstProfileImageView.layer.borderWidth = 1
             crownImageView.isHidden = false
         case 2:
-            secondUserId = user.userId
+            secondUserId = user.userProfileId
             secondNicknameLabel.text = user.nickname
             secondProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
             secondCard.configure(rankImage: .icRank2, tierCode: user.tierCode, lp: user.lp)
             secondProfileImageView.layer.borderColor = UIColor.Border.primary.cgColor
             secondProfileImageView.layer.borderWidth = 1
         case 3:
-            thirdUserId = user.userId
+            thirdUserId = user.userProfileId
             thirdNicknameLabel.text = user.nickname
             thirdProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
             thirdCard.configure(rankImage: .icRank3, tierCode: user.tierCode, lp: user.lp)

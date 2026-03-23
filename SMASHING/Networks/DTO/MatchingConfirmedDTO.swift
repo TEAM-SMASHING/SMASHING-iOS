@@ -23,15 +23,15 @@ struct MatchingConfirmedGameDTO: Codable {
     let resultStatus: GameResultStatus
     let createdAt: String
     let opponent: OpponentSummaryDTO
-    let isSubmitLocked: Bool
     let latestSubmissionId: String?
     let latestSubmitterId: String?
     let latestAttemptNo: Int?
-    
+
     enum CodingKeys: String, CodingKey {
         case gameID = "gameId"
         case resultStatus, createdAt, opponent
-        case latestSubmissionId, latestSubmitterId, isSubmitLocked, latestAttemptNo
+        case latestSubmissionId, latestAttemptNo
+        case latestSubmitterId = "latestSubmitterProfileId"
     }
 }
 
@@ -45,7 +45,7 @@ struct OpponentSummaryDTO: Codable {
     let tierCode: String?
     
     enum CodingKeys: String, CodingKey {
-        case userID = "userId"
+        case userID = "opponentProfileId"
         case nickname, openchatUrl, gender
         case tierCode
     }

@@ -112,18 +112,14 @@ final class MatchResultConfirmViewModel: MatchResultConfirmViewModelProtocol {
     }
     
     private func mapToConfirmData(dto: GameSubmissionDetailDTO) -> MatchResultConfirmData {
-        let isMyWin = dto.winner.userId == myUserId
+//        let isMyWin = dto.winner.userId == myUserId
         
         return MatchResultConfirmData(
             myNickname: myNickname,
             opponentNickname: gameData.opponent.nickname,
-            myScore: isMyWin ? dto.winner.score : dto.loser.score,
-            opponentScore: isMyWin ? dto.loser.score : dto.winner.score,
             winnerNickname: dto.winner.nickname,
-            winnerUserId: dto.winner.userId,
-            loserUserId: dto.loser.userId,
-            scoreWinner: dto.winner.score,
-            scoreLoser: dto.loser.score,
+            winnerProfileId: dto.winner.profileId,
+            loserProfileId: dto.loser.profileId,
             submissionId: submissionId,
             isFirstSubmission: dto.attemptNo == 1
         )
@@ -165,13 +161,9 @@ final class MatchResultConfirmViewModel: MatchResultConfirmViewModelProtocol {
 struct MatchResultConfirmData {
     let myNickname: String
     let opponentNickname: String
-    let myScore: Int
-    let opponentScore: Int
     let winnerNickname: String
-    let winnerUserId: String
-    let loserUserId: String
-    let scoreWinner: Int
-    let scoreLoser: Int
+    let winnerProfileId: String
+    let loserProfileId: String
     let submissionId: String
     let isFirstSubmission: Bool  // attemptNo == 1 여부
 }

@@ -194,12 +194,12 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
         self.genderIconImageView.image = opponent.gender.imageSm
         self.configureTierBadge(tierCode: opponent.tierCode)
         let isMySubmission = game.latestSubmitterId == myUserId
-        self.updateWriteResultButton(resultState: game.resultStatus, isMySubmission: isMySubmission, isSubmitLocked: game.isSubmitLocked)
+        self.updateWriteResultButton(resultState: game.resultStatus, isMySubmission: isMySubmission)
     }
     
-    private func updateWriteResultButton(resultState: GameResultStatus, isMySubmission: Bool, isSubmitLocked: Bool) {
+    private func updateWriteResultButton(resultState: GameResultStatus, isMySubmission: Bool) {
         let canConfirm = resultState.canConfirm(isMySubmission: isMySubmission)
-        let canSubmit = resultState.canSubmit(isMySubmission: isMySubmission) && !isSubmitLocked
+        let canSubmit = resultState.canSubmit(isMySubmission: isMySubmission)
         let title = resultState.buttonTitle(isMySubmission: isMySubmission)
         
         self.writeResult.setTitle(title, for: .normal)

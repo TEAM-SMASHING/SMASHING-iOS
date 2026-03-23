@@ -53,10 +53,6 @@ final class MatchResultCreateViewController: BaseViewController {
         mainView.nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
         mainView.myOptionButton.addTarget(self, action: #selector(didTapMyOptionButton), for: .touchUpInside)
         mainView.rivalOptionButton.addTarget(self, action: #selector(didTapRivalOptionButton), for: .touchUpInside)
-        
-        mainView.onScoreChanged = { [weak self] myScore, opponentScore, hasMyScore, hasOpponentScore in
-            self?.input.send(.scoreChanged(myScore: myScore, opponentScore: opponentScore, hasMyScore: hasMyScore, hasOpponentScore: hasOpponentScore))
-        }
     }
     
     private func bind() {
@@ -88,13 +84,6 @@ final class MatchResultCreateViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] winner in
                 self?.mainView.updateSelectedWinner(winner)
-            }
-            .store(in: &cancellables)
-        
-        output.prefillData
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] prefill in
-                self?.mainView.applyPrefillData(myScore: prefill.myScore, opponentScore: prefill.opponentScore)
             }
             .store(in: &cancellables)
         
@@ -168,8 +157,6 @@ final class MatchResultCreateViewController: BaseViewController {
 }
 
 struct MatchResultData {
-    let winnerUserId: String
-    let loserUserId: String
-    let scoreWinner: Int
-    let scoreLoser: Int
+    let winnerProfileId: String
+    let loserProfileId: String
 }

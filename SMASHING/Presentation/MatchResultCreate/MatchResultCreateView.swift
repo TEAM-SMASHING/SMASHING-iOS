@@ -17,7 +17,6 @@ final class MatchResultCreateView: BaseUIView {
     private var selectedWinner: String?
     
     var onBackTapped: (() -> Void)?
-    var onScoreChanged: ((Int?, Int?, Bool, Bool) -> Void)?
     
     lazy var navigationBar = CustomNavigationBar(title: "결과 작성",
                                                  leftAction: { [weak self] in
@@ -69,28 +68,6 @@ final class MatchResultCreateView: BaseUIView {
         $0.setTitleColor(.Text.primary, for: .normal)
     }
     
-    private let scoreLabel = UILabel().then {
-        $0.text = "스코어"
-        $0.setPretendard(.textMdM)
-        $0.textColor = .Text.primary
-    }
-    
-    private let scoreRequiredStar = UILabel().then {
-        $0.text = "*"
-        $0.setPretendard(.textMdM)
-        $0.textColor = .Text.red
-    }
-    
-    private lazy var myScoreTextField = ScoreTextField()
-    
-    private let semiColonLabel = UILabel().then {
-        $0.text = ":"
-        $0.font = .pretendard(.textSmM)
-        $0.textColor = .Text.primary
-    }
-    
-    private lazy var rivalScoreTextField = ScoreTextField()
-    
     let nextButton = CTAButton(label: "다음")
     
     override func setUI() {
@@ -101,25 +78,10 @@ final class MatchResultCreateView: BaseUIView {
                     subTitleLabel,
                     matchResultCard,
                     winnerLabel,
-                    scoreLabel,
                     winnerRequiredStar,
                     winnerDropDown,
-                    scoreRequiredStar,
                     nextButton,
-                    myScoreTextField,
-                    semiColonLabel,
-                    rivalScoreTextField,
                     dropDownOptionsView)
-        
-        myScoreTextField.onDone = { [weak self] in
-            self?.updateScoreToMatchResultCard()
-            self?.notifyScoreChanged()
-        }
-        
-        rivalScoreTextField.onDone = { [weak self] in
-            self?.updateScoreToMatchResultCard()
-            self?.notifyScoreChanged()
-        }
         
         nextButton.isEnabled = false
     }
@@ -179,34 +141,6 @@ final class MatchResultCreateView: BaseUIView {
             $0.height.equalTo(48)
         }
         
-        scoreLabel.snp.makeConstraints {
-            $0.top.equalTo(winnerLabel.snp.bottom).offset(41)
-            $0.leading.equalToSuperview().inset(16)
-        }
-        
-        scoreRequiredStar.snp.makeConstraints {
-            $0.top.equalTo(scoreLabel)
-            $0.leading.equalTo(scoreLabel.snp.trailing)
-        }
-        
-        myScoreTextField.snp.makeConstraints {
-            $0.centerY.equalTo(scoreLabel)
-            $0.leading.equalTo(winnerDropDown.snp.leading)
-            $0.width.equalTo(56)
-            $0.height.equalTo(45)
-        }
-        
-        semiColonLabel.snp.makeConstraints {
-            $0.centerY.equalTo(scoreLabel)
-            $0.leading.equalTo(myScoreTextField.snp.trailing).offset(12)
-        }
-        
-        rivalScoreTextField.snp.makeConstraints {
-            $0.centerY.equalTo(scoreLabel)
-            $0.trailing.equalTo(winnerDropDown.snp.trailing)
-            $0.width.height.equalTo(myScoreTextField)
-        }
-        
         nextButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(47)
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -236,46 +170,10 @@ final class MatchResultCreateView: BaseUIView {
             toggleDropDown()
         }
         updateWinnerUI()
-        notifyScoreChanged()
-    }
-    
-    private func notifyScoreChanged() {
-        let myText = myScoreTextField.text ?? ""
-        let opponentText = rivalScoreTextField.text ?? ""
-        let hasMyScore = !myText.isEmpty
-        let hasOpponentScore = !opponentText.isEmpty
-        
-        let myScore = hasMyScore ? Int(myText) : nil
-        let opponentScore = hasOpponentScore ? Int(opponentText) : nil
-        onScoreChanged?(myScore, opponentScore, hasMyScore, hasOpponentScore)
-        
-//        let myScore = getMyScore()
-//        let opponentScore = getOpponentScore()
-//        onScoreChanged?(myScore, opponentScore)
-    }
-    
-    private func updateScoreToMatchResultCard() {
-        let myScoreText: String
-        if let text = myScoreTextField.text, !text.isEmpty {
-            myScoreText = text
-        } else {
-            myScoreText = "0"
-        }
-        
-        let rivalScoreText: String
-        if let text = rivalScoreTextField.text, !text.isEmpty {
-            rivalScoreText = text
-        } else {
-            rivalScoreText = "0"
-        }
-        
-        matchResultCard.updateScore(myScore: myScoreText, rivalScore: rivalScoreText)
     }
     
     private func updateWinnerUI() {
-        guard let selectedWinner = selectedWinner else {
-            return
-        }
+        guard let selectedWinner else { return }
         
         let isMyWin = (selectedWinner == myOptionButton.titleLabel?.text)
         matchResultCard.updateWinnerCrown(isMyWin: isMyWin)
@@ -286,13 +184,6 @@ final class MatchResultCreateView: BaseUIView {
         myOptionButton.setTitle(myNickname, for: .normal)
         rivalOptionButton.setTitle(opponentNickname, for: .normal)
         matchResultCard.configure(myName: myNickname, myImage: UIImage(systemName: "circle.fill"), rivalName: opponentNickname, rivalImage: UIImage(systemName: "circle.fill"))
-    }
-    
-    func applyPrefillData(myScore: Int, opponentScore: Int) {
-        myScoreTextField.text = String(myScore)
-        rivalScoreTextField.text = String(opponentScore)
-        updateScoreToMatchResultCard()
-        notifyScoreChanged()
     }
     
     func getSelectedWinner() -> String? {

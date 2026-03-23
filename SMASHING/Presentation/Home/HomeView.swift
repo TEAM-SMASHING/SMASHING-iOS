@@ -13,31 +13,11 @@ import SnapKit
 
 final class HomeView: UICollectionView {
     
-    private var isRecommendedUserEmpty: Bool = false
-    
-    private lazy var compositionalLayout: UICollectionViewCompositionalLayout = {
-        UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
-            guard let sectionType = HomeViewLayout(rawValue: sectionIndex) else {
-                return HomeViewLayout.matching.section
-            }
-            
-            if sectionType == .recommendedUser, self?.isRecommendedUserEmpty == true {
-                return HomeViewLayout.recommendedUserEmptySection
-            }
-            return sectionType.section
-        }
-    }()
-    
-    //    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
-    //        super.init(frame: .zero, collectionViewLayout: self.compositionalLayout)
-    //
-    //        register()
-    //        setStyle()
-    //    }
-    //
+    private var isRecommendedUserEmpty: Bool = true
+
     init() {
         super.init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
-        setCollectionViewLayout(compositionalLayout, animated: false)
+        setCollectionViewLayout(makeLayout(), animated: false)
         register()
         setStyle()
     }
@@ -71,9 +51,27 @@ final class HomeView: UICollectionView {
         backgroundColor = .white
     }
     
+    private func makeLayout() -> UICollectionViewCompositionalLayout {
+        UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
+            guard let sectionType = HomeViewLayout(rawValue: sectionIndex) else {
+                return HomeViewLayout.matching.section
+            }
+            if sectionType == .recommendedUser, self?.isRecommendedUserEmpty == true {
+                return HomeViewLayout.recommendedUserEmptySection
+            }
+            return sectionType.section
+        }
+    }
+
     func setRecommendedUserEmpty(_ isEmpty: Bool) {
-        guard isRecommendedUserEmpty != isEmpty else { return }
-        isRecommendedUserEmpty = isEmpty
-        setCollectionViewLayout(compositionalLayout, animated: false)
+        if isRecommendedUserEmpty != isEmpty {
+            isRecommendedUserEmpty = isEmpty
+            setCollectionViewLayout(makeLayout(), animated: false) { [weak self] _ in
+                self?.reloadSections(IndexSet(integer: HomeViewLayout.recommendedUser.rawValue))
+            }
+        } else {
+            reloadSections(IndexSet(integer: HomeViewLayout.recommendedUser.rawValue))
+        }
     }
 }
+

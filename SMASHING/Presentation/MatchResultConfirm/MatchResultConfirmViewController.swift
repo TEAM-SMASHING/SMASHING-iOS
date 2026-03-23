@@ -55,8 +55,6 @@ final class MatchResultConfirmViewController: BaseViewController {
                 self?.mainView.configure(
                     myNickname: data.myNickname,
                     opponentNickname: data.opponentNickname,
-                    myScore: data.myScore,
-                    opponentScore: data.opponentScore,
                     winnerNickname: data.winnerNickname
                 )
             }

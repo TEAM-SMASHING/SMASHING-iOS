@@ -42,7 +42,7 @@ struct SentRequestReceiverDTO: Codable {
     let losses: Int
 
     enum CodingKeys: String, CodingKey {
-        case userID = "userId"
+        case userID = "receiverProfileId"
         case nickname, gender, reviewCount
         case tierCode, wins, losses
     }

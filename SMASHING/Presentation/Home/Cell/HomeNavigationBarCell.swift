@@ -11,10 +11,11 @@ import Then
 import SnapKit
 
 final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
-    var onRegionButtonTapped: (() -> Void)?
-    var onSportsAndTierTapped: (() -> Void)?
+    var onSportsAndTierTapped: ((UIView) -> Void)?
+    var onRegionButtonTapped: ((_ regionFrame: CGRect) -> Void)?
     var hasNewNotification: ((Bool) -> Void)?
     var onBellTapped: (() -> Void)?
+    var onMyPageTapped: (() -> Void)?
     
     private let regionStackView = UIStackView().then {
         $0.axis = .horizontal
@@ -64,12 +65,17 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         $0.contentMode = .scaleAspectFit
     }
     
+    private let myPageImage = UIImageView().then {
+        $0.image = .icProfile
+        $0.contentMode = .scaleAspectFit
+    }
+    
     override func setUI() {
         regionStackView.addArrangedSubviews(pinImageView, regionLabel, chevronImageView)
         
         sportsAndTierStackView.addArrangedSubviews(sportsImage, tierLabel)
         
-        addSubviews(regionStackView, sportsAndTierStackView, bellImage)
+        addSubviews(regionStackView, sportsAndTierStackView, bellImage, myPageImage)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(regionTapped))
         regionStackView.isUserInteractionEnabled = true
@@ -82,6 +88,10 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         let bellTap = UITapGestureRecognizer(target: self, action: #selector(bellTapped))
         bellImage.isUserInteractionEnabled = true
         bellImage.addGestureRecognizer(bellTap)
+        
+        let myPageTap = UITapGestureRecognizer(target: self, action: #selector(myPageTapped))
+        myPageImage.isUserInteractionEnabled = true
+        myPageImage.addGestureRecognizer(myPageTap)
     }
     
     override func setLayout() {
@@ -99,6 +109,12 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
         }
         
         bellImage.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(myPageImage.snp.leading).offset(-12)
+            $0.size.equalTo(24)
+        }
+        
+        myPageImage.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview()
             $0.size.equalTo(24)
@@ -126,15 +142,22 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     @objc
     private func regionTapped() {
-        onRegionButtonTapped?()
+        let frame = regionStackView.convert(regionStackView.bounds, to: nil)
+        onRegionButtonTapped?(frame)
     }
     
     @objc
     private func sportsAndTierTapped() {
-        onSportsAndTierTapped?()
+        onSportsAndTierTapped?(regionStackView)
     }
     
-    @objc private func bellTapped() {
+    @objc
+    private func bellTapped() {
         onBellTapped?()
+    }
+    
+    @objc
+    private func myPageTapped() {
+        onMyPageTapped?()
     }
 }
