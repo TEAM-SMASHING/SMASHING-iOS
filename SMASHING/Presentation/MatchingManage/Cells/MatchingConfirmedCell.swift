@@ -187,13 +187,13 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     
     // MARK: - Configuration
     
-    func configure(with game: MatchingConfirmedGameDTO, myUserId: String) {
+    func configure(with game: MatchingConfirmedGameDTO, myProfileId: String) {
         let opponent = game.opponent
         self.nicknameLabel.text = opponent.nickname
         self.profileImageView.image = UIImage.defaultProfileImage(name: opponent.nickname)
         self.genderIconImageView.image = opponent.gender.imageSm
         self.configureTierBadge(tierCode: opponent.tierCode)
-        let isMySubmission = game.latestSubmitterId == myUserId
+        let isMySubmission = game.latestSubmitterId == myProfileId
         self.updateWriteResultButton(resultState: game.resultStatus, isMySubmission: isMySubmission)
     }
     

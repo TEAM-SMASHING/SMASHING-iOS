@@ -53,6 +53,10 @@ final class HomeViewController: BaseViewController {
         return KeychainService.get(key: Environment.userIdKey) ?? ""
     }
     
+    private var myProfileId: String {
+        return latestMyProfile?.activeProfile.profileId ?? ""
+    }
+    
     private var myRegion: String {
         return UserDefaults.standard.string(forKey: UserDefaultKey.region) ?? ""
     }
@@ -260,7 +264,7 @@ final class HomeViewController: BaseViewController {
         let viewModel = MatchResultConfirmViewModel(
             gameData: gameData,
             submissionId: submissionId,
-            myUserId: myUserId
+            myProfileId: myProfileId
         )
         let vc = MatchResultConfirmViewController(viewModel: viewModel)
         NavigationManager.shared.push(vc, hidesBottomBar: true)
@@ -269,7 +273,7 @@ final class HomeViewController: BaseViewController {
     // MARK: - Navigation Methods
     
     private func showMatchResultCreate(with gameData: MatchingConfirmedGameDTO) {
-        let vm = MatchResultCreateViewModel(gameData: gameData, myUserId: myUserId, myNickname: myNickname)
+        let vm = MatchResultCreateViewModel(gameData: gameData, myProfileId: myProfileId, myNickname: myNickname)
         let vc = MatchResultCreateViewController(viewModel: vm)
         NavigationManager.shared.push(vc, hidesBottomBar: true)
     }
@@ -494,10 +498,10 @@ extension HomeViewController: UICollectionViewDataSource {
             } else {
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.reuseIdentifier, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
                 let matching = recentMatching[indexPath.item]
-                cell.configure(with: matching, myNickname: myNickname, myUserId: myUserId)
+                cell.configure(with: matching, myNickname: myNickname, myUserId: myProfileId)
                 cell.onWriteResultButtonTapped = { [weak self] in
                     guard let self else { return }
-                    let isMySubmission = matching.latestSubmitterId == self.myUserId
+                    let isMySubmission = matching.latestSubmitterId == self.myProfileId
                     let canConfirm = matching.resultStatus.canConfirm(isMySubmission: isMySubmission)
                     if canConfirm {
                         // 상대방이 제출한 결과 확인 플로우

@@ -52,7 +52,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
     // MARK: - Properties
     private let gameService: GameServiceProtocol
     private let gameData: MatchingConfirmedGameDTO
-    private let myUserId: String
+    private let myProfileId: String
     private let myNickname: String
     
     private var selectedWinner: String?
@@ -61,9 +61,9 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
     let output = Output()
     
     
-    init(gameData: MatchingConfirmedGameDTO, myUserId: String, myNickname: String, gameService: GameServiceProtocol = GameService()) {
+    init(gameData: MatchingConfirmedGameDTO, myProfileId: String, myNickname: String, gameService: GameServiceProtocol = GameService()) {
         self.gameData = gameData
-        self.myUserId = myUserId
+        self.myProfileId = myProfileId
         self.myNickname = myNickname
         self.gameService = gameService
     }
@@ -124,7 +124,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         let matchResultData = createMatchResultData()
         
         if gameData.resultStatus.isFirstSubmission {
-            output.navToReviewCreate.send((gameData, matchResultData, myUserId))
+            output.navToReviewCreate.send((gameData, matchResultData, myProfileId))
         } else {
             output.showSubmitConfirm.send(matchResultData)
         }
@@ -137,8 +137,8 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         
         let isMyWin = (selectedWinner == myNickname)
         
-        let winnerProfileId = isMyWin ? myUserId : gameData.opponent.userID
-        let loserProfileId = isMyWin ? gameData.opponent.userID : myUserId
+        let winnerProfileId = isMyWin ? myProfileId : gameData.opponent.userID
+        let loserProfileId = isMyWin ? gameData.opponent.userID : myProfileId
         
         return MatchResultData(winnerProfileId: winnerProfileId, loserProfileId: loserProfileId)
     }
@@ -146,7 +146,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
     private var shouldPrefillResubmission: Bool {
         guard gameData.resultStatus == .resultRejected else { return false }
         guard let latestSubmitterId = gameData.latestSubmitterId else { return false }
-        return latestSubmitterId == myUserId
+        return latestSubmitterId == myProfileId
     }
     
     private func fetchSubmissionDetail(submittionId: String) {
@@ -161,7 +161,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
                 }
             } receiveValue: { [weak self] dto in
                 guard let self else { return }
-                let isMyWin = dto.winner.profileId == self.myUserId
+                let isMyWin = dto.winner.profileId == self.myProfileId
                 let winnerNickname = isMyWin ? self.myNickname : self.gameData.opponent.nickname
                 self.selectedWinner = winnerNickname
                 self.output.prefillData.send(MatchResultPrefillData(winnerNickname: winnerNickname))
