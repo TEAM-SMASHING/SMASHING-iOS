@@ -15,11 +15,13 @@ final class CTAButton: UIButton {
     // MARK: - Properties
     
     private var action: (() -> Void)?
+    private var warning: Bool = false
     
     // MARK: - Setup Methods
     
-    init(label: String, action: (() -> Void)? = nil) {
+    init(label: String, action: (() -> Void)? = nil, warning: Bool = false) {
         self.action = action
+        self.warning = warning
         super.init(frame: .zero)
         
         setAttributes(label: label)
@@ -54,9 +56,12 @@ final class CTAButton: UIButton {
         if !isEnabled {
             self.backgroundColor = .Button.backgroundPrimaryDisabled
             self.setTitleColor(.Button.textPrimaryDisabled, for: .normal)
-        } else if isHighlighted {
+        } else if isHighlighted && !warning {
             self.backgroundColor = .Button.backgroundPrimaryPressed
             self.setTitleColor( .Button.textPrimaryPressed, for: .normal)
+        } else if isEnabled && warning {
+            self.backgroundColor = .Background.warning
+            self.setTitleColor(.Text.primary, for: .normal)
         } else {
             self.backgroundColor = .Button.backgroundPrimaryActive
             self.setTitleColor( .Button.textPrimaryActive, for: .normal)

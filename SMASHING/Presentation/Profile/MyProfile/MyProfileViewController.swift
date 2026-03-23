@@ -18,15 +18,22 @@ final class MyProfileViewController: BaseViewController {
     private lazy var mainView = MyProfileView().then {
         $0.tierCard.tierDetailAction = { self.inputSubject.send(.tierExplanationTapped) }
     }
-    private let viewModel: any MyProfileViewModelProtocol
+    private let viewModel: MyProfileViewModel
     private let inputSubject = PassthroughSubject<MyProfileViewModel.Input, Never>()
     
     private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - Init
     
+    init() {
+        let profileService = UserProfileService()
+        let reviewService = UserReviewService()
+        self.viewModel = MyProfileViewModel(userProfileService: profileService, userReviewService: reviewService)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
     init(viewModel: any MyProfileViewModelProtocol) {
-        self.viewModel = viewModel
+        self.viewModel = viewModel as! MyProfileViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -67,9 +74,6 @@ final class MyProfileViewController: BaseViewController {
             .sink { [weak self] response in
                 guard let self else { return }
                 mainView.configure(profile: response)
-                // TierCard의 CollectionView 데이터 갱신
-                // TODO: Response에서 전체 종목 리스트를 추출하여 전달해야 함
-                // 예: self.mainView.tierCard.reloadSports(with: response.allProfiles.map { $0.sport })
             }
             .store(in: &cancellables)
         
@@ -99,6 +103,51 @@ final class MyProfileViewController: BaseViewController {
                 mainView.configure(summury: response)
             }
             .store(in: &cancellables)
+        
+        // MARK: - Navigation Bindings (from ProfileCoordinator)
+        
+        output.navToAddSports
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showAddSports()
+            }
+            .store(in: &cancellables)
+        
+        output.navToSeeAllReviews
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showAllReviews()
+            }
+            .store(in: &cancellables)
+        
+        output.navToTierExplanation
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.showTierExplanation()
+            }
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - Navigation Methods
+    
+    private func showAddSports() {
+        let addSportsVC = AddSportsViewController()
+        NavigationManager.shared.push(addSportsVC, hidesBottomBar: true)
+    }
+    
+    private func showAllReviews() {
+        let service = UserReviewService()
+        let viewModel = MyReviewsViewModel(service: service)
+        let vc = MyReviewsViewController(viewModel: viewModel)
+        NavigationManager.shared.push(vc, hidesBottomBar: true)
+    }
+    
+    private func showTierExplanation() {
+        let tierViewController = TierExplanationViewController(sports: .badminton, oreTier: .bronze)
+        tierViewController.dismissAction = {
+            NavigationManager.shared.dismiss()
+        }
+        NavigationManager.shared.present(tierViewController)
     }
 }
 
@@ -112,9 +161,9 @@ extension MyProfileViewController: UICollectionViewDelegate, UICollectionViewDat
             withReuseIdentifier: ReviewCollectionViewCell.reuseIdentifier,
             for: indexPath
         ) as? ReviewCollectionViewCell else { return UICollectionViewCell() }
-        
+
         let data = viewModel.reviewPreviews[indexPath.item]
-        
+
         cell.configure(data)
         cell.contentView.snp.remakeConstraints {
             $0.width.equalTo(collectionView.frame.width)

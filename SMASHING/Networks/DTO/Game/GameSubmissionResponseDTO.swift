@@ -8,7 +8,7 @@
 import Foundation
 
 struct GameSubmissionResponseDTO: Decodable {
-    let reviewId: String?
+    let submissionId: String?
 }
 
 struct GameConfirmResponseDTO: Decodable {

@@ -12,8 +12,6 @@ import Combine
 
 struct MatchResultPrefillData {
     let winnerNickname: String
-    let myScore: Int
-    let opponentScore: Int
 }
 
 protocol MatchResultCreateViewModelProtocol: InputOutputProtocol {
@@ -27,7 +25,6 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         case winnerDropDownTapped
         case myOptionSelected
         case rivalOptionSelected
-        case scoreChanged(myScore: Int?, opponentScore: Int?, hasMyScore: Bool, hasOpponentScore: Bool)
         case nextButtonTapped
         case submitResubmissionConfirmed(MatchResultData)
     }
@@ -59,10 +56,6 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
     private let myNickname: String
     
     private var selectedWinner: String?
-    private var myScore: Int = 0
-    private var opponentScore: Int = 0
-    private var hasMyScore: Bool = false
-    private var hasOpponentScore: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
     let output = Output()
@@ -99,12 +92,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
             
         case .rivalOptionSelected:
             selectWinner(gameData.opponent.nickname)
-        case .scoreChanged(let myScore, let opponentScore, let hasMyScore, let hasOpponentScore):
-            self.myScore = myScore ?? 0
-            self.opponentScore = opponentScore ?? 0
-            self.hasMyScore = hasMyScore
-            self.hasOpponentScore = hasOpponentScore
-            validateWinnerAndScore()
+
         case .nextButtonTapped:
             handleNextButtonTapped()
         case .submitResubmissionConfirmed(let matchResultData):
@@ -117,7 +105,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         output.myNickname.send(myNickname)
         output.opponentNickname.send(gameData.opponent.nickname)
         
-        let buttonTitle = gameData.resultStatus.isFirstSubmission ? "다음" : "완료" //여기 해야함
+        let buttonTitle = gameData.resultStatus.isFirstSubmission ? "다음" : "완료"
         output.nextButtonTitle.send(buttonTitle)
         output.isNextButtonEnabled.send(false)
         
@@ -129,24 +117,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
     private func selectWinner(_ winner: String) {
         selectedWinner = winner
         output.selectedWinner.send(winner)
-        validateWinnerAndScore()
-    }
-    
-    private func validateWinnerAndScore() {
-        guard let selectedWinner = selectedWinner else {
-            output.isNextButtonEnabled.send(false)
-            return
-        }
-        
-        guard hasMyScore, hasOpponentScore else {
-            output.isNextButtonEnabled.send(false)
-            return 
-        }
-        
-        let isMyWin = (selectedWinner == myNickname)
-        let isScoreValid = isMyWin ? (myScore > opponentScore) : (opponentScore > myScore)
-        
-        output.isNextButtonEnabled.send(isScoreValid)
+        output.isNextButtonEnabled.send(true)
     }
     
     private func handleNextButtonTapped() {
@@ -160,24 +131,16 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
     }
     
     private func createMatchResultData() -> MatchResultData {
-        guard let selectedWinner = selectedWinner else {
-            return MatchResultData(winnerUserId: "", loserUserId: "", scoreWinner: 0, scoreLoser: 0)
+        guard let selectedWinner else {
+            return MatchResultData(winnerProfileId: "", loserProfileId: "")
         }
         
         let isMyWin = (selectedWinner == myNickname)
         
-        let winnerUserId = isMyWin ? myUserId : gameData.opponent.userID
-        let loserUserId = isMyWin ? gameData.opponent.userID : myUserId
+        let winnerProfileId = isMyWin ? myUserId : gameData.opponent.userID
+        let loserProfileId = isMyWin ? gameData.opponent.userID : myUserId
         
-        let scoreWinner = isMyWin ? myScore : opponentScore
-        let scoreLoser = isMyWin ? opponentScore : myScore
-        
-        return MatchResultData(
-            winnerUserId: winnerUserId,
-            loserUserId: loserUserId,
-            scoreWinner: scoreWinner,
-            scoreLoser: scoreLoser
-        )
+        return MatchResultData(winnerProfileId: winnerProfileId, loserProfileId: loserProfileId)
     }
     
     private var shouldPrefillResubmission: Bool {
@@ -198,15 +161,12 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
                 }
             } receiveValue: { [weak self] dto in
                 guard let self else { return }
-                let matchResultData = MatchResultData(winnerUserId: dto.winner.userId, loserUserId: dto.loser.userId, scoreWinner: dto.winner.score, scoreLoser: dto.loser.score)
-                let isMyWin = matchResultData.winnerUserId == self.myUserId
-                let prefill = MatchResultPrefillData(winnerNickname: isMyWin ? self.myNickname : self.gameData.opponent.nickname, myScore: isMyWin ? matchResultData.scoreWinner : matchResultData.scoreLoser, opponentScore: isMyWin ? matchResultData.scoreLoser : matchResultData.scoreWinner)
-                self.selectedWinner = prefill.winnerNickname
-                self.myScore = prefill.myScore
-                self.opponentScore = prefill.opponentScore
-                self.output.prefillData.send(prefill)
-                self.output.selectedWinner.send(prefill.winnerNickname)
-                self.validateWinnerAndScore()
+                let isMyWin = dto.winner.profileId == self.myUserId
+                let winnerNickname = isMyWin ? self.myNickname : self.gameData.opponent.nickname
+                self.selectedWinner = winnerNickname
+                self.output.prefillData.send(MatchResultPrefillData(winnerNickname: winnerNickname))
+                self.output.selectedWinner.send(winnerNickname)
+                self.output.isNextButtonEnabled.send(true)
             }
             .store(in: &cancellables)
     }
@@ -214,11 +174,10 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
     private func submitResubmission(_ matchResultData: MatchResultData) {
         output.isLoading.send(true)
         
-        let request = GameResubmissionRequestDTO(
-            winnerUserId: matchResultData.winnerUserId,
-            loserUserId: matchResultData.loserUserId,
-            scoreWinner: matchResultData.scoreWinner,
-            scoreLoser: matchResultData.scoreLoser
+        let request = GameSubmissionRequestDTO(
+            winnerProfileId: matchResultData.winnerProfileId,
+            loserProfileId: matchResultData.loserProfileId,
+            review: nil
         )
         
         gameService.resubmitResult(gameId: gameData.gameID, request: request)

@@ -164,11 +164,9 @@ final class ReviewCreateViewModel: ReviewCreateViewModelProtocol {
                 tags: selectedTags.isEmpty ? nil : selectedTags.map { $0.rawValue }
             )
 
-            let requestDTO = GameFirstSubmissionRequestDTO(
-                winnerUserId: matchResultData.winnerUserId,
-                loserUserId: matchResultData.loserUserId,
-                scoreWinner: matchResultData.scoreWinner,
-                scoreLoser: matchResultData.scoreLoser,
+            let requestDTO = GameSubmissionRequestDTO(
+                winnerProfileId: matchResultData.winnerProfileId,
+                loserProfileId: matchResultData.loserProfileId,
                 review: reviewRequestDTO
             )
 
@@ -183,7 +181,7 @@ final class ReviewCreateViewModel: ReviewCreateViewModelProtocol {
                     }
                 } receiveValue: { [weak self] response in
                     guard let self else { return }
-                    print("제출 성공 - reviewId: \(response.reviewId ?? "없음")")
+                    print("제출 성공 - reviewId: \(response.submissionId ?? "없음")")
                     self.output.navToHome.send()
                 }
                 .store(in: &cancellables)

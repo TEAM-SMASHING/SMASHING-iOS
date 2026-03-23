@@ -9,8 +9,8 @@ import Alamofire
 import Moya
 
 enum GameAPI {
-    case submissionResult(gameId: String, request: GameFirstSubmissionRequestDTO)
-    case resubmission(gameId: String, request: GameResubmissionRequestDTO)
+    case submissionResult(gameId: String, request: GameSubmissionRequestDTO)
+    case resubmission(gameId: String, request: GameSubmissionRequestDTO)
     case submissionConfirm(gameId: String, submissionId: String, request: GameConfirmRequestDTO)
     case rejectSubmission(gameId: String, submissionId: String, request: GameRejectRequestDTO)
     case deleteMatchBeforeConfirm //진재

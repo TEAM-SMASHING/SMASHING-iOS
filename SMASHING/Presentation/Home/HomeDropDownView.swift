@@ -14,7 +14,9 @@ final class HomeDropDownView: BaseUIView {
     
     // MARK: - Properties
     
-    var onRegionButtonTapped: (() -> Void)?
+    var onRegionButtonTapped: ((_ regionFrame: CGRect) -> Void)?
+    
+    private var regionTopConstraint: Constraint?
     var onSportsAndTierTapped: (() -> Void)?
     var onSportsCellTapped: ((Sports?) -> Void)?
     var onBellTapped: (() -> Void)?
@@ -110,7 +112,7 @@ final class HomeDropDownView: BaseUIView {
     
     override func setLayout() {
         regionStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(52)
+            regionTopConstraint = $0.top.equalToSuperview().offset(0).constraint
             $0.leading.equalToSuperview().inset(16)
         }
         
@@ -157,7 +159,12 @@ final class HomeDropDownView: BaseUIView {
             $0.top.equalTo(tierCard.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(20)
+            $0.height.equalTo(78)
         }
+    }
+    
+    func updateRegionTopOffset(_ offset: CGFloat) {
+        regionTopConstraint?.update(offset: offset)
     }
     
     func configure(profile: MyProfileListResponse, myRegion: String) {
@@ -178,7 +185,8 @@ final class HomeDropDownView: BaseUIView {
     
     @objc
     private func regionTapped() {
-        onRegionButtonTapped?()
+        let frame = regionStackView.convert(regionStackView.bounds, to: nil)
+        onRegionButtonTapped?(frame)
     }
     
     @objc

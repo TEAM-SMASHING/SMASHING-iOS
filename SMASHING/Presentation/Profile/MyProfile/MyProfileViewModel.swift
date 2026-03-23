@@ -27,7 +27,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
         let myProfileFetched = PassthroughSubject<MyProfileListResponse, Never>()
         let myReviewSummaryFetched = PassthroughSubject<ReviewSummaryResponse, Never>()
         let myRecentReviewListFetched = PassthroughSubject<[RecentReviewResult], Never>()
-        let navigateToAddSports = PassthroughSubject<Void, Never>()
+        let navToAddSports = PassthroughSubject<Void, Never>()
         let navToTierExplanation = PassthroughSubject<Void, Never>()
         let navToSeeAllReviews = PassthroughSubject<Void, Never>()
     }
@@ -78,7 +78,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
                     if let sport = sport {
                         updateActiveProfile(for: sport)
                     } else {
-                        output.navigateToAddSports.send()
+                        output.navToAddSports.send()
                     }
                 case .addSportsTapped:
                     break

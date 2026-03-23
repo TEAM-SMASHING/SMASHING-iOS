@@ -12,7 +12,7 @@ struct RecommendedUserResponseDTO: Decodable {
 }
 
 struct RecommendedUserDTO: Decodable {
-    let userId: String
+    let userProfileId: String
     let nickname: String
     let tierCode: String
     let wins: Int

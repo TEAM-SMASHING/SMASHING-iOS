@@ -172,7 +172,7 @@ extension RankingViewController: UICollectionViewDataSource {
 extension RankingViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let ranker = rankings[indexPath.item]
-        input.send(.rankingUserTapped(userId: ranker.userId))
+        input.send(.rankingUserTapped(userId: ranker.userProfileId))
     }
 }
 
