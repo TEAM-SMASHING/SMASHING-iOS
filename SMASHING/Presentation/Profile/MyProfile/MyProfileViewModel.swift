@@ -107,6 +107,7 @@ final class MyProfileViewModel: MyProfileViewModelProtocol {
             } receiveValue: { [weak self] response in
                 guard let self else { return }
                 self.storeSportsCode(from: response)
+                _ = KeychainService.add(key: Environment.activeProfileKey, value: response.activeProfile.profileId)
                 self.currentSport = response.activeProfile.sportCode
                 self.profileIdBySport = Dictionary(
                     uniqueKeysWithValues: response.allProfiles.map { ($0.sportCode, $0.profileId) }
