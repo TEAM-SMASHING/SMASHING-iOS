@@ -19,4 +19,5 @@ enum Environment {
     static let nicknameKey: String = "nicknameKey"
     static let sportsCodeKeyPrefix: String = "sportsCode"
     static let regionKey: String = "regionKey"
+    static let activeProfileKey: String = "activeProfileId"
 }

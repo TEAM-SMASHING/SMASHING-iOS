@@ -38,7 +38,7 @@ final class MatchResultConfirmViewModel: MatchResultConfirmViewModelProtocol {
     private let gameData: MatchingConfirmedGameDTO
     private let submissionId: String
     
-    private let myUserId: String
+    private let myProfileId: String
     private var myNickname: String {
         return KeychainService.get(key: Environment.nicknameKey) ?? ""
     }
@@ -52,12 +52,12 @@ final class MatchResultConfirmViewModel: MatchResultConfirmViewModelProtocol {
     init(
         gameData: MatchingConfirmedGameDTO,
         submissionId: String,
-        myUserId: String,
+        myProfileId: String,
         gameService: GameServiceProtocol = GameService()
     ) {
         self.gameData = gameData
         self.submissionId = submissionId
-        self.myUserId = myUserId
+        self.myProfileId = myProfileId
         self.gameService = gameService
     }
     

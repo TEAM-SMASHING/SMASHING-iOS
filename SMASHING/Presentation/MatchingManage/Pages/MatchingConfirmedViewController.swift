@@ -15,8 +15,8 @@ final class MatchingConfirmedViewController: BaseViewController {
 
     // MARK: - Properties
     
-    private var myUserId: String {
-        return KeychainService.get(key: Environment.userIdKey) ?? ""
+    private var myProfileId: String {
+        return KeychainService.get(key: Environment.activeProfileKey) ?? ""
     }
     
     private var myNickname: String {
@@ -175,7 +175,7 @@ final class MatchingConfirmedViewController: BaseViewController {
         let viewModel = MatchResultConfirmViewModel(
             gameData: gameData,
             submissionId: submissionId,
-            myUserId: myUserId
+            myProfileId: myProfileId
         )
         let vc = MatchResultConfirmViewController(viewModel: viewModel)
         vc.hidesBottomBarWhenPushed = true
@@ -183,7 +183,7 @@ final class MatchingConfirmedViewController: BaseViewController {
     }
     
     private func showMatchResultCreate(with gameData: MatchingConfirmedGameDTO) {
-        let vm = MatchResultCreateViewModel(gameData: gameData, myUserId: myUserId, myNickname: myNickname)
+        let vm = MatchResultCreateViewModel(gameData: gameData, myProfileId: myProfileId, myNickname: myNickname)
         let vc = MatchResultCreateViewController(viewModel: vm)
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
@@ -242,14 +242,14 @@ extension MatchingConfirmedViewController: UICollectionViewDataSource {
         }
 
         let game = self.gameList[indexPath.row]
-        cell.configure(with: game, myUserId: myUserId)
+        cell.configure(with: game, myProfileId: myProfileId)
 
         cell.onCloseTapped = { [weak self] in
             self?.closeButtonDidTap(at: indexPath.item)
         }
         cell.onAcceptTapped = { [weak self] in
             guard let self else { return }
-            let isMySubmission = game.latestSubmitterId == self.myUserId
+            let isMySubmission = game.latestSubmitterId == self.myProfileId
             let canConfirm = game.resultStatus.canConfirm(isMySubmission: isMySubmission)
             if canConfirm {
                 // 상대방이 제출한 결과 확인 플로우

@@ -96,8 +96,8 @@ final class MatchResultCreateViewController: BaseViewController {
         
         output.navToReviewCreate
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] gameData, matchResultData, myUserId in
-                self?.navigateToReviewCreate(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId)
+            .sink { [weak self] gameData, matchResultData in
+                self?.navigateToReviewCreate(gameData: gameData, matchResultData: matchResultData)
             }
             .store(in: &cancellables)
         
@@ -136,10 +136,10 @@ final class MatchResultCreateViewController: BaseViewController {
         input.send(.nextButtonTapped)
     }
     
-    private func navigateToReviewCreate(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String) {
-        let flowType = ReviewFlowType.submission(gameData: gameData, matchResultData: matchResultData, myUserId: myUserId)
+    private func navigateToReviewCreate(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData) {
+        let flowType = ReviewFlowType.submission(gameData: gameData, matchResultData: matchResultData)
         let vc = ReviewCreateViewController(viewModel: ReviewCreateViewModel(flowType: flowType))
-        print("게임데이터\(gameData), 매치result\(matchResultData), myuserid\(myUserId)")
+        print("게임데이터\(gameData), 매치result\(matchResultData)")
         navigationController?.pushViewController(vc, animated: true)
     }
     
