@@ -11,7 +11,7 @@ import Combine
 enum ReviewFlowType {
     /// 결과 제출 플로우 (MatchResultCreate → ReviewCreate)
         /// 내가 직접 입력한 결과 + 리뷰를 함께 제출
-        case submission(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData, myUserId: String)
+        case submission(gameData: MatchingConfirmedGameDTO, matchResultData: MatchResultData)
 
         /// 결과 확정 플로우 (MatchResultConfirm → ReviewCreate)
         /// 상대방이 제출한 결과를 확정하고 리뷰 제출
@@ -129,7 +129,7 @@ final class ReviewCreateViewModel: ReviewCreateViewModelProtocol {
     private func configureInitialData() {
         let nickname: String
                switch flowType {
-               case .submission(let gameData, _, _):
+               case .submission(let gameData, _):
                    nickname = gameData.opponent.nickname
                case .confirmation(_, _, let opponentNickname):
                    nickname = opponentNickname
@@ -140,7 +140,7 @@ final class ReviewCreateViewModel: ReviewCreateViewModelProtocol {
     
     private func submitReview() {
             switch flowType {
-            case .submission(let gameData, let matchResultData, _):
+            case .submission(let gameData, let matchResultData):
                 submitResultWithReview(gameData: gameData, matchResultData: matchResultData)
 
             case .confirmation(let gameId, let submissionId, _):

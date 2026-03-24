@@ -42,7 +42,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         
         let showSubmitConfirm = PassthroughSubject<MatchResultData, Never>()
         
-        let navToReviewCreate = PassthroughSubject<(MatchingConfirmedGameDTO, MatchResultData, String), Never>()
+        let navToReviewCreate = PassthroughSubject<(MatchingConfirmedGameDTO, MatchResultData), Never>()
         let navToHome = PassthroughSubject<Void, Never>()
         
         let isLoading = PassthroughSubject<Bool, Never>()
@@ -124,7 +124,7 @@ final class MatchResultCreateViewModel: MatchResultCreateViewModelProtocol {
         let matchResultData = createMatchResultData()
         
         if gameData.resultStatus.isFirstSubmission {
-            output.navToReviewCreate.send((gameData, matchResultData, myProfileId))
+            output.navToReviewCreate.send((gameData, matchResultData))
         } else {
             output.showSubmitConfirm.send(matchResultData)
         }
