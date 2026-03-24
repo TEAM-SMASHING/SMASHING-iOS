@@ -14,4 +14,9 @@ struct UserSearchResponse: Decodable {
 struct UserSummary: Decodable {
     let userId: String
     let nickname: String
+
+    enum CodingKeys: String, CodingKey {
+        case userId = "userProfileId"
+        case nickname
+    }
 }
