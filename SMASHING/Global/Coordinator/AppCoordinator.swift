@@ -21,16 +21,32 @@ final class AppCoordinator {
     }
 
     func start() {
-        // 검은 화면 방지: 즉시 로그인 화면을 루트로 설정
-        showLoginFlow()
+        showSplashFlow()
+    }
 
-        // refreshToken 존재 시 자동 로그인 시도
-        guard let refreshToken = KeychainService.get(key: Environment.refreshTokenKey) else { return }
+    func showSplashFlow() {
+        let splashVC = SplashViewController()
+        NavigationManager.shared.resetRootFlow(to: [splashVC])
+
+        // 1초 후 자동 로그인 시도 → 결과에 따라 화면 전환
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            self?.attemptAutoLogin()
+        }
+    }
+
+    private func attemptAutoLogin() {
+        guard let refreshToken = KeychainService.get(key: Environment.refreshTokenKey) else {
+            showLoginFlow()
+            return
+        }
         authReissueService.reissue(refreshToken: refreshToken)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] success in
-                if success { self?.showTabBarFlow() }
-                // 실패 시 로그인 화면 그대로 유지
+                if success {
+                    self?.showTabBarFlow()
+                } else {
+                    self?.showLoginFlow()
+                }
             }
             .store(in: &cancellables)
     }
