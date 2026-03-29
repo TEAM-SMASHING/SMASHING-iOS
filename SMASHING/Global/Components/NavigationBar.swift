@@ -97,6 +97,10 @@ final class CustomNavigationBar: BaseUIView {
     func setLeftButtonHidden(_ isHidden: Bool) {
         leftBackButton.isHidden = isHidden
     }
+
+    func setTitle(_ title: String) {
+        titleLabel.text = title
+    }
     
     func setRightButton(image: UIImage?, action: @escaping () -> Void) {
         rightButton.setImage(image, for: .normal)

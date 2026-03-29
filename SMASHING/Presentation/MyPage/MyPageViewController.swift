@@ -42,7 +42,8 @@ final class MyPageViewController: BaseViewController {
         }
 
         mainView.profileAction = {
-            NavigationManager.shared.switchTab(to: .profile)
+            let profileVC = MyProfileViewController(showsBackButton: true)
+            NavigationManager.shared.push(profileVC, hidesBottomBar: true)
         }
 
         mainView.logoutAction = { [weak self] in
