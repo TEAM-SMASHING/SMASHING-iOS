@@ -262,7 +262,7 @@ final class MyPageView: BaseUIView {
     func configure(profile: MyProfileListResponse) {
         userNameLabel.text = profile.nickname
         tierImage.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
-        profileImageView.image = UIImage.defaultProfileImage(name: profile.nickname)
+        profileImageView.image = UIImage.defaultProfileImage()
     }
 
     private func button(title: String) -> UIButton {
