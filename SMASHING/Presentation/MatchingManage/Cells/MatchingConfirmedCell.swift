@@ -190,7 +190,7 @@ final class MatchingConfirmedCell: BaseUICollectionViewCell, ReuseIdentifiable {
     func configure(with game: MatchingConfirmedGameDTO, myProfileId: String) {
         let opponent = game.opponent
         self.nicknameLabel.text = opponent.nickname
-        self.profileImageView.image = UIImage.defaultProfileImage(name: opponent.nickname)
+        self.profileImageView.image = UIImage.defaultProfileImage()
         self.genderIconImageView.image = opponent.gender.imageSm
         self.configureTierBadge(tierCode: opponent.tierCode)
         let isMySubmission = game.latestSubmitterId == myProfileId

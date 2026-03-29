@@ -92,7 +92,7 @@ final class ReviewCollectionViewCell: UICollectionViewCell, ReuseIdentifiable {
     }
     
     func configure(_ review :RecentReviewResult) {
-        profileImageView.image = UIImage.defaultProfileImage(name: review.opponentNickname)
+        profileImageView.image = UIImage.defaultProfileImage()
         nicknameLabel.text = review.opponentNickname
         dateLabel.text = review.createdAt.toDateFromISO8601?.toRelativeString()
         contentLabel.text = review.content

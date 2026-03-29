@@ -88,7 +88,7 @@ final class NotificationCollectionViewCell: UICollectionViewCell, ReuseIdentifia
     }
     
     func configure(_ data: NotificationSummaryResponseDTO) {
-        iconImageView.image = UIImage.defaultProfileImage(name: data.senderNickname)
+        iconImageView.image = UIImage.defaultProfileImage()
         titleLabel.text = data.title
         contentLabel.text = data.content
         timeLabel.text = data.createdAt.toDateFromISO8601?.toRelativeString()

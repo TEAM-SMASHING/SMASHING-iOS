@@ -88,7 +88,7 @@ final class myRankingScoreView: BaseUIView {
     }
     
     func configure(with myRank: MyRankingDTO) {
-        profileImageView.image = UIImage.defaultProfileImage(name: myRank.nickname)
+        profileImageView.image = UIImage.defaultProfileImage()
         nameLabel.text = myRank.nickname
         tierLabel.text = myRank.tierWithLpText
         tierEmblem.image = Tier.from(tierCode: myRank.tierCode)?.badge

@@ -19,12 +19,16 @@ struct NotificationSummaryResponseDTO: Codable {
     let type: NotificationType
     let title: String
     let content: String
-    let linkUrl: String
+    let linkUrl: String?
     var isRead: Bool
     let createdAt: String
-    let senderNickname: String
-    let receiverProfileId: String
-    let receiverSportId: IntSports
+    let senderProfileId: String
+}
+
+struct NotificationSportMatchDTO: Decodable {
+    let receiverUserProfileId: String
+    let notificationSportCode: String
+    let isMatch: Bool
 }
 
 struct NotificationBaseResponseDTO: Codable {

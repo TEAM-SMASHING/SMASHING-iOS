@@ -17,16 +17,7 @@ extension UIImage {
         }
     }
     
-    static func defaultProfileImage(name: String) -> UIImage {
-        switch ( name.unicodeScalars.reduce(0) { $0 + Int($1.value) } ) % 3 {
-        case 0:
-            return .profile01
-        case 1:
-            return .profile02
-        case 2:
-            return .profile03
-        default:
-            return UIImage()
-        }
+    static func defaultProfileImage() -> UIImage {
+        return .imageProfile
     }
 }

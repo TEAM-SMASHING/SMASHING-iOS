@@ -217,7 +217,7 @@ final class ReceiveRequestCell: BaseUICollectionViewCell, ReuseIdentifiable {
     func configure(with requester: RequesterSummaryDTO) {
         self.nicknameLabel.text = requester.nickname
         self.genderIconImageView.image = requester.gender.imageSm
-        self.profileImageView.image = UIImage.defaultProfileImage(name: requester.nickname)
+        self.profileImageView.image = UIImage.defaultProfileImage()
         self.recordValueLabel.text = "\(requester.wins)승 \(requester.losses)패"
         self.reviewValueLabel.text = "\(requester.reviewCount)"
         self.configureTierBadge(tierCode: requester.tierCode)

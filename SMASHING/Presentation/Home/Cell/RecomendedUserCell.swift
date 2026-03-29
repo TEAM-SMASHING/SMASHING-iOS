@@ -143,7 +143,7 @@ final class RecomendedUserCell: BaseUICollectionViewCell, ReuseIdentifiable {
         } else {
             genderImageView.image = .icManSm
         }
-        profileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
+        profileImageView.image = UIImage.defaultProfileImage()
         winLoseLabel.text = "\(user.wins)승 \(user.losses)패"
         reviewCountLabel.text = String(user.reviews)
     }

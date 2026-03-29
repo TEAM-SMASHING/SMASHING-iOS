@@ -183,7 +183,7 @@ final class NavigationManager {
         case .navConfirmedMatchManage:
             navigateToMatchManage(page: .received)
         case .navRequestedMatchManage:
-            navigateToMatchManage(page: .confirmed)
+            navigateToMatchManage(page: .received)
         case .navSentRequestManage:
             navigateToMatchManageSentAndRefresh()
         case .navSearchUser:

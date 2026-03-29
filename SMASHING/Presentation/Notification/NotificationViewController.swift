@@ -53,7 +53,51 @@ final class NotificationListViewController: BaseViewController {
         output.dataFetched
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.notificationListView.collectionView.reloadData()
+                guard let self else { return }
+                let isEmpty = viewModel.notifications.isEmpty
+                notificationListView.showEmptyView(isEmpty)
+                notificationListView.collectionView.reloadData()
+            }
+            .store(in: &cancellables)
+
+        output.showUnavailableToast
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self else { return }
+                let toast = ToastMessage()
+                let targetView = navigationController?.view ?? view
+                targetView?.addSubview(toast)
+                toast.configure(title: "열 수 없는 알림입니다.")
+                toast.show()
+            }
+            .store(in: &cancellables)
+
+        notificationListView.collectionView.reachedBottomPublisher
+            .sink { [weak self] in
+                self?.inputSubject.send(.reachedBottom)
+            }
+            .store(in: &cancellables)
+
+        output.showSportChangeConfirmation
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] info in
+                guard let self else { return }
+                let popup = ConfirmPopupViewController(
+                    title: "\(info.sportDisplayName)로 종목을 변경하시겠어요?",
+                    message: "종목은 내 프로필에서 재변경 가능합니다.",
+                    cancelTitle: "아니오",
+                    confirmTitle: "변경하기"
+                )
+                popup.onConfirmTapped = { [weak self] in
+                    self?.inputSubject.send(.sportChangeConfirmed(
+                        profileId: info.profileId,
+                        notificationType: info.notificationType
+                    ))
+                }
+                popup.onCancelTapped = { [weak self] in
+                    self?.inputSubject.send(.sportChangeCancelled)
+                }
+                present(popup, animated: true)
             }
             .store(in: &cancellables)
 
