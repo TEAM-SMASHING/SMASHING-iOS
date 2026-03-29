@@ -15,6 +15,7 @@ final class MyPageView: BaseUIView {
     // MARK: - Properties
 
     var leftButtonAction: (() -> Void)?
+    var profileAction: (() -> Void)?
     var logoutAction: (() -> Void)?
     var signoutAction: (() -> Void)?
     var privacyPolicyAction: (() -> Void)?
@@ -109,12 +110,17 @@ final class MyPageView: BaseUIView {
     private let versionInfoLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
         $0.textColor = .Text.tertiary
-        $0.text = "ver 0.0.0"
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+        $0.text = "ver \(version)"
     }
     
     // MARK: - Lifecycle
     
     override func setUI() {
+        let profileTap = UITapGestureRecognizer(target: self, action: #selector(profileContainerTapped))
+        profileContainerView.addGestureRecognizer(profileTap)
+        profileContainerView.isUserInteractionEnabled = true
+
         addSubviews(navigationBar, profileContainerView)
         profileContainerView.addSubviews(profileImageView,
                                          userNameLabel,
@@ -203,7 +209,7 @@ final class MyPageView: BaseUIView {
         policyContainerView.snp.makeConstraints { make in
             make.top.equalTo(divider.snp.bottom).offset(26)
             make.horizontalEdges.equalToSuperview().inset(16)
-            make.height.equalTo(122)
+            make.height.equalTo(140)
         }
         
         policyAndInformationLabel.snp.makeConstraints { make in
@@ -222,7 +228,7 @@ final class MyPageView: BaseUIView {
         
         versionLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview()
-            make.top.equalTo(termsOfServiceButton.snp.bottom).offset(8)
+            make.top.equalTo(termsOfServiceButton.snp.bottom).offset(16)
         }
         
         versionInfoLabel.snp.makeConstraints { make in
@@ -232,6 +238,10 @@ final class MyPageView: BaseUIView {
     }
     
     // MARK: - Actions
+
+    @objc private func profileContainerTapped() {
+        profileAction?()
+    }
 
     @objc private func logoutButtonTapped() {
         logoutAction?()
@@ -249,6 +259,12 @@ final class MyPageView: BaseUIView {
         termsOfServiceAction?()
     }
 
+    func configure(profile: MyProfileListResponse) {
+        userNameLabel.text = profile.nickname
+        tierImage.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
+        profileImageView.image = UIImage.defaultProfileImage()
+    }
+
     private func button(title: String) -> UIButton {
         return UIButton().then {
             $0.titleLabel?.font = .pretendard(.textSmM)
@@ -256,11 +272,4 @@ final class MyPageView: BaseUIView {
             $0.setTitle(title, for: .normal)
         }
     }
-}
-
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    MyPageView()
 }

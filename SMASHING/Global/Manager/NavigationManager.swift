@@ -33,6 +33,30 @@ final class NavigationManager {
         self.tabBarController = tabBarController
     }
 
+    // MARK: - Auth Flow
+
+    /// 로그아웃·회원탈퇴 후 로그인 화면으로 초기화
+    func navigateToLogin() {
+        tabBarController = nil
+        let loginVC = LoginViewController()
+        loginVC.onNeedOnboarding = { [weak self] in
+            guard let self else { return }
+            resetRootFlow(to: [])
+            let onboardingVC = OnboardingViewController()
+            onboardingVC.onComplete = { [weak self] in
+                self?.setupTabBar()
+            }
+            pushToRoot(onboardingVC)
+        }
+        loginVC.onLoginSuccess = { [weak self] in
+            guard let self else { return }
+            resetRootFlow(to: [])
+            setupTabBar()
+        }
+        resetRootFlow(to: [])
+        pushToRoot(loginVC)
+    }
+
     // MARK: - Root Flow
 
     func resetRootFlow(to viewControllers: [UIViewController], animated: Bool = false) {
@@ -183,7 +207,7 @@ final class NavigationManager {
         case .navConfirmedMatchManage:
             navigateToMatchManage(page: .received)
         case .navRequestedMatchManage:
-            navigateToMatchManage(page: .confirmed)
+            navigateToMatchManage(page: .received)
         case .navSentRequestManage:
             navigateToMatchManageSentAndRefresh()
         case .navSearchUser:

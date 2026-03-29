@@ -197,7 +197,7 @@ final class TopThreePodium: BaseUIView {
         case 1:
             firstUserId = user.userProfileId
             firstNicknameLabel.text = user.nickname
-            firstProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
+            firstProfileImageView.image = UIImage.defaultProfileImage()
             firstCard.configure(rankImage: .icRank1, tierCode: user.tierCode, lp: user.lp)
             firstProfileImageView.layer.borderColor = UIColor.Border.primary.cgColor
             firstProfileImageView.layer.borderWidth = 1
@@ -205,14 +205,14 @@ final class TopThreePodium: BaseUIView {
         case 2:
             secondUserId = user.userProfileId
             secondNicknameLabel.text = user.nickname
-            secondProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
+            secondProfileImageView.image = UIImage.defaultProfileImage()
             secondCard.configure(rankImage: .icRank2, tierCode: user.tierCode, lp: user.lp)
             secondProfileImageView.layer.borderColor = UIColor.Border.primary.cgColor
             secondProfileImageView.layer.borderWidth = 1
         case 3:
             thirdUserId = user.userProfileId
             thirdNicknameLabel.text = user.nickname
-            thirdProfileImageView.image = UIImage.defaultProfileImage(name: user.nickname)
+            thirdProfileImageView.image = UIImage.defaultProfileImage()
             thirdCard.configure(rankImage: .icRank3, tierCode: user.tierCode, lp: user.lp)
             thirdProfileImageView.layer.borderColor = UIColor.Border.primary.cgColor
             thirdProfileImageView.layer.borderWidth = 1

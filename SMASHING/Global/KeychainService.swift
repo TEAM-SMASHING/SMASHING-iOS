@@ -70,8 +70,19 @@ final class KeychainService {
                                             kSecAttrAccount: key]
         let status = SecItemDelete(deleteQuery as CFDictionary)
         if status == errSecSuccess { return true }
-        
+
         print("KeychainService DeleteItem Error : \(status.description)")
         return false
+    }
+
+    /// 로그아웃·탈퇴 시 저장된 모든 인증 정보 삭제
+    static func clearAll() {
+        _ = delete(key: Environment.accessTokenKey)
+        _ = delete(key: Environment.refreshTokenKey)
+        _ = delete(key: Environment.kakaoId)
+        _ = delete(key: Environment.userIdKey)
+        _ = delete(key: Environment.nicknameKey)
+        _ = delete(key: Environment.activeProfileKey)
+        UserDefaults.standard.removeObject(forKey: UserDefaultKey.region)
     }
 }

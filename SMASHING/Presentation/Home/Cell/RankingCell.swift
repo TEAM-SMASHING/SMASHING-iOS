@@ -130,7 +130,7 @@ final class RankingCell: BaseUICollectionViewCell, ReuseIdentifiable {
             tierImageView.isHidden = true
             rankLabel.text = ranker.rank.description
         }
-        profileImageView.image = UIImage.defaultProfileImage(name: ranker.nickname)
+        profileImageView.image = UIImage.defaultProfileImage()
         nameLabel.text = ranker.nickname
         tierLabel.text = ranker.tierWithLpText
         tierEmblem.image = Tier.from(tierCode: ranker.tierCode)?.badge

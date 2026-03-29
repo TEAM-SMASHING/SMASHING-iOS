@@ -11,6 +11,7 @@ import Moya
 enum NotificationAPI {
     case getNotifications(size: Int, cursor: String?, snapshotAt: String?)
     case readNotification(notificationId: String)
+    case checkSportMatch(notificationId: String)
 }
 
 extension NotificationAPI: BaseTargetType {
@@ -20,6 +21,8 @@ extension NotificationAPI: BaseTargetType {
             return "/api/v1/notifications/me"
         case .readNotification(let notificationId):
             return "/api/v1/notifications/\(notificationId)/read"
+        case .checkSportMatch(let notificationId):
+            return "/api/v1/notifications/\(notificationId)/sport-match"
         }
     }
     
@@ -29,6 +32,8 @@ extension NotificationAPI: BaseTargetType {
             return .get
         case .readNotification:
             return .put
+        case .checkSportMatch:
+            return .get
         }
     }
     
@@ -40,6 +45,8 @@ extension NotificationAPI: BaseTargetType {
             if let snapshotAt = snapshotAt { params["snapshotAt"] = snapshotAt }
             return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
         case .readNotification:
+            return .requestPlain
+        case .checkSportMatch:
             return .requestPlain
         }
     }

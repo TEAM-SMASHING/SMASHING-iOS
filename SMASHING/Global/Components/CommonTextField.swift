@@ -182,7 +182,11 @@ final class CommonTextField: UITextField {
     }
     
     // MARK: - Extensions (Overrides)
-    
+
+    override var placeholder: String? {
+        didSet { setPlaceholderColor(placeholderColor) }
+    }
+
     override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
         if result {

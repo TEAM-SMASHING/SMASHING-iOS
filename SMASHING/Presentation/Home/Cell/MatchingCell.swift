@@ -113,8 +113,8 @@ final class MatchingCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
     
     func configure(with matching: MatchingConfirmedGameDTO, myNickname: String, myUserId: String) {
-        myImage.image = UIImage.defaultProfileImage(name: myNickname)
-        rivalImage.image = UIImage.defaultProfileImage(name: matching.opponent.nickname)
+        myImage.image = UIImage.defaultProfileImage()
+        rivalImage.image = UIImage.defaultProfileImage()
         myNickName.text = myNickname
         rivalNickName.text = matching.opponent.nickname
         

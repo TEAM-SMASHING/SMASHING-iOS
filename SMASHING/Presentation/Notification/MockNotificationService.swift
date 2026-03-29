@@ -38,6 +38,18 @@ final class MockNotificationService: NotificationServiceProtocol {
             .eraseToAnyPublisher()
     }
 
+    func checkSportMatch(notificationId: String) -> AnyPublisher<GenericResponse<NotificationSportMatchDTO>, NetworkError> {
+        let matchData = NotificationSportMatchDTO(
+            receiverUserProfileId: "mock_profile_id",
+            notificationSportCode: "TENNIS",
+            isMatch: true
+        )
+        let response = GenericResponse(status: "SUCCESS", statusCode: 200, data: matchData, timestamp: "")
+        return Just(response)
+            .setFailureType(to: NetworkError.self)
+            .eraseToAnyPublisher()
+    }
+
     func markAsRead(notificationId: String) -> AnyPublisher<NotificationBaseResponseDTO, NetworkError> {
         let baseResponse = NotificationBaseResponseDTO(
             status: "SUCCESS",
@@ -64,9 +76,7 @@ final class MockNotificationService: NotificationServiceProtocol {
             linkUrl: "smashing://notifications/\(id)",
             isRead: false,
             createdAt: "2026-01-22T04:00:00Z",
-            senderNickname: "매칭상대",
-            receiverProfileId: "user_777",
-            receiverSportId: sport
+            senderProfileId: "mock_sender_profile_id"
         )
     }
 }

@@ -164,7 +164,7 @@ final class ProfileCard: BaseUIView {
         tierIcon.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
         winLoseRecordLabel.text = "\(profile.activeProfile.wins)" + "승 " + "\(profile.activeProfile.losses)" + "패"
         reviewCountsLabel.text = "\(profile.activeProfile.reviews ?? 0)"
-        profileImage.image = UIImage.defaultProfileImage(name: profile.nickname)
+        profileImage.image = UIImage.defaultProfileImage()
     }
 
     func configure(profile: OtherUserProfileResponse) {
@@ -173,7 +173,7 @@ final class ProfileCard: BaseUIView {
         tierIcon.image = Tier.from(tierCode: profile.selectedProfile.tierCode)?.image
         winLoseRecordLabel.text = "\(profile.selectedProfile.wins)" + "승 " + "\(profile.selectedProfile.losses)" + "패"
         reviewCountsLabel.text = "\(profile.selectedProfile.reviews ?? 0)"
-        profileImage.image = UIImage.defaultProfileImage(name: profile.nickname)
+        profileImage.image = UIImage.defaultProfileImage()
     }
 }
 

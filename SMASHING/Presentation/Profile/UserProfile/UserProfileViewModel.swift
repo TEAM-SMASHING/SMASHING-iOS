@@ -21,6 +21,7 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
         case viewDidLoad
         case refresh
         case challengeConfirmed
+        case sportSelected(Sports)
     }
 
     // MARK: - Output
@@ -37,7 +38,7 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
     // MARK: - Properties
 
     private let userId: String
-    private let sport: Sports
+    private var currentSport: Sports
     private let service: UserProfileServiceType
     private let matchingRequestService: MatchingRequestServiceProtocol
     private var cancellables = Set<AnyCancellable>()
@@ -54,7 +55,7 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
         matchingRequestService: MatchingRequestServiceProtocol = MatchingRequestService()
     ) {
         self.userId = userId
-        self.sport = sport
+        self.currentSport = sport
         self.service = service
         self.matchingRequestService = matchingRequestService
     }
@@ -82,6 +83,9 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
             output.navToMatchManage.send()
             output.refreshSentRequests.send()
             requestMatching()
+        case .sportSelected(let sport):
+            currentSport = sport
+            fetchUserProfile()
         }
     }
 
@@ -90,7 +94,7 @@ final class UserProfileViewModel: UserProfileViewModelProtocol {
     private func fetchUserProfile() {
         output.isLoading.send(true)
 
-        service.fetchOtherUserProfile(userId: userId, sport: sport)
+        service.fetchOtherUserProfile(userId: userId, sport: currentSport)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 guard let self else { return }

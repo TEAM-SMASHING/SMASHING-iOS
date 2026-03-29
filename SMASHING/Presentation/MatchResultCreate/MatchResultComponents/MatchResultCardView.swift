@@ -181,7 +181,7 @@ final class MatchResultCardView: BaseUIView {
     func configure(myName: String, myImage: UIImage?, rivalName: String, rivalImage: UIImage?) {
         myNickName.text = myName
         rivalNickName.text = rivalName
-        self.myImage.image = UIImage.defaultProfileImage(name: myName)
-        self.rivalImage.image = UIImage.defaultProfileImage(name: rivalName)
+        self.myImage.image = UIImage.defaultProfileImage()
+        self.rivalImage.image = UIImage.defaultProfileImage()
     }
 }
