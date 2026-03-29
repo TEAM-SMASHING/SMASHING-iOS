@@ -12,15 +12,37 @@ import UIKit
 final class MyPageViewController: BaseViewController {
 
     private let mainView = MyPageView()
+    private let viewModel = MyPageViewModel()
     private let accountService = UserAccountService()
+    private let inputSubject = PassthroughSubject<MyPageViewModel.Input, Never>()
     private var cancellables: Set<AnyCancellable> = []
 
     override func viewDidLoad() {
         view = mainView
+        bind()
+        setupActions()
+        inputSubject.send(.viewDidLoad)
+    }
 
+    private func bind() {
+        let output = viewModel.transform(input: inputSubject.eraseToAnyPublisher())
+
+        output.profileFetched
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] profile in
+                self?.mainView.configure(profile: profile)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func setupActions() {
         mainView.leftButtonAction = { [weak self] in
             guard let self else { return }
             NavigationManager.shared.pop()
+        }
+
+        mainView.profileAction = {
+            NavigationManager.shared.switchTab(to: .profile)
         }
 
         mainView.logoutAction = { [weak self] in

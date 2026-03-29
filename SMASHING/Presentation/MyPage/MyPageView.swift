@@ -15,6 +15,7 @@ final class MyPageView: BaseUIView {
     // MARK: - Properties
 
     var leftButtonAction: (() -> Void)?
+    var profileAction: (() -> Void)?
     var logoutAction: (() -> Void)?
     var signoutAction: (() -> Void)?
     var privacyPolicyAction: (() -> Void)?
@@ -116,6 +117,10 @@ final class MyPageView: BaseUIView {
     // MARK: - Lifecycle
     
     override func setUI() {
+        let profileTap = UITapGestureRecognizer(target: self, action: #selector(profileContainerTapped))
+        profileContainerView.addGestureRecognizer(profileTap)
+        profileContainerView.isUserInteractionEnabled = true
+
         addSubviews(navigationBar, profileContainerView)
         profileContainerView.addSubviews(profileImageView,
                                          userNameLabel,
@@ -234,6 +239,10 @@ final class MyPageView: BaseUIView {
     
     // MARK: - Actions
 
+    @objc private func profileContainerTapped() {
+        profileAction?()
+    }
+
     @objc private func logoutButtonTapped() {
         logoutAction?()
     }
@@ -248,6 +257,12 @@ final class MyPageView: BaseUIView {
 
     @objc private func termsOfServiceButtonTapped() {
         termsOfServiceAction?()
+    }
+
+    func configure(profile: MyProfileListResponse) {
+        userNameLabel.text = profile.nickname
+        tierImage.image = Tier.from(tierCode: profile.activeProfile.tierCode)?.image
+        profileImageView.image = UIImage.defaultProfileImage(name: profile.nickname)
     }
 
     private func button(title: String) -> UIButton {
