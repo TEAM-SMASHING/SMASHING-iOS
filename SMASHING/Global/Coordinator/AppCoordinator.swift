@@ -29,7 +29,7 @@ final class AppCoordinator {
         NavigationManager.shared.resetRootFlow(to: [splashVC])
 
         // 1초 후 자동 로그인 시도 → 결과에 따라 화면 전환
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             self?.attemptAutoLogin()
         }
     }
