@@ -109,7 +109,8 @@ final class MyPageView: BaseUIView {
     private let versionInfoLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
         $0.textColor = .Text.tertiary
-        $0.text = "ver 0.0.0"
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+        $0.text = "ver \(version)"
     }
     
     // MARK: - Lifecycle

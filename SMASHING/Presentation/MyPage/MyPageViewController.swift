@@ -5,11 +5,15 @@
 //  Created by 이승준 on 3/4/26.
 //
 
+import Combine
+import SafariServices
 import UIKit
 
 final class MyPageViewController: BaseViewController {
 
     private let mainView = MyPageView()
+    private let accountService = UserAccountService()
+    private var cancellables: Set<AnyCancellable> = []
 
     override func viewDidLoad() {
         view = mainView
@@ -28,7 +32,17 @@ final class MyPageViewController: BaseViewController {
                 confirmTitle: "로그아웃"
             )
             popup.onConfirmTapped = { [weak self] in
-                // 로그아웃 API 연동
+                guard let self else { return }
+                self.dismiss(animated: true) {
+                    self.accountService.logout()
+                        .receive(on: DispatchQueue.main)
+                        .sink { _ in
+                            // 성공·실패 모두 로컬 로그아웃 수행
+                            KeychainService.clearAll()
+                            NavigationManager.shared.navigateToLogin()
+                        } receiveValue: { _ in }
+                        .store(in: &self.cancellables)
+                }
             }
             present(popup, animated: true)
         }
@@ -40,12 +54,16 @@ final class MyPageViewController: BaseViewController {
 
         mainView.privacyPolicyAction = { [weak self] in
             guard let self else { return }
-            present(PrivacyWebVC(), animated: true)
+            guard let url = URL(string: "https://elated-piccolo-63b.notion.site/30b4556d60d18092b22ad0e23a84eee2?pvs=143") else { return }
+            let safariVC = SFSafariViewController(url: url)
+            present(safariVC, animated: true)
         }
 
         mainView.termsOfServiceAction = { [weak self] in
             guard let self else { return }
-            present(TermsOfUseWebVC(), animated: true)
+            guard let url = URL(string: "https://elated-piccolo-63b.notion.site/30b4556d60d18092b22ad0e23a84eee2") else { return }
+            let safariVC = SFSafariViewController(url: url)
+            present(safariVC, animated: true)
         }
     }
 }
