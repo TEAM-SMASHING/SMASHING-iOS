@@ -14,25 +14,27 @@ import Then
 final class MyProfileViewController: BaseViewController {
     
     // MARK: - Properties
-    
+
     private lazy var mainView = MyProfileView().then {
         $0.tierCard.tierDetailAction = { self.inputSubject.send(.tierExplanationTapped) }
     }
     private let viewModel: MyProfileViewModel
     private let inputSubject = PassthroughSubject<MyProfileViewModel.Input, Never>()
-    
+    private let showsBackButton: Bool
     private var cancellables: Set<AnyCancellable> = []
-    
+
     // MARK: - Init
-    
-    init() {
+
+    init(showsBackButton: Bool = false) {
+        self.showsBackButton = showsBackButton
         let profileService = UserProfileService()
         let reviewService = UserReviewService()
         self.viewModel = MyProfileViewModel(userProfileService: profileService, userReviewService: reviewService)
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     init(viewModel: any MyProfileViewModelProtocol) {
+        self.showsBackButton = false
         self.viewModel = viewModel as! MyProfileViewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -45,6 +47,13 @@ final class MyProfileViewController: BaseViewController {
     
     override func viewDidLoad() {
         view = mainView
+
+        if showsBackButton {
+            mainView.setBackButton(title: "내 프로필") {
+                NavigationManager.shared.pop()
+            }
+        }
+
         inputSubject.send(.viewDidLoad)
         mainView.reviewCard.reviewCollectionView.delegate = self
         mainView.reviewCard.reviewCollectionView.dataSource = self

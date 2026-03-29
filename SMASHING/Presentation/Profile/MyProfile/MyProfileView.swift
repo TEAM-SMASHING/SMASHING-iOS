@@ -89,4 +89,11 @@ final class MyProfileView: BaseUIView {
     func configure(summury: ReviewSummaryResponse) {
         reviewCard.configure(review: summury)
     }
+
+    /// push 진입 시 호출 — 타이틀 변경 + 뒤로가기 버튼 표시
+    func setBackButton(title: String, action: @escaping () -> Void) {
+        navigationBar.setTitle(title)
+        navigationBar.setLeftButtonHidden(false)
+        navigationBar.setLeftButton(action: action)
+    }
 }
