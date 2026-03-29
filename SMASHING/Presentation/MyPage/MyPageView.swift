@@ -209,7 +209,7 @@ final class MyPageView: BaseUIView {
         policyContainerView.snp.makeConstraints { make in
             make.top.equalTo(divider.snp.bottom).offset(26)
             make.horizontalEdges.equalToSuperview().inset(16)
-            make.height.equalTo(122)
+            make.height.equalTo(140)
         }
         
         policyAndInformationLabel.snp.makeConstraints { make in
@@ -228,7 +228,7 @@ final class MyPageView: BaseUIView {
         
         versionLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview()
-            make.top.equalTo(termsOfServiceButton.snp.bottom).offset(8)
+            make.top.equalTo(termsOfServiceButton.snp.bottom).offset(16)
         }
         
         versionInfoLabel.snp.makeConstraints { make in
@@ -272,11 +272,4 @@ final class MyPageView: BaseUIView {
             $0.setTitle(title, for: .normal)
         }
     }
-}
-
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    MyPageView()
 }
