@@ -180,9 +180,3 @@ final class SignOutView: BaseUIView {
         return container
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    SignOutViewController()
-}

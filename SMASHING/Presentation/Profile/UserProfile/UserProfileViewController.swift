@@ -42,6 +42,10 @@ final class UserProfileViewController: BaseViewController {
         mainView.challengeAction = { [weak self] in
             self?.presentChallengePopup()
         }
+        mainView.tierCard.onSportsAction = { [weak self] sport in
+            guard let sport else { return }
+            self?.input.send(.sportSelected(sport))
+        }
 
         mainView.reviewCard.reviewCollectionView.delegate = self
         mainView.reviewCard.reviewCollectionView.dataSource = self
