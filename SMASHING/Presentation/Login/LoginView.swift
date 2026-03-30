@@ -55,9 +55,8 @@ final class LoginView: BaseUIView {
         }
         
         kakaoLoginButton.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview()
+            // bottom은 buttonStack이 관리, 별도 설정 시 UISV-canvas-connection 충돌
             $0.height.equalTo(50)
-            $0.bottom.equalTo(safeAreaLayoutGuide).inset(122)
         }
     }
 

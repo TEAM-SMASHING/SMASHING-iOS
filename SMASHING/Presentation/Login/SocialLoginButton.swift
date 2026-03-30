@@ -57,7 +57,8 @@ final class SocialLoginButton: UIButton {
         }
         
         iconImageView.snp.makeConstraints {
-            $0.size.equalTo(18)
+            // 너비만 고정, 높이는 스택이 결정 (height 명시 시 UISV-canvas-connection 충돌)
+            $0.width.equalTo(18)
         }
     }
     
