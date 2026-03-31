@@ -283,7 +283,7 @@ final class NavigationManager {
         case .home:           return HomeViewController()
         case .matchingSearch: return MatchingSearchViewController()
         case .matchingManage: return MatchingManageViewController()
-        case .profile:        return MyProfileViewController()
+        case .chat:        return MyProfileViewController()
         }
     }
 
