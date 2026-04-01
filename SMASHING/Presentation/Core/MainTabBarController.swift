@@ -18,14 +18,14 @@ final class MainTabBarController: UITabBarController {
         case home = 0
         case matchingSearch
         case matchingManage
-        case profile
+        case chat
 
         var title: String {
             switch self {
             case .home: return "홈"
             case .matchingSearch: return "매칭 탐색"
             case .matchingManage: return "매칭 관리"
-            case .profile: return "프로필"
+            case .chat: return "채팅"
 
             }
         }
@@ -35,7 +35,7 @@ final class MainTabBarController: UITabBarController {
             case .home: return UIImage(resource: .icHomeUnselected)
             case .matchingSearch: return UIImage(resource: .icSearchUnselected)
             case .matchingManage: return UIImage(resource: .icTrophyUnselected)
-            case .profile: return UIImage(resource: .icProfileUnselected)
+            case .chat: return UIImage(resource: .icChatUnselected)
             }
         }
 
@@ -44,7 +44,7 @@ final class MainTabBarController: UITabBarController {
             case .home: return UIImage(resource: .icHomeSelected)
             case .matchingSearch: return UIImage(resource: .icSearchSelected)
             case .matchingManage: return UIImage(resource: .icTrophySelected)
-            case .profile: return UIImage(resource: .icProfileSelected)
+            case .chat: return UIImage(resource: .icChatSelected)
             }
         }
     }

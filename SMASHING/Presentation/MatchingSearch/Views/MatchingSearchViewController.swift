@@ -218,7 +218,7 @@ final class MatchingSearchViewController: BaseViewController {
             }
             .store(in: &cancellables)
 
-        NavigationManager.shared.push(userProfileVC)
+        NavigationManager.shared.push(userProfileVC, hidesBottomBar: true)
     }
 
     private func showRegionSelection() {

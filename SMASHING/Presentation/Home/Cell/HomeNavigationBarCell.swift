@@ -50,7 +50,8 @@ final class HomeNavigationBarCell: BaseUICollectionViewCell, ReuseIdentifiable {
     }
     
     private let sportsImage = UIImageView().then {
-        $0.image = .icBadminton
+        $0.image = .icBadminton.withRenderingMode(.alwaysTemplate)
+        $0.tintColor = .Icon.success
         $0.contentMode = .scaleAspectFit
     }
     

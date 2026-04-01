@@ -21,6 +21,8 @@ final class HomeDropDownView: BaseUIView {
     var onSportsCellTapped: ((Sports?) -> Void)?
     var onBellTapped: (() -> Void)?
     var onAddSportsTapped: (() -> Void)?
+    var onTierDetailTapped: (() -> Void)?
+    var onMyPageTapped: (() -> Void)?
     
     // MARK: - UI Components
     
@@ -29,8 +31,7 @@ final class HomeDropDownView: BaseUIView {
         $0.backgroundColor = .Background.surface
     }
     
-    private let winRateCard = WinRateCard(usesContainerView: false)
-        .then {
+    private let winRateCard = WinRateCard(usesContainerView: false).then {
             $0.backgroundColor = .Background.surface
         }
     
@@ -51,15 +52,19 @@ final class HomeDropDownView: BaseUIView {
         $0.contentMode = .scaleAspectFit
     }
     
-    private let containerView = UIView().then {
-        $0.backgroundColor = .clear
-        $0.layer.cornerRadius = 16
-        $0.layer.borderColor = UIColor.Border.secondary.cgColor
+    private let sportsAndTierStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.layer.cornerRadius = 18
         $0.layer.borderWidth = 1
+        $0.layer.borderColor = UIColor.Border.secondary.cgColor
+        $0.isLayoutMarginsRelativeArrangement = true
+        $0.layoutMargins = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
     }
     
     private let sportsImage = UIImageView().then {
-        $0.image = .icBadminton
+        $0.image = .icBadminton.withRenderingMode(.alwaysTemplate)
+        $0.tintColor = .Icon.success
         $0.contentMode = .scaleAspectFit
     }
     
@@ -74,6 +79,11 @@ final class HomeDropDownView: BaseUIView {
         $0.contentMode = .scaleAspectFit
     }
     
+    private let myPageImage = UIImageView().then {
+        $0.image = .icProfile
+        $0.contentMode = .scaleAspectFit
+    }
+    
     private let regionStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 4
@@ -84,9 +94,9 @@ final class HomeDropDownView: BaseUIView {
     override func setUI() {
         backgroundColor = .Background.surface
         setCornerRadius(16, maskedCorners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner])
-        addSubviews(regionStackView, containerView, bellImage, tierCard, winRateCard)
+        addSubviews(regionStackView, sportsAndTierStackView, bellImage, myPageImage, tierCard, winRateCard)
         
-        containerView.addSubviews(sportsImage, tierLabel)
+        sportsAndTierStackView.addArrangedSubviews(sportsImage, tierLabel)
         
         regionStackView.addArrangedSubviews(pinImageView, regionLabel, chevronImageView)
 
@@ -96,18 +106,26 @@ final class HomeDropDownView: BaseUIView {
         tierCard.addAction = { [weak self] in
             self?.onAddSportsTapped?()
         }
+        tierCard.addTierDetailButton()
+        tierCard.tierDetailAction = { [weak self] in
+            self?.onTierDetailTapped?()
+        }
         
         let regionTap = UITapGestureRecognizer(target: self, action: #selector(regionTapped))
         regionStackView.isUserInteractionEnabled = true
         regionStackView.addGestureRecognizer(regionTap)
         
         let sportsTap = UITapGestureRecognizer(target: self, action: #selector(sportsAndTierTapped))
-        containerView.isUserInteractionEnabled = true
-        containerView.addGestureRecognizer(sportsTap)
+        sportsAndTierStackView.isUserInteractionEnabled = true
+        sportsAndTierStackView.addGestureRecognizer(sportsTap)
         
         let bellTap = UITapGestureRecognizer(target: self, action: #selector(bellTapped))
         bellImage.isUserInteractionEnabled = true
         bellImage.addGestureRecognizer(bellTap)
+        
+        let myPageTap = UITapGestureRecognizer(target: self, action: #selector(myPageTapped))
+        myPageImage.isUserInteractionEnabled = true
+        myPageImage.addGestureRecognizer(myPageTap)
     }
     
     override func setLayout() {
@@ -124,39 +142,35 @@ final class HomeDropDownView: BaseUIView {
             $0.size.equalTo(24)
         }
         
-        bellImage.snp.makeConstraints {
+        myPageImage.snp.makeConstraints {
             $0.centerY.equalTo(regionStackView)
             $0.trailing.equalToSuperview().inset(16)
             $0.size.equalTo(24)
         }
-        
-        containerView.snp.makeConstraints {
+
+        bellImage.snp.makeConstraints {
             $0.centerY.equalTo(regionStackView)
-            $0.trailing.equalTo(bellImage.snp.leading).offset(-12)
-            $0.height.equalTo(34)
-            $0.width.equalTo(100)
-        }
-        
-        sportsImage.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().inset(10)
+            $0.trailing.equalTo(myPageImage.snp.leading).offset(-12)
             $0.size.equalTo(24)
         }
-        
-        tierLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalTo(sportsImage.snp.trailing).offset(5)
-            $0.trailing.equalToSuperview().inset(10)
+
+        sportsAndTierStackView.snp.makeConstraints {
+            $0.centerY.equalTo(regionStackView)
+            $0.trailing.equalTo(bellImage.snp.leading).offset(-12)
         }
-        
+
+        sportsImage.snp.makeConstraints {
+            $0.size.equalTo(24)
+        }
+
         tierCard.snp.makeConstraints {
             $0.top.equalTo(regionStackView.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(264)
+            $0.height.equalTo(314)
         }
-        
+
         winRateCard.snp.makeConstraints {
-            $0.top.equalTo(tierCard.snp.bottom).offset(20)
+            $0.top.equalTo(tierCard.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(20)
             $0.height.equalTo(78)
@@ -197,6 +211,11 @@ final class HomeDropDownView: BaseUIView {
     @objc
     private func bellTapped() {
         onBellTapped?()
+    }
+    
+    @objc
+    private func myPageTapped() {
+        onMyPageTapped?()
     }
 }
 
