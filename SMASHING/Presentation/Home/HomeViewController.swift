@@ -437,6 +437,14 @@ final class HomeViewController: BaseViewController {
         let vc = MyPageViewController()
         NavigationManager.shared.push(vc, hidesBottomBar: true)
     }
+    
+    private func showTierExplanation() {
+        let tierViewController = TierExplanationViewController(sports: .badminton, oreTier: .bronze)
+        tierViewController.dismissAction = {
+            NavigationManager.shared.dismiss()
+        }
+        NavigationManager.shared.present(tierViewController)
+    }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
@@ -630,6 +638,16 @@ extension HomeViewController {
             dd.onAddSportsTapped = { [weak self] in
                 self?.hideDropDown()
                 self?.input.send(.addSportsTapped)
+            }
+            
+            dd.onTierDetailTapped = { [weak self] in
+                self?.hideDropDown()
+                self?.showTierExplanation()
+            }
+            
+            dd.onMyPageTapped = { [weak self] in
+                self?.hideDropDown()
+                self?.input.send(.myPageTapped)
             }
             
             rootView.addSubview(dimView)
