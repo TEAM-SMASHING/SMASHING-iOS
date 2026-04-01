@@ -320,7 +320,7 @@ final class HomeViewController: BaseViewController {
             }
             .store(in: &cancellables)
         
-        NavigationManager.shared.push(userProfileVC)
+        NavigationManager.shared.push(userProfileVC, hidesBottomBar: true)
     }
     
     private func currentUserSport() -> Sports {
