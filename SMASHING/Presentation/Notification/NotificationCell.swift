@@ -75,7 +75,7 @@ final class NotificationCollectionViewCell: UICollectionViewCell, ReuseIdentifia
         
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
-            $0.leading.equalTo(titleLabel).offset(12)
+            $0.leading.equalTo(titleLabel)
             $0.trailing.equalToSuperview().inset(16)
         }
         
