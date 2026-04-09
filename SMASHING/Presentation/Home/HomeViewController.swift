@@ -28,6 +28,7 @@ final class HomeViewController: BaseViewController {
     
     private var tooltipView: TooltipView?
     private var tooltipDismissTap: UITapGestureRecognizer?
+    private var shouldRefreshAfterSportChange = false
     
     override func loadView() {
         view = rootView
@@ -255,6 +256,10 @@ final class HomeViewController: BaseViewController {
                 self.latestMyProfile = response
                 self.dropDownView?.configure(profile: response, myRegion: self.myRegion)
                 self.homeView.reloadSections(IndexSet(integer: HomeViewLayout.navigationBar.rawValue))
+                if self.shouldRefreshAfterSportChange {
+                    self.shouldRefreshAfterSportChange = false
+                    self.input.send(.viewWillAppear)
+                }
             }
             .store(in: &cancellables)
     }
@@ -422,7 +427,9 @@ final class HomeViewController: BaseViewController {
             UserDefaults.standard.set(address, forKey: UserDefaultKey.region)
             self.userProfileService.updateRegion(region: address)
                 .receive(on: DispatchQueue.main)
-                .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+                .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] _ in
+                    self?.input.send(.viewWillAppear)
+                })
                 .store(in: &self.cancellables)
         }
         NavigationManager.shared.push(addressVC, hidesBottomBar: true)
@@ -629,6 +636,7 @@ extension HomeViewController {
             dd.onSportsCellTapped = { [weak self] sport in
                 guard let self else { return }
                 if let sport {
+                    self.shouldRefreshAfterSportChange = true
                     self.myProfileInput.send(.sportsCellTapped(sport))
                 } else {
                     self.input.send(.addSportsTapped)
