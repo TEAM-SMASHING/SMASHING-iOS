@@ -20,6 +20,7 @@ final class MyPageView: BaseUIView {
     var signoutAction: (() -> Void)?
     var privacyPolicyAction: (() -> Void)?
     var termsOfServiceAction: (() -> Void)?
+    var verionInfoAction: (() -> Void)?
     
     // MARK: - UI Components
     
@@ -73,9 +74,11 @@ final class MyPageView: BaseUIView {
     private lazy var logoutButton = button(title: "로그아웃").then {
         $0.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
     }
+    
     private lazy var signoutButton = button(title: "계정 탈퇴").then {
         $0.addTarget(self, action: #selector(signoutButtonTapped), for: .touchUpInside)
     }
+    
     private lazy var signoutArrowButton = UIButton().then {
         $0.contentMode = .scaleAspectFit
         $0.setImage( .icArrowNext , for: .normal)
@@ -99,14 +102,15 @@ final class MyPageView: BaseUIView {
     private lazy var privacyPolicyButton = button(title: "개인정보 처리 방침").then {
         $0.addTarget(self, action: #selector(privacyPolicyButtonTapped), for: .touchUpInside)
     }
+    
     private lazy var termsOfServiceButton = button(title: "이용약관").then {
         $0.addTarget(self, action: #selector(termsOfServiceButtonTapped), for: .touchUpInside)
     }
-    private let versionLabel = UILabel().then {
-        $0.text = "버전 정보"
-        $0.font = .pretendard(.textSmM)
-        $0.textColor = .Text.primary
+    
+    private lazy var versionInfoButton = button(title: "버전 정보").then {
+        $0.addTarget(self, action: #selector(verionInfoButtonTapped), for: .touchUpInside)
     }
+    
     private let versionInfoLabel = UILabel().then {
         $0.font = .pretendard(.textSmM)
         $0.textColor = .Text.tertiary
@@ -136,7 +140,7 @@ final class MyPageView: BaseUIView {
         policyContainerView.addSubviews(policyAndInformationLabel,
                                         privacyPolicyButton,
                                         termsOfServiceButton,
-                                        versionLabel,
+                                        versionInfoButton,
                                         versionInfoLabel)
     }
     
@@ -226,13 +230,13 @@ final class MyPageView: BaseUIView {
             make.top.equalTo(privacyPolicyButton.snp.bottom).offset(8)
         }
         
-        versionLabel.snp.makeConstraints { make in
+        versionInfoButton.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.top.equalTo(termsOfServiceButton.snp.bottom).offset(16)
         }
         
         versionInfoLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(versionLabel)
+            make.centerY.equalTo(versionInfoButton)
             make.trailing.equalToSuperview()
         }
     }
@@ -258,6 +262,10 @@ final class MyPageView: BaseUIView {
     @objc private func termsOfServiceButtonTapped() {
         termsOfServiceAction?()
     }
+    
+    @objc private func verionInfoButtonTapped() {
+        verionInfoAction?()
+    }
 
     func configure(profile: MyProfileListResponse) {
         userNameLabel.text = profile.nickname
@@ -272,4 +280,10 @@ final class MyPageView: BaseUIView {
             $0.setTitle(title, for: .normal)
         }
     }
+}
+
+import SwiftUI
+@available(iOS 18.0, *)
+#Preview {
+    MyPageView()
 }
