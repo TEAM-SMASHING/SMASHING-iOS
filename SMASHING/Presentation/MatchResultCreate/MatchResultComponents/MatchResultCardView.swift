@@ -12,8 +12,6 @@ import Then
 import SnapKit
 
 final class MatchResultCardView: BaseUIView {
-    private var currentMyScore: Int = 0
-    private var currentRivalScore: Int = 0
     
     private let containerView = UIView().then {
         $0.backgroundColor = .Background.surface
@@ -41,23 +39,9 @@ final class MatchResultCardView: BaseUIView {
         $0.textAlignment = .center
     }
     
-    private let myScore = UILabel().then {
-        $0.text = "0"
-        $0.setPretendard(.headerHeroB)
-        $0.textColor = .Text.secondary
-        $0.textAlignment = .center
-    }
-    
-    private let scoreSemicolon = UILabel().then {
-        $0.text = ":"
-        $0.setPretendard(.headerHeroB)
-        $0.textColor = .Text.secondary
-        $0.textAlignment = .center
-    }
-    
-    private let rivalScore = UILabel().then {
-        $0.text = "0"
-        $0.setPretendard(.headerHeroB)
+    private let vsLabel = UILabel().then {
+        $0.text = "vs"
+        $0.setPretendard(.headerHeroSb)
         $0.textColor = .Text.secondary
         $0.textAlignment = .center
     }
@@ -90,9 +74,7 @@ final class MatchResultCardView: BaseUIView {
                                   myNickName,
                                   rivalImage,
                                   rivalNickName,
-                                  myScore,
-                                  scoreSemicolon,
-                                  rivalScore)
+                                  vsLabel)
         
         addSubviews(containerView)
     }
@@ -120,19 +102,9 @@ final class MatchResultCardView: BaseUIView {
             $0.centerX.equalTo(myImage)
         }
         
-        myScore.snp.makeConstraints {
-            $0.trailing.equalTo(scoreSemicolon.snp.leading).offset(-6)
-            $0.centerY.equalTo(scoreSemicolon)
-        }
-        
-        scoreSemicolon.snp.makeConstraints {
+        vsLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalTo(myImage)
-        }
-        
-        rivalScore.snp.makeConstraints {
-            $0.leading.equalTo(scoreSemicolon.snp.trailing).offset(6)
-            $0.centerY.equalTo(scoreSemicolon)
         }
         
         rightCrownImageView.snp.makeConstraints {
@@ -155,27 +127,10 @@ final class MatchResultCardView: BaseUIView {
     
     // MARK: UI Methods
     
-    // 텍스트 필드에서 받은 스코어로 CardView의 스코어 갱신하기
-    func updateScore(myScore: String, rivalScore: String) {
-        self.currentMyScore = Int(myScore) ?? 0
-        self.currentRivalScore = Int(rivalScore) ?? 0
-        
-        self.myScore.text = myScore
-        self.rivalScore.text = rivalScore
-    }
-    
     // 드롭다운에서 선택한 승자에 왕관 씌우기
     func updateWinnerCrown(isMyWin: Bool) {
         leftCrownImageView.isHidden = !isMyWin
         rightCrownImageView.isHidden = isMyWin
-    }
-    
-    func getMyScore() -> Int {
-        return currentMyScore
-    }
-    
-    func getRivalScore() -> Int {
-        return currentRivalScore
     }
     
     func configure(myName: String, myImage: UIImage?, rivalName: String, rivalImage: UIImage?) {
