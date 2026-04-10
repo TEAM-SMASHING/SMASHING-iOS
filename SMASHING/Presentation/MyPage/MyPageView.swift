@@ -281,9 +281,3 @@ final class MyPageView: BaseUIView {
         }
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    MyPageView()
-}

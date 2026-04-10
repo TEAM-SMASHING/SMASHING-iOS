@@ -23,6 +23,7 @@ final class UserProfileView: BaseUIView {
     var skipAction: (() -> Void)?
     var acceptAction: (() -> Void)?
     var backAction: (() -> Void)?
+    var menuAction: (() -> Void)?
     var challengeAction: (() -> Void)? {
         didSet { profileCard.challengeAction = challengeAction }
     }
@@ -65,6 +66,9 @@ final class UserProfileView: BaseUIView {
     // MARK: - Setup Methods
     
     override func setUI() {
+        navigationBar.setRightButton(image: .icMenu) { [weak self] in
+            self?.menuAction?()
+        }
         addSubview(navigationBar)
         addSubview(scrollView)
         scrollView.addSubview(contentView)

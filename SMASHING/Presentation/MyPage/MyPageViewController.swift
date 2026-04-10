@@ -97,9 +97,3 @@ final class MyPageViewController: BaseViewController {
         }
     }
 }
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    MyPageViewController()
-}
