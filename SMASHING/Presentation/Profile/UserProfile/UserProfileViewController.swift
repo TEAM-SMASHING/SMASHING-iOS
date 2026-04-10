@@ -39,6 +39,9 @@ final class UserProfileViewController: BaseViewController {
         mainView.backAction = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
         }
+        mainView.menuAction = { [weak self] in
+            self?.presentMenuBottomSheet()
+        }
         mainView.challengeAction = { [weak self] in
             self?.presentChallengePopup()
         }
@@ -92,6 +95,23 @@ final class UserProfileViewController: BaseViewController {
     private func updateUI(with profile: OtherUserProfileResponse) {
         mainView.configure(with: profile, mode: .plain)
         mainView.reviewCard.reviewCollectionView.reloadData()
+    }
+
+    private func presentMenuBottomSheet() {
+        let bottomSheetVC = UserProfileMenuBottomSheetViewController()
+        bottomSheetVC.onReportTapped = { [weak self] in
+            // TODO: 신고 API
+        }
+        bottomSheetVC.onBlockTapped = { [weak self] in
+            // TODO: 차단 API
+        }
+
+        if let sheet = bottomSheetVC.sheetPresentationController {
+            let customDetent = UISheetPresentationController.Detent.custom { _ in 160 }
+            sheet.detents = [customDetent]
+            sheet.prefersGrabberVisible = true
+        }
+        present(bottomSheetVC, animated: true)
     }
 
     private func presentChallengePopup() {

@@ -88,11 +88,12 @@ final class MyPageViewController: BaseViewController {
             let safariVC = SFSafariViewController(url: url)
             present(safariVC, animated: true)
         }
+        
+        mainView.verionInfoAction = { [weak self] in
+            guard let self else { return }
+            guard let url = URL(string: "https://elated-piccolo-63b.notion.site/30b4556d60d18010bb2aff85c555cd9e") else { return }
+            let safariVC = SFSafariViewController(url: url)
+            present(safariVC, animated: true)
+        }
     }
-}
-
-import SwiftUI
-@available(iOS 18.0, *)
-#Preview {
-    MyPageViewController()
 }

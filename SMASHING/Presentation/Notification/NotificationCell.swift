@@ -75,7 +75,7 @@ final class NotificationCollectionViewCell: UICollectionViewCell, ReuseIdentifia
         
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
-            $0.leading.equalTo(titleLabel).offset(12)
+            $0.leading.equalTo(titleLabel)
             $0.trailing.equalToSuperview().inset(16)
         }
         
@@ -92,6 +92,6 @@ final class NotificationCollectionViewCell: UICollectionViewCell, ReuseIdentifia
         titleLabel.text = data.title
         contentLabel.text = data.content
         timeLabel.text = data.createdAt.toDateFromISO8601?.toRelativeString()
-        contentView.backgroundColor = data.isRead ? .Background.surface : .Border.primary
+        contentView.backgroundColor = data.isRead ? .Border.primary : .Background.surface
     }
 }
